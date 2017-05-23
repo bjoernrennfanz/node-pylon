@@ -1,0 +1,29 @@
+﻿{
+    "name": "node-pylon",
+    "version": "0.0.1",
+    "author": "Björn Rennfanz <bjoern@fam-rennfanz.de>",
+    "license" : "MIT",
+    "description": "C++ pylon bindings for Node.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bjoernrennfanz/node-pylon.git"
+    },
+    "homepage": "https://github.com/bjoernrennfanz/node-pylon",
+    "main": "index.js",
+    "keywords": [
+        "pylon",
+        "machine vision"
+    ],
+    "engines": {
+        "node": ">=0.6.14"
+    },
+    "dependencies": {
+        "nan": "^2.6.2",
+        "shelljs": "0.0.5pre4"
+    },
+    "scripts": {
+        "install": "node-gyp rebuild"
+    },
+    "devDependencies": {},
+    "optionalDependencies": {}
+}
