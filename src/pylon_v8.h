@@ -24,11 +24,22 @@
 
 #include <node.h>
 #include <nan.h>
+#include <base/GCString.h>
 
 namespace pylon_v8 
 {
     inline bool InstanceOf(v8::Local<v8::Value> value, Nan::Persistent<v8::FunctionTemplate>* prototype) 
     {
         return value->IsObject() && Nan::New(*prototype)->HasInstance(value);
+    }
+
+    inline GENICAM_NAMESPACE::gcstring ToGCString(v8::Local<v8::String> str) 
+    {
+        return GENICAM_NAMESPACE::gcstring(*v8::String::Utf8Value(str));
+    }
+
+    inline v8::Local<v8::String> FromGCString(GENICAM_NAMESPACE::gcstring str)
+    {
+        return Nan::New<v8::String>(str.c_str()).ToLocalChecked();
     }
 }

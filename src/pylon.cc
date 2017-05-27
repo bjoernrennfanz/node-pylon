@@ -20,13 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <node.h>
-#include <nan.h>
+#include "pylon/DeviceInfo.h"
 
 using namespace v8;
 
 void pylonInitialize(Handle<Object> target)
 {
+	DeviceInfoWrap::Initialize(target);
 }
 
 NODE_MODULE(pylon, pylonInitialize)
