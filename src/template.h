@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -20,22 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//
-// Load bindings binary
-//
-var genicam = require(__dirname + '/build/Release/genicam.node');
-var pylon = require(__dirname + '/build/Release/pylon.node');
+#pragma once
 
-//
-// Pylon::EDeviceAccessiblityInfo
-//
-pylon.DeviceAccessiblityInfo = {
-    Accessibility_Unknown: 0,
-    Accessibility_Ok: 1,
-    Accessibility_Opened: 2,
-    Accessibility_OpenedExclusively: 3,
-    Accessibility_NotReachable: 4
-}
-Object.freeze(pylon.DeviceAccessiblityInfo);
+#include <node.h>
+#include <nan.h>
 
-module.exports = { genicam, pylon };
+#include <pylon/__Template__.h>
+
+class __Template__Wrap : public node::ObjectWrap 
+{
+public:
+    static Nan::Persistent<v8::FunctionTemplate> prototype;
+    static NAN_MODULE_INIT(Initialize);
+
+    Pylon::C__Template__* GetWrapped() const 
+    { 
+        return m___Template__; 
+    };
+
+    void SetWrapped(Pylon::C__Template__ __template__) 
+    { 
+        if (m___Template__) delete m___Template__; 
+        m___Template__ = new Pylon::C__Template__(__template__); 
+    };
+
+    static v8::Handle<v8::Value> NewInstance(Pylon::C__Template__ __template__);
+
+private:
+    static Nan::Persistent<v8::Function> constructor;
+    __Template__Wrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~__Template__Wrap();
+    static NAN_METHOD(New);
+
+    // Wrapped methods
+    static NAN_METHOD(Example);
+
+    // Wrapped object
+    __Template__* m___Template__;
+};

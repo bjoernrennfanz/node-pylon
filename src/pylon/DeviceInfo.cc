@@ -46,8 +46,8 @@ DeviceInfoWrap::DeviceInfoWrap(Nan::NAN_METHOD_ARGS_TYPE info)
 		}
 
 		// Unwrap obj
-		DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
-		CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+		DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+		CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 		m_DeviceInfo = new CDeviceInfo(*deviceInfo);
     }
@@ -110,8 +110,8 @@ NAN_MODULE_INIT(DeviceInfoWrap::Initialize) {
 
 NAN_METHOD(DeviceInfoWrap::New) 
 {
-	DeviceInfoWrap* deviceInfoWrap = new DeviceInfoWrap(info);
-	deviceInfoWrap->Wrap(info.This());
+	DeviceInfoWrap* wrappedDeviceInfo = new DeviceInfoWrap(info);
+	wrappedDeviceInfo->Wrap(info.This());
 }
 
 Handle<Value> DeviceInfoWrap::NewInstance(CDeviceInfo deviceInfo) 
@@ -119,24 +119,24 @@ Handle<Value> DeviceInfoWrap::NewInstance(CDeviceInfo deviceInfo)
 	Nan::EscapableHandleScope scope;
 
 	Local<Object> instance = Nan::NewInstance(Nan::New(constructor), 0, NULL).ToLocalChecked();
-	DeviceInfoWrap* deviceInfoWrap = node::ObjectWrap::Unwrap<DeviceInfoWrap>(instance);
-	deviceInfoWrap->SetWrapped(deviceInfo);
+	DeviceInfoWrap* wrappedDeviceInfo = node::ObjectWrap::Unwrap<DeviceInfoWrap>(instance);
+	wrappedDeviceInfo->SetWrapped(deviceInfo);
 
 	return scope.Escape(instance);
 }
 
 NAN_METHOD(DeviceInfoWrap::GetSerialNumber)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetSerialNumber()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetSerialNumber)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetSerialNumber(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -145,24 +145,24 @@ NAN_METHOD(DeviceInfoWrap::SetSerialNumber)
 
 NAN_METHOD(DeviceInfoWrap::IsSerialNumberAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsSerialNumberAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::GetUserDefinedName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetUserDefinedName()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetUserDefinedName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetUserDefinedName(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -171,24 +171,24 @@ NAN_METHOD(DeviceInfoWrap::SetUserDefinedName)
 
 NAN_METHOD(DeviceInfoWrap::IsUserDefinedNameAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsUserDefinedNameAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::GetModelName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetModelName()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetModelName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetModelName(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -197,24 +197,24 @@ NAN_METHOD(DeviceInfoWrap::SetModelName)
 
 NAN_METHOD(DeviceInfoWrap::IsModelNameAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsModelNameAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::GetDeviceVersion)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetDeviceVersion()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetDeviceVersion)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetDeviceVersion(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -223,24 +223,24 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceVersion)
 
 NAN_METHOD(DeviceInfoWrap::IsDeviceVersionAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsDeviceVersionAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::GetDeviceFactory)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetDeviceFactory()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetDeviceFactory)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetDeviceFactory(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -249,24 +249,24 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceFactory)
 
 NAN_METHOD(DeviceInfoWrap::IsDeviceFactoryAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsDeviceFactoryAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::GetXMLSource)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(pylon_v8::FromGCString(deviceInfo->GetXMLSource()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetXMLSource)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetXMLSource(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -275,16 +275,16 @@ NAN_METHOD(DeviceInfoWrap::SetXMLSource)
 
 NAN_METHOD(DeviceInfoWrap::IsXMLSourceAvailable)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	info.GetReturnValue().Set(Nan::New(deviceInfo->IsXMLSourceAvailable()));
 }
 
 NAN_METHOD(DeviceInfoWrap::SetFriendlyName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetFriendlyName(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -293,8 +293,8 @@ NAN_METHOD(DeviceInfoWrap::SetFriendlyName)
 
 NAN_METHOD(DeviceInfoWrap::SetFullName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetFullName(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -303,8 +303,8 @@ NAN_METHOD(DeviceInfoWrap::SetFullName)
 
 NAN_METHOD(DeviceInfoWrap::SetVendorName)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetVendorName(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -313,8 +313,8 @@ NAN_METHOD(DeviceInfoWrap::SetVendorName)
 
 NAN_METHOD(DeviceInfoWrap::SetDeviceClass)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetDeviceClass(pylon_v8::ToGCString(info[0]->ToString()));
 
@@ -323,8 +323,8 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceClass)
 
 NAN_METHOD(DeviceInfoWrap::SetPropertyValue)
 {
-	DeviceInfoWrap* deviceInfoWrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
-	CDeviceInfo* deviceInfo = deviceInfoWrap->GetWrapped();
+	DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+	CDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
 	deviceInfo->SetPropertyValue(pylon_v8::ToGCString(info[0]->ToString()), pylon_v8::ToGCString(info[1]->ToString()));
 

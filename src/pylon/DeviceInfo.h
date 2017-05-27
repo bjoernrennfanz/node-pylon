@@ -48,7 +48,7 @@ public:
 
  private:
     static Nan::Persistent<v8::Function> constructor;
-    DeviceInfoWrap(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    DeviceInfoWrap(Nan::NAN_METHOD_ARGS_TYPE info);
     ~DeviceInfoWrap();
     static NAN_METHOD(New);
 
