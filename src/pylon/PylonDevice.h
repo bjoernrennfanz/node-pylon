@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -20,13 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
+
 #include <node.h>
 #include <nan.h>
 
-using namespace v8;
+#include <pylon/Device.h>
 
-NAN_MODULE_INIT(InitGenicamWrapper)
+class PylonDeviceWrap : public node::ObjectWrap 
 {
-}
+public:
+    static Nan::Persistent<v8::FunctionTemplate> prototype;
+    static NAN_MODULE_INIT(Initialize);
 
-NODE_MODULE(genicam, InitGenicamWrapper)
+	Pylon::IPylonDevice* GetWrapped() const
+    { 
+        return m_PylonDevice;
+    };
+
+    void SetWrapped(Pylon::IPylonDevice* ptrPylonDevice)
+    { 
+        m_PylonDevice = ptrPylonDevice;
+    };
+
+    static v8::Handle<v8::Value> NewInstance(Pylon::IPylonDevice* ptrPylonDevice);
+
+private:
+    static Nan::Persistent<v8::Function> constructor;
+    PylonDeviceWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~PylonDeviceWrap();
+    static NAN_METHOD(New);
+
+    // Wrapped methods
+
+    // Wrapped object
+	Pylon::IPylonDevice* m_PylonDevice;
+};

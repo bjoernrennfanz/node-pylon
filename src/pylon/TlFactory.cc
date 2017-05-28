@@ -21,8 +21,10 @@
 // SOFTWARE.
 
 #include "TlFactory.h"
+#include "PylonDevice.h"
 
 using namespace v8;
+using namespace Pylon;
 
 Nan::Persistent<FunctionTemplate> TlFactoryWrap::prototype;
 Nan::Persistent<Function> TlFactoryWrap::constructor;
@@ -44,7 +46,8 @@ NAN_MODULE_INIT(TlFactoryWrap::Initialize)
     tpl->InstanceTemplate()->SetInternalFieldCount(1);  
 
     // Prototype
-    // Nan::SetPrototypeMethod(tpl, "example", Example);
+    Nan::SetPrototypeMethod(tpl, "getInstance", GetInstance);
+	Nan::SetPrototypeMethod(tpl, "createFirstDevice", CreateFirstDevice);
 
     prototype.Reset(tpl);
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
@@ -58,11 +61,34 @@ NAN_METHOD(TlFactoryWrap::New)
     wrappedTlFactory->Wrap(info.This());
 }
 
+Handle<Value> TlFactoryWrap::NewInstance(CTlFactory& tlFactory)
+{
+	Nan::EscapableHandleScope scope;
+
+	Local<Object> instance = Nan::NewInstance(Nan::New(constructor), 0, NULL).ToLocalChecked();
+	TlFactoryWrap* wrappedTlFactory = node::ObjectWrap::Unwrap<TlFactoryWrap>(instance);
+	wrappedTlFactory->SetWrapped(&tlFactory);
+
+	return scope.Escape(instance);
+}
+
 NAN_METHOD(TlFactoryWrap::GetInstance)
 {
-    // TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
-    // CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
-    // tlFactory->...?
+	// Get singleton instance of TlFactory and warp it.
+	info.GetReturnValue().Set(TlFactoryWrap::NewInstance(CTlFactory::GetInstance()));
+}
 
-    info.GetReturnValue().Set(Nan::Undefined());
+NAN_METHOD(TlFactoryWrap::CreateFirstDevice)
+{
+	TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+	CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+	// Check if instance is valid
+	if (tlFactory == nullptr)
+	{
+		return Nan::ThrowError(Exception::TypeError(Nan::New("TlFactoryWrap::CreateFirstDevice: instance not initialized.").ToLocalChecked()));
+	}
+	
+	// Implement currently only default
+	info.GetReturnValue().Set(PylonDeviceWrap::NewInstance(tlFactory->CreateFirstDevice()));
 }

@@ -19,11 +19,13 @@
 				},
                 'include_dirs' : [
                     '<!(echo %PYLON_DEV_DIR%)/include'
-                ],
+                ]
+			}],
+			['OS=="win" and target_arch=="ia32"', {
 				'libraries': [
 					'<!(echo %PYLON_DEV_DIR%)/lib/Win32/GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib',
 					'<!(echo %PYLON_DEV_DIR%)/lib/Win32/GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib'
-				],
+				]
 			}],
 			['OS=="win" and target_arch=="x64"', {
 				'libraries': [
@@ -55,6 +57,7 @@
         'sources': [
             'src/pylon.cc',
 			'src/pylon/DeviceInfo.cc',
+			'src/pylon/PylonDevice.cc',
 			'src/pylon/TlFactory.cc'
         ],
         'include_dirs' : [
@@ -75,7 +78,9 @@
                 'include_dirs' : [
 					'<!(echo %PYLON_DEV_DIR%)/include',
                     '<!(echo %PYLON_DEV_DIR%)/include/pylon',
-                ],
+                ]
+			}],
+			['OS=="win" and target_arch=="ia32"', {
 				'libraries': [
 					'<!(echo %PYLON_DEV_DIR%)/lib/Win32/GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib',
 					'<!(echo %PYLON_DEV_DIR%)/lib/Win32/GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib',

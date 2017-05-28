@@ -38,10 +38,12 @@ public:
 		return m_TlFactory;
     };
 
-	void SetWrapped(Pylon::CTlFactory& tlFactory)
+	void SetWrapped(Pylon::CTlFactory* tlFactory)
 	{
-		m_TlFactory = &tlFactory;
+		m_TlFactory = tlFactory;
 	};
+
+	static v8::Handle<v8::Value> NewInstance(Pylon::CTlFactory& tlFactory);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
@@ -51,6 +53,7 @@ private:
 
     // Wrapped methods
     static NAN_METHOD(GetInstance);
+	static NAN_METHOD(CreateFirstDevice);
 
 	// Wrapped object
 	Pylon::CTlFactory* m_TlFactory;

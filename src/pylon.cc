@@ -21,14 +21,45 @@
 // SOFTWARE.
 
 #include "pylon/DeviceInfo.h"
+#include "pylon/PylonDevice.h"
 #include "pylon/TlFactory.h"
+
+#include <pylon/PylonBase.h>
 
 using namespace v8;
 
-void pylonInitialize(Handle<Object> target)
+class PylonWrap
 {
+public:
+	static NAN_METHOD(Initialize)
+	{
+		Pylon::PylonInitialize();
+		info.GetReturnValue().Set(Nan::Undefined());
+	}
+
+	static NAN_METHOD(Terminate)
+	{
+		Pylon::PylonTerminate();
+		info.GetReturnValue().Set(Nan::Undefined());
+	}
+
+	static NAN_METHOD(GetVersionString)
+	{
+		info.GetReturnValue().Set(Nan::New<v8::String>(Pylon::GetPylonVersionString()).ToLocalChecked());
+	}
+};
+
+NAN_MODULE_INIT(InitPylonWrapper)
+{
+	// Initialize static methods
+	Nan::Set(target, Nan::New<String>("initialize").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::Initialize)).ToLocalChecked());
+	Nan::Set(target, Nan::New<String>("terminate").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::Terminate)).ToLocalChecked());
+	Nan::Set(target, Nan::New<String>("getVersionString").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::GetVersionString)).ToLocalChecked());
+
+	// Initialize dynamic classes
 	DeviceInfoWrap::Initialize(target);
+	PylonDeviceWrap::Initialize(target);
 	TlFactoryWrap::Initialize(target);
 }
 
-NODE_MODULE(pylon, pylonInitialize)
+NODE_MODULE(pylon, InitPylonWrapper)

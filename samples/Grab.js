@@ -20,13 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <node.h>
-#include <nan.h>
+const util = require('util');
+const pylonNode = require('..');
 
-using namespace v8;
+// Get GeniCam and pylon classes
+const genicam = pylonNode.genicam;
+const pylon = pylonNode.pylon;
 
-NAN_MODULE_INIT(InitGenicamWrapper)
-{
-}
+// Number of images to be grabbed.
+const countOfImagesToGrab = 100
 
-NODE_MODULE(genicam, InitGenicamWrapper)
+// Initialize pylon
+pylon.initialize();
+    
+// Print pylon Version
+console.log("Using pylon Version " + pylon.getVersionString());
+    
+// Get TlFactory singleton instance
+const tlFactoryInstance = new pylon.TlFactory().getInstance();
+
+// Create an instant camera object with thecamera device found first.
+var camera = new pylon.InstantCamera(tlFactoryInstance.createFirstDevice())
+
+// Print the model name of the camera.
+console.log("Using device ", camera.getDeviceInfo().getModelName())

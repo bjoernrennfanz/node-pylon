@@ -23,4 +23,12 @@
 const util = require('util');
 const pylonNode = require('..');
 
-console.log(util.inspect(pylonNode, {depth: null}));
+// Get GeniCam and pylon classes
+const genicam = pylonNode.genicam;
+const pylon = pylonNode.pylon;
+
+// Print pylon Version
+console.log("Using pylon Version " + pylon.getVersionString());
+
+console.log(util.inspect(pylon, { depth: null }));
+console.log(util.inspect(genicam, { depth: null }));
