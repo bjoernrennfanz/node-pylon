@@ -24,7 +24,7 @@
 
 #include <node.h>
 #include <nan.h>
-#include <base/GCString.h>
+#include <Base/GCString.h>
 
 namespace pylon_v8 
 {

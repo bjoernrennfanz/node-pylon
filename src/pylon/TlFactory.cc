@@ -60,11 +60,9 @@ NAN_METHOD(TlFactoryWrap::New)
 
 NAN_METHOD(TlFactoryWrap::GetInstance)
 {
-    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
-    TlFactory* tlFactory = wrappedTlFactory->GetWrapped();
-
+    // TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    // CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
     // tlFactory->...?
 
     info.GetReturnValue().Set(Nan::Undefined());
 }
-*/

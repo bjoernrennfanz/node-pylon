@@ -31,7 +31,23 @@
 					'<!(echo %PYLON_DEV_DIR%)/lib/x64/GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib'
 				]
             }],
-
+            ['OS=="mac"', {
+                'xcode_settings': {
+                    'LD_RUNPATH_SEARCH_PATHS': [ '/Library/Frameworks' ],
+                    'MACOSX_DEPLOYMENT_TARGET': '10.10',
+                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                    'GCC_ENABLE_CPP_RTTI': 'YES'
+                },
+            	'mac_framework_dirs': [
+                    '/Library/Frameworks'
+                ],
+                'include_dirs' : [
+                    '/Library/Frameworks/pylon.framework/Headers/GenICam',
+                ],
+				'libraries': [
+					'-framework', 'pylon'
+				]
+        	}]
         ]
     },
     {
@@ -76,7 +92,24 @@
 					'<!(echo %PYLON_DEV_DIR%)/lib/x64/PylonGUI_MD_VC120_v5_0.lib',
 					'<!(echo %PYLON_DEV_DIR%)/lib/x64/PylonUtility_MD_VC120_v5_0.lib'
 				]
-            }]
+            }],
+            ['OS=="mac"', {
+                'xcode_settings': {
+                    'LD_RUNPATH_SEARCH_PATHS': [ '/Library/Frameworks' ],
+                    'MACOSX_DEPLOYMENT_TARGET': '10.10',
+                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                    'GCC_ENABLE_CPP_RTTI': 'YES'
+                },
+            	'mac_framework_dirs': [
+                    '/Library/Frameworks'
+                ],
+                'include_dirs': [
+                    '/Library/Frameworks/pylon.framework/Headers/GenICam'
+                ],
+				'libraries': [
+					'-framework', 'pylon'
+				]
+        	}]
         ]
     }]
 }
