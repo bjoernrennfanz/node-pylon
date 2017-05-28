@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -20,15 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "pylon/DeviceInfo.h"
-#include "pylon/TlFactory.h"
+#pragma once
 
-using namespace v8;
+#include <node.h>
+#include <nan.h>
 
-void pylonInitialize(Handle<Object> target)
+#include <pylon/TlFactory.h>
+
+class TlFactoryWrap : public node::ObjectWrap
 {
-	DeviceInfoWrap::Initialize(target);
-	TlFactoryWrap::Initialize(target);
-}
+public:
+    static Nan::Persistent<v8::FunctionTemplate> prototype;
+    static NAN_MODULE_INIT(Initialize);
 
-NODE_MODULE(pylon, pylonInitialize)
+    Pylon::CTlFactory* GetWrapped() const 
+    { 
+		return m_TlFactory;
+    };
+
+	void SetWrapped(Pylon::CTlFactory& tlFactory)
+	{
+		m_TlFactory = &tlFactory;
+	};
+
+private:
+    static Nan::Persistent<v8::Function> constructor;
+	TlFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+	~TlFactoryWrap();
+    static NAN_METHOD(New);
+
+    // Wrapped methods
+    static NAN_METHOD(GetInstance);
+
+	// Wrapped object
+	Pylon::CTlFactory* m_TlFactory;
+};

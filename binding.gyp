@@ -38,7 +38,8 @@
         'target_name': 'pylon',
         'sources': [
             'src/pylon.cc',
-			'src/pylon/DeviceInfo.cc'
+			'src/pylon/DeviceInfo.cc',
+			'src/pylon/TlFactory.cc'
         ],
         'include_dirs' : [
             '<!(node -e "require(\'nan\')")'
