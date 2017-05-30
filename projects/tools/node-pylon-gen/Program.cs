@@ -20,15 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const util = require('util');
-const pylonNode = require('../projects/node-pylon');
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-// Get GeniCam and pylon classes
-const genicam = pylonNode.genicam;
-const pylon = pylonNode.pylon;
-
-// Print pylon Version
-console.log("Using pylon Version " + pylon.getVersionString());
-
-console.log(util.inspect(pylon, { depth: null }));
-console.log(util.inspect(genicam, { depth: null }));
+namespace NodePylonGen
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+    }
+}

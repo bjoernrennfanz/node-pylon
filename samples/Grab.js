@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 const util = require('util');
-const pylonNode = require('..');
+const pylonNode = require('../projects/node-pylon');
 
 // Get GeniCam and pylon classes
 const genicam = pylonNode.genicam;

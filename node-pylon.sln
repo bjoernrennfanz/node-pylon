@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "node-pylon", "node-pylon.njsproj", "{7E0D9B9A-5058-4C14-BA54-3E0B669C140E}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "node-pylon", "projects\node-pylon\node-pylon.njsproj", "{7E0D9B9A-5058-4C14-BA54-3E0B669C140E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "node-pylon-gen", "projects\tools\node-pylon-gen\node-pylon-gen.csproj", "{EA2E22CA-727E-4DE1-9914-C7420FED4E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7E0D9B9A-5058-4C14-BA54-3E0B669C140E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E0D9B9A-5058-4C14-BA54-3E0B669C140E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E0D9B9A-5058-4C14-BA54-3E0B669C140E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

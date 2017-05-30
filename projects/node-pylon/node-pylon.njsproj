@@ -21,7 +21,6 @@
   <ItemGroup>
     <Content Include="package.json" />
     <Compile Include="index.js" />
-    <Compile Include="samples\InspectModule.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="build" />
@@ -31,7 +30,6 @@
     <Folder Include="build\Release\obj\genicam\genicam.tlog" />
     <Folder Include="build\Release\obj\pylon" />
     <Folder Include="build\Release\obj\pylon\pylon.tlog" />
-    <Folder Include="samples" />
     <Folder Include="src" />
     <Folder Include="typings\" />
     <Folder Include="typings\globals\" />
