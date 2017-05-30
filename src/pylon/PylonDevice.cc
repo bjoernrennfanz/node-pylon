@@ -33,11 +33,12 @@ Nan::Persistent<Function> PylonDeviceWrap::constructor;
 PylonDeviceWrap::PylonDeviceWrap(Nan::NAN_METHOD_ARGS_TYPE args)
   : m_PylonDevice(NULL)
 {
+    // Standalone constructor not implemented
+    // internal use SetWrapped()
 }
 
 PylonDeviceWrap::~PylonDeviceWrap() 
 {
-    delete m_PylonDevice;
 }
 
 NAN_MODULE_INIT(PylonDeviceWrap::Initialize)

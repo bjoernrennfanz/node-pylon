@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -20,30 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const util = require('util');
-const pylonNode = require('..');
+#pragma once
 
-// Get GeniCam and pylon classes
-const genicam = pylonNode.genicam;
-const pylon = pylonNode.pylon;
+#include <node.h>
+#include <nan.h>
 
-// Number of images to be grabbed.
-const countOfImagesToGrab = 100
+#include <pylon/InstantCamera.h>
 
-// Initialize pylon
-pylon.initialize();
-    
-// Print pylon Version
-console.log("Using pylon Version " + pylon.getVersionString());
-    
-// Get TlFactory singleton instance
-const tlFactoryInstance = new pylon.TlFactory().getInstance();
+class InstantCameraWrap : public node::ObjectWrap 
+{
+public:
+    static Nan::Persistent<v8::FunctionTemplate> prototype;
+    static NAN_MODULE_INIT(Initialize);
 
-// Create an instant camera object with the camera device found first.
-var camera = new pylon.InstantCamera(tlFactoryInstance.createFirstDevice())
+    Pylon::CInstantCamera* GetWrapped() const 
+    { 
+        return m_InstantCamera; 
+    };
 
-// Print the model name of the camera.
-console.log("Using device " + camera.getDeviceInfo().getModelName())
+    void SetWrapped(Pylon::CInstantCamera* instantCamera) 
+    { 
+        m_InstantCamera = instantCamera;
+    };
 
-// Terminate pylon
-pylon.terminate();
+    static v8::Handle<v8::Value> NewInstance(Pylon::CInstantCamera* instantCamera);
+
+private:
+    static Nan::Persistent<v8::Function> constructor;
+    InstantCameraWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~InstantCameraWrap();
+    static NAN_METHOD(New);
+
+    // Wrapped methods
+    static NAN_METHOD(GetDeviceInfo);
+
+    // Properties
+    static NAN_GETTER(MaxNumBufferGet);
+    static NAN_SETTER(MaxNumBufferSet);
+
+    // Wrapped object
+    Pylon::CInstantCamera* m_InstantCamera;
+};

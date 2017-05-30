@@ -32,6 +32,8 @@ Nan::Persistent<Function> TlFactoryWrap::constructor;
 TlFactoryWrap::TlFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
 	: m_TlFactory(NULL)
 {
+    // Standalone constructor not implemented
+    // internal use SetWrapped()
 }
 
 TlFactoryWrap::~TlFactoryWrap()

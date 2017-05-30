@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include "pylon/DeviceInfo.h"
+#include "pylon/InstantCamera.h"
 #include "pylon/PylonDevice.h"
 #include "pylon/TlFactory.h"
 
@@ -58,6 +59,7 @@ NAN_MODULE_INIT(InitPylonWrapper)
 
 	// Initialize dynamic classes
 	DeviceInfoWrap::Initialize(target);
+    InstantCameraWrap::Initialize(target);
 	PylonDeviceWrap::Initialize(target);
 	TlFactoryWrap::Initialize(target);
 }
