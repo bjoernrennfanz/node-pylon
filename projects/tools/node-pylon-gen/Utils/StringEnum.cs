@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,47 +27,39 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NodePylonGen
+namespace NodePylonGen.Utils
 {
-    class Program
+    public class StringEnumValue : System.Attribute 
     {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static CodeGenerator codeGenerator;
+        private readonly string stringValue;
 
-        public static void RunCodeGeneration()
+        public StringEnumValue(string value)
         {
-            try
-            {
-                codeGenerator.Run();
-            }
-            catch (Exception ex)
-            {
-                log.Fatal("Unexpected exception: ", ex);
-            }
+            stringValue = value;
         }
 
-        static void Main(string[] args)
+        public string Value
         {
-            try
-            {
-                codeGenerator = new CodeGenerator();
-                codeGenerator.ParseArguments(args);
+            get { return stringValue; }
+        }
+    }
 
-                if (codeGenerator.Initialize())
-                {
-                    RunCodeGeneration();
-                }
-                else
-                {
-                    log.Info("Latest code generation is up to date. No need to run code generation");
-                }
-            }
-            catch (Exception ex)
+    public static class StringEnum
+    {
+        public static string GetStringValue(Enum value)
+        {
+            string result = null;
+            Type enumType = value.GetType();
+
+            FieldInfo enumFieldInfo = enumType.GetField(value.ToString());
+            StringEnumValue[] enumAttrs = enumFieldInfo.GetCustomAttributes(typeof(StringEnumValue), false) as StringEnumValue[];
+
+            if (enumAttrs.Length > 0)
             {
-                log.Fatal("Unexpected exception: ", ex);
+                result = enumAttrs[0].Value;
             }
 
-            Environment.Exit(0);
+            return result;
         }
     }
 }

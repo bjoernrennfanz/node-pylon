@@ -27,48 +27,28 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NodePylonGen.Config;
 
-namespace NodePylonGen
+namespace NodePylonGen.Parser
 {
-    class Program
+    public class CppParser
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static CodeGenerator codeGenerator;
+        private string castXmlExecutablePath;
 
-        public static void RunCodeGeneration()
+        public CppParser(string castXmlExecutablePath)
         {
-            try
-            {
-                codeGenerator.Run();
-            }
-            catch (Exception ex)
-            {
-                log.Fatal("Unexpected exception: ", ex);
-            }
+            this.CastXmlExecutablePath = castXmlExecutablePath;
         }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// Gets the CastXML executable path.
+        /// </summary>
+        public string CastXmlExecutablePath { get; private set; }
+
+        public void Initialize(ConfigMapping config)
         {
-            try
-            {
-                codeGenerator = new CodeGenerator();
-                codeGenerator.ParseArguments(args);
-
-                if (codeGenerator.Initialize())
-                {
-                    RunCodeGeneration();
-                }
-                else
-                {
-                    log.Info("Latest code generation is up to date. No need to run code generation");
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Fatal("Unexpected exception: ", ex);
-            }
-
-            Environment.Exit(0);
+            
         }
     }
 }

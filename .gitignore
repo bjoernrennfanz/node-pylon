@@ -63,3 +63,4 @@ build/
 bin/
 obj/
 packages/
+*.db

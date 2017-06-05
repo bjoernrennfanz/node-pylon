@@ -52,6 +52,10 @@
       <HintPath>..\..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -62,9 +66,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGenerator.cs" />
+    <Compile Include="Config\ConfigMapping.cs" />
+    <Compile Include="Config\IncludeDirMapping.cs" />
+    <Compile Include="Config\IncludeMapping.cs" />
+    <Compile Include="Config\VariableMapping.cs" />
     <Compile Include="Parser\CastXML.cs" />
+    <Compile Include="Parser\CppParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\StringEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

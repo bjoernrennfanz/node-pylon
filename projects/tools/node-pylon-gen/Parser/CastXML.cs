@@ -20,86 +20,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using log4net;
+using NodePylonGen.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace NodePylonGen.Parser
 {
     public class CastXML
     {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         // Regex for error detection
         private static Regex MatchForError = new Regex("error:");
 
         /// <summary>
-        ///     CastXml tag for FundamentalType
+        ///     Enum for CastXML Tag definitions
         /// </summary>
-        public const string TagFundamentalType = "FundamentalType";
-
-        /// <summary>
-        ///     CastXml tag for Enumeration
-        /// </summary>
-        public const string TagEnumeration = "Enumeration";
-
-        /// <summary>
-        ///     CastXml tag for Struct
-        /// </summary>
-        public const string TagStruct = "Struct";
-
-        /// <summary>
-        ///     CastXml tag for Field
-        /// </summary>
-        public const string TagField = "Field";
-
-        /// <summary>
-        ///     CastXml tag for Union
-        /// </summary>
-        public const string TagUnion = "Union";
-
-        /// <summary>
-        ///     CastXml tag for Typedef
-        /// </summary>
-        public const string TagTypedef = "Typedef";
-
-        /// <summary>
-        ///     CastXml tag for Function
-        /// </summary>
-        public const string TagFunction = "Function";
-
-        /// <summary>
-        ///     CastXml tag for PointerType
-        /// </summary>
-        public const string TagPointerType = "PointerType";
-
-        /// <summary>
-        ///     CastXml tag for ArrayType
-        /// </summary>
-        public const string TagArrayType = "ArrayType";
-
-        /// <summary>
-        ///     CastXml tag for ReferenceType
-        /// </summary>
-        public const string TagReferenceType = "ReferenceType";
-
-        /// <summary>
-        ///     CastXml tag for CvQualifiedType
-        /// </summary>
-        public const string TagCvQualifiedType = "CvQualifiedType";
-
-        /// <summary>
-        ///     CastXml tag for Namespace
-        /// </summary>
-        public const string TagNamespace = "Namespace";
-
-        /// <summary>
-        ///     CastXml tag for Variable
-        /// </summary>
-        public const string TagVariable = "Variable";
-
-        /// <summary>
-        ///     CastXml tag for FunctionType
-        /// </summary>
-        public const string TagFunctionType = "FunctionType";
+        public enum CastXMLTag
+        {
+            [StringEnumValue("FundamentalType")]
+            FundamentalType,
+            [StringEnumValue("Enumeration")]
+            Enumeration,
+            [StringEnumValue("Struct")]
+            Struct,
+            [StringEnumValue("Field")]
+            Field,
+            [StringEnumValue("Union")]
+            Union,
+            [StringEnumValue("Typedef")]
+            Typedef,
+            [StringEnumValue("Function")]
+            Function,
+            [StringEnumValue("PointerType")]
+            PointerType,
+            [StringEnumValue("ArrayType")]
+            ArrayType,
+            [StringEnumValue("ReferenceType")]
+            ReferenceType,
+            [StringEnumValue("CvQualifiedType")]
+            CvQualifiedType,
+            [StringEnumValue("Namespace")]
+            Namespace,
+            [StringEnumValue("Variable")]
+            Variable,
+            [StringEnumValue("FunctionType")]
+            FunctionType
+        }
 
         /// <summary>
         ///     Gets or sets the executable path of castxml.exe.
@@ -110,7 +82,7 @@ namespace NodePylonGen.Parser
         /// <summary>
         ///     Gets or sets additional include directory
         /// </summary>
-        public List<string> AdditionalIncludeDirs { get; private set; }
+        public List<string> AdditionalIncludeDirs { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CastXml"/> class.
@@ -119,5 +91,86 @@ namespace NodePylonGen.Parser
         {
             AdditionalIncludeDirs = new List<string>();
         }
+
+        /// <summary>
+        ///     Get command-line arguments of castxml.exe
+        /// </summary>
+        /// <returns></returns>
+        private static string GetCastXmlArgs()
+        {
+            var arguments = String.Empty;
+
+            arguments += " --castxml-gccxml";
+            arguments += " -x c++ -std=c++11 -fmsc-version=1900 -fms-extensions -fms-compatibility";
+
+            return arguments;
+        }
+
+        private void ProcessErrorFromHeaderFile(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                string errorText = e.Data;
+                if (MatchForError.Match(errorText).Success)
+                {
+                    log.Error(errorText);
+                }
+                else
+                {
+                    log.Warn(errorText);
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Pre process header file an check for parser errors
+        /// </summary>
+        /// <param name="headerFile"></param>
+        /// <param name="consoleHandler"></param>
+        public void PreProcessHeader(string headerFile, DataReceivedEventHandler consoleHandler)
+        {
+            if (!File.Exists(ExecutablePath))
+            {
+                log.Fatal("castxml.exe not found in path: " + ExecutablePath);
+                return;
+            }
+
+            if (!File.Exists(headerFile))
+            {
+                log.Fatal("C++ header file " + headerFile + " was not found.");
+                return;
+            }
+
+            Process castXMLProcess = new Process();
+            ProcessStartInfo castXMLInfo = new ProcessStartInfo(ExecutablePath)
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.CurrentDirectory
+            };
+
+            string castXMLArgs = GetCastXmlArgs();
+            castXMLArgs += " -E -dD";
+            foreach (string directory in AdditionalIncludeDirs)
+            {
+                castXMLArgs += " " + directory;
+            }
+
+            castXMLInfo.Arguments = castXMLArgs + " " + headerFile;
+            castXMLProcess.StartInfo = castXMLInfo;
+            castXMLProcess.ErrorDataReceived += ProcessErrorFromHeaderFile;
+            castXMLProcess.OutputDataReceived += consoleHandler;
+
+            castXMLProcess.Start();
+            castXMLProcess.BeginOutputReadLine();
+            castXMLProcess.BeginErrorReadLine();
+
+            castXMLProcess.WaitForExit();
+            castXMLProcess.Close();
+        }
+    
+
     }
 }

@@ -111,7 +111,6 @@
                 },
                 'include_dirs' : [
                     '<!(echo %PYLON_DEV_DIR%)/include',
-                    '<!(echo %PYLON_DEV_DIR%)/include/pylon',
                 ]
             }],
             ['OS=="win" and target_arch=="ia32"', {
