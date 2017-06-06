@@ -35,18 +35,6 @@ namespace NodePylonGen
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static CodeGenerator codeGenerator;
 
-        public static void RunCodeGeneration()
-        {
-            try
-            {
-                codeGenerator.Run();
-            }
-            catch (Exception ex)
-            {
-                log.Fatal("Unexpected exception: ", ex);
-            }
-        }
-
         static void Main(string[] args)
         {
             try
@@ -56,7 +44,7 @@ namespace NodePylonGen
 
                 if (codeGenerator.Initialize())
                 {
-                    RunCodeGeneration();
+                    codeGenerator.Run();
                 }
                 else
                 {

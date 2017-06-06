@@ -28,13 +28,24 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using NodePylonGen.Config;
+using NodePylonGen.Parser.Cpp;
+using System.IO;
 
 namespace NodePylonGen.Parser
 {
     public class CppParser
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private string castXmlExecutablePath;
+        private const string Version = "0.0.1";
+
+        private ConfigMapping masterConfig;
+        private string masterHeaderFile;
+        
+        private CppModule cppModule;
+        private CastXML castXML;
+
+        private Dictionary<string, bool> includeToProcess = new Dictionary<string, bool>();
+        private Dictionary<string, bool> includeIsAttached = new Dictionary<string, bool>();
 
         public CppParser(string castXmlExecutablePath)
         {
@@ -48,7 +59,73 @@ namespace NodePylonGen.Parser
 
         public void Initialize(ConfigMapping config)
         {
-            
+            masterConfig = config;
+            masterHeaderFile = masterConfig.Id + ".hpp";
+
+            // Create CastXml instance
+            castXML = new CastXML();
+            castXML.ExecutablePath = CastXmlExecutablePath;
+
+            // Add current directory for gccxml
+            castXML.IncludeDirs.Add(new IncludeDirMapping(Environment.CurrentDirectory));
+
+            // Configure gccxml with include directory
+            foreach (ConfigMapping configFile in masterConfig.ConfigFilesLoaded)
+            {
+                // Add all include directories
+                foreach (IncludeDirMapping includeDir in configFile.IncludeDirs)
+                {
+                    castXML.IncludeDirs.Add(includeDir);
+                }
+            }
+
+            // Check if the file has any includes related config
+            List<string> filesWithIncludes = new List<string>();
+            foreach (ConfigMapping configFile in masterConfig.ConfigFilesLoaded)
+            {
+                bool isWithInclude = false;
+
+                // Add this config file as an include to process
+                includeToProcess.Add(configFile.Id, true);
+                includeIsAttached.Add(configFile.Id, true);
+
+                if (configFile.IncludeDirs.Count > 0)
+                {
+                    isWithInclude = true;
+                }
+
+                if (configFile.Includes.Count > 0)
+                {
+                    isWithInclude = true;
+                }
+                    
+                if (configFile.References.Count > 0)
+                {
+                    isWithInclude = true;
+                }
+                    
+                // If this config file has any include rules
+                if (isWithInclude)
+                {
+                    filesWithIncludes.Add(configFile.Id);
+                }      
+            }
+
+            // Write include files
+            foreach (ConfigMapping configFile in masterConfig.ConfigFilesLoaded)
+            {
+                // Check if config have includes
+                if (!filesWithIncludes.Contains(configFile.Id))
+                {
+                    // Skip, process next config
+                    continue;
+                }
+                    
+                var outputConfig = new StringWriter();
+                outputConfig.WriteLine("// pylon-node include config for {0} - Version {1}", configFile.Id, Version);
+
+             
+            }
         }
     }
 }

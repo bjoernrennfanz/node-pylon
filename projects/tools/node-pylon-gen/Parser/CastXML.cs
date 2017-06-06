@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using log4net;
+using NodePylonGen.Config;
 using NodePylonGen.Utils;
 using System;
 using System.Collections.Generic;
@@ -80,16 +81,16 @@ namespace NodePylonGen.Parser
         public string ExecutablePath { get; set; }
 
         /// <summary>
-        ///     Gets or sets additional include directory
+        ///     Gets or sets include directorys
         /// </summary>
-        public List<string> AdditionalIncludeDirs { get; set; }
+        public List<IncludeDirMapping> IncludeDirs { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CastXml"/> class.
         /// </summary>
         public CastXML()
         {
-            AdditionalIncludeDirs = new List<string>();
+            IncludeDirs = new List<IncludeDirMapping>();
         }
 
         /// <summary>
@@ -153,9 +154,9 @@ namespace NodePylonGen.Parser
 
             string castXMLArgs = GetCastXmlArgs();
             castXMLArgs += " -E -dD";
-            foreach (string directory in AdditionalIncludeDirs)
+            foreach (IncludeDirMapping directory in IncludeDirs)
             {
-                castXMLArgs += " " + directory;
+                castXMLArgs += " " + directory.Path;
             }
 
             castXMLInfo.Arguments = castXMLArgs + " " + headerFile;
