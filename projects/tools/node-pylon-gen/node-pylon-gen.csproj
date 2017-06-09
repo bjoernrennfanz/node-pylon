@@ -73,6 +73,8 @@
     <Compile Include="Config\VariableMapping.cs" />
     <Compile Include="Parser\CastXML.cs" />
     <Compile Include="Parser\CppParser.cs" />
+    <Compile Include="Parser\Model\CppElement.cs" />
+    <Compile Include="Parser\Model\CppInclude.cs" />
     <Compile Include="Parser\Model\CppModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

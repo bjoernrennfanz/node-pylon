@@ -21,15 +21,15 @@
 // SOFTWARE.
 
 using System;
-using NodePylonGen.Parser.Model;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace NodePylonGen.Parser.Cpp
+namespace NodePylonGen.Parser.Model
 {
-    public class CppModule : CppElement
+    public class CppInclude : CppElement
     {
-        public CppInclude FindInclude(string id)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

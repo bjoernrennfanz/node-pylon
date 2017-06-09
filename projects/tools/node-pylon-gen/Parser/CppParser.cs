@@ -23,13 +23,11 @@
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NodePylonGen.Config;
-using NodePylonGen.Parser.Cpp;
 using System.IO;
+using NodePylonGen.Parser.Model;
+using NodePylonGen.Parser.Cpp;
 
 namespace NodePylonGen.Parser
 {
@@ -120,11 +118,26 @@ namespace NodePylonGen.Parser
                     // Skip, process next config
                     continue;
                 }
-                    
+
                 var outputConfig = new StringWriter();
                 outputConfig.WriteLine("// pylon-node include config for {0} - Version {1}", configFile.Id, Version);
 
-             
+                // Write includes
+                foreach (IncludeMapping includeMapping in configFile.Includes)
+                {
+                    CppInclude cppInclude = cppModule.FindInclude(includeMapping.Id);
+                    if (cppInclude == null)
+                    {
+                        includeToProcess.Add(includeMapping.Id, true);
+
+                        cppInclude = new CppInclude();
+                        cppInclude.Name = includeMapping.Id;
+                        cppModule.Add(cppInclude);
+                    }
+                }
+
+
+
             }
         }
     }
