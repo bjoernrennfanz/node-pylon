@@ -20,16 +20,88 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
+    /// <summary>
+    /// A C++ include declarations for macros, enums, 
+    /// structs, interfaces and functions.
+    /// </summary>
+    [XmlType("include")]
     public class CppInclude : CppElement
     {
+        /// <summary>
+        /// Gets the full name.
+        /// </summary>
+        [XmlIgnore]
+        public override string FullName
+        {
+            get { return ""; }
+        }
 
+        /// <summary>
+        /// Gets the macros.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppDefine> Macros
+        {
+            get { return Iterate<CppDefine>(); }
+        }
+
+        /// <summary>
+        /// Gets the interfaces.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppInterface> Interfaces
+        {
+            get { return Iterate<CppInterface>(); }
+        }
+
+        /// <summary>
+        /// Gets the functions.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppFunction> Functions
+        {
+            get { return Iterate<CppFunction>(); }
+        }
+
+        /// <summary>
+        /// Gets the structs.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppStruct> Structs
+        {
+            get { return Iterate<CppStruct>(); }
+        }
+
+        /// <summary>
+        /// Gets the enums.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppEnum> Enums
+        {
+            get { return Iterate<CppEnum>(); }
+        }
+
+        /// <summary>
+        /// Gets the guids.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppGuid> Guids
+        {
+            get { return Iterate<CppGuid>(); }
+        }
+
+        /// <summary>
+        /// Gets the constants.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppConstant> Constants
+        {
+            get { return Iterate<CppConstant>(); }
+        }
     }
 }

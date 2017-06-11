@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -21,16 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
--->
 
-<config id="pylon-node-module-pylon" xmlns="urn:NodePylonGen.Config">
-
-	<!-- Module name -->
-	<module>pylon</module>
-
-	<!-- Module includes -->
-	<include file="pylon/DeviceInfo.h" />
-	<include file="pylon/InstantCamera.h" />
-	<include file="pylon/Device.h" />
-	<include file="pylon/TlFactory.h" />
-</config>
+namespace NodePylonGen.Parser.Model
+{
+    public class CppGuid : CppElement
+    {
+    }
+}

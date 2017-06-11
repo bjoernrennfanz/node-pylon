@@ -71,7 +71,9 @@ namespace NodePylonGen.Parser
             [StringEnumValue("Variable")]
             Variable,
             [StringEnumValue("FunctionType")]
-            FunctionType
+            FunctionType,
+            [StringEnumValue("Class")]
+            Class
         }
 
         /// <summary>
@@ -79,6 +81,11 @@ namespace NodePylonGen.Parser
         /// </summary>
         /// <value>The executable path.</value>
         public string ExecutablePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path to the Visual C++ toolset
+        /// </summary>
+        public string VcToolsPath { get; set; }
 
         /// <summary>
         ///     Gets or sets include directorys
@@ -101,12 +108,17 @@ namespace NodePylonGen.Parser
         {
             var arguments = String.Empty;
 
-            arguments += " --castxml-gccxml";
-            arguments += " -x c++ -std=c++11 -fmsc-version=1900 -fms-extensions -fms-compatibility";
+            arguments += "--castxml-cc-msvc cl --castxml-gccxml -fexceptions";
+            //arguments += " --castxml-gccxml";
+            //arguments += " -x c++ -std=c++11 -fmsc-version=1900 -fms-extensions -fms-compatibility -fexceptions";
+            //arguments += " -D_WIN32 -D_MT";
 
             return arguments;
         }
 
+        /// <summary>
+        /// Processes the error from header file.
+        /// </summary>
         private void ProcessErrorFromHeaderFile(object sender, DataReceivedEventArgs e)
         {
             if (e.Data != null)
@@ -120,6 +132,17 @@ namespace NodePylonGen.Parser
                 {
                     log.Warn(errorText);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Processes the output from header file.
+        /// </summary>
+        static void ProcessOutputFromHeaderFile(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                log.Info(e.Data);
             }
         }
 
@@ -142,8 +165,10 @@ namespace NodePylonGen.Parser
                 return;
             }
 
+            string castXmlPreProcessBatch = Path.Combine(Environment.CurrentDirectory, "castxml_preprocess.bat");
+
             Process castXMLProcess = new Process();
-            ProcessStartInfo castXMLInfo = new ProcessStartInfo(ExecutablePath)
+            ProcessStartInfo castXMLInfo = new ProcessStartInfo(castXmlPreProcessBatch)
             {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -152,18 +177,24 @@ namespace NodePylonGen.Parser
                 WorkingDirectory = Environment.CurrentDirectory
             };
 
-            string castXMLArgs = GetCastXmlArgs();
-            castXMLArgs += " -E -dD";
+            string arguments = GetCastXmlArgs();
+            arguments += " -E -dD";
             foreach (IncludeDirMapping directory in IncludeDirs)
             {
-                castXMLArgs += " " + directory.Path;
+                arguments += " -I\"" + directory.Path + "\"";
             }
 
-            castXMLInfo.Arguments = castXMLArgs + " " + headerFile;
+            StreamWriter streamWriter = new StreamWriter(castXmlPreProcessBatch);
+            streamWriter.WriteLine("@echo off");
+            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86"); streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
+            streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
+            streamWriter.Close();
+
+            log.Info("Using commandline: " + castXmlPreProcessBatch);
+
             castXMLProcess.StartInfo = castXMLInfo;
             castXMLProcess.ErrorDataReceived += ProcessErrorFromHeaderFile;
             castXMLProcess.OutputDataReceived += consoleHandler;
-
             castXMLProcess.Start();
             castXMLProcess.BeginOutputReadLine();
             castXMLProcess.BeginErrorReadLine();
@@ -171,7 +202,84 @@ namespace NodePylonGen.Parser
             castXMLProcess.WaitForExit();
             castXMLProcess.Close();
         }
-    
+
+        /// <summary>
+        /// Processes the specified header headerFile.
+        /// </summary>
+        /// <param name="headerFile">The header headerFile.</param>
+        /// <returns></returns>
+        public StreamReader Process(string headerFile)
+        {
+            StreamReader result = null;
+            ExecutablePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, ExecutablePath));
+
+            if (!File.Exists(ExecutablePath))
+            {
+                log.Fatal("castxml.exe not found from path: " + ExecutablePath);
+                return result;
+            }
+
+            if (!File.Exists(headerFile))
+            {
+                log.Fatal("C++ Header file " + headerFile + " not found");
+                return result;
+            }
+
+            string castXmlProcessBatch = Path.Combine(Environment.CurrentDirectory, "castxml_process.bat");
+
+            Process currentProcess = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo(castXmlProcessBatch)
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.CurrentDirectory
+            };
+            var xmlFile = Path.ChangeExtension(headerFile, "xml");
+
+            // Delete any previously generated xml file
+            File.Delete(xmlFile);
+
+            string arguments = GetCastXmlArgs();
+            arguments += " -o " + xmlFile;
+
+            foreach (IncludeDirMapping directory in IncludeDirs)
+            {
+                arguments += " -I\"" + directory.Path + "\"";
+            }
+
+            StreamWriter streamWriter = new StreamWriter(castXmlProcessBatch);
+            streamWriter.WriteLine("@echo off");
+            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
+            streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
+            streamWriter.Close();
+
+            log.Info("Using commandline: " + castXmlProcessBatch);
+
+            currentProcess.StartInfo = startInfo;
+            currentProcess.ErrorDataReceived += ProcessErrorFromHeaderFile;
+            currentProcess.OutputDataReceived += ProcessOutputFromHeaderFile;
+            currentProcess.Start();
+            currentProcess.BeginOutputReadLine();
+            currentProcess.BeginErrorReadLine();
+
+            currentProcess.WaitForExit();
+
+            currentProcess.Close();
+
+            if (!File.Exists(xmlFile))
+            {
+                log.Error("Unable to generate XML file with castxml " + xmlFile + ". Check previous errors.");
+                return result;
+            }
+            else
+            {
+                result = new StreamReader(xmlFile);
+            }
+
+            return result;
+        }
 
     }
 }

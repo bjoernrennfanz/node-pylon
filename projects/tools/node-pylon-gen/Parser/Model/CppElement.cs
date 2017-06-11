@@ -137,18 +137,18 @@ namespace NodePylonGen.Parser.Model
         /// Return all items inside this C++ element.
         /// </summary>
         [XmlArray("items")]
-        //[XmlArrayItem(typeof(CppConstant))]
-        //[XmlArrayItem(typeof(CppDefine))]
-        //[XmlArrayItem(typeof(CppEnum))]
+        [XmlArrayItem(typeof(CppConstant))]
+        [XmlArrayItem(typeof(CppDefine))]
+        [XmlArrayItem(typeof(CppEnum))]
         //[XmlArrayItem(typeof(CppEnumItem))]
         //[XmlArrayItem(typeof(CppField))]
-        //[XmlArrayItem(typeof(CppFunction))]
-        //[XmlArrayItem(typeof(CppGuid))]
+        [XmlArrayItem(typeof(CppFunction))]
+        [XmlArrayItem(typeof(CppGuid))]
         [XmlArrayItem(typeof(CppInclude))]
-        //[XmlArrayItem(typeof(CppInterface))]
+        [XmlArrayItem(typeof(CppInterface))]
         //[XmlArrayItem(typeof(CppMethod))]
         //[XmlArrayItem(typeof(CppParameter))]
-        //[XmlArrayItem(typeof(CppStruct))]
+        [XmlArrayItem(typeof(CppStruct))]
         //[XmlArrayItem(typeof(CppType))]
         public List<CppElement> Items { get; set; }
 
@@ -245,6 +245,10 @@ namespace NodePylonGen.Parser.Model
             }
         }
 
+        /// <summary>
+        /// Gets a string representation of this <see cref="CppElement"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return GetType().Name + " [" + Name + "]";

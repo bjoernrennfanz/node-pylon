@@ -24,13 +24,11 @@ using log4net;
 using Mono.Options;
 using NodePylonGen.Config;
 using NodePylonGen.Parser;
+using NodePylonGen.Parser.Model;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NodePylonGen
 {
@@ -44,14 +42,15 @@ namespace NodePylonGen
         /// <summary>
         /// Gets or sets the CastXML executable path.
         /// </summary>
-        /// <value>The CastXML executable path.</value>
         public string CastXmlExecutablePath { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the Visual C++ toolset
         /// </summary>
-        /// <value>The Visual C++ toolset path</value>
         public string VcToolsPath { get; set; }
+
+        private bool forceParsing;
+        private bool configHasChanged;
 
         private ConfigMapping config;
         private string configRootPath;
@@ -87,6 +86,7 @@ namespace NodePylonGen
                 "",
                 {"c|castxml=", "Specify the path to castxml.exe", opt => CastXmlExecutablePath = opt},
                 {"v|vctools=", "Specify the path to the Visual C++ Toolset", opt => VcToolsPath = opt },
+                {"f|force", "Force parsing of pylon header files", opt => forceParsing = opt != null },
                 "",
                 {"h|help", "Show this message and exit", opt => showHelp = opt != null},
                 // default
@@ -125,13 +125,13 @@ namespace NodePylonGen
             DateTime configTimestamp = ConfigMapping.GetLatestTimestamp(config.ConfigFilesLoaded);
             configCheckFilePath = config.Id + "-" + "codegen.check";
 
-            bool isConfigFileChanged = !File.Exists(configCheckFilePath) || configTimestamp > File.GetLastWriteTime(configCheckFilePath);
-            if (isConfigFileChanged)
+            configHasChanged = !File.Exists(configCheckFilePath) || configTimestamp > File.GetLastWriteTime(configCheckFilePath);
+            if (configHasChanged)
             {
                 log.Info("Config files " + string.Join(", ", config.ConfigFilesLoaded.Select(file => Path.GetFileName(file.AbsoluteFilePath))) + " changed.");
             }
 
-            return isConfigFileChanged;
+            return configHasChanged;
         }
 
         /// <summary>
@@ -142,10 +142,12 @@ namespace NodePylonGen
             log.Info("Starting code generation...");
 
             // Initialize the parser
-            CppParser parser = new CppParser(CastXmlExecutablePath);
+            CppParser parser = new CppParser(CastXmlExecutablePath, VcToolsPath);
+            parser.ForceParsing = configHasChanged || forceParsing;
             parser.Initialize(config);
 
-
+            // Run the parser
+            CppModule mainModule = parser.Run();
         }
     }
 }

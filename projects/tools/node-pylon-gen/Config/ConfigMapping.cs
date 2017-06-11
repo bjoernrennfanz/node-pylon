@@ -52,16 +52,20 @@ namespace NodePylonGen.Config
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this config was updated.
+        /// </summary>
+        [XmlIgnore]
+        public bool IsConfigUpdated { get; set; }
+
+        /// <summary>
         /// Gets the parent of this mapping file.
         /// </summary>
-        /// <value>The parent mapping config.</value>
         [XmlIgnore]
         public ConfigMapping Parent { get; private set; }
 
         /// <summary>
         /// Gets the path of this MappingFile.
         /// </summary>
-        /// <value>The path to mapping config.</value>
         [XmlIgnore]
         public string FilePath { get; private set; }
 
