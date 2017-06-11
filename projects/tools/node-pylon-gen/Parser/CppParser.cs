@@ -36,18 +36,19 @@ namespace NodePylonGen.Parser
     public class CppParser
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private const string Version = "0.0.1";
 
         private bool masterConfigHasChanged;
         private ConfigMapping masterConfig;
-        private string masterHeaderFile;
-
         private CppModule masterCppModule;
-        private CastXML castXML;
-
+        private string masterHeaderFile;
+                
         private Dictionary<string, bool> includeToProcess = new Dictionary<string, bool>();
         private Dictionary<string, XElement> mapIdToXElement = new Dictionary<string, XElement>();
         private Dictionary<string, List<XElement>> mapFileToXElement = new Dictionary<string, List<XElement>>();
+
+        private CastXML castXML;
         private CppInclude currentCppInclude;
 
         public CppParser(string castXmlExecutablePath, string vcToolsPath)

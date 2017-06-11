@@ -42,6 +42,15 @@ namespace NodePylonGen.Parser.Model
         }
 
         /// <summary>
+        /// Gets the classes.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppClass> Classes
+        {
+            get { return Iterate<CppClass>(); }
+        }
+
+        /// <summary>
         /// Gets the macros.
         /// </summary>
         [XmlIgnore]
@@ -84,15 +93,6 @@ namespace NodePylonGen.Parser.Model
         public IEnumerable<CppEnum> Enums
         {
             get { return Iterate<CppEnum>(); }
-        }
-
-        /// <summary>
-        /// Gets the guids.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppGuid> Guids
-        {
-            get { return Iterate<CppGuid>(); }
         }
 
         /// <summary>

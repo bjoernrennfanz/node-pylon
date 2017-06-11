@@ -27,7 +27,7 @@ namespace NodePylonGen.Parser.Model
     /// <summary>
     /// A C++ define macro Name=Value.
     /// </summary>
-    [XmlType("macro")]
+    [XmlType("define")]
     public class CppDefine : CppElement
     {
         /// <summary>

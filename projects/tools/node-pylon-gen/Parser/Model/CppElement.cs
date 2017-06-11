@@ -137,19 +137,19 @@ namespace NodePylonGen.Parser.Model
         /// Return all items inside this C++ element.
         /// </summary>
         [XmlArray("items")]
+        [XmlArrayItem(typeof(CppClass))]
         [XmlArrayItem(typeof(CppConstant))]
         [XmlArrayItem(typeof(CppDefine))]
         [XmlArrayItem(typeof(CppEnum))]
-        //[XmlArrayItem(typeof(CppEnumItem))]
-        //[XmlArrayItem(typeof(CppField))]
+        // [XmlArrayItem(typeof(CppEnumItem))]
+        [XmlArrayItem(typeof(CppField))]
         [XmlArrayItem(typeof(CppFunction))]
-        [XmlArrayItem(typeof(CppGuid))]
         [XmlArrayItem(typeof(CppInclude))]
         [XmlArrayItem(typeof(CppInterface))]
-        //[XmlArrayItem(typeof(CppMethod))]
-        //[XmlArrayItem(typeof(CppParameter))]
+        [XmlArrayItem(typeof(CppMethod))]
+        [XmlArrayItem(typeof(CppParameter))]
         [XmlArrayItem(typeof(CppStruct))]
-        //[XmlArrayItem(typeof(CppType))]
+        [XmlArrayItem(typeof(CppType))]
         public List<CppElement> Items { get; set; }
 
         /// <summary>

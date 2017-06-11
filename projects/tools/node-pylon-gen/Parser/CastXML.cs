@@ -40,7 +40,7 @@ namespace NodePylonGen.Parser
         private static Regex MatchForError = new Regex("error:");
 
         /// <summary>
-        ///     Enum for CastXML Tag definitions
+        /// Enum for CastXML Tag definitions
         /// </summary>
         public enum CastXMLTag
         {
@@ -77,7 +77,7 @@ namespace NodePylonGen.Parser
         }
 
         /// <summary>
-        ///     Gets or sets the executable path of castxml.exe.
+        /// Gets or sets the executable path of castxml.exe.
         /// </summary>
         /// <value>The executable path.</value>
         public string ExecutablePath { get; set; }
@@ -88,7 +88,7 @@ namespace NodePylonGen.Parser
         public string VcToolsPath { get; set; }
 
         /// <summary>
-        ///     Gets or sets include directorys
+        /// Gets or sets include directorys
         /// </summary>
         public List<IncludeDirMapping> IncludeDirs { get; set; }
 
@@ -101,17 +101,12 @@ namespace NodePylonGen.Parser
         }
 
         /// <summary>
-        ///     Get command-line arguments of castxml.exe
+        /// Get command-line arguments of castxml.exe
         /// </summary>
-        /// <returns></returns>
         private static string GetCastXmlArgs()
         {
-            var arguments = String.Empty;
-
+            string arguments = String.Empty;
             arguments += "--castxml-cc-msvc cl --castxml-gccxml -fexceptions";
-            //arguments += " --castxml-gccxml";
-            //arguments += " -x c++ -std=c++11 -fmsc-version=1900 -fms-extensions -fms-compatibility -fexceptions";
-            //arguments += " -D_WIN32 -D_MT";
 
             return arguments;
         }
@@ -184,13 +179,14 @@ namespace NodePylonGen.Parser
                 arguments += " -I\"" + directory.Path + "\"";
             }
 
+            log.Info("Generating batch: " + castXmlPreProcessBatch);
             StreamWriter streamWriter = new StreamWriter(castXmlPreProcessBatch);
             streamWriter.WriteLine("@echo off");
-            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86"); streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
+            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
             streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
             streamWriter.Close();
 
-            log.Info("Using commandline: " + castXmlPreProcessBatch);
+            log.Info("Running batch: " + castXmlPreProcessBatch);
 
             castXMLProcess.StartInfo = castXMLInfo;
             castXMLProcess.ErrorDataReceived += ProcessErrorFromHeaderFile;
@@ -249,14 +245,14 @@ namespace NodePylonGen.Parser
                 arguments += " -I\"" + directory.Path + "\"";
             }
 
+            log.Info("Generating batch: " + castXmlProcessBatch);
             StreamWriter streamWriter = new StreamWriter(castXmlProcessBatch);
             streamWriter.WriteLine("@echo off");
-            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
+            streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
             streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
             streamWriter.Close();
 
-            log.Info("Using commandline: " + castXmlProcessBatch);
-
+            log.Info("Running batch: " + castXmlProcessBatch);
             currentProcess.StartInfo = startInfo;
             currentProcess.ErrorDataReceived += ProcessErrorFromHeaderFile;
             currentProcess.OutputDataReceived += ProcessOutputFromHeaderFile;

@@ -20,11 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
@@ -35,6 +31,24 @@ namespace NodePylonGen.Parser.Model
     [XmlType("class")]
     public class CppClass : CppElement
     {
+        /// <summary>
+        /// Gets or sets the name of the parent.
+        /// </summary>
+        [XmlAttribute("base")]
+        public string ParentName { get; set; }
 
+        /// <summary>
+        /// Gets the methods.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppMethod> Methods
+        {
+            get { return Iterate<CppMethod>(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the total method count.
+        /// </summary>
+        internal int TotalMethodCount { get; set; }
     }
 }

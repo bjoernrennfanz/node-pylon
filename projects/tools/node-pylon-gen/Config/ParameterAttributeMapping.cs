@@ -20,9 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace NodePylonGen.Parser.Model
+using System;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
+
+namespace NodePylonGen.Config
 {
-    public class CppGuid : CppElement
+    [DataContract(Name = "attribute"), Flags]
+    public enum ParameterAttributeMapping
     {
+        [EnumMember, XmlEnum("none")]
+        None = 0,
+        [EnumMember, XmlEnum("in")]
+        In = 0x1,
+        [EnumMember, XmlEnum("out")]
+        Out = 0x2,
+        [EnumMember, XmlEnum("inout")]
+        InOut = 0x4,
+        [EnumMember, XmlEnum("buffer")]
+        Buffer = 0x8,
+        [EnumMember, XmlEnum("optional")]
+        Optional = 0x10,
+        [EnumMember, XmlEnum("fast")]
+        Fast = 0x20,
+        [EnumMember, XmlEnum("params")]
+        Params = 0x48,
+        [EnumMember, XmlEnum("value")]
+        Value = 0x80,
     }
 }

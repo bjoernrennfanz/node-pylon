@@ -20,36 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using NodePylonGen.Config;
 using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
     /// <summary>
-    /// A C++ struct.
+    /// A C++ parameter.
     /// </summary>
-    [XmlType("struct")]
-    public class CppStruct : CppElement
+    [XmlType("param")]
+    public class CppParameter : CppType
     {
         /// <summary>
-        /// Gets or sets the align.
+        /// Gets or sets the attribute.
         /// </summary>
-        [XmlAttribute("align")]
-        public int Align { get; set; }
+        [XmlAttribute("attributes")]
+        public ParameterAttributeMapping Attribute { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the parent.
+        /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
-
-        /// <summary>
-        /// Gets the fields.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppField> Fields
+        public override string ToString()
         {
-            get { return Iterate<CppField>(); }
+            return "[" + Attribute + "] " + base.ToString();
         }
     }
 }

@@ -20,9 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Xml.Serialization;
+
 namespace NodePylonGen.Parser.Model
 {
-    public class CppFunction : CppElement
+    /// <summary>
+    /// A C++ function.
+    /// </summary>
+    [XmlType("function")]
+    public class CppFunction : CppMethod
     {
     }
 }

@@ -58,6 +58,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,6 +71,7 @@
     <Compile Include="Config\ConfigMapping.cs" />
     <Compile Include="Config\IncludeDirMapping.cs" />
     <Compile Include="Config\IncludeMapping.cs" />
+    <Compile Include="Config\ParameterAttributeMapping.cs" />
     <Compile Include="Config\VariableMapping.cs" />
     <Compile Include="Parser\CastXML.cs" />
     <Compile Include="Parser\CppParser.cs" />
@@ -78,12 +80,15 @@
     <Compile Include="Parser\Model\CppDefine.cs" />
     <Compile Include="Parser\Model\CppElement.cs" />
     <Compile Include="Parser\Model\CppEnum.cs" />
+    <Compile Include="Parser\Model\CppField.cs" />
     <Compile Include="Parser\Model\CppFunction.cs" />
-    <Compile Include="Parser\Model\CppGuid.cs" />
     <Compile Include="Parser\Model\CppInclude.cs" />
     <Compile Include="Parser\Model\CppInterface.cs" />
+    <Compile Include="Parser\Model\CppMethod.cs" />
     <Compile Include="Parser\Model\CppModule.cs" />
+    <Compile Include="Parser\Model\CppParameter.cs" />
     <Compile Include="Parser\Model\CppStruct.cs" />
+    <Compile Include="Parser\Model\CppType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\StringEnum.cs" />
