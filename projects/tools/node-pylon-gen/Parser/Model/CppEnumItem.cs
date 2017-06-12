@@ -20,40 +20,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
     /// <summary>
-    /// A C++ enum.
+    /// A C++ enum item Name = Value.
     /// </summary>
-    [XmlType("enum")]
-    public class CppEnum : CppElement
+    [XmlType("enum-item")]
+    public class CppEnumItem : CppElement
     {
         /// <summary>
-        /// Adds an enum item to this enum.
+        /// Initializes a new instance of the <see cref="CppEnumItem"/> class.
         /// </summary>
-        public void AddEnumItem(string name, string value)
+        public CppEnumItem()
         {
-            Add(new CppEnumItem(name, value));
         }
 
         /// <summary>
-        /// Adds the None = 0 enum item.
+        /// Initializes a new instance of the <see cref="CppEnumItem"/> class.
         /// </summary>
-        public void AddNone()
+        public CppEnumItem(string name, string value)
         {
-            AddEnumItem("None", "0");
+            Name = name;
+            Value = value;
         }
 
         /// <summary>
-        /// Gets the enum items.
+        /// Gets the path.
         /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppEnumItem> EnumItems
+        public override string Path
         {
-            get { return Iterate<CppEnumItem>(); }
+            get { return ""; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value.
+        /// </summary>
+        [XmlAttribute("value")]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        public override string ToString()
+        {
+            return "EnumItem [" + Name + "]";
         }
     }
 }

@@ -80,6 +80,7 @@
     <Compile Include="Parser\Model\CppDefine.cs" />
     <Compile Include="Parser\Model\CppElement.cs" />
     <Compile Include="Parser\Model\CppEnum.cs" />
+    <Compile Include="Parser\Model\CppEnumItem.cs" />
     <Compile Include="Parser\Model\CppField.cs" />
     <Compile Include="Parser\Model\CppFunction.cs" />
     <Compile Include="Parser\Model\CppInclude.cs" />

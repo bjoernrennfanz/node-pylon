@@ -30,5 +30,57 @@ namespace NodePylonGen.Parser.Model
     [XmlType("field")]
     public class CppField : CppElement
     {
+        /// <summary>
+        /// Index of the field mostly used to handle unions.
+        /// </summary>
+        [XmlAttribute("offset")]
+        public int Offset { get; set; }
+
+        /// <summary>
+        /// Used only for structure with bits
+        /// </summary>
+        [XmlAttribute("bitfield")]
+        public bool IsBitField { get; set; }
+
+        /// <summary>
+        /// Used only for structure with bits
+        /// </summary>
+        [XmlAttribute("bitoffset")]
+        public int BitOffset { get; set; }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        public bool Equals(CppField other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && other.Offset == Offset && other.IsBitField.Equals(IsBitField) && other.BitOffset == BitOffset;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as CppField);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            int result = base.GetHashCode();
+
+            result += Offset.GetHashCode();
+            result += IsBitField.GetHashCode();
+            result += BitOffset.GetHashCode();
+            result /= 4;
+
+            return result;
+        }
     }
 }

@@ -30,6 +30,7 @@ using NodePylonGen.Parser.Model;
 using System.Xml.Linq;
 using NodePylonGen.Utils;
 using static NodePylonGen.Parser.CastXML;
+using System.Linq;
 
 namespace NodePylonGen.Parser
 {
@@ -387,44 +388,8 @@ namespace NodePylonGen.Parser
                         continue;
                     }
 
-                    CppElement cppElement = null;
-                    string name = xElement.Name.LocalName;
-                    string elementName = xElement.Attribute("name").Value;
-
-                    if (name == StringEnum.GetStringValue(CastXMLTag.Enumeration))
-                    {
-                        cppElement = ParseEnum(xElement);
-                    }
-                    else if (name == StringEnum.GetStringValue(CastXMLTag.Function))
-                    {
-                        cppElement = ParseFunction(xElement);
-                    }
-                    else if (name == StringEnum.GetStringValue(CastXMLTag.Struct))
-                    {
-                        if (xElement.Attribute("abstract") != null)
-                        {
-                            cppElement = ParseInterface(xElement);
-                        }
-                        else
-                        {
-                            cppElement = ParseStructOrUnion(xElement);
-                        }
-                    }
-                    else if (name == StringEnum.GetStringValue(CastXMLTag.Union))
-                    {
-                        cppElement = ParseStructOrUnion(xElement);
-                    }
-                    else if (name == StringEnum.GetStringValue(CastXMLTag.Variable))
-                    {
-                        if (xElement.Attribute("init") != null)
-                        {
-                            cppElement = ParseVariable(xElement);
-                        }
-                    }
-                    else if (name == StringEnum.GetStringValue(CastXMLTag.Class))
-                    {
-                        cppElement = ParseClass(xElement);
-                    }
+                    // Parse current element
+                    CppElement cppElement = ParseElement(xElement);
 
                     // Check if cppElement was parsed
                     if (cppElement != null)
@@ -433,6 +398,50 @@ namespace NodePylonGen.Parser
                     }
                 }
             }
+        }
+
+        private CppElement ParseElement(XElement xElement)
+        {
+            CppElement cppElement = null;
+            string name = xElement.Name.LocalName;
+            string elementName = xElement.Attribute("name").Value;
+
+            if (name == StringEnum.GetStringValue(CastXMLTag.Enumeration))
+            {
+                cppElement = ParseEnum(xElement);
+            }
+            else if (name == StringEnum.GetStringValue(CastXMLTag.Function))
+            {
+                cppElement = ParseFunction(xElement);
+            }
+            else if (name == StringEnum.GetStringValue(CastXMLTag.Struct))
+            {
+                if (xElement.Attribute("abstract") != null)
+                {
+                    cppElement = ParseInterface(xElement);
+                }
+                else
+                {
+                    cppElement = ParseStructOrUnion(xElement);
+                }
+            }
+            else if (name == StringEnum.GetStringValue(CastXMLTag.Union))
+            {
+                cppElement = ParseStructOrUnion(xElement);
+            }
+            else if (name == StringEnum.GetStringValue(CastXMLTag.Variable))
+            {
+                if (xElement.Attribute("init") != null)
+                {
+                    cppElement = ParseVariable(xElement);
+                }
+            }
+            else if (name == StringEnum.GetStringValue(CastXMLTag.Class))
+            {
+                cppElement = ParseClass(xElement);
+            }
+
+            return cppElement;
         }
 
         private CppElement ParseClass(XElement xElement)
@@ -448,6 +457,33 @@ namespace NodePylonGen.Parser
             cppClass = new CppClass();
             cppClass.Name = xElement.Attribute("name").Value;
             xElement.AddAnnotation(cppClass);
+
+            // Calculate offset method using inheritance
+            int offsetMethod = 0;
+
+            XAttribute basesAttribute = xElement.Attribute("bases");
+            IEnumerable<string> bases = basesAttribute != null ? basesAttribute.Value.Split(' ') : Enumerable.Empty<string>();
+            foreach (string xElementBaseId in bases)
+            {
+                if (string.IsNullOrEmpty(xElementBaseId))
+                {
+                    continue;
+                }
+                    
+                XElement xElementBase = mapIdToXElement[xElementBaseId];
+                CppElement cppElementBase = ParseElement(xElementBase);
+
+                if (string.IsNullOrEmpty(cppClass.ParentName))
+                {
+                    cppClass.ParentName = cppElementBase.Name;
+                }
+
+                // Get methods count from base class or interface
+                offsetMethod += ((cppElementBase is CppClass) ? ((CppClass)cppElementBase).TotalMethodCount : ((CppInterface)cppElementBase).TotalMethodCount);
+            }
+
+            
+
 
             return cppClass;
         }

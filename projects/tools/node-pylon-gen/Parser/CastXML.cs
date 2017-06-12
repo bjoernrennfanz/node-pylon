@@ -183,7 +183,7 @@ namespace NodePylonGen.Parser
             StreamWriter streamWriter = new StreamWriter(castXmlPreProcessBatch);
             streamWriter.WriteLine("@echo off");
             streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
-            streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
+            streamWriter.WriteLine("call \"" + ExecutablePath + "\" " + arguments + " " + headerFile);
             streamWriter.Close();
 
             log.Info("Running batch: " + castXmlPreProcessBatch);
@@ -249,7 +249,7 @@ namespace NodePylonGen.Parser
             StreamWriter streamWriter = new StreamWriter(castXmlProcessBatch);
             streamWriter.WriteLine("@echo off");
             streamWriter.WriteLine("call \"" + VcToolsPath + "\\vcvarsall.bat\" x86");
-            streamWriter.WriteLine(ExecutablePath + " " + arguments + " " + headerFile);
+            streamWriter.WriteLine("call \"" + ExecutablePath + "\" " + arguments + " " + headerFile);
             streamWriter.Close();
 
             log.Info("Running batch: " + castXmlProcessBatch);
