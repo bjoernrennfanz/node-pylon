@@ -118,7 +118,7 @@ namespace NodePylonGen.Parser.Model
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return ((TypeName != null ? TypeName.GetHashCode() : 0) + (Pointer != null ? Pointer.GetHashCode() : 0));
+            return (((TypeName != null ? TypeName.GetHashCode() : 0) + (Pointer != null ? Pointer.GetHashCode() : 0)) / 2);
         }
     }
 }

@@ -40,6 +40,12 @@ namespace NodePylonGen.Parser.Model
         public CppType ReturnType { get; set; }
 
         /// <summary>
+        /// Gets or sets the offset.
+        /// </summary>
+        [XmlAttribute("offset")]
+        public int Offset { get; set; }
+
+        /// <summary>
         /// Gets the parameters.
         /// </summary>
         [XmlIgnore]

@@ -25,11 +25,26 @@ using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
-    /// <summary>
-    /// A C++ interface.
-    /// </summary>
-    [XmlType("interface")]
-    public class CppInterface : CppBase
+    public class CppBase : CppElement
     {
+        /// <summary>
+        /// Gets or sets the name of the parent.
+        /// </summary>
+        [XmlAttribute("base")]
+        public string ParentName { get; set; }
+
+        /// <summary>
+        /// Gets the methods.
+        /// </summary>
+        [XmlIgnore]
+        public IEnumerable<CppMethod> Methods
+        {
+            get { return Iterate<CppMethod>(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the total method count.
+        /// </summary>
+        internal int TotalMethodCount { get; set; }
     }
 }

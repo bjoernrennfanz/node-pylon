@@ -446,17 +446,28 @@ namespace NodePylonGen.Parser
 
         private CppElement ParseClass(XElement xElement)
         {
+            return ParseClassOrInterface<CppClass>(xElement);
+        }
+
+        private CppElement ParseInterface(XElement xElement)
+        {
+            return ParseClassOrInterface<CppInterface>(xElement);
+        }
+
+        private T ParseClassOrInterface<T>(XElement xElement) where T : CppBase, new()
+        {
             // If element is already transformed, return it
-            CppClass cppClass = xElement.Annotation<CppClass>();
-            if (cppClass != null)
+            T cppBase = xElement.Annotation<T>();
+            if (cppBase != null)
             {
-                return cppClass;
+                return cppBase;
             }
 
             // Else, create a new CppInterface
-            cppClass = new CppClass();
-            cppClass.Name = xElement.Attribute("name").Value;
-            xElement.AddAnnotation(cppClass);
+            cppBase = new T();
+            cppBase.Name = xElement.Attribute("name").Value;
+            cppBase.Id = xElement.Attribute("id").Value;
+            xElement.AddAnnotation(cppBase);
 
             // Calculate offset method using inheritance
             int offsetMethod = 0;
@@ -473,19 +484,99 @@ namespace NodePylonGen.Parser
                 XElement xElementBase = mapIdToXElement[xElementBaseId];
                 CppElement cppElementBase = ParseElement(xElementBase);
 
-                if (string.IsNullOrEmpty(cppClass.ParentName))
+                if (string.IsNullOrEmpty(cppBase.ParentName))
                 {
-                    cppClass.ParentName = cppElementBase.Name;
+                    cppBase.ParentName = cppElementBase.Name;
                 }
 
                 // Get methods count from base class or interface
-                offsetMethod += ((cppElementBase is CppClass) ? ((CppClass)cppElementBase).TotalMethodCount : ((CppInterface)cppElementBase).TotalMethodCount);
+                offsetMethod += ((cppElementBase is CppBase) ? ((CppBase)cppElementBase).TotalMethodCount : 0);
             }
 
-            
+            List<CppMethod> methods = new List<CppMethod>();
 
+            // Parse methods
+            foreach (var method in xElement.Elements())
+            {
 
-            return cppClass;
+                string overrides = String.Empty;
+                XAttribute overridesAttribute = method.Attribute("overrides");
+                if (overridesAttribute != null)
+                {
+                    overrides = overridesAttribute.Value;
+                }
+
+                string pureVirtual = String.Empty;
+                XAttribute pureVirtualAttribute = method.Attribute("pure_virtual");
+                if (pureVirtualAttribute != null)
+                {
+                    pureVirtual = pureVirtualAttribute.Value;
+                }
+
+                // Parse method with pure virtual (=0) and that do not override any other methods
+                if (method.Name.LocalName == "Method" && !string.IsNullOrWhiteSpace(pureVirtual) && string.IsNullOrWhiteSpace(overrides))
+                {
+                    CppMethod cppMethod = ParseMethodOrFunction<CppMethod>(method);
+                    methods.Add(cppMethod);
+                }
+            }
+
+            // The Visual C++ compiler breaks the rules of the COM ABI when overloaded methods are used.
+            // It will group the overloads together in memory and lay them out in the reverse of their declaration order.
+            // Since GCC always lays them out in the order declared, we have to modify the order of the methods to match Visual C++.
+            // See http://support.microsoft.com/kb/131104 for more information.
+            for (int i = 0; i < methods.Count; i++)
+            {
+                string name = methods[i].Name;
+
+                // Look for overloads of this function
+                for (int j = i + 1; j < methods.Count; j++)
+                {
+                    var nextMethod = methods[j];
+                    if (nextMethod.Name == name)
+                    {
+                        // Remove this one from its current position further into the vtable
+                        methods.RemoveAt(j);
+
+                        // Put this one before all other overloads (aka reverse declaration order)
+                        int k = i - 1;
+                        while (k >= 0 && methods[k].Name == name)
+                            k--;
+                        methods.Insert(k + 1, nextMethod);
+                        i++;
+                    }
+                }
+            }
+
+            // Add the methods to the cppbase with the correct offsets
+            foreach (var cppMethod in methods)
+            {
+                
+                cppMethod.Offset = offsetMethod++;
+                cppBase.Add(cppMethod);
+            }
+
+            cppBase.TotalMethodCount = offsetMethod;
+
+            return cppBase;
+        }
+
+        /// <summary>
+        /// Parses a C++ method or function.
+        /// </summary>
+        private T ParseMethodOrFunction<T>(XElement xElement) where T : CppMethod, new()
+        {
+            T cppMethod = new T();
+            cppMethod.Name = xElement.Attribute("name").Value;
+            cppMethod.Id = xElement.Attribute("id").Value;
+
+            // Parse parameters
+            //ParseParameters(xElement, cppMethod);
+
+            cppMethod.ReturnType = new CppType();
+            //ResolveAndFillType(xElement.AttributeValue("returns"), cppMethod.ReturnType);
+
+            return cppMethod;
         }
 
         private CppElement ParseVariable(XElement xElement)
@@ -494,11 +585,6 @@ namespace NodePylonGen.Parser
         }
 
         private CppElement ParseStructOrUnion(XElement xElement)
-        {
-            return null;
-        }
-
-        private CppElement ParseInterface(XElement xElement)
         {
             return null;
         }
