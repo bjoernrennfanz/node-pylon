@@ -141,7 +141,7 @@ namespace NodePylonGen.Parser.Model
         [XmlArrayItem(typeof(CppConstant))]
         [XmlArrayItem(typeof(CppDefine))]
         [XmlArrayItem(typeof(CppEnum))]
-        // [XmlArrayItem(typeof(CppEnumItem))]
+        [XmlArrayItem(typeof(CppEnumItem))]
         [XmlArrayItem(typeof(CppField))]
         [XmlArrayItem(typeof(CppFunction))]
         [XmlArrayItem(typeof(CppInclude))]

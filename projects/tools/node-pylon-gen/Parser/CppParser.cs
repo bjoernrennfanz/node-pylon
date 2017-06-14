@@ -31,6 +31,7 @@ using System.Xml.Linq;
 using NodePylonGen.Utils;
 using static NodePylonGen.Parser.CastXML;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace NodePylonGen.Parser
 {
@@ -400,6 +401,9 @@ namespace NodePylonGen.Parser
             }
         }
 
+        /// <summary>
+        /// Parse C++ element from given <see cref="XElement"/> 
+        /// </summary>
         private CppElement ParseElement(XElement xElement)
         {
             CppElement cppElement = null;
@@ -444,30 +448,39 @@ namespace NodePylonGen.Parser
             return cppElement;
         }
 
+        /// <summary>
+        /// Parse C++ class from given <see cref="XElement"/> 
+        /// </summary>
         private CppElement ParseClass(XElement xElement)
         {
             return ParseClassOrInterface<CppClass>(xElement);
         }
 
+        /// <summary>
+        /// Parse C++ interface from given <see cref="XElement"/> 
+        /// </summary>
         private CppElement ParseInterface(XElement xElement)
         {
             return ParseClassOrInterface<CppInterface>(xElement);
         }
 
+        /// <summary>
+        /// Parse C++ class or interface from given <see cref="XElement"/> 
+        /// </summary>
         private T ParseClassOrInterface<T>(XElement xElement) where T : CppBase, new()
         {
             // If element is already transformed, return it
-            T cppBase = xElement.Annotation<T>();
-            if (cppBase != null)
+            T cppBaseType = xElement.Annotation<T>();
+            if (cppBaseType != null)
             {
-                return cppBase;
+                return cppBaseType;
             }
 
             // Else, create a new CppInterface
-            cppBase = new T();
-            cppBase.Name = xElement.Attribute("name").Value;
-            cppBase.Id = xElement.Attribute("id").Value;
-            xElement.AddAnnotation(cppBase);
+            cppBaseType = new T();
+            cppBaseType.Name = xElement.Attribute("name").Value;
+            cppBaseType.Id = xElement.Attribute("id").Value;
+            xElement.AddAnnotation(cppBaseType);
 
             // Calculate offset method using inheritance
             int offsetMethod = 0;
@@ -484,9 +497,9 @@ namespace NodePylonGen.Parser
                 XElement xElementBase = mapIdToXElement[xElementBaseId];
                 CppElement cppElementBase = ParseElement(xElementBase);
 
-                if (string.IsNullOrEmpty(cppBase.ParentName))
+                if (string.IsNullOrEmpty(cppBaseType.ParentName))
                 {
-                    cppBase.ParentName = cppElementBase.Name;
+                    cppBaseType.ParentName = cppElementBase.Name;
                 }
 
                 // Get methods count from base class or interface
@@ -514,9 +527,20 @@ namespace NodePylonGen.Parser
                 }
 
                 // Parse method with pure virtual (=0) and that do not override any other methods
-                if (method.Name.LocalName == "Method" && !string.IsNullOrWhiteSpace(pureVirtual) && string.IsNullOrWhiteSpace(overrides))
+                if (method.Name.LocalName == "Method")
                 {
                     CppMethod cppMethod = ParseMethodOrFunction<CppMethod>(method);
+                    
+                    if (!string.IsNullOrWhiteSpace(pureVirtual))
+                    {
+                        cppMethod.Virtual = true;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(overrides))
+                    {
+                        cppMethod.Override = true;
+                    }
+                    
                     methods.Add(cppMethod);
                 }
             }
@@ -553,12 +577,12 @@ namespace NodePylonGen.Parser
             {
                 
                 cppMethod.Offset = offsetMethod++;
-                cppBase.Add(cppMethod);
+                cppBaseType.Add(cppMethod);
             }
 
-            cppBase.TotalMethodCount = offsetMethod;
+            cppBaseType.TotalMethodCount = offsetMethod;
 
-            return cppBase;
+            return cppBaseType;
         }
 
         /// <summary>
@@ -571,17 +595,190 @@ namespace NodePylonGen.Parser
             cppMethod.Id = xElement.Attribute("id").Value;
 
             // Parse parameters
-            //ParseParameters(xElement, cppMethod);
+            ParseParameters(xElement, cppMethod);
 
+            // Parse return type
             cppMethod.ReturnType = new CppType();
-            //ResolveAndFillType(xElement.AttributeValue("returns"), cppMethod.ReturnType);
+            XAttribute returnsAttribute = xElement.Attribute("returns");
+            if (returnsAttribute != null)
+            {
+                ResolveAndFillType(returnsAttribute.Value, cppMethod.ReturnType);
+            }
 
             return cppMethod;
         }
 
+        /// <summary>
+        /// Parses a C++ parameters.
+        /// </summary>
+        private void ParseParameters(XElement xElement, CppElement methodOrFunction)
+        {
+            int paramCount = 0;
+            foreach (XElement parameter in xElement.Elements())
+            {
+                if (parameter.Name.LocalName != "Argument")
+                {
+                    continue;
+                }
+
+                CppParameter cppParameter = new CppParameter();
+                XAttribute nameAttribute = parameter.Attribute("name");
+                if (nameAttribute != null)
+                {
+                    cppParameter.Name = nameAttribute.Value;
+                }
+                
+                if (string.IsNullOrEmpty(cppParameter.Name))
+                {
+                    cppParameter.Name = "arg" + paramCount;
+                }
+
+                // All parameters without any annotations are considerate as In
+                if (cppParameter.Attribute == ParameterAttributeMapping.None)
+                {
+                    cppParameter.Attribute = ParameterAttributeMapping.In;
+                }
+                    
+                XAttribute typeAttribute = parameter.Attribute("type");
+                if (typeAttribute != null)
+                {
+                    ResolveAndFillType(typeAttribute.Value, cppParameter);
+                }
+
+                methodOrFunction.Add(cppParameter);
+                paramCount++;
+            }
+        }
+
+        /// <summary>
+        /// Resolves a type to its fundamental type or a binded type.
+        /// This methods is going through the type declaration in order to return the most fundamental type
+        /// or to return a bind.
+        /// </summary>
+        private void ResolveAndFillType(string typeId, CppType type)
+        {
+            List<string> fullTypeName = new List<string>();
+            XElement xType = mapIdToXElement[typeId];
+            bool isTypeResolved = false;
+
+            while (!isTypeResolved)
+            {
+                string name = String.Empty;
+                XAttribute nameAttribute = xType.Attribute("name");
+                if (nameAttribute != null)
+                {
+                    name = nameAttribute.Value;
+                    fullTypeName.Add(name);
+                }
+
+                string nextType = String.Empty;
+                XAttribute nextTypeAttribute = xType.Attribute("type");
+                if (nextTypeAttribute != null)
+                {
+                    nextType = nextTypeAttribute.Value;
+                }
+
+                string localName = xType.Name.LocalName;
+                if (localName == StringEnum.GetStringValue(CastXMLTag.FundamentalType))
+                {
+                    //type.TypeName = ConvertFundamentalType(name);
+                    type.TypeName = name;
+                    isTypeResolved = true;
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.Enumeration))
+                {
+                    type.TypeName = name;
+                    isTypeResolved = true;
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.Struct) || name == StringEnum.GetStringValue(CastXMLTag.Union))
+                {
+                    type.TypeName = name;
+                    isTypeResolved = true;
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.Typedef))
+                {
+                    type.TypeName = name;
+                    xType = mapIdToXElement[nextType];
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.PointerType))
+                {
+                    xType = mapIdToXElement[nextType];
+                    type.Pointer = (type.Pointer ?? "") + "*";
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.ArrayType))
+                {
+                    type.IsArray = true;
+                    string maxArrayIndex = xType.Attribute("max").Value;
+                    int arrayDim = int.Parse(maxArrayIndex.TrimEnd('u')) + 1;
+
+                    if (type.ArrayDimension == null)
+                    {
+                        type.ArrayDimension = "" + arrayDim;
+                    }
+                    else
+                    {
+                        type.ArrayDimension += "," + arrayDim;
+                    }
+
+                    xType = mapIdToXElement[nextType];
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.ReferenceType))
+                {
+                    xType = mapIdToXElement[nextType];
+                    type.Pointer = (type.Pointer ?? "") + "&";
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.CvQualifiedType))
+                {
+                    xType = mapIdToXElement[nextType];
+                    type.Const = true;
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.FunctionType))
+                {
+                    type.TypeName = "__function__stdcall";
+                    isTypeResolved = true;
+                }
+                else if (localName == StringEnum.GetStringValue(CastXMLTag.Class) || localName == StringEnum.GetStringValue(CastXMLTag.Interface))
+                {
+                    type.TypeName = name;
+                    isTypeResolved = true;
+                }
+            }
+        }
+
         private CppElement ParseVariable(XElement xElement)
         {
-            return null;
+            string name = String.Empty;
+            XAttribute nameAttribute = xElement.Attribute("name");
+            if (nameAttribute != null)
+            {
+                name = nameAttribute.Value;
+            }
+
+            CppType cppType = new CppType();
+            XAttribute typeAttribute = xElement.Attribute("type");
+            if (typeAttribute != null)
+            {
+                ResolveAndFillType(typeAttribute.Value, cppType);
+            }
+
+            string value = String.Empty;
+            XAttribute valueAttribute = xElement.Attribute("init");
+            if (valueAttribute != null)
+            {
+                value = valueAttribute.Value;
+
+                // CastXML outputs initialization expressions. Cast to proper type.
+                Match match = Regex.Match(value, @"\((?:\(.+\))?(.+)\)");
+                if (match.Success)
+                {
+                    value = $"unchecked(({cppType.TypeName}){match.Groups[1].Value})";
+                }
+
+                // Handle C++ floating point literals
+                value = value.Replace(".F", ".0F");
+            }
+
+            return new CppConstant() { Name = name, Value = value };
         }
 
         private CppElement ParseStructOrUnion(XElement xElement)

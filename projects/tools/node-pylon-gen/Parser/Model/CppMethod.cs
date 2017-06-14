@@ -70,11 +70,31 @@ namespace NodePylonGen.Parser.Model
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this method is virtual.
+        /// </summary>
+        [XmlAttribute("virtual")]
+        public bool Virtual { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is override.
+        /// </summary>
+        [XmlAttribute("override")]
+        public bool Override { get; set; }
+
+        /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
+            
+            // Check if virtual method
+            if (Virtual)
+            {
+                builder.Append("virtual");
+                builder.Append(" ");
+            }
+
             builder.Append(ReturnType);
             builder.Append(" ");
 
@@ -100,6 +120,13 @@ namespace NodePylonGen.Parser.Model
                 i++;
             }
             builder.Append(")");
+
+            // Check if we override base method
+            if (Override)
+            {
+                builder.Append(" ");
+                builder.Append("override");
+            }
 
             return builder.ToString();
         }

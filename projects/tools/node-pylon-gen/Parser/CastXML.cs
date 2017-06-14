@@ -73,7 +73,9 @@ namespace NodePylonGen.Parser
             [StringEnumValue("FunctionType")]
             FunctionType,
             [StringEnumValue("Class")]
-            Class
+            Class,
+            [StringEnumValue("Interface")]
+            Interface
         }
 
         /// <summary>
