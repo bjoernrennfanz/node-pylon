@@ -28,7 +28,7 @@ namespace NodePylonGen.Parser.Model
     /// A C++ field.
     /// </summary>
     [XmlType("field")]
-    public class CppField : CppElement
+    public class CppField : CppType
     {
         /// <summary>
         /// Index of the field mostly used to handle unions.
@@ -74,7 +74,6 @@ namespace NodePylonGen.Parser.Model
         public override int GetHashCode()
         {
             int result = base.GetHashCode();
-
             result += Offset.GetHashCode();
             result += IsBitField.GetHashCode();
             result += BitOffset.GetHashCode();

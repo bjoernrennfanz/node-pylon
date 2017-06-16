@@ -47,6 +47,7 @@ namespace NodePylonGen.Parser
         private string masterHeaderFile;
                 
         private Dictionary<string, bool> includeToProcess = new Dictionary<string, bool>();
+        private Dictionary<string, int> mapIncludeToAnonymousEnumCount = new Dictionary<string, int>();
         private Dictionary<string, XElement> mapIdToXElement = new Dictionary<string, XElement>();
         private Dictionary<string, List<XElement>> mapFileToXElement = new Dictionary<string, List<XElement>>();
 
@@ -241,25 +242,44 @@ namespace NodePylonGen.Parser
             if (masterConfigHasChanged)
             {
                 log.Info("Config files changed.");
-            }
 
-            StreamReader xmlReader = null;
-            try
-            {
-                xmlReader = castXML.Process(masterHeaderFile);
-                if (xmlReader != null)
+
+                StreamReader xmlReader = null;
+                try
                 {
-                    Parse(xmlReader);
+                    xmlReader = castXML.Process(masterHeaderFile);
+                    if (xmlReader != null)
+                    {
+                        Parse(xmlReader);
+                    }
+
+                    // Save back the C++ parsed includes
+                    masterCppModule.Write(MasterModuleFileName);
                 }
+                catch (Exception ex)
+                {
+                    log.Error("Unexpected error", ex);
+                }
+                finally
+                {
+                    if (xmlReader != null)
+                    {
+                        xmlReader.Close();
+                    }
 
-                // Save back the C++ parsed includes
-                // masterCppModule.Write(MasterModuleFileName);
+                    // Write back GCCXML document on the disk
+                    if (CastXmlDoc != null)
+                    {
+                        CastXmlDoc.Save(CastXmlFileName);
+                    }
+
+                    log.Info("Parsing headers is finished.");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                log.Error("Unexpected error", ex);
+                masterCppModule = CppModule.Read(MasterModuleFileName);
             }
-
 
             return masterCppModule;
         }
@@ -745,6 +765,9 @@ namespace NodePylonGen.Parser
             }
         }
 
+        /// <summary>
+        /// Parse a C++ variable from <see cref="XElement"/> 
+        /// </summary>
         private CppElement ParseVariable(XElement xElement)
         {
             string name = String.Empty;
@@ -781,19 +804,204 @@ namespace NodePylonGen.Parser
             return new CppConstant() { Name = name, Value = value };
         }
 
-        private CppElement ParseStructOrUnion(XElement xElement)
+        /// <summary>
+        /// Parses a C++ struct or union declaration.
+        /// </summary>
+        private CppStruct ParseStructOrUnion(XElement xElement, CppElement cppParent = null, int innerAnonymousIndex = 0)
         {
-            return null;
+            CppStruct cppStruct = xElement.Annotation<CppStruct>();
+            if (cppStruct != null)
+            {
+                return cppStruct;
+            }
+
+            // Build struct name directly from the struct name or based on the parent
+            string structName = String.Empty;
+            XAttribute structNameAttribute = xElement.Attribute("name");
+            if (structNameAttribute != null)
+            {
+                structName = structNameAttribute.Value;
+            }
+
+            if (cppParent != null)
+            {
+                if (string.IsNullOrEmpty(structName))
+                {
+                    structName = cppParent.Name + "_Inner_" + innerAnonymousIndex;
+                }
+                else
+                {
+                    structName = cppParent.Name + "_" + structName + "_Inner";
+                }
+            }
+
+            // Create struct
+            cppStruct = new CppStruct { Name = structName };
+            xElement.AddAnnotation(cppStruct);
+            bool isUnion = (xElement.Name.LocalName == StringEnum.GetStringValue(CastXMLTag.Union));
+
+            // Get align from structure
+            cppStruct.Align = xElement.Attribute("align") != null ? int.Parse(xElement.Attribute("align").Value) / 8 : 0;
+
+            // Enter struct/union description
+            var basesValueAttribute = xElement.Attribute("bases");
+            IEnumerable<string> bases = basesValueAttribute != null ? basesValueAttribute.Value.Split(' ') : Enumerable.Empty<string>();
+            foreach (string xElementBaseId in bases)
+            {
+                if (string.IsNullOrEmpty(xElementBaseId))
+                {
+                    continue;
+                }
+                    
+                XElement xElementBase = mapIdToXElement[xElementBaseId];
+
+                CppStruct cppStructBase = ParseStructOrUnion(xElementBase);
+                if (string.IsNullOrEmpty(cppStructBase.ParentName))
+                {
+                    cppStruct.ParentName = cppStructBase.Name;
+                }
+            }
+
+            // Parse all fields
+            int fieldOffset = 0;
+            int innerStructCount = 0;
+            foreach (XElement field in xElement.Elements())
+            {
+                if (field.Name.LocalName != StringEnum.GetStringValue(CastXMLTag.Field))
+                {
+                    continue;
+                }
+                    
+                // Parse the field
+                var cppField = ParseField(field);
+                cppField.Offset = fieldOffset;
+
+                // Test if the field type is declared inside this struct or union
+                string fieldName = field.Attribute("name") != null ? field.Attribute("name").Value : String.Empty;
+                string fieldTypeId = field.Attribute("type") != null ? field.Attribute("type").Value : String.Empty;
+
+                XElement fieldType = mapIdToXElement[fieldTypeId];
+                string fieldTypeContext = fieldType.Attribute("context") != null ? fieldType.Attribute("context").Value : String.Empty;
+                string fieldId = field.Attribute("id") != null ? field.Attribute("id").Value : String.Empty;
+                if (fieldTypeContext == fieldId)
+                {
+                    var fieldSubStruct = ParseStructOrUnion(fieldType, cppStruct, innerStructCount++);
+
+                    // If fieldName is empty, then we need to inline fields from the struct/union.
+                    if (string.IsNullOrEmpty(fieldName))
+                    {
+                        // Make a copy in order to remove fields
+                        List<CppField> listOfSubFields = new List<CppField>(fieldSubStruct.Fields);
+
+                        // Copy the current field offset
+                        int lastFieldOffset = fieldOffset;
+                        foreach (CppField subField in listOfSubFields)
+                        {
+                            subField.Offset = subField.Offset + fieldOffset;
+                            cppStruct.Add(subField);
+                            lastFieldOffset = subField.Offset;
+                        }
+
+                        // Set the current field offset according to the inlined fields
+                        if (!isUnion)
+                        {
+                            fieldOffset = lastFieldOffset;
+                        }
+                            
+                        // Don't add the current field, as it is actually an inline struct/union
+                        cppField = null;
+                    }
+                    else
+                    {
+                        // Get the type name from the inner-struct and set it to the field
+                        cppField.TypeName = fieldSubStruct.Name;
+                        currentCppInclude.Add(fieldSubStruct);
+                    }
+                }
+
+                // Go to next field offset if not in union
+                bool goToNextFieldOffset = !isUnion;
+
+                // Add the field if any
+                if (cppField != null)
+                {
+                    cppStruct.Add(cppField);
+                    // TODO managed multiple bitfield group
+                    // Current implem is only working with a single set of consecutive bitfield in the same struct
+                    goToNextFieldOffset = goToNextFieldOffset && !cppField.IsBitField;
+                }
+
+                if (goToNextFieldOffset)
+                {
+                    fieldOffset++;
+                }
+            }
+
+            return cppStruct;
         }
 
+        /// <summary>
+        /// Parses a C++ field declaration.
+        /// </summary>
+        private CppField ParseField(XElement xElement)
+        {
+            CppField cppField = new CppField();
+            cppField.Name = xElement.Attribute("name") != null ? xElement.Attribute("name").Value : String.Empty;
+
+            // Handle bitfield info
+            string bitField = xElement.Attribute("bits") != null ? xElement.Attribute("bits").Value : String.Empty;
+            if (!string.IsNullOrEmpty(bitField))
+            {
+                cppField.IsBitField = true;
+                cppField.BitOffset = int.Parse(bitField);
+            }
+
+            string fieldType = xElement.Attribute("type") != null ? xElement.Attribute("type").Value : String.Empty;
+            ResolveAndFillType(fieldType, cppField);
+
+            return cppField;
+        }
+
+        /// <summary>
+        /// Parses a C++ function.
+        /// </summary>
         private CppElement ParseFunction(XElement xElement)
         {
-            return null;
+            return ParseMethodOrFunction<CppFunction>(xElement);
         }
 
-        private CppElement ParseEnum(XElement xElement)
+        /// <summary>
+        /// Parses a C++ enum declaration.
+        /// </summary>
+        private CppEnum ParseEnum(XElement xElement)
         {
-            return null;
+            CppEnum cppEnum = new CppEnum();
+            cppEnum.Name = xElement.Attribute("name") != null ? xElement.Attribute("name").Value : String.Empty;
+
+            // Anonymous enum
+            if (cppEnum.Name.StartsWith("$") || string.IsNullOrEmpty(cppEnum.Name))
+            {
+                int enumOffset;
+                string includeFrom = GetIncludeIdFromFileId(xElement.Attribute("file").Value);
+                
+                if (!mapIncludeToAnonymousEnumCount.TryGetValue(includeFrom, out enumOffset))
+                {
+                    mapIncludeToAnonymousEnumCount.Add(includeFrom, enumOffset);
+                }
+                    
+                cppEnum.Name = includeFrom.ToUpper() + "_ENUM_" + enumOffset;
+                mapIncludeToAnonymousEnumCount[includeFrom]++;
+            }
+
+            foreach (XElement xEnumItems in xElement.Elements())
+            {
+                string enumItemName = xEnumItems.Attribute("name") != null ? xEnumItems.Attribute("name").Value : String.Empty;
+                string enumItemInit = xEnumItems.Attribute("init") != null ? xEnumItems.Attribute("init").Value : String.Empty;
+
+                cppEnum.Add(new CppEnumItem(enumItemName, enumItemInit));
+            }
+
+            return cppEnum;
         }
     }
 }
