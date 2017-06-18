@@ -25,6 +25,9 @@
 
 <config id="pylon-node" xmlns="urn:NodePylonGen.Config">
 
+	<!-- Base includes -->
+	<include file="pylon/PylonBase.h" />
+
 	<!-- Include pylon and genicam mappings -->
 	<file>pylon\Mapping.xml</file>
 	<!--

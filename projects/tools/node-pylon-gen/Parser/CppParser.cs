@@ -502,8 +502,9 @@ namespace NodePylonGen.Parser
             cppBaseType.Id = xElement.Attribute("id").Value;
             xElement.AddAnnotation(cppBaseType);
 
-            // Calculate offset method using inheritance
+            // Calculate offsets using inheritance
             int offsetMethod = 0;
+            int offsetConstructor = 0;
 
             XAttribute basesAttribute = xElement.Attribute("bases");
             IEnumerable<string> bases = basesAttribute != null ? basesAttribute.Value.Split(' ') : Enumerable.Empty<string>();
@@ -524,33 +525,34 @@ namespace NodePylonGen.Parser
 
                 // Get methods count from base class or interface
                 offsetMethod += ((cppElementBase is CppBase) ? ((CppBase)cppElementBase).TotalMethodCount : 0);
+                offsetConstructor += ((cppElementBase is CppBase) ? ((CppBase)cppElementBase).TotalConstructorCount : 0);
             }
 
+            List<CppConstructor> constructors = new List<CppConstructor>();
             List<CppMethod> methods = new List<CppMethod>();
 
             // Parse methods
-            foreach (var method in xElement.Elements())
+            foreach (XElement element in xElement.Elements())
             {
-
                 string overrides = String.Empty;
-                XAttribute overridesAttribute = method.Attribute("overrides");
+                XAttribute overridesAttribute = element.Attribute("overrides");
                 if (overridesAttribute != null)
                 {
                     overrides = overridesAttribute.Value;
                 }
 
                 string pureVirtual = String.Empty;
-                XAttribute pureVirtualAttribute = method.Attribute("pure_virtual");
+                XAttribute pureVirtualAttribute = element.Attribute("pure_virtual");
                 if (pureVirtualAttribute != null)
                 {
                     pureVirtual = pureVirtualAttribute.Value;
                 }
 
                 // Parse method with pure virtual (=0) and that do not override any other methods
-                if (method.Name.LocalName == "Method")
+                if (element.Name.LocalName == "Method")
                 {
-                    CppMethod cppMethod = ParseMethodOrFunction<CppMethod>(method);
-                    
+                    CppMethod cppMethod = ParseMethodOrFunction<CppMethod>(element);
+
                     if (!string.IsNullOrWhiteSpace(pureVirtual))
                     {
                         cppMethod.Virtual = true;
@@ -560,8 +562,13 @@ namespace NodePylonGen.Parser
                     {
                         cppMethod.Override = true;
                     }
-                    
+
                     methods.Add(cppMethod);
+                }
+                else if (element.Name.LocalName == "Constructor")
+                {
+                    CppConstructor cppConstructor = ParseConstructor(element);
+                    constructors.Add(cppConstructor);
                 }
             }
 
@@ -593,13 +600,22 @@ namespace NodePylonGen.Parser
             }
 
             // Add the methods to the cppbase with the correct offsets
-            foreach (var cppMethod in methods)
+            foreach (CppMethod cppMethod in methods)
             {
                 
                 cppMethod.Offset = offsetMethod++;
                 cppBaseType.Add(cppMethod);
             }
 
+            // Add the constructor to the cppbase with the correct offsets
+            foreach (CppConstructor cppConstructor in constructors)
+            {
+
+                cppConstructor.Offset = offsetConstructor++;
+                cppBaseType.Add(cppConstructor);
+            }
+
+            cppBaseType.TotalConstructorCount = offsetConstructor;
             cppBaseType.TotalMethodCount = offsetMethod;
 
             return cppBaseType;
@@ -629,9 +645,24 @@ namespace NodePylonGen.Parser
         }
 
         /// <summary>
+        /// Parses a C++ constructor.
+        /// </summary>
+        private CppConstructor ParseConstructor(XElement xElement)
+        {
+            CppConstructor cppConstructor = new CppConstructor();
+            cppConstructor.Name = xElement.Attribute("name").Value;
+            cppConstructor.Id = xElement.Attribute("id").Value;
+
+            // Parse parameters
+            ParseParameters(xElement, cppConstructor);
+
+            return cppConstructor;
+        }
+
+        /// <summary>
         /// Parses a C++ parameters.
         /// </summary>
-        private void ParseParameters(XElement xElement, CppElement methodOrFunction)
+        private void ParseParameters(XElement xElement, CppElement constructorOrMethodOrFunction)
         {
             int paramCount = 0;
             foreach (XElement parameter in xElement.Elements())
@@ -665,7 +696,7 @@ namespace NodePylonGen.Parser
                     ResolveAndFillType(typeAttribute.Value, cppParameter);
                 }
 
-                methodOrFunction.Add(cppParameter);
+                constructorOrMethodOrFunction.Add(cppParameter);
                 paramCount++;
             }
         }

@@ -20,45 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using NodePylonGen.Config;
+using NodePylonGen.Parser.Model;
 
-namespace NodePylonGen.Parser.Model
+namespace NodePylonGen.Generator
 {
-    public class CppBase : CppElement
+    public class BindingContext
     {
-        /// <summary>
-        /// Gets or sets the name of the parent.
-        /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
+        public ConfigMapping MappingConfig { get; private set; }
+        public CppModule MainModule { get; private set; }
 
-        /// <summary>
-        /// Gets the constructors.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppConstructor> Constructors
+        public BindingContext(ConfigMapping mappingConfig, CppModule mainModule)
         {
-            get { return Iterate<CppConstructor>(); }
+            MappingConfig = mappingConfig;
+            MainModule = mainModule;
         }
-
-        /// <summary>
-        /// Gets or sets the total constructor count.
-        /// </summary>
-        internal int TotalConstructorCount { get; set; }
-
-        /// <summary>
-        /// Gets the methods.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppMethod> Methods
-        {
-            get { return Iterate<CppMethod>(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the total method count.
-        /// </summary>
-        internal int TotalMethodCount { get; set; }
     }
 }

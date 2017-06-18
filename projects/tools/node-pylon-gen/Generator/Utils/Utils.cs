@@ -20,45 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
+using System.Linq;
 
-namespace NodePylonGen.Parser.Model
+namespace NodePylonGen.Generator.Utils
 {
-    public class CppBase : CppElement
+    public static class StringHelpers
     {
         /// <summary>
-        /// Gets or sets the name of the parent.
+        /// Special version of spilt that keeps the delemiters
         /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
-
-        /// <summary>
-        /// Gets the constructors.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppConstructor> Constructors
+        public static IEnumerable<string> SplitAndKeep(this string s, string seperator)
         {
-            get { return Iterate<CppConstructor>(); }
+            string[] obj = s.Split(new[] { seperator }, StringSplitOptions.None);
+            return obj.Select((t, i) => i == obj.Length - 1 ? t : t + seperator);
         }
-
-        /// <summary>
-        /// Gets or sets the total constructor count.
-        /// </summary>
-        internal int TotalConstructorCount { get; set; }
-
-        /// <summary>
-        /// Gets the methods.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppMethod> Methods
-        {
-            get { return Iterate<CppMethod>(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the total method count.
-        /// </summary>
-        internal int TotalMethodCount { get; set; }
     }
 }

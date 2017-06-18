@@ -21,44 +21,63 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
-    public class CppBase : CppElement
+    /// <summary>
+    /// A C++ constructor.
+    /// </summary>
+    public class CppConstructor : CppElement
     {
         /// <summary>
-        /// Gets or sets the name of the parent.
+        /// Gets or sets the offset.
         /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
+        [XmlAttribute("offset")]
+        public int Offset { get; set; }
 
         /// <summary>
-        /// Gets the constructors.
+        /// Gets the parameters.
         /// </summary>
         [XmlIgnore]
-        public IEnumerable<CppConstructor> Constructors
+        public IEnumerable<CppParameter> Parameters
         {
-            get { return Iterate<CppConstructor>(); }
+            get { return Iterate<CppParameter>(); }
         }
 
         /// <summary>
-        /// Gets or sets the total constructor count.
+        /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        internal int TotalConstructorCount { get; set; }
-
-        /// <summary>
-        /// Gets the methods.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppMethod> Methods
+        public override string ToString()
         {
-            get { return Iterate<CppMethod>(); }
-        }
+            StringBuilder builder = new StringBuilder();
 
-        /// <summary>
-        /// Gets or sets the total method count.
-        /// </summary>
-        internal int TotalMethodCount { get; set; }
+            // Check if parent is interface or class
+            if (Parent is CppInterface || Parent is CppClass)
+            {
+                builder.Append(Parent.Name);
+                builder.Append("::");
+            }
+
+            // Build method
+            builder.Append(Name);
+            builder.Append("(");
+
+            int i = 0, count = Parameters.Count();
+            foreach (var cppParameter in Parameters)
+            {
+                builder.Append(cppParameter);
+                if ((i + 1) < count)
+                {
+                    builder.Append(",");
+                }
+                i++;
+            }
+            builder.Append(")");
+
+            return builder.ToString();
+        }
     }
 }

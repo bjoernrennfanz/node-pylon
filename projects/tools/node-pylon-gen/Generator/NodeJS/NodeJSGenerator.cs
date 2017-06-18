@@ -20,45 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using NodePylonGen.Config;
+using NodePylonGen.Parser.Model;
 
-namespace NodePylonGen.Parser.Model
+namespace NodePylonGen.Generator.NodeJS
 {
-    public class CppBase : CppElement
+    public class NodeJSGenerator : Generator
     {
-        /// <summary>
-        /// Gets or sets the name of the parent.
-        /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
-
-        /// <summary>
-        /// Gets the constructors.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppConstructor> Constructors
+        public NodeJSGenerator(ConfigMapping config, CppModule mainModule)
+            : base(new BindingContext(config, mainModule))
         {
-            get { return Iterate<CppConstructor>(); }
         }
-
-        /// <summary>
-        /// Gets or sets the total constructor count.
-        /// </summary>
-        internal int TotalConstructorCount { get; set; }
-
-        /// <summary>
-        /// Gets the methods.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppMethod> Methods
-        {
-            get { return Iterate<CppMethod>(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the total method count.
-        /// </summary>
-        internal int TotalMethodCount { get; set; }
     }
+
 }

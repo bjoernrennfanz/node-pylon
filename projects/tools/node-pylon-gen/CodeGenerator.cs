@@ -25,10 +25,12 @@ using Mono.Options;
 using NodePylonGen.Config;
 using NodePylonGen.Parser;
 using NodePylonGen.Parser.Model;
+using NodePylonGen.Generator;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using NodePylonGen.Generator.NodeJS;
 
 namespace NodePylonGen
 {
@@ -55,6 +57,8 @@ namespace NodePylonGen
         private ConfigMapping config;
         private string configRootPath;
         private string configCheckFilePath;
+
+        private string generatorRootPath;
 
         /// <summary>
         /// Print usages with error message.
@@ -119,6 +123,8 @@ namespace NodePylonGen
         /// </summary>
         public bool Initialize()
         {
+            generatorRootPath = Path.GetDirectoryName(configRootPath);
+
             log.Info("Loading config files...");
             config = ConfigMapping.Load(configRootPath, new VariableMapping("VC_TOOLS_PATH", VcToolsPath));
 
@@ -148,6 +154,11 @@ namespace NodePylonGen
 
             // Run the parser
             CppModule mainModule = parser.Run();
+
+            // Run the code generation process
+            NodeJSGenerator generator = new NodeJSGenerator(config, mainModule);
+
+
         }
     }
 }

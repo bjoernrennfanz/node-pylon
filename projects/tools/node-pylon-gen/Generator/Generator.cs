@@ -20,45 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
-
-namespace NodePylonGen.Parser.Model
+namespace NodePylonGen.Generator
 {
-    public class CppBase : CppElement
+    public abstract class Generator
     {
         /// <summary>
-        /// Gets or sets the name of the parent.
+        /// Gets the binding context of this generator instance.
         /// </summary>
-        [XmlAttribute("base")]
-        public string ParentName { get; set; }
+        public BindingContext Context { get; private set; }
 
         /// <summary>
-        /// Gets the constructors.
+        /// Construct an new <see cref="Generator"/> instance. 
         /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppConstructor> Constructors
+        protected Generator(BindingContext context)
         {
-            get { return Iterate<CppConstructor>(); }
+            Context = context;
         }
-
-        /// <summary>
-        /// Gets or sets the total constructor count.
-        /// </summary>
-        internal int TotalConstructorCount { get; set; }
-
-        /// <summary>
-        /// Gets the methods.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppMethod> Methods
-        {
-            get { return Iterate<CppMethod>(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the total method count.
-        /// </summary>
-        internal int TotalMethodCount { get; set; }
     }
 }
