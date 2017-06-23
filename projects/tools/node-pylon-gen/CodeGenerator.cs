@@ -158,6 +158,8 @@ namespace NodePylonGen
             // Run the code generation process
             NodeJSGenerator generator = new NodeJSGenerator(config, mainModule);
 
+            generator.SetupPasses();
+            generator.ProcessCode();
 
         }
     }

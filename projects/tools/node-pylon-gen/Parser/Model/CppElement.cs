@@ -27,7 +27,7 @@ using System.Xml.Serialization;
 
 namespace NodePylonGen.Parser.Model
 {
-    public class CppElement
+    public abstract class CppElement
     {
         /// <summary>
         /// Gets or sets the name.
@@ -138,6 +138,7 @@ namespace NodePylonGen.Parser.Model
         /// </summary>
         [XmlArray("items")]
         [XmlArrayItem(typeof(CppClass))]
+        [XmlArrayItem(typeof(CppConstructor))]
         [XmlArrayItem(typeof(CppConstant))]
         [XmlArrayItem(typeof(CppDefine))]
         [XmlArrayItem(typeof(CppEnum))]

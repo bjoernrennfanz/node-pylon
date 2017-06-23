@@ -31,7 +31,7 @@ namespace NodePylonGen.Generator.Utils
     {
         public const uint DefaultIndent = 4;
 
-        protected StringBuilder stringBuilder;
+        public StringBuilder stringBuilder;
         protected bool isStartOfLine;
         protected bool needsNewLine;
         protected Stack<uint> currentIndent;

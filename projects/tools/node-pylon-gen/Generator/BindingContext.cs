@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 
@@ -27,13 +28,21 @@ namespace NodePylonGen.Generator
 {
     public class BindingContext
     {
-        public ConfigMapping MappingConfig { get; private set; }
-        public CppModule MainModule { get; private set; }
+        public ConfigMapping ConfigContext { get; private set; }
+        public CppModule ModuleContext { get; private set; }
 
-        public BindingContext(ConfigMapping mappingConfig, CppModule mainModule)
+        // public RulesBuilder<CppIncludePass> CppIncludeRules { get; private set; }
+        // public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
+
+        public BindingContext(ConfigMapping configContext, CppModule moduleContext)
         {
-            MappingConfig = mappingConfig;
-            MainModule = mainModule;
+            ConfigContext = configContext;
+            ModuleContext = moduleContext;
+        }
+
+        public void RunPasses()
+        {
+       
         }
     }
 }

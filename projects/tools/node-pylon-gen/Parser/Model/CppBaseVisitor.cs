@@ -20,29 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using NodePylonGen.Config;
-using NodePylonGen.Parser.Model;
-
-namespace NodePylonGen.Generator.NodeJS
+namespace NodePylonGen.Parser.Model
 {
-    public class NodeJSGenerator : Generator
+    public interface ICppBaseVisitor<out T>
     {
-        public NodeJSGenerator(ConfigMapping config, CppModule mainModule)
-            : base(config, mainModule)
-        {
-        }
-
-        public override bool SetupPasses()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override List<CodeGenerator> Generate(IEnumerable<CppInclude> units)
-        {
-            throw new NotImplementedException();
-        }
+        T VisitCppBase(CppBase cppBase);
+        T VisitConstructors(CppConstructor cppConstructor);
+        T VisitMethods(CppMethod cppMethod);
     }
-
 }

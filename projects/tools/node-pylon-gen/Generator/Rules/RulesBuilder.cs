@@ -20,65 +20,57 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 
-namespace NodePylonGen.Parser.Model
+namespace NodePylonGen.Generator.Rules
 {
     /// <summary>
-    /// A C++ constructor.
+    /// This class is used to build rules that will be run against the 
+    /// <see cref="CppIncludes"/> that comes from C++.
     /// </summary>
-    [XmlType("constructor")]
-    public class CppConstructor : CppElement
+    public class RulesBuilder<T>
     {
-        /// <summary>
-        /// Gets or sets the offset.
-        /// </summary>
-        [XmlAttribute("offset")]
-        public int Offset { get; set; }
+        public BindingContext Context { get; private set; }
+        public List<T> Rules { get; private set; }
 
-        /// <summary>
-        /// Gets the parameters.
-        /// </summary>
-        [XmlIgnore]
-        public IEnumerable<CppParameter> Parameters
+        public RulesBuilder(BindingContext context)
         {
-            get { return Iterate<CppParameter>(); }
+            Context = context;
+            Rules = new List<T>();
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Adds a new rule to the builder.
         /// </summary>
-        public override string ToString()
+        public void AddRule(T rule)
         {
-            StringBuilder builder = new StringBuilder();
-
-            // Check if parent is interface or class
-            if (Parent is CppInterface || Parent is CppClass)
+            if (rule is CppIncludeRule)
             {
-                builder.Append(Parent.Name);
-                builder.Append("::");
+                (rule as CppIncludeRule).Context = Context;
             }
 
-            // Build method
-            builder.Append(Name);
-            builder.Append("(");
+            Rules.Add(rule);
+        }
 
-            int i = 0, count = Parameters.Count();
-            foreach (var cppParameter in Parameters)
+        /// <summary>
+        /// Finds a previously-added rule of the given type.
+        /// </summary>
+        public U FindRule<U>() where U : CppIncludeRule
+        {
+            return Rules.OfType<U>().Select(rule => rule as U).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Runs the rules in the builder.
+        /// </summary>
+        public void RunRules(Action<T> action)
+        {
+            foreach (var rule in Rules)
             {
-                builder.Append(cppParameter);
-                if ((i + 1) < count)
-                {
-                    builder.Append(",");
-                }
-                i++;
+                action(rule);
             }
-            builder.Append(")");
-
-            return builder.ToString();
         }
     }
 }
