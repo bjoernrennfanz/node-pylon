@@ -75,8 +75,7 @@
     <Compile Include="Config\VariableMapping.cs" />
     <Compile Include="Generator\BindingContext.cs" />
     <Compile Include="Generator\Generator.cs" />
-    <Compile Include="Parser\Model\CppBaseVisitor.cs" />
-    <Compile Include="Parser\Model\CppIncludeVisitor.cs" />
+    <Compile Include="Parser\Model\CppElementVisitor.cs" />
     <Compile Include="Generator\NodeJS\NodeJSGenerator.cs" />
     <Compile Include="Generator\Rules\CppIncludeRule.cs" />
     <Compile Include="Generator\Rules\RulesBuilder.cs" />
@@ -96,13 +95,13 @@
     <Compile Include="Parser\Model\CppField.cs" />
     <Compile Include="Parser\Model\CppFunction.cs" />
     <Compile Include="Parser\Model\CppInclude.cs" />
+    <Compile Include="Parser\Model\CppIncludeVisitor.cs" />
     <Compile Include="Parser\Model\CppInterface.cs" />
     <Compile Include="Parser\Model\CppMethod.cs" />
     <Compile Include="Parser\Model\CppModule.cs" />
     <Compile Include="Parser\Model\CppParameter.cs" />
     <Compile Include="Parser\Model\CppStruct.cs" />
     <Compile Include="Parser\Model\CppType.cs" />
-    <Compile Include="Parser\Model\CppTypeVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\StringEnum.cs" />

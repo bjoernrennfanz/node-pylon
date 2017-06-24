@@ -40,7 +40,7 @@ namespace NodePylonGen.Generator
             ModuleContext = moduleContext;
         }
 
-        public void RunPasses()
+        public void ApplyRules()
         {
        
         }

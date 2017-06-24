@@ -51,5 +51,13 @@ namespace NodePylonGen.Parser.Model
         {
             get { return Iterate<CppField>(); }
         }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppStruct(this);
+        }
     }
 }

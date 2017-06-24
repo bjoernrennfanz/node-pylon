@@ -120,5 +120,13 @@ namespace NodePylonGen.Parser.Model
         {
             return (((TypeName != null ? TypeName.GetHashCode() : 0) + (Pointer != null ? Pointer.GetHashCode() : 0)) / 2);
         }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppType(this);
+        }
     }
 }

@@ -67,5 +67,13 @@ namespace NodePylonGen.Parser.Model
         {
             return "EnumItem [" + Name + "]";
         }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppEnumItem(this);
+        }
     }
 }

@@ -126,5 +126,13 @@ namespace NodePylonGen.Parser.Model
                 xmlSerializer.Serialize(xmlWriter, this, xmlSerializerNamespaces);
             }
         }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppModule(this);
+        }
     }
 }

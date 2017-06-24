@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -60,5 +61,13 @@ namespace NodePylonGen.Parser.Model
         /// Gets or sets the total method count.
         /// </summary>
         internal int TotalMethodCount { get; set; }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppBase(this);
+        }
     }
 }

@@ -130,5 +130,13 @@ namespace NodePylonGen.Parser.Model
 
             return builder.ToString();
         }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitMethod(this);
+        }
     }
 }

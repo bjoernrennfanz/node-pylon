@@ -31,5 +31,12 @@ namespace NodePylonGen.Parser.Model
     [XmlType("class")]
     public class CppClass : CppBase
     {
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppClass(this);
+        }
     }
 }

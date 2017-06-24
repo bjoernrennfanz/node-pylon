@@ -20,27 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Parser.Model;
 using System.Collections.Generic;
 using System;
 
-namespace NodePylonGen.Generator.Model
+namespace NodePylonGen.Parser.Model
 {
     public interface ICppIncludeVisited
     {
         ISet<object> Visited { get; }
         bool AlreadyVisited(CppElement element);
-    }
-
-    public interface ICppIncludeVisitor<out T> : ICppTypeVisitor<T>, ICppBaseVisitor<T>
-    {
-        T VisitCppClass(CppClass cppClass);
-        T VisitCppDefine(CppDefine cppDefine);
-        T VisitCppInterface(CppInterface cppInterface);
-        T VisitCppFunction(CppFunction cppFunction);
-        T VisitCppStruct(CppStruct cppStruct);
-        T VisitCppEnum(CppEnum cppEnum);
-        T VisitCppConstant(CppConstant cppConstant);
     }
 
     public class CppIncludeVisitorOptions
@@ -50,7 +38,7 @@ namespace NodePylonGen.Generator.Model
         public bool VisitClassMethods = true;
     }
 
-    public abstract class CppIncludeVisitor : ICppIncludeVisitor<bool>, ICppIncludeVisited
+    public abstract class CppIncludeVisitor : ICppElementVisitor<bool>, ICppIncludeVisited
     {
         public ISet<object> Visited { get; private set; }
         public CppIncludeVisitorOptions VisitOptions { get; private set; }
@@ -70,7 +58,7 @@ namespace NodePylonGen.Generator.Model
 
         #endregion
 
-        #region Include visitor implementation
+        #region CppElement visitor implementation
 
         public virtual bool VisitCppClass(CppClass cppClass)
         {
@@ -79,13 +67,6 @@ namespace NodePylonGen.Generator.Model
                 return false;
             }
 
-            /*
-            cppClass.B
-            if (VisitOptions.)
-                    foreach (var baseClass in @class.Bases)
-                        if (baseClass.IsClass)
-                            baseClass.Class.Visit(this); cppClass.Constructors
-                            */
             return true;
         }
 
@@ -121,7 +102,12 @@ namespace NodePylonGen.Generator.Model
 
         public virtual bool VisitCppBase(CppBase cppBase)
         {
-            return false;   
+            if (!AlreadyVisited(cppBase))
+            {
+                return false;
+            }
+
+            return VisitCppElement(cppBase);
         }
 
         public virtual bool VisitConstructors(CppConstructor cppConstructor)
@@ -134,10 +120,6 @@ namespace NodePylonGen.Generator.Model
             throw new NotImplementedException();
         }
 
-        #endregion
-
-        #region Type visitor implementation
-
         public virtual bool VisitCppType(CppType cppType)
         {
             throw new NotImplementedException();
@@ -149,6 +131,36 @@ namespace NodePylonGen.Generator.Model
         }
 
         public virtual bool VisitCppParameter(CppParameter cppParameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitConstructor(CppConstructor cppConstructor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitMethod(CppMethod cppMethod)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitCppElement(CppElement cppElement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitCppEnumItem(CppEnumItem cppEnumItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitCppInclude(CppInclude cppInclude)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool VisitCppModule(CppModule cppModule)
         {
             throw new NotImplementedException();
         }

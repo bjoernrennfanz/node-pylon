@@ -34,14 +34,14 @@ namespace NodePylonGen.Generator.NodeJS
         {
         }
 
-        public override bool SetupPasses()
+        public override bool SetupRules()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         protected override List<CodeGenerator> Generate(IEnumerable<CppInclude> units)
         {
-            throw new NotImplementedException();
+            return new List<CodeGenerator>();
         }
     }
 

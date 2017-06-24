@@ -21,10 +21,8 @@
 // SOFTWARE.
 
 using NodePylonGen.Config;
-using NodePylonGen.Generator.Model;
 using NodePylonGen.Parser.Model;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NodePylonGen.Generator
 {
@@ -71,7 +69,7 @@ namespace NodePylonGen.Generator
         /// <summary>
         /// Setup any generator-specific passes here.
         /// </summary>
-        public abstract bool SetupPasses();
+        public abstract bool SetupRules();
 
         /// <summary>
         /// Setup any generator-specific processing here.
@@ -81,9 +79,12 @@ namespace NodePylonGen.Generator
 
         }
 
+        /// <summary>
+        /// Generate the outputs for given context.
+        /// </summary>
         public void ProcessCode()
         {
-            Context.RunPasses();
+            Context.ApplyRules();
             Process();
         }
 

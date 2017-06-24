@@ -22,10 +22,31 @@
 
 namespace NodePylonGen.Parser.Model
 {
-    public interface ICppBaseVisitor<out T>
+    public interface ICppElementVisitor<out T>
     {
+        // Class & Interface
         T VisitCppBase(CppBase cppBase);
-        T VisitConstructors(CppConstructor cppConstructor);
-        T VisitMethods(CppMethod cppMethod);
+        T VisitConstructor(CppConstructor cppConstructor);
+        T VisitMethod(CppMethod cppMethod);
+
+        // All other elements
+        T VisitCppElement(CppElement cppElement);
+        T VisitCppClass(CppClass cppClass);
+        T VisitCppDefine(CppDefine cppDefine);
+        T VisitCppInterface(CppInterface cppInterface);
+        T VisitCppFunction(CppFunction cppFunction);
+        T VisitCppStruct(CppStruct cppStruct);
+        T VisitCppEnum(CppEnum cppEnum);
+        T VisitCppEnumItem(CppEnumItem cppEnumItem);
+        T VisitCppConstant(CppConstant cppConstant);
+
+        // Module & Include
+        T VisitCppInclude(CppInclude cppInclude);
+        T VisitCppModule(CppModule cppModule);
+
+        // Types
+        T VisitCppType(CppType cppType);
+        T VisitCppField(CppField cppField);
+        T VisitCppParameter(CppParameter cppParameter);
     }
 }

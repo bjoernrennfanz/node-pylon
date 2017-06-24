@@ -30,5 +30,12 @@ namespace NodePylonGen.Parser.Model
     [XmlType("function")]
     public class CppFunction : CppMethod
     {
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppFunction(this);
+        }
     }
 }

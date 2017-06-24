@@ -51,5 +51,13 @@ namespace NodePylonGen.Parser.Model
         /// </summary>
         [XmlAttribute("value")]
         public string Value { get; set; }
+
+        /// <summary>
+        /// Overriden version of Visit<T>
+        /// </summary>
+        public override T Visit<T>(ICppElementVisitor<T> visitor)
+        {
+            return visitor.VisitCppConstant(this);
+        }
     }
 }

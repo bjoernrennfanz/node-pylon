@@ -254,5 +254,7 @@ namespace NodePylonGen.Parser.Model
         {
             return GetType().Name + " [" + Name + "]";
         }
+
+        public abstract T Visit<T>(ICppElementVisitor<T> visitor);
     }
 }
