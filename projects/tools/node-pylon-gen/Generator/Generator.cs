@@ -20,16 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Config;
+using NodePylonGen.Generator.Generators;
 using NodePylonGen.Parser.Model;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NodePylonGen.Generator
 {
     /// <summary>
     /// Kinds of language generators.
     /// </summary>
-    public enum GeneratorKind
+    public enum GeneratorType
     {
         NodeJS = 1,
         Java
@@ -61,22 +63,34 @@ namespace NodePylonGen.Generator
         /// <summary>
         /// Construct an new <see cref="Generator"/> instance. 
         /// </summary>
-        protected Generator(ConfigMapping config, CppModule mainModule)
+        protected Generator(BindingContext context)
         {
-            Context = new BindingContext(config, mainModule);
+            Context = context;
         }
 
         /// <summary>
-        /// Setup any generator-specific passes here.
+        /// Called when a translation unit is generated.
         /// </summary>
-        public abstract bool SetupRules();
+        public Action<GeneratorOutput> OnUnitGenerated = delegate { };
 
         /// <summary>
-        /// Setup any generator-specific processing here.
+        /// 
+        /// </summary>
+        public void SetupCodeRules()
+        {
+            SetupRules();
+        }
+
+        /// <summary>
+        /// Setup any generator-specific rules here.
+        /// </summary>
+        protected abstract bool SetupRules();
+
+        /// <summary>
+        /// Generate the generator-specific outputs for given context.
         /// </summary>
         protected virtual void Process()
         {
-
         }
 
         /// <summary>
@@ -100,20 +114,66 @@ namespace NodePylonGen.Generator
         public List<GeneratorOutput> GenerateCode()
         {
             List<GeneratorOutput> outputs = new List<GeneratorOutput>();
-            /*
-            var units = Context.TranslationUnits.GetGenerated().ToList();
+            List<CppInclude> includes = Context.ModuleContext.Includes.ToList();
 
-            if (Context.Options.IsCSharpGenerator)
+            if (Context.IsJavaGenerator)
             {
-                GenerateSingleTemplate(outputs);
+                GenerateSingleTemplate(outputs, includes);
             }
             else
             {
-                GenerateTemplates(outputs, units.Where(u => !u.IsSystemHeader));
+                GenerateTemplates(outputs, includes);
             }
-            */
+            
             return outputs;
         }
 
+        /// <summary>
+        /// Generate templates for output
+        /// </summary>
+        private void GenerateTemplates(List<GeneratorOutput> outputs, IEnumerable<CppInclude> includes)
+        {
+            foreach (CppInclude include in includes)
+            {
+                List<CodeGenerator> templates = Generate(new[] { include });
+                if (templates.Count == 0)
+                {
+                    return;
+                }
+                    
+                foreach (CodeGenerator template in templates)
+                {
+                    template.Process();
+                }
+
+                GeneratorOutput output = new GeneratorOutput
+                {
+                    Include = include,
+                    Outputs = templates
+                };
+                outputs.Add(output);
+
+                OnUnitGenerated(output);
+            }
+        }
+
+        /// <summary>
+        /// Generate single template for output
+        /// </summary>
+        private void GenerateSingleTemplate(List<GeneratorOutput> outputs, IEnumerable<CppInclude> includes)
+        {
+            foreach (CppInclude include in includes)
+            {
+                GeneratorOutput output = new GeneratorOutput
+                {
+                    Include = include,
+                    Outputs = Generate(new[] { include })
+                };
+                output.Outputs.FirstOrDefault().Process();
+                outputs.Add(output);
+
+                OnUnitGenerated(output);
+            }
+        }
     }
 }

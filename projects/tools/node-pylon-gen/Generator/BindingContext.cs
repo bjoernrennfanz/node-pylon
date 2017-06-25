@@ -23,6 +23,7 @@
 using System;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
+using NodePylonGen.Generator.Rules;
 
 namespace NodePylonGen.Generator
 {
@@ -31,8 +32,13 @@ namespace NodePylonGen.Generator
         public ConfigMapping ConfigContext { get; private set; }
         public CppModule ModuleContext { get; private set; }
 
-        // public RulesBuilder<CppIncludePass> CppIncludeRules { get; private set; }
-        // public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
+        public GeneratorType GeneratorKind { get; internal set; }
+
+        public bool IsNodeJSGenerator => GeneratorKind == GeneratorType.NodeJS;
+        public bool IsJavaGenerator => GeneratorKind == GeneratorType.Java;
+
+        public RulesBuilder<CppIncludeRule> CppIncludeRules { get; private set; }
+        //public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
 
         public BindingContext(ConfigMapping configContext, CppModule moduleContext)
         {

@@ -25,19 +25,20 @@ using Mono.Options;
 using NodePylonGen.Config;
 using NodePylonGen.Parser;
 using NodePylonGen.Parser.Model;
-using NodePylonGen.Generator;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using NodePylonGen.Generator.NodeJS;
+using NodePylonGen.Generator.Generators.NodeJS;
+using NodePylonGen.Generator;
+using System.Collections.Generic;
 
 namespace NodePylonGen
 {
     /// <summary>
     /// pylon-node Code Generator Application
     /// </summary>
-    public class CodeGenerator
+    public class CodeGeneratorApp
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -158,9 +159,14 @@ namespace NodePylonGen
             // Run the code generation process
             NodeJSGenerator generator = new NodeJSGenerator(config, mainModule);
 
-            generator.SetupRules();
+            // Setup and process some rules
+            generator.SetupCodeRules();
             generator.ProcessCode();
 
+            // Generate wrapper code
+            List<GeneratorOutput> outputs = generator.GenerateCode();
+
+            
         }
     }
 }

@@ -29,18 +29,18 @@ namespace NodePylonGen
     class Program
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static CodeGenerator codeGenerator;
+        private static CodeGeneratorApp codeGeneratorApp;
 
         static void Main(string[] args)
         {
             try
             {
-                codeGenerator = new CodeGenerator();
-                codeGenerator.ParseArguments(args);
+                codeGeneratorApp = new CodeGeneratorApp();
+                codeGeneratorApp.ParseArguments(args);
 
-                if (codeGenerator.Initialize())
+                if (codeGeneratorApp.Initialize())
                 {
-                    codeGenerator.Run();
+                    codeGeneratorApp.Run();
                 }
                 else
                 {

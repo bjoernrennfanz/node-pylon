@@ -26,8 +26,8 @@ namespace NodePylonGen.Parser.Model
     {
         // Class & Interface
         T VisitCppBase(CppBase cppBase);
-        T VisitConstructor(CppConstructor cppConstructor);
-        T VisitMethod(CppMethod cppMethod);
+        T VisitCppConstructor(CppConstructor cppConstructor);
+        T VisitCppMethod(CppMethod cppMethod);
 
         // All other elements
         T VisitCppElement(CppElement cppElement);

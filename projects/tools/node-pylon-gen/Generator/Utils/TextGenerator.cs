@@ -31,7 +31,7 @@ namespace NodePylonGen.Generator.Utils
     {
         public const uint DefaultIndent = 4;
 
-        public StringBuilder stringBuilder;
+        public StringBuilder StringBuilder;
         protected bool isStartOfLine;
         protected bool needsNewLine;
         protected Stack<uint> currentIndent;
@@ -41,7 +41,7 @@ namespace NodePylonGen.Generator.Utils
         /// </summary>
         public TextGenerator()
         {
-            stringBuilder = new StringBuilder();
+            StringBuilder = new StringBuilder();
             currentIndent = new Stack<uint>();
             isStartOfLine = false;
         }
@@ -52,7 +52,7 @@ namespace NodePylonGen.Generator.Utils
         public TextGenerator(TextGenerator generator)
         {
             currentIndent = new Stack<uint>(generator.currentIndent);
-            stringBuilder = new StringBuilder(generator);
+            StringBuilder = new StringBuilder(generator);
             isStartOfLine = generator.isStartOfLine;
             needsNewLine = generator.needsNewLine;
         }
@@ -86,7 +86,7 @@ namespace NodePylonGen.Generator.Utils
         /// </summary>
         public void NewLine()
         {
-            stringBuilder.AppendLine(string.Empty);
+            StringBuilder.AppendLine(string.Empty);
             isStartOfLine = true;
         }
 
@@ -147,7 +147,7 @@ namespace NodePylonGen.Generator.Utils
             {
                 if (isStartOfLine && !string.IsNullOrWhiteSpace(line))
                 {
-                    stringBuilder.Append(new string(' ', (int)currentIndent.Sum(u => u)));
+                    StringBuilder.Append(new string(' ', (int)currentIndent.Sum(u => u)));
                 }
 
                 if (line.Length > 0)
@@ -155,7 +155,7 @@ namespace NodePylonGen.Generator.Utils
                     isStartOfLine = line.EndsWith(Environment.NewLine);
                 }
                     
-                stringBuilder.Append(line);
+                StringBuilder.Append(line);
             }
         }
 
@@ -201,7 +201,7 @@ namespace NodePylonGen.Generator.Utils
         /// </summary>
         public override string ToString()
         {
-            return stringBuilder.ToString();
+            return StringBuilder.ToString();
         }
 
         /// <summary>

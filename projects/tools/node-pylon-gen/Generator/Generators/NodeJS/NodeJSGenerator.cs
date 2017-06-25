@@ -20,28 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 
-namespace NodePylonGen.Generator.NodeJS
+namespace NodePylonGen.Generator.Generators.NodeJS
 {
+    /// <summary>
+    /// C++/NodeJS wrapper generator responsible for 
+    /// driving the generation of source and header files.
+    /// </summary>
     public class NodeJSGenerator : Generator
     {
         public NodeJSGenerator(ConfigMapping config, CppModule mainModule)
-            : base(config, mainModule)
+            : base(new BindingContext(config, mainModule))
         {
+            // Setup generator type
+            Context.GeneratorKind = GeneratorType.NodeJS;
         }
 
-        public override bool SetupRules()
+        protected override bool SetupRules()
         {
             return true;
         }
 
         protected override List<CodeGenerator> Generate(IEnumerable<CppInclude> units)
         {
-            return new List<CodeGenerator>();
+            List<CodeGenerator> outputs = new List<CodeGenerator>();
+
+            NodeJSHeaders header = new NodeJSHeaders(Context, units);
+            outputs.Add(header);
+
+            NodeJSSources source = new NodeJSSources(Context, units);
+            outputs.Add(source);
+
+            return outputs;
         }
     }
 

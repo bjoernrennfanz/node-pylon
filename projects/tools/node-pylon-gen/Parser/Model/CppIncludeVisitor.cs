@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System;
 
 namespace NodePylonGen.Parser.Model
 {
@@ -72,97 +71,229 @@ namespace NodePylonGen.Parser.Model
 
         public virtual bool VisitCppDefine(CppDefine cppDefine)
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppInterface(CppInterface cppInterface)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppFunction(CppFunction cppFunction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppStruct(CppStruct cppStruct)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppEnum(CppEnum cppEnum)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppConstant(CppConstant cppConstant)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual bool VisitCppBase(CppBase cppBase)
-        {
-            if (!AlreadyVisited(cppBase))
+            if (!VisitCppElement(cppDefine))
             {
                 return false;
             }
 
-            return VisitCppElement(cppBase);
+            return true;
         }
 
-        public virtual bool VisitConstructors(CppConstructor cppConstructor)
+        public virtual bool VisitCppInterface(CppInterface cppInterface)
         {
-            throw new NotImplementedException();
+            if (!VisitCppBase(cppInterface))
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public virtual bool VisitMethods(CppMethod cppMethod)
+        public virtual bool VisitCppFunction(CppFunction cppFunction)
         {
-            throw new NotImplementedException();
+            if (!VisitCppMethod(cppFunction))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual bool VisitCppStruct(CppStruct cppStruct)
+        {
+            if (!VisitCppElement(cppStruct))
+            {
+                return false;
+            }
+
+            foreach (CppField field in cppStruct.Fields)
+            {
+                field.Visit(this);
+            }
+
+            return true;
+        }
+
+        public virtual bool VisitCppEnum(CppEnum cppEnum)
+        {
+            if (!VisitCppElement(cppEnum))
+            {
+                return false;
+            }
+
+            foreach (CppEnumItem enumItem in cppEnum.EnumItems)
+            {
+                enumItem.Visit(this);
+            }
+
+            return true;
+        }
+
+        public virtual bool VisitCppConstant(CppConstant cppConstant)
+        {
+            if (!VisitCppElement(cppConstant))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual bool VisitCppBase(CppBase cppBase)
+        {
+            if (!VisitCppElement(cppBase))
+            {
+                return false;
+            }
+
+            foreach(CppConstructor constructor in cppBase.Constructors)
+            {
+                constructor.Visit(this);
+            }
+
+            foreach (CppMethod method in cppBase.Methods)
+            {
+                method.Visit(this);
+            }
+
+            return true;
+        }
+
+        public virtual bool VisitCppConstructor(CppConstructor cppConstructor)
+        {
+            if (!VisitCppElement(cppConstructor))
+            {
+                return false;
+            }
+
+            foreach(CppParameter parameter in cppConstructor.Parameters)
+            {
+                parameter.Visit(this);
+            }
+
+            return true;
         }
 
         public virtual bool VisitCppType(CppType cppType)
         {
-            throw new NotImplementedException();
+            if (!VisitCppElement(cppType))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual bool VisitCppField(CppField cppField)
         {
-            throw new NotImplementedException();
+            if (!VisitCppType(cppField))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual bool VisitCppParameter(CppParameter cppParameter)
         {
-            throw new NotImplementedException();
+            if (!VisitCppType(cppParameter))
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public virtual bool VisitConstructor(CppConstructor cppConstructor)
+        public virtual bool VisitCppMethod(CppMethod cppMethod)
         {
-            throw new NotImplementedException();
-        }
+            if (!VisitCppElement(cppMethod))
+            {
+                return false;
+            }
 
-        public virtual bool VisitMethod(CppMethod cppMethod)
-        {
-            throw new NotImplementedException();
+            foreach (CppParameter parameter in cppMethod.Parameters)
+            {
+                parameter.Visit(this);
+            }
+
+            cppMethod.ReturnType.Visit(this);
+
+            return true;
         }
 
         public virtual bool VisitCppElement(CppElement cppElement)
         {
-            throw new NotImplementedException();
+            return !AlreadyVisited(cppElement);
         }
 
         public virtual bool VisitCppEnumItem(CppEnumItem cppEnumItem)
         {
-            throw new NotImplementedException();
+            if (!VisitCppElement(cppEnumItem))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual bool VisitCppInclude(CppInclude cppInclude)
         {
-            throw new NotImplementedException();
+            if (!VisitCppElement(cppInclude))
+            {
+                return false;
+            }
+
+            foreach (CppClass cppClass in cppInclude.Classes)
+            {
+                cppClass.Visit(this);
+            }
+
+            foreach (CppDefine cppDefine in cppInclude.Macros)
+            {
+                cppDefine.Visit(this);
+            }
+
+            foreach (CppInterface cppInterface in cppInclude.Interfaces)
+            {
+                cppInterface.Visit(this);
+            }
+
+            foreach (CppFunction cppFunction in cppInclude.Functions)
+            {
+                cppFunction.Visit(this);
+            }
+
+            foreach (CppStruct cppStruct in cppInclude.Structs)
+            {
+                cppStruct.Visit(this);
+            }
+
+            foreach (CppEnum cppEnum in cppInclude.Enums)
+            {
+                cppEnum.Visit(this);
+            }
+
+            foreach (CppConstant cppConstant in cppInclude.Constants)
+            {
+                cppConstant.Visit(this);
+            }
+
+            return true;
         }
 
         public virtual bool VisitCppModule(CppModule cppModule)
         {
-            throw new NotImplementedException();
+            if (!VisitCppElement(cppModule))
+            {
+                return false;
+            }
+
+            foreach (CppInclude cppInclude in cppModule.Includes)
+            {
+                cppInclude.Visit(this);
+            }
+
+            return true;
         }
 
         #endregion
