@@ -24,6 +24,7 @@ using System;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 using NodePylonGen.Generator.Rules;
+using System.Collections.Generic;
 
 namespace NodePylonGen.Generator
 {
@@ -49,6 +50,31 @@ namespace NodePylonGen.Generator
         public void ApplyRules()
         {
        
+        }
+
+        public string GetIncludePathOfUnit(CppInclude unit)
+        {
+            IncludeMapping includeOfUnit = null;
+
+            IEnumerable<ConfigMapping> configFilesLoaded = ConfigContext.ConfigFilesLoaded;
+            foreach (ConfigMapping configFileLoad in configFilesLoaded)
+            {
+                foreach (IncludeMapping include in configFileLoad.Includes)
+                {
+                    if (include.Id == unit.Name)
+                    {
+                        includeOfUnit = include;
+                        break;
+                    }
+                }
+
+                if (includeOfUnit != null)
+                {
+                    break;
+                }
+            }
+
+            return (includeOfUnit != null) ? includeOfUnit.File : "invalid";
         }
     }
 }

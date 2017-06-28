@@ -415,10 +415,51 @@ namespace NodePylonGen.Parser
                     // Check if cppElement was parsed
                     if (cppElement != null)
                     {
+                        // Parse complete namespace
+                        XAttribute contextAttribute = xElement.Attribute("context");
+                        if ((contextAttribute != null) && string.IsNullOrEmpty(cppElement.Namespace))
+                        {
+                            XElement parentContext = mapIdToXElement[contextAttribute.Value];
+                            if (parentContext != null)
+                            {
+                                cppElement.Namespace = ParseNamespace(parentContext);
+                            }
+                        }
+
                         currentCppInclude.Add(cppElement);
                     }
                 }
             }
+        }
+
+        private string ParseNamespace(XElement xElement, Stack<string> namespaceNames = null)
+        {
+            if (namespaceNames == null)
+            {
+                namespaceNames = new Stack<string>();
+            }
+
+            XAttribute contextAttribute = xElement.Attribute("context");
+            if (contextAttribute != null)
+            {
+                XElement parentContext = mapIdToXElement[contextAttribute.Value];
+                string parentElementName = ((parentContext != null) ? parentContext.Name.LocalName : string.Empty);
+                if (parentElementName == StringEnum.GetStringValue(CastXMLTag.Namespace))
+                {
+                    ParseNamespace(parentContext, namespaceNames);
+                }
+            }
+
+            if (xElement.Name.LocalName == StringEnum.GetStringValue(CastXMLTag.Namespace))
+            {
+                string nameSpaceName = xElement.Attribute("name").Value;
+                if (nameSpaceName != "::")
+                {
+                    namespaceNames.Push(nameSpaceName);
+                }
+            }
+
+            return "::" + string.Join("::", namespaceNames.Reverse().ToArray());
         }
 
         /// <summary>

@@ -166,7 +166,23 @@ namespace NodePylonGen
             // Generate wrapper code
             List<GeneratorOutput> outputs = generator.GenerateCode();
 
-            
+            SaveCode(outputs);
+
+
+        }
+
+        private void SaveCode(IEnumerable<GeneratorOutput> outputs)
+        {
+            foreach (var output in outputs)
+            {
+                foreach (var template in output.Outputs)
+                {
+                    var filePath = template.FilePath;
+
+                    File.WriteAllText(filePath, template.Generate());
+                    log.Info("Generated '" + filePath + "'");
+                }
+            }
         }
     }
 }

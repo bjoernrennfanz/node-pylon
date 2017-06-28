@@ -79,7 +79,9 @@
     <Compile Include="Generator\Generators\NodeJS\NodeJSHeaders.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
-    <Compile Include="Generator\Utils\Blockgenerator.cs" />
+    <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
+    <Compile Include="Generator\Utils\BlockGenerator.cs" />
+    <Compile Include="Generator\Utils\CommentGenerator.cs" />
     <Compile Include="Parser\Model\CppElementVisitor.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSGenerator.cs" />
     <Compile Include="Generator\Rules\CppIncludeRule.cs" />

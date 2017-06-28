@@ -140,7 +140,7 @@ namespace NodePylonGen.Generator
                 {
                     return;
                 }
-                    
+
                 foreach (CodeGenerator template in templates)
                 {
                     template.Process();

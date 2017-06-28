@@ -36,6 +36,12 @@ namespace NodePylonGen.Parser.Model
         public string Name { get; set; }
 
         /// <summary>
+        /// Gets or sets the namespace.
+        /// </summary>
+        [XmlAttribute("namespace")]
+        public string Namespace { get; set; }
+
+        /// <summary>
         /// Gets or sets the id.
         /// </summary>
         [XmlElement("id")]
