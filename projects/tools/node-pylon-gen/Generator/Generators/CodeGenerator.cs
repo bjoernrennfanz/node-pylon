@@ -21,59 +21,42 @@
 // SOFTWARE.
 
 using NodePylonGen.Config;
+using NodePylonGen.Generator.Model;
 using NodePylonGen.Generator.Utils;
-using NodePylonGen.Parser.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace NodePylonGen.Generator.Generators
 {
-    public abstract class CodeGenerator : BlockGenerator, ICppElementVisitor<bool>
+    public abstract class CodeGenerator : BlockGenerator
     {
         public BindingContext Context { get; }
-        public List<CppInclude> Units { get; }
+        public List<TranslationUnit> TranslationUnits { get; }
 
-        public CppInclude Unit => Units[0];
+        public TranslationUnit TranslationUnit => TranslationUnits[0];
 
         public abstract string FileExtension { get; }
         public virtual string FilePath
         {
             get
             {
-                ConfigMapping configOfUnit = null;
-                IEnumerable<ConfigMapping> configFilesLoaded = Context.ConfigContext.ConfigFilesLoaded;
-                
-                foreach (ConfigMapping configFileLoad in configFilesLoaded)
-                {
-                    foreach(IncludeMapping include in configFileLoad.Includes)
-                    {
-                        if (include.Id == Unit.Name)
-                        {
-                            configOfUnit = configFileLoad;
-                            break;
-                        }
-                    }
+                string fileName = TranslationUnit.FileNameWithoutExtension + "." + FileExtension;
+                string filePath = Path.GetDirectoryName(TranslationUnit.FilePath);
 
-                    if (configOfUnit != null)
-                    {
-                        break;
-                    }
-                }
-
-                return ((configOfUnit != null) ? Path.Combine(Path.GetDirectoryName(configOfUnit.AbsoluteFilePath), Unit.Name) : Unit.Name) + "." + FileExtension;
+                return Path.Combine( filePath, fileName);
             }
         }
 
-        protected CodeGenerator(BindingContext context, CppInclude unit)
-            : this(context, new List<CppInclude> { unit })
+        protected CodeGenerator(BindingContext context, TranslationUnit unit)
+            : this(context, new List<TranslationUnit> { unit })
         {
         }
 
-        protected CodeGenerator(BindingContext context, IEnumerable<CppInclude> units)
+        protected CodeGenerator(BindingContext context, IEnumerable<TranslationUnit> units)
         {
             Context = context;
-            Units = new List<CppInclude>(units);
+            TranslationUnits = new List<TranslationUnit>(units);
         }
 
         public abstract void Process();
@@ -164,94 +147,5 @@ namespace NodePylonGen.Generator.Generators
             GenerateMultiLineComment(lines, type);
             PopBlock();
         }
-
-        #region ICppElementVisitor
-
-        public bool VisitCppBase(CppBase cppBase)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppClass(CppClass cppClass)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppConstant(CppConstant cppConstant)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppConstructor(CppConstructor cppConstructor)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppDefine(CppDefine cppDefine)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppElement(CppElement cppElement)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppEnum(CppEnum cppEnum)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppEnumItem(CppEnumItem cppEnumItem)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppField(CppField cppField)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppFunction(CppFunction cppFunction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppInclude(CppInclude cppInclude)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppInterface(CppInterface cppInterface)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppMethod(CppMethod cppMethod)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppModule(CppModule cppModule)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppParameter(CppParameter cppParameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppStruct(CppStruct cppStruct)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VisitCppType(CppType cppType)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 }

@@ -30,6 +30,27 @@ namespace NodePylonGen.Parser.Model
     public abstract class CppElement
     {
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CppElement()
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        public CppElement(CppElement otherCppElement)
+        {
+            Name = otherCppElement.Name;
+            Namespace = otherCppElement.Namespace;
+            Id = otherCppElement.Namespace;
+            Description = otherCppElement.Description;
+            Remarks = otherCppElement.Remarks;
+            Parent = otherCppElement.Parent;
+            Items = otherCppElement.Items;
+        }
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [XmlAttribute("name")]
@@ -64,12 +85,6 @@ namespace NodePylonGen.Parser.Model
         /// </summary>
         [XmlIgnore]
         public CppElement Parent { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tag.
-        /// </summary>
-        [XmlIgnore]
-        public object Tag { get; set; }
 
         /// <summary>
         /// Gets the parent include.
@@ -174,14 +189,6 @@ namespace NodePylonGen.Parser.Model
         public bool IsEmpty
         {
             get { return Items == null || Items.Count == 0; }
-        }
-
-        /// <summary>
-        /// Get the tag or new instance of given type
-        /// </summary>
-        public T GetTagOrDefault<T>() where T : new()
-        {
-            return (T)(Tag ?? new T());
         }
 
         /// <summary>

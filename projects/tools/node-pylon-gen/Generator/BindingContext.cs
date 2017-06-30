@@ -20,18 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 using NodePylonGen.Generator.Rules;
 using System.Collections.Generic;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator
 {
     public class BindingContext
     {
-        public ConfigMapping ConfigContext { get; private set; }
-        public CppModule ModuleContext { get; private set; }
+        public ConfigMapping ConfigurationContext { get; private set; }
+        public TranslationUnitContext TranslationUnitContext { get; private set; }
 
         public GeneratorType GeneratorKind { get; internal set; }
 
@@ -41,40 +41,15 @@ namespace NodePylonGen.Generator
         public RulesBuilder<CppIncludeRule> CppIncludeRules { get; private set; }
         //public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
 
-        public BindingContext(ConfigMapping configContext, CppModule moduleContext)
+        public BindingContext(ConfigMapping configurationContext, CppModule moduleContext)
         {
-            ConfigContext = configContext;
-            ModuleContext = moduleContext;
+            TranslationUnitContext = new TranslationUnitContext(configurationContext, moduleContext);
+            ConfigurationContext = configurationContext;
         }
 
         public void ApplyRules()
         {
        
-        }
-
-        public string GetIncludePathOfUnit(CppInclude unit)
-        {
-            IncludeMapping includeOfUnit = null;
-
-            IEnumerable<ConfigMapping> configFilesLoaded = ConfigContext.ConfigFilesLoaded;
-            foreach (ConfigMapping configFileLoad in configFilesLoaded)
-            {
-                foreach (IncludeMapping include in configFileLoad.Includes)
-                {
-                    if (include.Id == unit.Name)
-                    {
-                        includeOfUnit = include;
-                        break;
-                    }
-                }
-
-                if (includeOfUnit != null)
-                {
-                    break;
-                }
-            }
-
-            return (includeOfUnit != null) ? includeOfUnit.File : "invalid";
         }
     }
 }

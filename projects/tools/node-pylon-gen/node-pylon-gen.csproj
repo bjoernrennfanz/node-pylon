@@ -27,6 +27,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -80,6 +82,12 @@
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
+    <Compile Include="Generator\Model\Declaration.cs" />
+    <Compile Include="Generator\Model\DeclarationVisitor.cs" />
+    <Compile Include="Generator\Model\Namespace.cs" />
+    <Compile Include="Generator\Model\Reference.cs" />
+    <Compile Include="Generator\Model\TranslationUnit.cs" />
+    <Compile Include="Generator\Model\TranslationUnitContext.cs" />
     <Compile Include="Generator\Utils\BlockGenerator.cs" />
     <Compile Include="Generator\Utils\CommentGenerator.cs" />
     <Compile Include="Parser\Model\CppElementVisitor.cs" />
@@ -131,6 +139,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\packages\Baseclass.Contrib.Nuget.Output.2.3.0\build\net40\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('..\..\..\packages\Baseclass.Contrib.Nuget.Output.2.3.0\build\net40\Baseclass.Contrib.Nuget.Output.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\Baseclass.Contrib.Nuget.Output.2.3.0\build\net40\Baseclass.Contrib.Nuget.Output.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Baseclass.Contrib.Nuget.Output.2.3.0\build\net40\Baseclass.Contrib.Nuget.Output.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

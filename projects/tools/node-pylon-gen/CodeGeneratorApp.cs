@@ -159,7 +159,7 @@ namespace NodePylonGen
             // Run the code generation process
             NodeJSGenerator generator = new NodeJSGenerator(config, mainModule);
 
-            // Setup and process some rules
+            // Setup rules and process code 
             generator.SetupCodeRules();
             generator.ProcessCode();
 
@@ -167,8 +167,6 @@ namespace NodePylonGen
             List<GeneratorOutput> outputs = generator.GenerateCode();
 
             SaveCode(outputs);
-
-
         }
 
         private void SaveCode(IEnumerable<GeneratorOutput> outputs)

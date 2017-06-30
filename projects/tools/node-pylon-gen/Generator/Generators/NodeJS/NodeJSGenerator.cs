@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -44,7 +45,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             return true;
         }
 
-        protected override List<CodeGenerator> Generate(IEnumerable<CppInclude> units)
+        protected override List<CodeGenerator> Generate(IEnumerable<TranslationUnit> units)
         {
             List<CodeGenerator> outputs = new List<CodeGenerator>();
 

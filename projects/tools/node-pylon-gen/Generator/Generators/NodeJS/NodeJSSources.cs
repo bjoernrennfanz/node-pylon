@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using NodePylonGen.Parser.Model;
 using NodePylonGen.Generator.Utils;
 using System.IO;
-using System;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -33,7 +33,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
     /// </summary>
     public class NodeJSSources : NodeJSTemplate
     {
-        public NodeJSSources(BindingContext context, IEnumerable<CppInclude> units)
+        public NodeJSSources(BindingContext context, IEnumerable<TranslationUnit> units)
             : base(context, units)
         {
         }
@@ -61,13 +61,13 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             NewLine();
             PopBlock();
 
-            GenerateCppIncludeContext(Unit);
+            GenerateCppIncludeContext(TranslationUnit);
 
             PushBlock(BlockType.Footer);
             PopBlock();
         }
 
-        private void GenerateCppIncludeContext(CppInclude unit)
+        private void GenerateCppIncludeContext(TranslationUnit unit)
         {
             
         }

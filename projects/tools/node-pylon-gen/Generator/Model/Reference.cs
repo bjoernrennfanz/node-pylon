@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
@@ -21,16 +19,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
--->
 
-<config id="pylon-node-module-pylon" xmlns="urn:NodePylonGen.Config">
+namespace NodePylonGen.Generator.Model
+{
+    /// <summary>
+    /// Represents a type reference.
+    /// </summary>
+    public class TypeReference
+    {
+        public Declaration Declaration;
+        public string FowardReference;
 
-	<!-- Module name -->
-	<module>pylon</module>
+        public override string ToString()
+        {
+            if (!string.IsNullOrWhiteSpace(FowardReference))
+            {
+                return FowardReference;
+            }
 
-	<!-- Module includes -->
-	<include file="pylon/DeviceInfo.h" />
-	<include file="pylon/InstantCamera.h" />
-	<include file="pylon/Device.h" alias="PylonDevice"/>
-	<include file="pylon/TlFactory.h" />
-</config>
+            return base.ToString();
+        }
+    }
+}

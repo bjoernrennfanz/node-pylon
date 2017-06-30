@@ -21,8 +21,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using NodePylonGen.Parser.Model;
 using NodePylonGen.Generator.Utils;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -31,7 +31,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
     /// </summary>
     internal class NodeJSHeaders : NodeJSTemplate
     {
-        public NodeJSHeaders(BindingContext context, IEnumerable<CppInclude> units)
+        public NodeJSHeaders(BindingContext context, IEnumerable<TranslationUnit> units)
             : base(context, units)
         {
         }
@@ -54,7 +54,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             // Generate #include forward references.
             PushBlock(BlockType.IncludesForwardReferences);
-            WriteLine("#include <{0}>", Context.GetIncludePathOfUnit(Unit));
+            WriteLine("#include <{0}>", TranslationUnit.IncludePath);
             GenerateIncludeForwardRefernces();
             PopBlock(NewLineType.BeforeNextBlock);
             PopBlock(NewLineType.Always);

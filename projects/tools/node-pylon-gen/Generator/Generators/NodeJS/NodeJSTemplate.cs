@@ -21,8 +21,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using NodePylonGen.Parser.Model;
-using NodePylonGen.Config;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -50,7 +49,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
     {
         public ISet<Include> Includes;
 
-        protected NodeJSTemplate(BindingContext context, IEnumerable<CppInclude> units)
+        protected NodeJSTemplate(BindingContext context, IEnumerable<TranslationUnit> units)
             : base(context, units)
         {
             Includes = new HashSet<Include>();

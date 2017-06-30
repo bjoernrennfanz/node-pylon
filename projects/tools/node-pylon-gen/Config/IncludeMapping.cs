@@ -48,7 +48,17 @@ namespace NodePylonGen.Config
         [XmlIgnore]
         public string Id
         {
-            get { return Path.GetFileNameWithoutExtension(File).ToLower(); }
+            get
+            {
+                // Check if alias is not set
+                if (string.IsNullOrEmpty(Alias))
+                {
+                    // Generate Id from filename
+                    return Path.GetFileNameWithoutExtension(File).ToLower();
+                }
+
+                return Alias;
+            }
         }
 
         /// <summary>
@@ -56,6 +66,12 @@ namespace NodePylonGen.Config
         /// </summary>
         [XmlAttribute("file")]
         public string File { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file to be included.
+        /// </summary>
+        [XmlAttribute("alias")]
+        public string Alias { get; set; }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.

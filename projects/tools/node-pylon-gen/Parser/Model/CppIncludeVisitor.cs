@@ -30,22 +30,13 @@ namespace NodePylonGen.Parser.Model
         bool AlreadyVisited(CppElement element);
     }
 
-    public class CppIncludeVisitorOptions
-    {
-        public bool VisitClassBases = true;
-        public bool VisitClassFields = true;
-        public bool VisitClassMethods = true;
-    }
-
     public abstract class CppIncludeVisitor : ICppElementVisitor<bool>, ICppIncludeVisited
     {
         public ISet<object> Visited { get; private set; }
-        public CppIncludeVisitorOptions VisitOptions { get; private set; }
 
         public CppIncludeVisitor()
         {
             Visited = new HashSet<object>();
-            VisitOptions = new CppIncludeVisitorOptions();
         }
 
         #region Already visited implementation
