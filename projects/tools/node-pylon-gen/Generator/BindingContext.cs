@@ -31,14 +31,14 @@ namespace NodePylonGen.Generator
     public class BindingContext
     {
         public ConfigMapping ConfigurationContext { get; private set; }
-        public TranslationUnitContext TranslationUnitContext { get; private set; }
 
+        public TranslationUnitContext TranslationUnitContext { get; private set; }
         public GeneratorType GeneratorKind { get; internal set; }
 
         public bool IsNodeJSGenerator => GeneratorKind == GeneratorType.NodeJS;
         public bool IsJavaGenerator => GeneratorKind == GeneratorType.Java;
 
-        public RulesBuilder<CppIncludeRule> CppIncludeRules { get; private set; }
+        public RulesBuilder<TranslationUnitRule> TranslationUnitRules { get; private set; }
         //public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
 
         public BindingContext(ConfigMapping configurationContext, CppModule moduleContext)

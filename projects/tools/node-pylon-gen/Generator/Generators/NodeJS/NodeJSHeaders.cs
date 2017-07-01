@@ -67,7 +67,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public void GenerateIncludeForwardRefernces()
         {
-            
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext);
+            typeReferenceCollector.Process(TranslationUnit, filterNamespaces: false);
+
+
         }
 
     }

@@ -21,17 +21,20 @@
 // SOFTWARE.
 
 using NodePylonGen.Parser.Model;
+using System.Collections.Generic;
 
 namespace NodePylonGen.Generator.Model
 {
     public abstract class Declaration : CppElement
     {
-        #region Constructors
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Declaration()
+        {
+            Items = new List<CppElement>();
+        }
 
-
-        #endregion
-
-        
         private DeclarationContext declarationNamespace;
         public DeclarationContext OriginalNamespace;
 
@@ -72,6 +75,23 @@ namespace NodePylonGen.Generator.Model
             }
         }
 
+        /// <summary>
+        /// The effective name of a declaration is the logical name
+        /// </summary>
+        public virtual string LogicalName
+        {
+            get { return Name; }
+        }
+
+        /// <summary>
+        /// The effective original name of a declaration is the 
+        /// logical original name for the declaration.
+        /// </summary>
+        public virtual string LogicalOriginalName
+        {
+            get { return OriginalName; }
+        }
+
         public TranslationUnit TranslationUnit
         {
             get
@@ -89,7 +109,7 @@ namespace NodePylonGen.Generator.Model
 
         public override T Visit<T>(ICppElementVisitor<T> visitor)
         {
-            return visitor.VisitCppElement(this);
+            return Visit<T>(visitor as IDeclarationVisitor<T>);
         }
 
         public abstract T Visit<T>(IDeclarationVisitor<T> visitor);
@@ -103,6 +123,7 @@ namespace NodePylonGen.Generator.Model
     public interface IDeclarationVisitor<out T> : ICppElementVisitor<T>
     {
         T VisitDeclaration(Declaration declaration);
+        T VisitDeclarationContext(DeclarationContext context);
         T VisitNamespace(Namespace declarationNamespace);
         T VisitTranslationUnit(TranslationUnit unit);
     }

@@ -83,7 +83,8 @@
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
     <Compile Include="Generator\Model\Declaration.cs" />
-    <Compile Include="Generator\Model\DeclarationVisitor.cs" />
+    <Compile Include="Generator\Model\DeclarationIterator.cs" />
+    <Compile Include="Generator\Model\TranslationUnitVisitor.cs" />
     <Compile Include="Generator\Model\Namespace.cs" />
     <Compile Include="Generator\Model\Reference.cs" />
     <Compile Include="Generator\Model\TranslationUnit.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="Generator\Utils\CommentGenerator.cs" />
     <Compile Include="Parser\Model\CppElementVisitor.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSGenerator.cs" />
-    <Compile Include="Generator\Rules\CppIncludeRule.cs" />
+    <Compile Include="Generator\Rules\TranslationUnitRule.cs" />
     <Compile Include="Generator\Rules\RulesBuilder.cs" />
     <Compile Include="Generator\Utils\ITextGenerator.cs" />
     <Compile Include="Generator\Utils\TextGenerator.cs" />

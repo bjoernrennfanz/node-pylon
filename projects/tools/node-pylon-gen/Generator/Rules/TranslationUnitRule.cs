@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Parser.Model;
+using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Rules
 {
-    public class CppIncludeRule : CppIncludeVisitor
+    public class TranslationUnitRule : TranslationUnitVisitor
     {
         public BindingContext Context { get; set; }
     }

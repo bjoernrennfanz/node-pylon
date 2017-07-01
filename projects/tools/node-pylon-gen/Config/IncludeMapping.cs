@@ -48,17 +48,7 @@ namespace NodePylonGen.Config
         [XmlIgnore]
         public string Id
         {
-            get
-            {
-                // Check if alias is not set
-                if (string.IsNullOrEmpty(Alias))
-                {
-                    // Generate Id from filename
-                    return Path.GetFileNameWithoutExtension(File).ToLower();
-                }
-
-                return Alias;
-            }
+            get { return Path.GetFileNameWithoutExtension(File).ToLower(); }
         }
 
         /// <summary>

@@ -46,9 +46,9 @@ namespace NodePylonGen.Generator.Rules
         /// </summary>
         public void AddRule(T rule)
         {
-            if (rule is CppIncludeRule)
+            if (rule is TranslationUnitRule)
             {
-                (rule as CppIncludeRule).Context = Context;
+                (rule as TranslationUnitRule).Context = Context;
             }
 
             Rules.Add(rule);
@@ -57,7 +57,7 @@ namespace NodePylonGen.Generator.Rules
         /// <summary>
         /// Finds a previously-added rule of the given type.
         /// </summary>
-        public U FindRule<U>() where U : CppIncludeRule
+        public U FindRule<U>() where U : TranslationUnitRule
         {
             return Rules.OfType<U>().Select(rule => rule as U).FirstOrDefault();
         }
