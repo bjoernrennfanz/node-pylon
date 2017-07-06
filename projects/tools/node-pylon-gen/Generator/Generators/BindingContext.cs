@@ -20,21 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using CppSharp.AST;
+using NodePylonGen.Config;
+using NodePylonGen.Parser.Model;
 
-namespace NodePylonGen.Generator.Utils
+namespace NodePylonGen.Generator
 {
-    public static class StringHelpers
+    public class BindingContext : CppSharp.Generators.BindingContext
     {
+        public ConfigMapping ConfigurationContext { get; private set; }
+
         /// <summary>
-        /// Special version of spilt that keeps the delemiters
+        /// Gets the driver options of this instance
         /// </summary>
-        public static IEnumerable<string> SplitAndKeep(this string s, string seperator)
+        public new DriverOptions Options { get; private set; }
+
+        public BindingContext(ConfigMapping configurationContext, DriverOptions driverOptions, CppModule moduleContext)
+            : base(driverOptions)
         {
-            string[] obj = s.Split(new[] { seperator }, StringSplitOptions.None);
-            return obj.Select((t, i) => i == obj.Length - 1 ? t : t + seperator);
+            Options = driverOptions;
+
+            ASTContext = new ASTContext();
+            foreach (CppInclude include in moduleContext.Includes)
+            {
+                TranslationUnit unit = ASTContext.FindOrCreateTranslationUnit(include.Name + ".h");
+
+            }
         }
     }
 }

@@ -20,10 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
+using CppSharp.AST;
+using CppSharp.Generators;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
-using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -33,19 +35,19 @@ namespace NodePylonGen.Generator.Generators.NodeJS
     /// </summary>
     public class NodeJSGenerator : Generator
     {
-        public NodeJSGenerator(ConfigMapping config, CppModule mainModule)
-            : base(new BindingContext(config, mainModule))
+        public NodeJSGenerator(ConfigMapping config, DriverOptions driverOptions, CppModule mainModule)
+            : base(new BindingContext(config, driverOptions, mainModule))
         {
             // Setup generator type
-            Context.GeneratorKind = GeneratorType.NodeJS;
+            Context.Options.GeneratorKind = GeneratorType.NodeJS;
         }
 
-        protected override bool SetupRules()
+        public override bool SetupPasses()
         {
             return true;
         }
 
-        protected override List<CodeGenerator> Generate(IEnumerable<TranslationUnit> units)
+        public override List<CodeGenerator> GenerateCode(IEnumerable<TranslationUnit> units)
         {
             List<CodeGenerator> outputs = new List<CodeGenerator>();
 
@@ -57,6 +59,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             return outputs;
         }
-    }
 
+        protected override string TypePrinterDelegate(CppSharp.AST.Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

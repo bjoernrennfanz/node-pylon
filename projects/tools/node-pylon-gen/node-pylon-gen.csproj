@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NodePylonGen</RootNamespace>
     <AssemblyName>node-pylon-gen</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -29,6 +29,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,12 +51,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="CppSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+    <Reference Include="CppSharp.AST, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.AST.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CppSharp.Generator, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.Generator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CppSharp.Parser, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.Parser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CppSharp.Parser.CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.Parser.CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CppSharp.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CppSharp.0.8.11\lib\CppSharp.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,29 +96,16 @@
     <Compile Include="Config\IncludeMapping.cs" />
     <Compile Include="Config\ParameterAttributeMapping.cs" />
     <Compile Include="Config\VariableMapping.cs" />
-    <Compile Include="Generator\BindingContext.cs" />
+    <Compile Include="Generator\Generators\BindingContext.cs" />
     <Compile Include="Generator\Generators\CodeGenerator.cs" />
     <Compile Include="Generator\Generator.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSHeaders.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
-    <Compile Include="Generator\Model\Declaration.cs" />
-    <Compile Include="Generator\Model\DeclarationIterator.cs" />
-    <Compile Include="Generator\Model\TranslationUnitVisitor.cs" />
-    <Compile Include="Generator\Model\Namespace.cs" />
-    <Compile Include="Generator\Model\Reference.cs" />
-    <Compile Include="Generator\Model\TranslationUnit.cs" />
-    <Compile Include="Generator\Model\TranslationUnitContext.cs" />
-    <Compile Include="Generator\Utils\BlockGenerator.cs" />
-    <Compile Include="Generator\Utils\CommentGenerator.cs" />
+    <Compile Include="Generator\Options.cs" />
     <Compile Include="Parser\Model\CppElementVisitor.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSGenerator.cs" />
-    <Compile Include="Generator\Rules\TranslationUnitRule.cs" />
-    <Compile Include="Generator\Rules\RulesBuilder.cs" />
-    <Compile Include="Generator\Utils\ITextGenerator.cs" />
-    <Compile Include="Generator\Utils\TextGenerator.cs" />
-    <Compile Include="Generator\Utils\Utils.cs" />
     <Compile Include="Parser\CastXML.cs" />
     <Compile Include="Parser\CppParser.cs" />
     <Compile Include="Parser\Model\CppBase.cs" />

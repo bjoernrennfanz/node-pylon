@@ -20,31 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Config;
-using NodePylonGen.Generator.Model;
-using NodePylonGen.Generator.Utils;
+using CppSharp;
+using CppSharp.AST;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace NodePylonGen.Generator.Generators
 {
-    public abstract class CodeGenerator : BlockGenerator
+    public class CodeGenerator : CppSharp.Generators.CodeGenerator
     {
-        public BindingContext Context { get; }
-        public List<TranslationUnit> TranslationUnits { get; }
+        public new BindingContext Context { get; private set; }
 
-        public TranslationUnit TranslationUnit => TranslationUnits[0];
-
-        public abstract string FileExtension { get; }
-        public virtual string FilePath
+        public override string FileExtension
         {
             get
             {
-                string fileName = TranslationUnit.FileNameWithoutExtension + "." + FileExtension;
-                string filePath = Path.GetDirectoryName(TranslationUnit.FilePath);
-
-                return Path.Combine( filePath, fileName);
+                throw new NotImplementedException();
             }
         }
 
@@ -54,17 +45,16 @@ namespace NodePylonGen.Generator.Generators
         }
 
         protected CodeGenerator(BindingContext context, IEnumerable<TranslationUnit> units)
+            : base(context, units)
         {
             Context = context;
-            TranslationUnits = new List<TranslationUnit>(units);
+            // TranslationUnits = new List<TranslationUnit>(units);
         }
-
-        public abstract void Process();
 
         public override string Generate()
         {
             // Check if generator type is Java
-            if (Context.IsJavaGenerator)
+            if (Context.Options.IsJavaGenerator)
             {
                 return GenerateUnformatted();
             }
@@ -72,28 +62,7 @@ namespace NodePylonGen.Generator.Generators
             return base.Generate();
         }
 
-        public void GenerateMultiLineComment(List<string> lines, CommentType commentType)
-        {
-            string lineCommentPrologue = CommentGenerator.GetLinePrologue(commentType);
-            if (!string.IsNullOrWhiteSpace(lineCommentPrologue))
-            {
-                WriteLine("{0}", lineCommentPrologue);
-            }
-
-            string multiLineCommentPrologue = CommentGenerator.GetMultiLinePrologue(commentType);
-            foreach (var line in lines)
-            {
-                WriteLine("{0} {1}", multiLineCommentPrologue, line);
-            }
-
-            var lineCommentEpilogue = CommentGenerator.GetLineEpilogue(commentType);
-            if (!string.IsNullOrWhiteSpace(lineCommentEpilogue))
-            {
-                WriteLine("{0}", lineCommentEpilogue);
-            }
-        }
-
-        public virtual void GenerateFilePreamble(CommentType type, string generatorName = "pylon-node-gen")
+        public override void GenerateFilePreamble(CommentKind kind, string generatorName = "pylon-node-gen")
         {
             var lines = new List<string>
             {
@@ -103,12 +72,12 @@ namespace NodePylonGen.Generator.Generators
                 "----------------------------------------------------------------------------",
             };
 
-            PushBlock(BlockType.Header);
-            GenerateMultiLineComment(lines, type);
-            PopBlock(NewLineType.BeforeNextBlock);
+            PushBlock(BlockKind.Header);
+            GenerateMultiLineComment(lines, kind);
+            PopBlock(NewLineKind.BeforeNextBlock);
         }
 
-        public virtual void GenerateLegalFilePreamble(CommentType type, string creatorYear = "", string creatorName = "Björn Rennfanz <bjoern@fam-rennfanz.de>")
+        public virtual void GenerateLegalFilePreamble(CommentKind kind, string creatorYear = "", string creatorName = "Björn Rennfanz <bjoern@fam-rennfanz.de>")
         {
             // Check if year is empty
             if (string.IsNullOrEmpty(creatorYear))
@@ -143,9 +112,14 @@ namespace NodePylonGen.Generator.Generators
                 ""
             };
 
-            PushBlock(BlockType.Header);
-            GenerateMultiLineComment(lines, type);
+            PushBlock(BlockKind.Header);
+            GenerateMultiLineComment(lines, kind);
             PopBlock();
+        }
+
+        public override void Process()
+        {
+            throw new NotImplementedException();
         }
     }
 }

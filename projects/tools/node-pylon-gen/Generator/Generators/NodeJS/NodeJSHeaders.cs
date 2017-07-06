@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using CppSharp;
+using CppSharp.AST;
 using System.Collections.Generic;
-using NodePylonGen.Generator.Utils;
-using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -40,10 +40,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public override void Process()
         {
-            GenerateLegalFilePreamble(CommentType.BCPL);
-            GenerateFilePreamble(CommentType.BCPL);
+            GenerateLegalFilePreamble(CommentKind.BCPL);
+            GenerateFilePreamble(CommentKind.BCPL);
             
-            PushBlock(BlockType.Includes);
+            PushBlock(BlockKind.Includes);
             WriteLine("#pragma once");
             NewLine();
 
@@ -53,15 +53,15 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             NewLine();
 
             // Generate #include forward references.
-            PushBlock(BlockType.IncludesForwardReferences);
+            PushBlock(BlockKind.IncludesForwardReferences);
             WriteLine("#include <{0}>", TranslationUnit.IncludePath);
             GenerateIncludeForwardRefernces();
-            PopBlock(NewLineType.BeforeNextBlock);
-            PopBlock(NewLineType.Always);
+            PopBlock(NewLineKind.BeforeNextBlock);
+            PopBlock(NewLineKind.Always);
 
             // using namespace v8;
 
-            PushBlock(BlockType.Footer);
+            PushBlock(BlockKind.Footer);
             PopBlock();
         }
 

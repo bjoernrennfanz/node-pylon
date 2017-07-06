@@ -20,12 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Generator.Generators;
-using NodePylonGen.Generator.Model;
-using NodePylonGen.Parser.Model;
+using CppSharp.AST;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using CodeGenerator = NodePylonGen.Generator.Generators.CodeGenerator;
 
 namespace NodePylonGen.Generator
 {
@@ -54,44 +54,25 @@ namespace NodePylonGen.Generator
         public List<CodeGenerator> Outputs;
     }
 
-    public abstract class Generator
+    public abstract class Generator : CppSharp.Generators.Generator
     {
         /// <summary>
         /// Gets the binding context of this generator instance.
         /// </summary>
-        public BindingContext Context { get; private set; }
+        public new BindingContext Context { get; private set; }
+
+        /// <summary>
+        /// Called when a translation unit is generated.
+        /// </summary>
+        public new Action<GeneratorOutput> OnUnitGenerated = delegate { };
 
         /// <summary>
         /// Construct an new <see cref="Generator"/> instance. 
         /// </summary>
         protected Generator(BindingContext context)
+            : base(context)
         {
             Context = context;
-        }
-
-        /// <summary>
-        /// Called when a translation unit is generated.
-        /// </summary>
-        public Action<GeneratorOutput> OnUnitGenerated = delegate { };
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void SetupCodeRules()
-        {
-            SetupRules();
-        }
-
-        /// <summary>
-        /// Setup any generator-specific rules here.
-        /// </summary>
-        protected abstract bool SetupRules();
-
-        /// <summary>
-        /// Generate the generator-specific outputs for given context.
-        /// </summary>
-        protected virtual void Process()
-        {
         }
 
         /// <summary>
@@ -99,14 +80,9 @@ namespace NodePylonGen.Generator
         /// </summary>
         public void ProcessCode()
         {
-            Context.ApplyRules();
+            Context.RunPasses();
             Process();
         }
-
-        /// <summary>
-        /// Generates the outputs for a given translation unit.
-        /// </summary>
-        protected abstract List<CodeGenerator> Generate(IEnumerable<TranslationUnit> units);
 
         /// <summary>
         /// Generates the source files
@@ -115,19 +91,34 @@ namespace NodePylonGen.Generator
         public List<GeneratorOutput> GenerateCode()
         {
             List<GeneratorOutput> outputs = new List<GeneratorOutput>();
-            List<TranslationUnit> units = Context.TranslationUnitContext.TranslationUnits;
+            //List<TranslationUnit> units = Context.ASTContext.Ge
 
-            if (Context.IsJavaGenerator)
+            if (Context.Options.IsJavaGenerator)
             {
-                GenerateSingleTemplate(outputs, units);
+               // GenerateSingleTemplate(outputs, units);
             }
             else
             {
-                GenerateTemplates(outputs, units);
+                //GenerateTemplates(outputs, units);
             }
             
             return outputs;
         }
+
+        public override List<CppSharp.Generators.CodeGenerator> Generate(IEnumerable<TranslationUnit> units)
+        {
+            List<CodeGenerator> codeGenerators = GenerateCode(units);
+            List<CppSharp.Generators.CodeGenerator> result = new List<CppSharp.Generators.CodeGenerator>();
+
+            foreach (CodeGenerator generator in codeGenerators)
+            {
+                result.Add(generator as CppSharp.Generators.CodeGenerator);
+            }
+
+            return result;
+        }
+
+        public abstract List<CodeGenerator> GenerateCode(IEnumerable<TranslationUnit> units);
 
         /// <summary>
         /// Generate templates for output
@@ -136,7 +127,7 @@ namespace NodePylonGen.Generator
         {
             foreach (TranslationUnit unit in units)
             {
-                List<CodeGenerator> templates = Generate(new[] { unit });
+                List<CodeGenerator> templates = GenerateCode(new[] { unit });
                 if (templates.Count == 0)
                 {
                     return;
@@ -168,7 +159,7 @@ namespace NodePylonGen.Generator
                 GeneratorOutput output = new GeneratorOutput
                 {
                     TranslationUnit = unit,
-                    Outputs = Generate(new[] { unit })
+                    Outputs = GenerateCode(new[] { unit })
                 };
 
                 output.Outputs.FirstOrDefault().Process();

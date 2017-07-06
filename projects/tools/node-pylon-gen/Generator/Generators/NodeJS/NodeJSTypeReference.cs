@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Generator.Model;
 using System.Collections.Generic;
 using NodePylonGen.Config;
+using CppSharp.AST;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -49,7 +49,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         }
     }
 
-    public class NodeJSTypeReferenceCollector : TranslationUnitVisitor
+    public class NodeJSTypeReferenceCollector : AstVisitor
     {
 
         private readonly ConfigMapping ConfigurationContext;
@@ -84,6 +84,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         public void Process(Namespace declNamespace, bool filterNamespaces = false)
         {
             TranslationUnit = declNamespace.TranslationUnit;
+            // TODO
         }
     }
 }

@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using log4net;
-using Mono.Options;
 using NodePylonGen.Config;
 using NodePylonGen.Parser;
 using NodePylonGen.Parser.Model;
@@ -30,8 +29,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NodePylonGen.Generator.Generators.NodeJS;
-using NodePylonGen.Generator;
 using System.Collections.Generic;
+using NodePylonGen.Generator;
+using Mono.Options;
 
 namespace NodePylonGen
 {
@@ -157,19 +157,19 @@ namespace NodePylonGen
             CppModule mainModule = parser.Run();
 
             // Run the code generation process
-            NodeJSGenerator generator = new NodeJSGenerator(config, mainModule);
+            NodeJSGenerator generator = new NodeJSGenerator(config, new DriverOptions(), mainModule);
 
             // Setup rules and process code 
-            generator.SetupCodeRules();
+            generator.SetupPasses();
             generator.ProcessCode();
 
             // Generate wrapper code
-            List<GeneratorOutput> outputs = generator.GenerateCode();
+            List<Generator.GeneratorOutput> outputs = generator.GenerateCode();
 
             SaveCode(outputs);
         }
 
-        private void SaveCode(IEnumerable<GeneratorOutput> outputs)
+        private void SaveCode(IEnumerable<Generator.GeneratorOutput> outputs)
         {
             foreach (var output in outputs)
             {

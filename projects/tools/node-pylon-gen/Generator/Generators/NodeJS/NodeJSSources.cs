@@ -20,11 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using CppSharp;
+using CppSharp.AST;
 using System.Collections.Generic;
-using NodePylonGen.Parser.Model;
-using NodePylonGen.Generator.Utils;
 using System.IO;
-using NodePylonGen.Generator.Model;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -42,20 +41,20 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public override void Process()
         {
-            GenerateLegalFilePreamble(CommentType.BCPL);
-            GenerateFilePreamble(CommentType.BCPL);
+            GenerateLegalFilePreamble(CommentKind.BCPL);
+            GenerateFilePreamble(CommentKind.BCPL);
 
             // Generate name of own include
             string file = Path.GetFileNameWithoutExtension(FilePath).Replace('\\', '/');
 
-            PushBlock(BlockType.Includes);
+            PushBlock(BlockKind.Includes);
             WriteLine("#include \"{0}.h\"", file);
             GenerateForwardReferenceHeaders();
 
             NewLine();
             PopBlock();
 
-            PushBlock(BlockType.Usings);
+            PushBlock(BlockKind.Usings);
             WriteLine("using namespace v8;");
             GenerateNamespaceUsings();
             NewLine();
@@ -63,7 +62,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             GenerateCppIncludeContext(TranslationUnit);
 
-            PushBlock(BlockType.Footer);
+            PushBlock(BlockKind.Footer);
             PopBlock();
         }
 
