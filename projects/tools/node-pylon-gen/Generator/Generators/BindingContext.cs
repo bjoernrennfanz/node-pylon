@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using CppSharp.AST;
 using NodePylonGen.Config;
+using NodePylonGen.Generator.Model;
 using NodePylonGen.Parser.Model;
 
 namespace NodePylonGen.Generator
@@ -38,14 +38,10 @@ namespace NodePylonGen.Generator
         public BindingContext(ConfigMapping configurationContext, DriverOptions driverOptions, CppModule moduleContext)
             : base(driverOptions)
         {
+            ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
+            ConfigurationContext = configurationContext;
+            ASTContext = converter.Convert();
             Options = driverOptions;
-
-            ASTContext = new ASTContext();
-            foreach (CppInclude include in moduleContext.Includes)
-            {
-                TranslationUnit unit = ASTContext.FindOrCreateTranslationUnit(include.Name + ".h");
-
-            }
         }
     }
 }
