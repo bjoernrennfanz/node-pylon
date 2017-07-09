@@ -24,18 +24,23 @@ using CppSharp;
 using CppSharp.AST;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NodePylonGen.Generator.Generators
 {
-    public class CodeGenerator : CppSharp.Generators.CodeGenerator
+    public abstract class CodeGenerator : CppSharp.Generators.CodeGenerator
     {
         public new BindingContext Context { get; private set; }
 
-        public override string FileExtension
+        public new virtual string FilePath
         {
             get
             {
-                throw new NotImplementedException();
+                string path = Path.GetDirectoryName(TranslationUnit.FilePath);
+                string file = TranslationUnit.FileNameWithoutExtension + "." + FileExtension;
+                string filePath = Path.Combine(path, file);
+
+                return filePath;
             }
         }
 
@@ -115,11 +120,6 @@ namespace NodePylonGen.Generator.Generators
             PushBlock(BlockKind.Header);
             GenerateMultiLineComment(lines, kind);
             PopBlock();
-        }
-
-        public override void Process()
-        {
-            throw new NotImplementedException();
         }
     }
 }

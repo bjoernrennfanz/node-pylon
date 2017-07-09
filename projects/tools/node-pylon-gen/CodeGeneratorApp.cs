@@ -164,7 +164,7 @@ namespace NodePylonGen
             generator.ProcessCode();
 
             // Generate wrapper code
-            List<Generator.GeneratorOutput> outputs = generator.GenerateCode();
+            List<GeneratorOutput> outputs = generator.GenerateCode();
 
             SaveCode(outputs);
         }

@@ -91,15 +91,15 @@ namespace NodePylonGen.Generator
         public List<GeneratorOutput> GenerateCode()
         {
             List<GeneratorOutput> outputs = new List<GeneratorOutput>();
-            //List<TranslationUnit> units = Context.ASTContext.Ge
+            List<TranslationUnit> units = Context.ASTContext.TranslationUnits.GetGenerated().ToList();
 
             if (Context.Options.IsJavaGenerator)
             {
-               // GenerateSingleTemplate(outputs, units);
+               GenerateSingleTemplate(outputs, units);
             }
             else
             {
-                //GenerateTemplates(outputs, units);
+               GenerateTemplates(outputs, units);
             }
             
             return outputs;
