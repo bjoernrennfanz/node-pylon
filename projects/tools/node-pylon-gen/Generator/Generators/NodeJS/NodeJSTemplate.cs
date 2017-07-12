@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using CppSharp.AST;
+using System;
 using System.Collections.Generic;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
@@ -34,7 +35,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         }
 
         public string File;
-        //public TranslationUnit TranslationUnit;
+        public TranslationUnit TranslationUnit;
 
         public IncludeType Type;
         public bool InHeader;
@@ -59,5 +60,44 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public abstract override void Process();
 
+        /// <summary>
+        /// Generate using directives
+        /// </summary>
+        protected void GenerateNamespaceUsings()
+        {
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+            typeReferenceCollector.Process(TranslationUnit);
+
+            // Create sorted list of namespaces
+            SortedSet<string> namespaces = new SortedSet<string>(StringComparer.InvariantCulture);
+            foreach (NodeJSTypeReference typeRef in typeReferenceCollector.TypeReferences)
+            {
+                // Check if declaration namespace is set
+                if (typeRef.Declaration.Namespace != null)
+                {
+                    namespaces.Add(typeRef.Declaration.Namespace.ToString());
+                }
+            }
+
+            // Output @namespace lines
+            foreach (string @namespace in namespaces)
+            {
+                WriteLine("using namespace {0};", @namespace);
+            }
+        }
+
+        /// <summary>
+        /// Convert given name to 
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        protected string ConvertToParameterName(string name)
+        {
+            // Generate name for wrapped parameters
+            string convertedName = name.TrimStart('I').TrimStart('C');
+            convertedName = char.ToLowerInvariant(convertedName[0]) + convertedName.Substring(1);
+
+            return convertedName;
+        }
     }
 }

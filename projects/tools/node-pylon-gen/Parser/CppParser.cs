@@ -589,6 +589,13 @@ namespace NodePylonGen.Parser
                     pureVirtual = pureVirtualAttribute.Value;
                 }
 
+                string access = String.Empty;
+                XAttribute accessAttribute = element.Attribute("access");
+                if (accessAttribute != null)
+                {
+                    access = accessAttribute.Value;
+                }
+
                 // Parse method with pure virtual (=0) and that do not override any other methods
                 if (element.Name.LocalName == "Method")
                 {
@@ -604,11 +611,22 @@ namespace NodePylonGen.Parser
                         cppMethod.Override = true;
                     }
 
+                    if (!string.IsNullOrWhiteSpace(access))
+                    {
+                        cppMethod.Access = access;
+                    }
+
                     methods.Add(cppMethod);
                 }
                 else if (element.Name.LocalName == "Constructor")
                 {
                     CppConstructor cppConstructor = ParseConstructor(element);
+
+                    if (!string.IsNullOrWhiteSpace(access))
+                    {
+                        cppConstructor.Access = access;
+                    }
+
                     constructors.Add(cppConstructor);
                 }
             }

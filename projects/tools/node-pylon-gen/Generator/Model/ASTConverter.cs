@@ -1,8 +1,31 @@
-﻿using CppSharp.AST;
+﻿// MIT License
+//
+// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using CppSharp.AST;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static CppSharp.AST.ArrayType;
 
@@ -52,10 +75,41 @@ namespace NodePylonGen.Generator.Model
             }
         }
 
-        private IEnumerable<T> FindTypeDeclRecursive<T>(string typeName) where T : Declaration
+        /// <summary>
+        /// Find parent <see cref="Declaration"/> with given type name. 
+        /// </summary>
+        private List<T> FindTypeDeclRecursive<T>(string typeName, List<Declaration> declarations = null, List<T> foundTypes = null) where T : Declaration
         {
-            foreach(TranslationUnit unit in currentASTContext.)
+            if (foundTypes != null && declarations != null)
+            { 
+                // Loop over all declarations
+                foreach (Declaration declaration in declarations)
+                {
+                    DeclarationContext declarationContext = declaration as DeclarationContext;
+                    if (declarationContext != null)
+                    {
+                        FindTypeDeclRecursive(typeName, declarationContext.Declarations, foundTypes);
+                    }
 
+                    // Check if typename matches
+                    if (declaration.Name == typeName)
+                    {
+                        foundTypes.Add(declaration as T);
+                    }
+                }   
+            }
+            else
+            {
+                foundTypes = new List<T>();
+
+                // Loop over all translation units
+                foreach (TranslationUnit unit in currentASTContext.TranslationUnits)
+                {
+                    foundTypes = FindTypeDeclRecursive<T>(typeName, unit.Declarations, foundTypes);
+                }
+            }
+
+            return foundTypes;
         }
 
         /// <summary>
@@ -85,7 +139,7 @@ namespace NodePylonGen.Generator.Model
                 }
             }
 
-            return (((configOfUnit != null) && (includeOfUnit != null)) ? System.IO.Path.Combine(System.IO.Path.GetDirectoryName(configOfUnit.AbsoluteFilePath), (string.IsNullOrEmpty(includeOfUnit.Alias) ? unit.Name : includeOfUnit.Alias.ToLower())) : "invalid") + ".gen";
+            return (((configOfUnit != null) && (includeOfUnit != null)) ? Path.Combine(Path.GetDirectoryName(configOfUnit.AbsoluteFilePath), (string.IsNullOrEmpty(includeOfUnit.Alias) ? unit.Name : includeOfUnit.Alias.ToLower())) : "invalid") + ".gen";
         }
 
         /// <summary>
@@ -342,7 +396,15 @@ namespace NodePylonGen.Generator.Model
                     method.Name = cppMethod.Name;
                     method.Namespace = @class.Namespace;
 
-                    method.Access = AccessSpecifier.Public;
+                    try
+                    {
+                        method.Access = (AccessSpecifier)Enum.Parse(typeof(AccessSpecifier), cppMethod.Access, true);
+                    }
+                    catch (ArgumentException)
+                    {
+                        method.Access = AccessSpecifier.Internal;
+                    }
+
                     method.IsOverride = cppMethod.Override;
                     method.IsVirtual = cppMethod.Virtual;
 
@@ -369,6 +431,7 @@ namespace NodePylonGen.Generator.Model
             TranslationUnit unit = currentASTContext.FindOrCreateTranslationUnit(filePath);
             unit.Name = cppInclude.Name;
             unit.IncludePath = includePath;
+            unit.Module = new Module(Path.GetFileNameWithoutExtension(filePath) + ".dll");
 
             cppElementToDeclarationMapping.Add(cppInclude, unit);
             return base.VisitCppInclude(cppInclude);
@@ -461,8 +524,12 @@ namespace NodePylonGen.Generator.Model
 
         private bool WalkTagType(string typeName, out CppSharp.AST.Type tagType)
         {
-            //IEnumerable<Declaration> declarations = FindDeclRecursive<Declaration>(typeName);
-            var test = currentASTContext.TranslationUnits.First().FindDeclaration(new[] { typeName });
+            IEnumerable<Declaration> declarations = FindTypeDeclRecursive<Declaration>(typeName);
+            if (declarations.Count() > 0)
+            {
+                tagType = new TagType(declarations.First());
+                return true;
+            }
 
             tagType = null;
             return false;

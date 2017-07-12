@@ -22,7 +22,10 @@
 
 using CppSharp;
 using CppSharp.AST;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -49,7 +52,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             // Generate #include for interop
             WriteLine("#include <node.h>");
-            WriteLine("#include <nan.h>");
+            WriteLine("#include <nan.h>");           
             NewLine();
 
             // Generate #include forward references.
@@ -59,7 +62,13 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             PopBlock(NewLineKind.BeforeNextBlock);
             PopBlock(NewLineKind.Always);
 
-            // using namespace v8;
+            // Generate namespace for forward references.
+            PushBlock(BlockKind.Usings);
+            WriteLine("using namespace v8;");
+            GenerateNamespaceUsings();
+            PopBlock(NewLineKind.BeforeNextBlock);
+
+            GenerateWrapperClass();
 
             PushBlock(BlockKind.Footer);
             PopBlock();
@@ -67,11 +76,184 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public void GenerateIncludeForwardRefernces()
         {
-            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext);
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
             typeReferenceCollector.Process(TranslationUnit, filterNamespaces: false);
 
+            // Filter for needed includes
+            SortedSet<string> includes = new SortedSet<string>(StringComparer.InvariantCulture);
+            foreach (NodeJSTypeReference typeRef in typeReferenceCollector.TypeReferences)
+            {
+                if (typeRef.Include.TranslationUnit == TranslationUnit)
+                    continue;
 
+                if (typeRef.Include.File == TranslationUnit.FileName)
+                    continue;
+
+                Include include = typeRef.Include;
+                TranslationUnit unit = include.TranslationUnit;
+
+                if (unit != null && !unit.IsDeclared)
+                    continue;
+
+                if (!string.IsNullOrEmpty(include.File) && include.InHeader)
+                    includes.Add(include.ToString());
+            }
+
+            // Output include lines
+            foreach (string include in includes)
+            {
+                WriteLine(include);
+            }
         }
 
+        public void GenerateWrapperClass()
+        {
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+            typeReferenceCollector.Process(TranslationUnit);
+
+            List<Function> functions = typeReferenceCollector.TypeReferences
+                .Where(item => ((item.Declaration is Function) && !(item.Declaration is Method)))
+                .Select(item => item.Declaration as Function).ToList();
+
+            NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
+                .Where(item => item.Declaration is Class)
+                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .FirstOrDefault();
+
+            string className = string.Empty;
+            string classNameWrap = string.Empty;
+            string classNameWrapperMember = string.Empty;
+
+            // Generate wrapper class name
+            if (classToWrapTypeReference != null)
+            {
+                className = (classToWrapTypeReference.Declaration as Class).Name;
+                classNameWrap = className.TrimStart('I').TrimStart('C') + "Wrap";
+                classNameWrapperMember = "m_" + className.TrimStart('I').TrimStart('C');
+            }
+            else
+            {
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                classNameWrap = textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension) + "Wrap";
+            }
+
+            // Generate class stub
+            PushBlock(BlockKind.Class);
+            WriteLine("class {0} : public node::ObjectWrap", classNameWrap);
+            WriteLine("{");
+            WriteLine("public:");
+            PushIndent();
+
+            // Write
+            WriteLine("static NAN_MODULE_INIT(Initialize);");
+
+            // Check if we have an class to warp
+            if (!string.IsNullOrEmpty(className))
+            {
+                // Generate prototype templates
+                WriteLine("static Nan::Persistent<v8::FunctionTemplate> prototype;");
+                WriteLine("");
+
+                // Create get wrapped method
+                PushBlock(BlockKind.Method);
+                WriteLine("{0}* GetWrapped() const", className);
+                WriteStartBraceIndent();
+                WriteLine("return {0}", classNameWrapperMember);
+                PopIndent();
+                WriteLine("};");
+                PopBlock(NewLineKind.BeforeNextBlock);
+
+                // Create get wrapped method
+                PushBlock(BlockKind.Method);
+                WriteLine("void SetWrapped({0}* {1})", className, ConvertToParameterName(className));
+                WriteStartBraceIndent();
+                WriteLine("{0} = {1};", classNameWrapperMember, ConvertToParameterName(className));
+                PopIndent();
+                WriteLine("};");
+                PopBlock(NewLineKind.BeforeNextBlock);
+
+                // New instance prototype
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("static v8::Handle<v8::Value> NewInstance({0}* {1});", className, ConvertToParameterName(className));
+                PopBlock(NewLineKind.Always);
+            }
+            else
+            {
+                WriteLine("");
+            }
+
+            // Private members prototypes
+            PopIndent();
+            WriteLine("private:");
+            PushIndent();
+
+            // Check if we have an class to warp
+            if (!string.IsNullOrEmpty(className))
+            {
+                // Constructor & destructor of wrapper class
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("static Nan::Persistent<v8::Function> constructor;");
+                WriteLine("{0}(Nan::NAN_METHOD_ARGS_TYPE info);", classNameWrap);
+                WriteLine("~{0}();", classNameWrap);
+                WriteLine("static NAN_METHOD(New);");
+                PopBlock(NewLineKind.Always);
+
+                // Methods
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Wrapped methods");
+                SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+                foreach (Method method in (classToWrapTypeReference.Declaration as Class).Methods)
+                {
+                    // Skip constructors
+                    if (method.IsConstructor)
+                        continue;
+
+                    // Skip on other access level than public
+                    if (method.Access != AccessSpecifier.Public)
+                        continue;
+
+                    // Process method only once
+                    if (methodsProcessed.Contains(method.Name))
+                        continue;
+
+                    // Output method declaration
+                    WriteLine("static NAN_METHOD({0});", method.Name);
+                    methodsProcessed.Add(method.Name);
+                }
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+
+            // Functions
+            if (functions.Count > 0)
+            {
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Wrapped functions");
+                foreach (Function function in functions)
+                {
+                    // Skip on other access level than public
+                    if (function.Access != AccessSpecifier.Public)
+                        continue;
+
+                    // Output method declaration
+                    WriteLine("static NAN_METHOD({0});", function.Name);
+                }
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+
+            // Wrapped object
+            if (!string.IsNullOrEmpty(className))
+            {
+                // Wrapped object
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Wrapped object");
+                WriteLine("{0}* {1};", className, classNameWrapperMember);
+                PopBlock();
+            }
+
+            PopIndent();
+            WriteLine("};");
+
+            PopBlock(NewLineKind.BeforeNextBlock);
+        }
     }
 }

@@ -40,6 +40,12 @@ namespace NodePylonGen.Parser.Model
         public int Offset { get; set; }
 
         /// <summary>
+        /// Gets or sets the access.
+        /// </summary>
+        [XmlAttribute("access")]
+        public string Access { get; set; }
+
+        /// <summary>
         /// Gets the parameters.
         /// </summary>
         [XmlIgnore]
@@ -54,6 +60,13 @@ namespace NodePylonGen.Parser.Model
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
+
+            // Check if access is set
+            if (!string.IsNullOrEmpty(Access))
+            {
+                builder.Append(Access);
+                builder.Append(" ");
+            }
 
             // Check if parent is interface or class
             if (Parent is CppInterface || Parent is CppClass)

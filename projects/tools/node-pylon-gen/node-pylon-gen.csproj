@@ -104,6 +104,7 @@
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
     <Compile Include="Generator\Model\ASTConverter.cs" />
+    <Compile Include="Generator\Model\Types\TypeMap.cs" />
     <Compile Include="Generator\Options.cs" />
     <Compile Include="Parser\Model\CppElementVisitor.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSGenerator.cs" />

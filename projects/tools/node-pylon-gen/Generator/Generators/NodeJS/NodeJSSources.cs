@@ -23,7 +23,11 @@
 using CppSharp;
 using CppSharp.AST;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System;
+using NodePylonGen.Config;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -45,39 +49,97 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             GenerateFilePreamble(CommentKind.BCPL);
 
             // Generate name of own include
-            string file = Path.GetFileNameWithoutExtension(FilePath).Replace('\\', '/');
-
             PushBlock(BlockKind.Includes);
-            WriteLine("#include \"{0}.h\"", file);
-            GenerateForwardReferenceHeaders();
+            WriteLine("#include \"{0}.h\"", Path.GetFileNameWithoutExtension(FilePath).Replace('\\', '/'));
+            WriteLine("#include \"{0}.h\"", GetMarshalHelperPath("pylon_v8"));
+            PopBlock(NewLineKind.BeforeNextBlock);
 
-            NewLine();
-            PopBlock();
-
+            // Generate namespace for forward references.
             PushBlock(BlockKind.Usings);
             WriteLine("using namespace v8;");
             GenerateNamespaceUsings();
-            NewLine();
-            PopBlock();
+            PopBlock(NewLineKind.BeforeNextBlock);
 
-            GenerateCppIncludeContext(TranslationUnit);
+            // Generate wrapper class implementations
+            GenerateWrapperClassImplementations();
 
             PushBlock(BlockKind.Footer);
             PopBlock();
         }
 
-        private void GenerateCppIncludeContext(TranslationUnit unit)
+        private string GetMarshalHelperPath(string wrapperHeader)
         {
-            
+            ConfigMapping pylonNodeConfig = Context.ConfigurationContext.ConfigFilesLoaded.Where(config => config.Id == "pylon-node").FirstOrDefault();
+            string relativNodePylonRootPath = PathHelpers.GetRelativePath(Path.GetDirectoryName(TranslationUnit.FilePath), Path.GetDirectoryName(pylonNodeConfig.AbsoluteFilePath));
+
+            return Path.Combine(relativNodePylonRootPath, wrapperHeader);
         }
 
-        private void GenerateForwardReferenceHeaders()
+        private void GenerateWrapperClassImplementations()
         {
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+            typeReferenceCollector.Process(TranslationUnit);
+
+            // Find own class to wrap
+            NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
+                .Where(item => item.Declaration is Class)
+                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .FirstOrDefault();
+
+            string className = string.Empty;
+            string classNameWrap = string.Empty;
+
+            // Generate wrapper class name
+            if (classToWrapTypeReference != null)
+            {
+                className = (classToWrapTypeReference.Declaration as Class).Name;
+                classNameWrap = className.TrimStart('I').TrimStart('C') + "Wrap";
+            }
+            else
+            {
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                classNameWrap = textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension) + "Wrap";
+            }
+
+            // Generate NodeJS wrapper prototypes
+            GenerateWrapperClassPersistentFunctions(classNameWrap);
+
+            if (classToWrapTypeReference != null)
+            {
+                // Generate constructors
+                GenerateWrapperClassConstructors(classToWrapTypeReference, typeReferenceCollector);
+            }
+
         }
 
-        private void GenerateNamespaceUsings()
+        private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference, NodeJSTypeReferenceCollector typeReferenceCollector)
         {
-            
+            Class classToWrap = classToWrapTypeReference.Declaration as Class;
+            IEnumerable<Method> constructors = classToWrap.Constructors;
+
+            string classNameWrap = classToWrap.Name.TrimStart('I').TrimStart('C') + "Wrap";
+            string classNameWrapperMember = "m_" + classToWrap.Name.TrimStart('I').TrimStart('C');
+
+            PushBlock(BlockKind.Method);
+            WriteLine("// Supported implementations");
+
+            WriteLine("{0}::{0}(Nan::NAN_METHOD_ARGS_TYPE info)", classNameWrap);
+            WriteLine("  : {0}(NULL)", classNameWrapperMember);
+            WriteStartBraceIndent();
+
+
+
+
+            WriteCloseBraceIndent();
+            PopBlock(NewLineKind.BeforeNextBlock);
+        }
+
+        private void GenerateWrapperClassPersistentFunctions(string classNameWrap)
+        {
+            PushBlock(BlockKind.Template);
+            WriteLine("Nan::Persistent<FunctionTemplate> {0}::prototype;", classNameWrap);
+            WriteLine("Nan::Persistent<Function> {0}::constructor;", classNameWrap);
+            PopBlock(NewLineKind.BeforeNextBlock);
         }
     }
 }

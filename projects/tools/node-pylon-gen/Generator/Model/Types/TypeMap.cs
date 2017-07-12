@@ -20,32 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Config;
-using NodePylonGen.Generator.Model;
-using NodePylonGen.Parser.Model;
+using CppSharp.AST;
+using CppSharp.Generators.AST;
+using NodePylonGen.Generator.Generators.NodeJS;
+using System;
 
-namespace NodePylonGen.Generator
+namespace NodePylonGen.Generator.Model.Types
 {
-    public class BindingContext : CppSharp.Generators.BindingContext
+    public class TypeMap : CppSharp.Types.TypeMap
     {
-        public ConfigMapping ConfigurationContext { get; private set; }
-        public CppModule ParserContext { get; private set; }
+        #region NodeJS backend
 
-        /// <summary>
-        /// Gets the driver options of this instance
-        /// </summary>
-        public new DriverOptions Options { get; private set; }
-
-        public BindingContext(ConfigMapping configurationContext, DriverOptions driverOptions, CppModule moduleContext)
-            : base(driverOptions)
+        public virtual string NodeJSSignature(TypePrinterContext ctx)
         {
-            ConfigurationContext = configurationContext;
-            ParserContext = moduleContext;
-            Options = driverOptions;
-
-            ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
-            ASTContext = converter.Convert();
-            
+            throw new NotImplementedException();
         }
+
+        public virtual void NodeJSTypeReference(NodeJSTypeReferenceCollector collector, ASTRecord<Declaration> loc)
+        {
+        }
+
+        #endregion
     }
 }
