@@ -29,8 +29,33 @@
 	<module>pylon</module>
 
 	<!-- Module includes -->
-	<include file="pylon/DeviceInfo.h" />
-	<include file="pylon/InstantCamera.h" />
+	<include file="pylon/_ImageFormatConverterParams.h" alias="ImageFormatConverterParams" />
+	<include file="pylon/_InstantCameraParams.h" alias="InstantCameraParams" />
+	<include file="pylon/AcquireContinuousConfiguration.h" />
+	<include file="pylon/AcquireSingleFrameConfiguration.h" />
+	<include file="pylon/CameraEventHandler.h" />
+	<include file="pylon/ConfigurationEventHandler.h" />
 	<include file="pylon/Device.h" alias="PylonDevice"/>
+	<include file="pylon/DeviceFactory.h" />
+	<include file="pylon/DeviceInfo.h" />
+	<include file="pylon/FeaturePersistence.h" />
+	<include file="pylon/GrabResultData.h" />
+	<include file="pylon/GrabResultPtr.h" />
+	<include file="pylon/Image.h" />
+	<include file="pylon/ImageEventHandler.h" />
+	<include file="pylon/ImageFormatConverter.h" />
+	<include file="pylon/Info.h" />
+	<include file="pylon/InstantCamera.h" />
+	<include file="pylon/InstantCameraArray.h" />
+	<include file="pylon/PayloadType.h" />
+	<include file="pylon/PixelType.h" />
+	<include file="pylon/PylonGUI.h" />
+	<include file="pylon/PylonImage.h" />
+	<include file="pylon/PylonImageBase.h" />
+	<include file="pylon/Result.h" />
+	<include file="pylon/ReusableImage.h" />
+	<include file="pylon/SoftwareTriggerConfiguration.h" />
+	<include file="pylon/StreamGrabber.h" />
 	<include file="pylon/TlFactory.h" />
+	<include file="pylon/TransportLayer.h" />
 </config>

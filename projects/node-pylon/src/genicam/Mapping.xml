@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+// MIT License
+//
+// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+-->
+
+<config id="pylon-node-module-genicam" xmlns="urn:NodePylonGen.Config">
+
+	<!-- Module name -->
+	<module>genicam</module>
+
+	<!-- Module includes -->
+	<include file="GenICam.h" />
+	<include file="GenICamVersion.h" />
+	<include file="Base/GCException.h" />
+	<include file="GenApi/ChunkAdapter.h" />
+	<include file="GenApi/ChunkAdapterGeneric.h" />
+	<include file="GenApi/ChunkAdapterGEV.h" />
+	<include file="GenApi/ChunkAdapterU3V.h" />
+	<include file="GenApi/ChunkPort.h" />
+	<include file="GenApi/Container.h" />
+	<include file="GenApi/EnumClasses.h" />
+	<include file="GenApi/EventAdapter.h" />
+	<include file="GenApi/EventAdapterGeneric.h" />
+	<include file="GenApi/EventAdapterGEV.h" />
+	<include file="GenApi/EventAdapterU3V.h" />
+	<include file="GenApi/EventPort.h" />
+	<include file="GenApi/Filestream.h" />
+	<include file="GenApi/IBase.h" />
+	<include file="GenApi/IBoolean.h" />
+	<include file="GenApi/ICategory.h" />
+	<include file="GenApi/IChunkPort.h" />
+	<include file="GenApi/ICommand.h" />
+	<include file="GenApi/IDeviceInfo.h" />
+	<include file="GenApi/IEnumEntry.h" />
+	<include file="GenApi/IEnumeration.h" />
+	<include file="GenApi/IFloat.h" />
+	<include file="GenApi/IInteger.h" />
+	<include file="GenApi/INode.h" />
+	<include file="GenApi/INodeMap.h" />
+	<include file="GenApi/IPort.h" />
+	<include file="GenApi/IPortConstruct.h" />
+	<include file="GenApi/IPortRecorder.h" />
+	<include file="GenApi/IRegister.h" />
+	<include file="GenApi/ISelector.h" />
+	<include file="GenApi/ISelectorDigit.h" />
+	<include file="GenApi/IString.h" />
+	<include file="GenApi/IValue.h" />
+	<include file="GenApi/NodeCallback.h" />
+	<include file="GenApi/NodeMapRef.h" />
+	<include file="GenApi/PortImpl.h" />
+	<include file="GenApi/Reference.h" />
+	<include file="GenApi/SelectorSet.h" />
+	<include file="GenApi/Types.h" />
+</config>

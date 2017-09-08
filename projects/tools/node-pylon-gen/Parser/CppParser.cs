@@ -469,7 +469,6 @@ namespace NodePylonGen.Parser
         {
             CppElement cppElement = null;
             string name = xElement.Name.LocalName;
-            string elementName = xElement.Attribute("name").Value;
 
             if (name == StringEnum.GetStringValue(CastXMLTag.Enumeration))
             {

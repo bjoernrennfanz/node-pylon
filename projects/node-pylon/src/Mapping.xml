@@ -30,7 +30,5 @@
 
 	<!-- Include pylon and genicam mappings -->
 	<file>pylon\Mapping.xml</file>
-	<!--
 	<file>genicam\Mapping.xml</file>
-	-->
 </config>

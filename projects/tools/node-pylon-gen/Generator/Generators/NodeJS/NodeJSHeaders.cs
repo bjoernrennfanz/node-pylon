@@ -128,8 +128,21 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             if (classToWrapTypeReference != null)
             {
                 className = (classToWrapTypeReference.Declaration as Class).Name;
-                classNameWrap = className.TrimStart('I').TrimStart('C') + "Wrap";
-                classNameWrapperMember = "m_" + className.TrimStart('I').TrimStart('C');
+
+                // Remove C or I prefix from class name
+                string trimmedClassName = className;
+                if (className.Substring(0, 2).Contains("CC") || className.Substring(0, 2).Contains("II"))
+                {
+                    trimmedClassName = className.Substring(1);
+                }
+                else
+                {
+                    trimmedClassName = className.TrimStart('I').TrimStart('C');
+                }
+
+                // Generate wrapper and member names
+                classNameWrap = trimmedClassName + "Wrap";
+                classNameWrapperMember = "m_" + trimmedClassName;
             }
             else
             {
@@ -158,7 +171,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 PushBlock(BlockKind.Method);
                 WriteLine("{0}* GetWrapped() const", className);
                 WriteStartBraceIndent();
-                WriteLine("return {0}", classNameWrapperMember);
+                WriteLine("return {0};", classNameWrapperMember);
                 PopIndent();
                 WriteLine("};");
                 PopBlock(NewLineKind.BeforeNextBlock);

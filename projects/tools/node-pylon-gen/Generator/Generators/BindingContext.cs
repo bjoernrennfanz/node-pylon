@@ -45,7 +45,6 @@ namespace NodePylonGen.Generator
 
             ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
             ASTContext = converter.Convert();
-            
         }
     }
 }
