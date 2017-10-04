@@ -22,6 +22,7 @@
 
 using CppSharp;
 using CppSharp.AST;
+using NodePylonGen.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;

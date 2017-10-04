@@ -96,12 +96,13 @@
     <Compile Include="Config\IncludeMapping.cs" />
     <Compile Include="Config\ParameterAttributeMapping.cs" />
     <Compile Include="Config\VariableMapping.cs" />
-    <Compile Include="Generator\Generators\BindingContext.cs" />
+    <Compile Include="Generator\BindingContext.cs" />
     <Compile Include="Generator\Generators\CodeGenerator.cs" />
     <Compile Include="Generator\Generator.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSHeaders.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
+    <Compile Include="Generator\Generators\NodeJS\NodeJSTypePrinter.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
     <Compile Include="Generator\Model\ASTConverter.cs" />
     <Compile Include="Generator\Model\Types\TypeMap.cs" />

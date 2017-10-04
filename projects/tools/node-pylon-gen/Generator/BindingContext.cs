@@ -21,35 +21,31 @@
 // SOFTWARE.
 
 using NodePylonGen.Config;
-using NodePylonGen.Parser.Model;
-using NodePylonGen.Generator.Rules;
-using System.Collections.Generic;
+using NodePylonGen.Generator;
 using NodePylonGen.Generator.Model;
+using NodePylonGen.Parser.Model;
 
-namespace NodePylonGen.Generator
+namespace NodePylonGen.Generators
 {
-    public class BindingContext
+    public class BindingContext : CppSharp.Generators.BindingContext
     {
         public ConfigMapping ConfigurationContext { get; private set; }
+        public CppModule ParserContext { get; private set; }
 
-        public TranslationUnitContext TranslationUnitContext { get; private set; }
-        public GeneratorType GeneratorKind { get; internal set; }
+        /// <summary>
+        /// Gets the driver options of this instance
+        /// </summary>
+        public new DriverOptions Options { get; private set; }
 
-        public bool IsNodeJSGenerator => GeneratorKind == GeneratorType.NodeJS;
-        public bool IsJavaGenerator => GeneratorKind == GeneratorType.Java;
-
-        public RulesBuilder<TranslationUnitRule> TranslationUnitRules { get; private set; }
-        //public RulesBuilder<GeneratorOutputPass> GeneratorOutputRules { get; private set; }
-
-        public BindingContext(ConfigMapping configurationContext, CppModule moduleContext)
+        public BindingContext(ConfigMapping configurationContext, DriverOptions driverOptions, CppModule moduleContext)
+            : base(driverOptions)
         {
-            TranslationUnitContext = new TranslationUnitContext(configurationContext, moduleContext);
             ConfigurationContext = configurationContext;
-        }
+            ParserContext = moduleContext;
+            Options = driverOptions;
 
-        public void ApplyRules()
-        {
-       
+            ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
+            ASTContext = converter.Convert();
         }
     }
 }

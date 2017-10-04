@@ -20,14 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+
 using CppSharp;
 using CppSharp.AST;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System;
 using NodePylonGen.Config;
+using CppSharp.Generators;
+using BindingContext = NodePylonGen.Generators.BindingContext;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -114,21 +116,29 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference, NodeJSTypeReferenceCollector typeReferenceCollector)
         {
+            CppTypePrinter typePrinter = new CppTypePrinter();
+            typePrinter.PrintScopeKind = TypePrintScopeKind.Local;
+
             Class classToWrap = classToWrapTypeReference.Declaration as Class;
-            IEnumerable<Method> constructors = classToWrap.Constructors;
+            IEnumerable<Method> constructors = classToWrap.Constructors.OrderByDescending(s => s.Parameters.Count);
 
             string classNameWrap = classToWrap.Name.TrimStart('I').TrimStart('C') + "Wrap";
             string classNameWrapperMember = "m_" + classToWrap.Name.TrimStart('I').TrimStart('C');
 
             PushBlock(BlockKind.Method);
             WriteLine("// Supported implementations");
+            foreach (Method constructor in constructors.OrderBy(s => s.Parameters.Count))
+            {
+                string args = typePrinter.VisitParameters(constructor.Parameters, hasNames: false);
+                WriteLine("{0}({1})", classToWrap.Name, args);
+            }
 
             WriteLine("{0}::{0}(Nan::NAN_METHOD_ARGS_TYPE info)", classNameWrap);
             WriteLine("  : {0}(NULL)", classNameWrapperMember);
             WriteStartBraceIndent();
 
 
-
+            
 
             WriteCloseBraceIndent();
             PopBlock(NewLineKind.BeforeNextBlock);

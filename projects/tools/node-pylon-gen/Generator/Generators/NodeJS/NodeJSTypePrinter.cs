@@ -20,31 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using NodePylonGen.Config;
-using NodePylonGen.Generator.Model;
-using NodePylonGen.Parser.Model;
+using BindingContext = NodePylonGen.Generators.BindingContext;
+using CppSharp.AST;
+using CppSharp.AST.Extensions;
+using CppSharp.Generators;
+using CppSharp.Types;
 
-namespace NodePylonGen.Generator
+namespace NodePylonGen.Generator.Generators.NodeJS
 {
-    public class BindingContext : CppSharp.Generators.BindingContext
+    public class NodeJSTypePrinter : TypePrinter
     {
-        public ConfigMapping ConfigurationContext { get; private set; }
-        public CppModule ParserContext { get; private set; }
+        public BindingContext Context { get; private set; }
 
-        /// <summary>
-        /// Gets the driver options of this instance
-        /// </summary>
-        public new DriverOptions Options { get; private set; }
+        public DriverOptions Options => Context.Options;
+        public TypeMapDatabase TypeMapDatabase => Context.TypeMaps;
 
-        public BindingContext(ConfigMapping configurationContext, DriverOptions driverOptions, CppModule moduleContext)
-            : base(driverOptions)
+        public NodeJSTypePrinter(BindingContext context)
         {
-            ConfigurationContext = configurationContext;
-            ParserContext = moduleContext;
-            Options = driverOptions;
+            Context = context;
+        }
 
-            ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
-            ASTContext = converter.Convert();
+        public override TypePrinterResult VisitParameter(Parameter param, bool hasName)
+        {
+            var printedType = param.Type.Visit(this, param.QualifiedType.Qualifiers);
+
+            return "";
         }
     }
 }
