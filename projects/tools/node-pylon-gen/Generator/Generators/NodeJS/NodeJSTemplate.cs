@@ -88,17 +88,43 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         }
 
         /// <summary>
-        /// Convert given name to 
+        /// Convert given class name to name used for parameters
         /// </summary>
-        /// <param name="className"></param>
-        /// <returns></returns>
         protected string ConvertToParameterName(string name)
         {
             // Generate name for wrapped parameters
-            string convertedName = name.TrimStart('I').TrimStart('C');
+            string convertedName = GenerateTrimmedClassName(name);
             convertedName = char.ToLowerInvariant(convertedName[0]) + convertedName.Substring(1);
 
             return convertedName;
         }
+
+        /// <summary>
+        /// Remove leading I, C and template parameters from class name
+        /// </summary>
+        protected string GenerateTrimmedClassName(string className)
+        {
+            // Remove C or I prefix from class name
+            string trimmedClassName = className;
+            if (className.Substring(0, 2).Contains("CC") || className.Substring(0, 2).Contains("II") || className.Substring(0, 2).Contains("IC"))
+            {
+                trimmedClassName = className.Substring(1);
+            }
+            else
+            {
+                trimmedClassName = className.TrimStart('I').TrimStart('C');
+            }
+
+            // Check if trimmed name contains template parameter
+            if (trimmedClassName.Contains("<"))
+            {
+                // Remove template parameter
+                trimmedClassName = trimmedClassName.Substring(0, trimmedClassName.IndexOf("<"));
+            }
+
+            return trimmedClassName;
+        }
+
+        
     }
 }

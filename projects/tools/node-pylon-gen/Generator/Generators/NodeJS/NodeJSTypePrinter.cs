@@ -22,13 +22,11 @@
 
 using BindingContext = NodePylonGen.Generators.BindingContext;
 using CppSharp.AST;
-using CppSharp.AST.Extensions;
-using CppSharp.Generators;
 using CppSharp.Types;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
-    public class NodeJSTypePrinter : TypePrinter
+    public class NodeJSTypePrinter : CppTypePrinter
     {
         public BindingContext Context { get; private set; }
 
@@ -40,11 +38,30 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             Context = context;
         }
 
-        public override TypePrinterResult VisitParameter(Parameter param, bool hasName)
+        public string VisitParameter(Parameter param, bool hasName, bool hasModifier)
         {
-            var printedType = param.Type.Visit(this, param.QualifiedType.Qualifiers);
+            bool savedPrintTypeModifiers = PrintTypeModifiers;
+            bool savedPrintTypeQualifiers = PrintTypeQualifiers;
+            string result = string.Empty;
 
-            return "";
+            PrintTypeModifiers = hasModifier;
+            PrintTypeQualifiers = hasModifier;
+
+            result = VisitParameter(param, false);
+
+            PrintTypeModifiers = savedPrintTypeModifiers;
+            PrintTypeQualifiers = savedPrintTypeQualifiers;
+
+            return result;
+        }
+
+        public override string VisitUnsupportedType(UnsupportedType type, TypeQualifiers quals)
+        {
+            // Generate type name and modifiers
+            string result = type.Description;
+            result += (quals.IsConst ? " const" : string.Empty);
+
+            return result;
         }
     }
 }

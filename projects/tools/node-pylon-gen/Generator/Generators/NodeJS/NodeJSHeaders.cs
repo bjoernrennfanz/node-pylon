@@ -131,15 +131,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 className = (classToWrapTypeReference.Declaration as Class).Name;
 
                 // Remove C or I prefix from class name
-                string trimmedClassName = className;
-                if (className.Substring(0, 2).Contains("CC") || className.Substring(0, 2).Contains("II"))
-                {
-                    trimmedClassName = className.Substring(1);
-                }
-                else
-                {
-                    trimmedClassName = className.TrimStart('I').TrimStart('C');
-                }
+                string trimmedClassName = GenerateTrimmedClassName(className);
 
                 // Generate wrapper and member names
                 classNameWrap = trimmedClassName + "Wrap";

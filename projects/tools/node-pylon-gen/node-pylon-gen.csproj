@@ -102,6 +102,7 @@
     <Compile Include="Generator\Generators\NodeJS\NodeJSHeaders.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
+    <Compile Include="Generator\Generators\NodeJS\NodeJSTypeCheckPrinter.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypePrinter.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTypeReference.cs" />
     <Compile Include="Generator\Model\ASTConverter.cs" />

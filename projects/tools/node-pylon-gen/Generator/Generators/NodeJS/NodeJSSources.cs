@@ -95,7 +95,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             if (classToWrapTypeReference != null)
             {
                 className = (classToWrapTypeReference.Declaration as Class).Name;
-                classNameWrap = className.TrimStart('I').TrimStart('C') + "Wrap";
+                classNameWrap = GenerateTrimmedClassName(className) + "Wrap";
             }
             else
             {
@@ -111,35 +111,109 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 // Generate constructors
                 GenerateWrapperClassConstructors(classToWrapTypeReference, typeReferenceCollector);
             }
-
         }
 
         private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference, NodeJSTypeReferenceCollector typeReferenceCollector)
         {
-            CppTypePrinter typePrinter = new CppTypePrinter();
-            typePrinter.PrintScopeKind = TypePrintScopeKind.Local;
+            NodeJSTypePrinter nodeJSTypePrinter = new NodeJSTypePrinter(Context);
+            NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(Context);
+            nodeJSTypePrinter.PrintScopeKind = TypePrintScopeKind.Local;
 
             Class classToWrap = classToWrapTypeReference.Declaration as Class;
+            string classNameWrap = GenerateTrimmedClassName(classToWrap.Name) + "Wrap";
+            string classNameWrapperMember = "m_" + GenerateTrimmedClassName(classToWrap.Name);
+
             IEnumerable<Method> constructors = classToWrap.Constructors.OrderByDescending(s => s.Parameters.Count);
 
-            string classNameWrap = classToWrap.Name.TrimStart('I').TrimStart('C') + "Wrap";
-            string classNameWrapperMember = "m_" + classToWrap.Name.TrimStart('I').TrimStart('C');
-
+            // Supported implementations comment
             PushBlock(BlockKind.Method);
             WriteLine("// Supported implementations");
             foreach (Method constructor in constructors.OrderBy(s => s.Parameters.Count))
-            {
-                string args = typePrinter.VisitParameters(constructor.Parameters, hasNames: false);
-                WriteLine("{0}({1})", classToWrap.Name, args);
+            {                    
+                WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
             }
 
+            // Constructor for wrapped class
             WriteLine("{0}::{0}(Nan::NAN_METHOD_ARGS_TYPE info)", classNameWrap);
             WriteLine("  : {0}(NULL)", classNameWrapperMember);
             WriteStartBraceIndent();
 
+            bool firstConstructorCreated = false;
+            int constructorArgumentIndex = 0;
 
-            
+            // Generate check for constructor arguments
+            WriteLine("// Check constructor arguments");
+            foreach (Method constructor in constructors.OrderBy(s => s.Parameters.Count))
+            {
+                // Generate default constructor here when needed
+                if (constructor.Parameters.Count == 0 && !firstConstructorCreated)
+                {
+                    WriteLine("if (info.Length() == 0)");
+                    WriteStartBraceIndent();
 
+                    WriteLine("// {0}()", classToWrap.Name);
+                    WriteLine("{0} = new {1}();", classNameWrapperMember, classToWrap.Name);
+
+                    WriteCloseBraceIndent();
+                    firstConstructorCreated = true;
+                }
+                else
+                {
+                    // Generate other constructors than default
+                    string generatedCheckStatement = (firstConstructorCreated ? "else " : string.Empty);
+                    generatedCheckStatement += "if " + (constructor.Parameters.Count > 1 ? "(" : string.Empty);
+
+                    constructorArgumentIndex = 0;
+                    foreach (Parameter parameter in constructor.Parameters)
+                    {
+                        // Generate argument check foreach parameter
+                        generatedCheckStatement += constructorArgumentIndex > 0 ? " && " : string.Empty;
+                        generatedCheckStatement += "(info[" + constructorArgumentIndex + "]->" + nodeJSTypeCheckPrinter.VisitParameter(parameter) + ")";
+
+                        // Increment argument index
+                        constructorArgumentIndex++;
+                    }
+
+                    generatedCheckStatement += (constructor.Parameters.Count > 1 ? ")" : string.Empty);
+
+                    // Output arguments checker
+                    WriteLine(generatedCheckStatement);
+                    WriteStartBraceIndent();
+                    WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
+
+                    constructorArgumentIndex = 0;
+                    foreach (Parameter parameter in constructor.Parameters)
+                    {
+                        if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
+                        {
+                            string parameterClassName = nodeJSTypePrinter.VisitParameter(parameter, false, false);
+
+                            WriteLine("GENICAM_NAMESPACE::gcstring info{0}_constructor = pylon_v8::ToGCString(info[{0}]->ToObject()->GetConstructorName());", constructorArgumentIndex);
+                            WriteLine("if (info{0}_constructor != \"{1}\")", constructorArgumentIndex, parameterClassName);
+                            WriteStartBraceIndent();
+                            WriteLine("ThrowException(Exception::TypeError(String::New(\"{0}::{0}: bad argument\")));", classToWrap.Name);
+                            WriteCloseBraceIndent();
+                            WriteLine(string.Empty);
+
+                            WriteLine("// Unwrap obj");
+
+                        }
+                        else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
+                        {
+
+                        }
+
+                        WriteLine("// Unwrap obj");
+
+                    }
+
+
+
+                    WriteCloseBraceIndent();
+                    firstConstructorCreated = true;
+                }
+            }
+        
             WriteCloseBraceIndent();
             PopBlock(NewLineKind.BeforeNextBlock);
         }
