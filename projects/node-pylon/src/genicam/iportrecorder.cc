@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> PortRecorderWrap::prototype;
 Nan::Persistent<Function> PortRecorderWrap::constructor;
 
 // Supported implementations
+// IPortRecorder()
+// IPortRecorder(IPortRecorder& const arg0)
 PortRecorderWrap::PortRecorderWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_PortRecorder(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IPortRecorder()
+        m_PortRecorder = new IPortRecorder();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IPortRecorder")
+        {
+            ThrowException(Exception::TypeError(String::New("IPortRecorder::IPortRecorder: bad argument")));
+        }
+
+        // Unwrap obj
+        PortRecorderWrap* arg0_wrap = ObjectWrap::Unwrap<PortRecorderWrap>(info[0]->ToObject());
+        IPortRecorder* arg0 = arg0_wrap->GetWrapped();
+
+        // IPortRecorder(IPortRecorder& const arg0)
+        m_PortRecorder = new IPortRecorder(*arg0);
+    }
 }

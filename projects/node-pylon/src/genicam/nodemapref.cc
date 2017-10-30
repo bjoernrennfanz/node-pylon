@@ -31,11 +31,70 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap::prototype;
-Nan::Persistent<Function> NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap::constructor;
+Nan::Persistent<FunctionTemplate> NodeMapRefTWrap::prototype;
+Nan::Persistent<Function> NodeMapRefTWrap::constructor;
 
 // Supported implementations
-NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap::NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(NULL)
+// CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(gcstring& const DeviceName)
+// CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>& const Them)
+// CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(INodeMap* pNodeMap, gcstring& const DeviceName)
+NodeMapRefTWrap::NodeMapRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_NodeMapRefT(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "gcstring")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
+        }
+
+        // Unwrap obj
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(gcstring& const DeviceName)
+        m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(*arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapRefTWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapRefTWrap>(info[0]->ToObject());
+        CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* arg0 = arg0_wrap->GetWrapped();
+
+        // CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>& const Them)
+        m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsObject()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        gcstring info1_constructor = pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName());
+        if (info1_constructor != "gcstring")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
+        }
+
+        // Unwrap obj
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(INodeMap* pNodeMap, gcstring& const DeviceName)
+        m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(arg0, arg0, *arg1);
+    }
 }

@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> SelectorDigitWrap::prototype;
 Nan::Persistent<Function> SelectorDigitWrap::constructor;
 
 // Supported implementations
+// ISelectorDigit()
+// ISelectorDigit(ISelectorDigit& const arg0)
 SelectorDigitWrap::SelectorDigitWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_SelectorDigit(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // ISelectorDigit()
+        m_SelectorDigit = new ISelectorDigit();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "ISelectorDigit")
+        {
+            ThrowException(Exception::TypeError(String::New("ISelectorDigit::ISelectorDigit: bad argument")));
+        }
+
+        // Unwrap obj
+        SelectorDigitWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorDigitWrap>(info[0]->ToObject());
+        ISelectorDigit* arg0 = arg0_wrap->GetWrapped();
+
+        // ISelectorDigit(ISelectorDigit& const arg0)
+        m_SelectorDigit = new ISelectorDigit(*arg0);
+    }
 }

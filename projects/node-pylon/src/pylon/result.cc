@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> GrabResultWrap::prototype;
 Nan::Persistent<Function> GrabResultWrap::constructor;
 
 // Supported implementations
+// GrabResult()
+// GrabResult(GrabResult& const arg0)
 GrabResultWrap::GrabResultWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_GrabResult(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // GrabResult()
+        m_GrabResult = new GrabResult();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "GrabResult")
+        {
+            ThrowException(Exception::TypeError(String::New("GrabResult::GrabResult: bad argument")));
+        }
+
+        // Unwrap obj
+        GrabResultWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultWrap>(info[0]->ToObject());
+        GrabResult* arg0 = arg0_wrap->GetWrapped();
+
+        // GrabResult(GrabResult& const arg0)
+        m_GrabResult = new GrabResult(*arg0);
+    }
 }

@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> ReusableImageWrap::prototype;
 Nan::Persistent<Function> ReusableImageWrap::constructor;
 
 // Supported implementations
+// IReusableImage()
+// IReusableImage(IReusableImage& const arg0)
 ReusableImageWrap::ReusableImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ReusableImage(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IReusableImage()
+        m_ReusableImage = new IReusableImage();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IReusableImage")
+        {
+            ThrowException(Exception::TypeError(String::New("IReusableImage::IReusableImage: bad argument")));
+        }
+
+        // Unwrap obj
+        ReusableImageWrap* arg0_wrap = ObjectWrap::Unwrap<ReusableImageWrap>(info[0]->ToObject());
+        IReusableImage* arg0 = arg0_wrap->GetWrapped();
+
+        // IReusableImage(IReusableImage& const arg0)
+        m_ReusableImage = new IReusableImage(*arg0);
+    }
 }

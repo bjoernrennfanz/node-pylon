@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> SoftwareTriggerConfigurationWrap::prototype;
 Nan::Persistent<Function> SoftwareTriggerConfigurationWrap::constructor;
 
 // Supported implementations
+// CSoftwareTriggerConfiguration()
+// CSoftwareTriggerConfiguration(CSoftwareTriggerConfiguration& const arg0)
 SoftwareTriggerConfigurationWrap::SoftwareTriggerConfigurationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_SoftwareTriggerConfiguration(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CSoftwareTriggerConfiguration()
+        m_SoftwareTriggerConfiguration = new CSoftwareTriggerConfiguration();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CSoftwareTriggerConfiguration")
+        {
+            ThrowException(Exception::TypeError(String::New("CSoftwareTriggerConfiguration::CSoftwareTriggerConfiguration: bad argument")));
+        }
+
+        // Unwrap obj
+        SoftwareTriggerConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<SoftwareTriggerConfigurationWrap>(info[0]->ToObject());
+        CSoftwareTriggerConfiguration* arg0 = arg0_wrap->GetWrapped();
+
+        // CSoftwareTriggerConfiguration(CSoftwareTriggerConfiguration& const arg0)
+        m_SoftwareTriggerConfiguration = new CSoftwareTriggerConfiguration(*arg0);
+    }
 }

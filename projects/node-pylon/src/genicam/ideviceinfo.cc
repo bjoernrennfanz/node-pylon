@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> DeviceInfoWrap::prototype;
 Nan::Persistent<Function> DeviceInfoWrap::constructor;
 
 // Supported implementations
+// IDeviceInfo()
+// IDeviceInfo(IDeviceInfo& const arg0)
 DeviceInfoWrap::DeviceInfoWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_DeviceInfo(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IDeviceInfo()
+        m_DeviceInfo = new IDeviceInfo();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IDeviceInfo")
+        {
+            ThrowException(Exception::TypeError(String::New("IDeviceInfo::IDeviceInfo: bad argument")));
+        }
+
+        // Unwrap obj
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        IDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // IDeviceInfo(IDeviceInfo& const arg0)
+        m_DeviceInfo = new IDeviceInfo(*arg0);
+    }
 }

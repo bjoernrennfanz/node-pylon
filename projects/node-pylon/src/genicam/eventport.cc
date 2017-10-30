@@ -35,7 +35,40 @@ Nan::Persistent<FunctionTemplate> EventPortWrap::prototype;
 Nan::Persistent<Function> EventPortWrap::constructor;
 
 // Supported implementations
+// CEventPort(INode* pNode)
+// CEventPort(CEventPort& const arg0)
 EventPortWrap::EventPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventPort(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INode")
+        {
+            ThrowException(Exception::TypeError(String::New("CEventPort::CEventPort: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
+        INode* arg0 = arg0_wrap->GetWrapped();
+
+        // CEventPort(INode* pNode)
+        m_EventPort = new CEventPort(arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CEventPort")
+        {
+            ThrowException(Exception::TypeError(String::New("CEventPort::CEventPort: bad argument")));
+        }
+
+        // Unwrap obj
+        EventPortWrap* arg0_wrap = ObjectWrap::Unwrap<EventPortWrap>(info[0]->ToObject());
+        CEventPort* arg0 = arg0_wrap->GetWrapped();
+
+        // CEventPort(CEventPort& const arg0)
+        m_EventPort = new CEventPort(*arg0);
+    }
 }

@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> TlFactoryWrap::prototype;
 Nan::Persistent<Function> TlFactoryWrap::constructor;
 
 // Supported implementations
+// CTlFactory()
+// CTlFactory(CTlFactory& const arg0)
 TlFactoryWrap::TlFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_TlFactory(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CTlFactory()
+        m_TlFactory = new CTlFactory();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CTlFactory")
+        {
+            ThrowException(Exception::TypeError(String::New("CTlFactory::CTlFactory: bad argument")));
+        }
+
+        // Unwrap obj
+        TlFactoryWrap* arg0_wrap = ObjectWrap::Unwrap<TlFactoryWrap>(info[0]->ToObject());
+        CTlFactory* arg0 = arg0_wrap->GetWrapped();
+
+        // CTlFactory(CTlFactory& const arg0)
+        m_TlFactory = new CTlFactory(*arg0);
+    }
 }

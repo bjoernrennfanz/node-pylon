@@ -46,12 +46,12 @@ public:
         return m_Image;
     };
 
-    void SetWrapped(IImage* mage)
+    void SetWrapped(IImage* image)
     {
-        m_Image = mage;
+        m_Image = image;
     };
 
-    static v8::Handle<v8::Value> NewInstance(IImage* mage);
+    static v8::Handle<v8::Value> NewInstance(IImage* image);
 
 private:
     static Nan::Persistent<v8::Function> constructor;

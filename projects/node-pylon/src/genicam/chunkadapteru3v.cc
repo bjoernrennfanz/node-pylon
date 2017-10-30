@@ -31,11 +31,47 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkAdapterU3VWrap::prototype;
-Nan::Persistent<Function> hunkAdapterU3VWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkAdapterU3VWrap::prototype;
+Nan::Persistent<Function> ChunkAdapterU3VWrap::constructor;
 
 // Supported implementations
-hunkAdapterU3VWrap::hunkAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkAdapterU3V(NULL)
+// CChunkAdapterU3V(CChunkAdapterU3V& const arg0)
+// CChunkAdapterU3V(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+ChunkAdapterU3VWrap::ChunkAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkAdapterU3V(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CChunkAdapterU3V")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterU3V::CChunkAdapterU3V: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkAdapterU3VWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info[0]->ToObject());
+        CChunkAdapterU3V* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkAdapterU3V(CChunkAdapterU3V& const arg0)
+        m_ChunkAdapterU3V = new CChunkAdapterU3V(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterU3V::CChunkAdapterU3V: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // CChunkAdapterU3V(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+        m_ChunkAdapterU3V = new CChunkAdapterU3V(arg0, arg1);
+    }
 }

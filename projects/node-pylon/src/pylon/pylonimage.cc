@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> PylonImageWrap::prototype;
 Nan::Persistent<Function> PylonImageWrap::constructor;
 
 // Supported implementations
+// CPylonImage()
+// CPylonImage(CPylonImage& const source)
 PylonImageWrap::PylonImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_PylonImage(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CPylonImage()
+        m_PylonImage = new CPylonImage();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CPylonImage")
+        {
+            ThrowException(Exception::TypeError(String::New("CPylonImage::CPylonImage: bad argument")));
+        }
+
+        // Unwrap obj
+        PylonImageWrap* arg0_wrap = ObjectWrap::Unwrap<PylonImageWrap>(info[0]->ToObject());
+        CPylonImage* arg0 = arg0_wrap->GetWrapped();
+
+        // CPylonImage(CPylonImage& const source)
+        m_PylonImage = new CPylonImage(*arg0);
+    }
 }

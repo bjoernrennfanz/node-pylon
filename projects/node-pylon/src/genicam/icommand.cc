@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> ommandWrap::prototype;
-Nan::Persistent<Function> ommandWrap::constructor;
+Nan::Persistent<FunctionTemplate> CommandWrap::prototype;
+Nan::Persistent<Function> CommandWrap::constructor;
 
 // Supported implementations
-ommandWrap::ommandWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_ommand(NULL)
+// ICommand()
+// ICommand(ICommand& const arg0)
+CommandWrap::CommandWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Command(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // ICommand()
+        m_Command = new ICommand();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "ICommand")
+        {
+            ThrowException(Exception::TypeError(String::New("ICommand::ICommand: bad argument")));
+        }
+
+        // Unwrap obj
+        CommandWrap* arg0_wrap = ObjectWrap::Unwrap<CommandWrap>(info[0]->ToObject());
+        ICommand* arg0 = arg0_wrap->GetWrapped();
+
+        // ICommand(ICommand& const arg0)
+        m_Command = new ICommand(*arg0);
+    }
 }

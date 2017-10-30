@@ -31,11 +31,47 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkAdapterGenericWrap::prototype;
-Nan::Persistent<Function> hunkAdapterGenericWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkAdapterGenericWrap::prototype;
+Nan::Persistent<Function> ChunkAdapterGenericWrap::constructor;
 
 // Supported implementations
-hunkAdapterGenericWrap::hunkAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkAdapterGeneric(NULL)
+// CChunkAdapterGeneric(CChunkAdapterGeneric& const arg0)
+// CChunkAdapterGeneric(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+ChunkAdapterGenericWrap::ChunkAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkAdapterGeneric(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CChunkAdapterGeneric")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterGeneric::CChunkAdapterGeneric: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkAdapterGenericWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterGenericWrap>(info[0]->ToObject());
+        CChunkAdapterGeneric* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkAdapterGeneric(CChunkAdapterGeneric& const arg0)
+        m_ChunkAdapterGeneric = new CChunkAdapterGeneric(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterGeneric::CChunkAdapterGeneric: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // CChunkAdapterGeneric(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+        m_ChunkAdapterGeneric = new CChunkAdapterGeneric(arg0, arg1);
+    }
 }

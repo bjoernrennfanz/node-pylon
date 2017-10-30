@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkPortWrap::prototype;
-Nan::Persistent<Function> hunkPortWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkPortWrap::prototype;
+Nan::Persistent<Function> ChunkPortWrap::constructor;
 
 // Supported implementations
-hunkPortWrap::hunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkPort(NULL)
+// IChunkPort()
+// IChunkPort(IChunkPort& const arg0)
+ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkPort(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IChunkPort()
+        m_ChunkPort = new IChunkPort();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IChunkPort")
+        {
+            ThrowException(Exception::TypeError(String::New("IChunkPort::IChunkPort: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkPortWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkPortWrap>(info[0]->ToObject());
+        IChunkPort* arg0 = arg0_wrap->GetWrapped();
+
+        // IChunkPort(IChunkPort& const arg0)
+        m_ChunkPort = new IChunkPort(*arg0);
+    }
 }

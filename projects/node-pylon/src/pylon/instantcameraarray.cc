@@ -35,7 +35,39 @@ Nan::Persistent<FunctionTemplate> InstantCameraArrayWrap::prototype;
 Nan::Persistent<Function> InstantCameraArrayWrap::constructor;
 
 // Supported implementations
+// CInstantCameraArray()
+// CInstantCameraArray(unsigned int numberOfCameras)
+// CInstantCameraArray(CInstantCameraArray& const arg0)
 InstantCameraArrayWrap::InstantCameraArrayWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_InstantCameraArray(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CInstantCameraArray()
+        m_InstantCameraArray = new CInstantCameraArray();
+    }
+    else if (info[0]->IsNumber())
+    {
+        // Convert number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // CInstantCameraArray(unsigned int numberOfCameras)
+        m_InstantCameraArray = new CInstantCameraArray(arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CInstantCameraArray")
+        {
+            ThrowException(Exception::TypeError(String::New("CInstantCameraArray::CInstantCameraArray: bad argument")));
+        }
+
+        // Unwrap obj
+        InstantCameraArrayWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info[0]->ToObject());
+        CInstantCameraArray* arg0 = arg0_wrap->GetWrapped();
+
+        // CInstantCameraArray(CInstantCameraArray& const arg0)
+        m_InstantCameraArray = new CInstantCameraArray(*arg0);
+    }
 }

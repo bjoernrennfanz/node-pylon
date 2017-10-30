@@ -35,7 +35,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class hunkPortWrap : public node::ObjectWrap
+class ChunkPortWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -43,20 +43,20 @@ public:
 
     IChunkPort* GetWrapped() const
     {
-        return m_hunkPort;
+        return m_ChunkPort;
     };
 
-    void SetWrapped(IChunkPort* hunkPort)
+    void SetWrapped(IChunkPort* chunkPort)
     {
-        m_hunkPort = hunkPort;
+        m_ChunkPort = chunkPort;
     };
 
-    static v8::Handle<v8::Value> NewInstance(IChunkPort* hunkPort);
+    static v8::Handle<v8::Value> NewInstance(IChunkPort* chunkPort);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    hunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~hunkPortWrap();
+    ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~ChunkPortWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -64,5 +64,5 @@ private:
     static NAN_METHOD(CacheChunkData);
 
     // Wrapped object
-    IChunkPort* m_hunkPort;
+    IChunkPort* m_ChunkPort;
 };

@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace Pylon;
 
-Nan::Persistent<FunctionTemplate> onfigurationEventHandlerWrap::prototype;
-Nan::Persistent<Function> onfigurationEventHandlerWrap::constructor;
+Nan::Persistent<FunctionTemplate> ConfigurationEventHandlerWrap::prototype;
+Nan::Persistent<Function> ConfigurationEventHandlerWrap::constructor;
 
 // Supported implementations
-onfigurationEventHandlerWrap::onfigurationEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_onfigurationEventHandler(NULL)
+// CConfigurationEventHandler()
+// CConfigurationEventHandler(CConfigurationEventHandler& const arg0)
+ConfigurationEventHandlerWrap::ConfigurationEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ConfigurationEventHandler(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CConfigurationEventHandler()
+        m_ConfigurationEventHandler = new CConfigurationEventHandler();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CConfigurationEventHandler")
+        {
+            ThrowException(Exception::TypeError(String::New("CConfigurationEventHandler::CConfigurationEventHandler: bad argument")));
+        }
+
+        // Unwrap obj
+        ConfigurationEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info[0]->ToObject());
+        CConfigurationEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // CConfigurationEventHandler(CConfigurationEventHandler& const arg0)
+        m_ConfigurationEventHandler = new CConfigurationEventHandler(*arg0);
+    }
 }

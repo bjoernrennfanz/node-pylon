@@ -35,7 +35,43 @@ Nan::Persistent<FunctionTemplate> NodeCallbackWrap::prototype;
 Nan::Persistent<Function> NodeCallbackWrap::constructor;
 
 // Supported implementations
+// CNodeCallback(CNodeCallback& const arg0)
+// CNodeCallback(INode* pNode, ECallbackType CallbackType)
 NodeCallbackWrap::NodeCallbackWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_NodeCallback(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CNodeCallback")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeCallback::CNodeCallback: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeCallbackWrap* arg0_wrap = ObjectWrap::Unwrap<NodeCallbackWrap>(info[0]->ToObject());
+        CNodeCallback* arg0 = arg0_wrap->GetWrapped();
+
+        // CNodeCallback(CNodeCallback& const arg0)
+        m_NodeCallback = new CNodeCallback(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INode")
+        {
+            ThrowException(Exception::TypeError(String::New("CNodeCallback::CNodeCallback: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
+        INode* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        ECallbackType arg1 = static_cast<ECallbackType>(info[1]->NumberValue());
+
+        // CNodeCallback(INode* pNode, ECallbackType CallbackType)
+        m_NodeCallback = new CNodeCallback(arg0, arg1);
+    }
 }

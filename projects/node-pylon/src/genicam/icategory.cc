@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> ategoryWrap::prototype;
-Nan::Persistent<Function> ategoryWrap::constructor;
+Nan::Persistent<FunctionTemplate> CategoryWrap::prototype;
+Nan::Persistent<Function> CategoryWrap::constructor;
 
 // Supported implementations
-ategoryWrap::ategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_ategory(NULL)
+// ICategory()
+// ICategory(ICategory& const arg0)
+CategoryWrap::CategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Category(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // ICategory()
+        m_Category = new ICategory();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "ICategory")
+        {
+            ThrowException(Exception::TypeError(String::New("ICategory::ICategory: bad argument")));
+        }
+
+        // Unwrap obj
+        CategoryWrap* arg0_wrap = ObjectWrap::Unwrap<CategoryWrap>(info[0]->ToObject());
+        ICategory* arg0 = arg0_wrap->GetWrapped();
+
+        // ICategory(ICategory& const arg0)
+        m_Category = new ICategory(*arg0);
+    }
 }

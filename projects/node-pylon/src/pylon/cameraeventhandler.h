@@ -46,12 +46,12 @@ public:
         return m_CameraEventHandler;
     };
 
-    void SetWrapped(CCameraEventHandler* ameraEventHandler)
+    void SetWrapped(CCameraEventHandler* cameraEventHandler)
     {
-        m_CameraEventHandler = ameraEventHandler;
+        m_CameraEventHandler = cameraEventHandler;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CCameraEventHandler* ameraEventHandler);
+    static v8::Handle<v8::Value> NewInstance(CCameraEventHandler* cameraEventHandler);
 
 private:
     static Nan::Persistent<v8::Function> constructor;

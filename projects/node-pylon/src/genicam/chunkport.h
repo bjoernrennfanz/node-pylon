@@ -46,12 +46,12 @@ public:
         return m_ChunkPort;
     };
 
-    void SetWrapped(CChunkPort* hunkPort)
+    void SetWrapped(CChunkPort* chunkPort)
     {
-        m_ChunkPort = hunkPort;
+        m_ChunkPort = chunkPort;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CChunkPort* hunkPort);
+    static v8::Handle<v8::Value> NewInstance(CChunkPort* chunkPort);
 
 private:
     static Nan::Persistent<v8::Function> constructor;

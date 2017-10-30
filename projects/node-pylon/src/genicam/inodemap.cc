@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> NodeMapWrap::prototype;
 Nan::Persistent<Function> NodeMapWrap::constructor;
 
 // Supported implementations
+// INodeMap()
+// INodeMap(INodeMap& const arg0)
 NodeMapWrap::NodeMapWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_NodeMap(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // INodeMap()
+        m_NodeMap = new INodeMap();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("INodeMap::INodeMap: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // INodeMap(INodeMap& const arg0)
+        m_NodeMap = new INodeMap(*arg0);
+    }
 }

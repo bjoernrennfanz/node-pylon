@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> AcquireContinuousConfigurationWrap::prototype;
 Nan::Persistent<Function> AcquireContinuousConfigurationWrap::constructor;
 
 // Supported implementations
+// CAcquireContinuousConfiguration()
+// CAcquireContinuousConfiguration(CAcquireContinuousConfiguration& const arg0)
 AcquireContinuousConfigurationWrap::AcquireContinuousConfigurationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_AcquireContinuousConfiguration(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CAcquireContinuousConfiguration()
+        m_AcquireContinuousConfiguration = new CAcquireContinuousConfiguration();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CAcquireContinuousConfiguration")
+        {
+            ThrowException(Exception::TypeError(String::New("CAcquireContinuousConfiguration::CAcquireContinuousConfiguration: bad argument")));
+        }
+
+        // Unwrap obj
+        AcquireContinuousConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<AcquireContinuousConfigurationWrap>(info[0]->ToObject());
+        CAcquireContinuousConfiguration* arg0 = arg0_wrap->GetWrapped();
+
+        // CAcquireContinuousConfiguration(CAcquireContinuousConfiguration& const arg0)
+        m_AcquireContinuousConfiguration = new CAcquireContinuousConfiguration(*arg0);
+    }
 }

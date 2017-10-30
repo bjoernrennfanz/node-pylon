@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> DeviceFactoryWrap::prototype;
 Nan::Persistent<Function> DeviceFactoryWrap::constructor;
 
 // Supported implementations
+// IDeviceFactory()
+// IDeviceFactory(IDeviceFactory& const arg0)
 DeviceFactoryWrap::DeviceFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_DeviceFactory(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IDeviceFactory()
+        m_DeviceFactory = new IDeviceFactory();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IDeviceFactory")
+        {
+            ThrowException(Exception::TypeError(String::New("IDeviceFactory::IDeviceFactory: bad argument")));
+        }
+
+        // Unwrap obj
+        DeviceFactoryWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceFactoryWrap>(info[0]->ToObject());
+        IDeviceFactory* arg0 = arg0_wrap->GetWrapped();
+
+        // IDeviceFactory(IDeviceFactory& const arg0)
+        m_DeviceFactory = new IDeviceFactory(*arg0);
+    }
 }

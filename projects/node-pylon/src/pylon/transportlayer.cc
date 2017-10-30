@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> TransportLayerWrap::prototype;
 Nan::Persistent<Function> TransportLayerWrap::constructor;
 
 // Supported implementations
+// ITransportLayer()
+// ITransportLayer(ITransportLayer& const arg0)
 TransportLayerWrap::TransportLayerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_TransportLayer(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // ITransportLayer()
+        m_TransportLayer = new ITransportLayer();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "ITransportLayer")
+        {
+            ThrowException(Exception::TypeError(String::New("ITransportLayer::ITransportLayer: bad argument")));
+        }
+
+        // Unwrap obj
+        TransportLayerWrap* arg0_wrap = ObjectWrap::Unwrap<TransportLayerWrap>(info[0]->ToObject());
+        ITransportLayer* arg0 = arg0_wrap->GetWrapped();
+
+        // ITransportLayer(ITransportLayer& const arg0)
+        m_TransportLayer = new ITransportLayer(*arg0);
+    }
 }

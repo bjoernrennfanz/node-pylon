@@ -31,11 +31,44 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkPortWrap::prototype;
-Nan::Persistent<Function> hunkPortWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkPortWrap::prototype;
+Nan::Persistent<Function> ChunkPortWrap::constructor;
 
 // Supported implementations
-hunkPortWrap::hunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkPort(NULL)
+// CChunkPort(IPort* pPort)
+// CChunkPort(CChunkPort& const arg0)
+ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkPort(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IPort")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkPort::CChunkPort: bad argument")));
+        }
+
+        // Unwrap obj
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkPort(IPort* pPort)
+        m_ChunkPort = new CChunkPort(arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CChunkPort")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkPort::CChunkPort: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkPortWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkPortWrap>(info[0]->ToObject());
+        CChunkPort* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkPort(CChunkPort& const arg0)
+        m_ChunkPort = new CChunkPort(*arg0);
+    }
 }

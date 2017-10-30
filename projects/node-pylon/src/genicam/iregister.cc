@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> RegisterWrap::prototype;
 Nan::Persistent<Function> RegisterWrap::constructor;
 
 // Supported implementations
+// IRegister()
+// IRegister(IRegister& const arg0)
 RegisterWrap::RegisterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Register(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IRegister()
+        m_Register = new IRegister();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IRegister")
+        {
+            ThrowException(Exception::TypeError(String::New("IRegister::IRegister: bad argument")));
+        }
+
+        // Unwrap obj
+        RegisterWrap* arg0_wrap = ObjectWrap::Unwrap<RegisterWrap>(info[0]->ToObject());
+        IRegister* arg0 = arg0_wrap->GetWrapped();
+
+        // IRegister(IRegister& const arg0)
+        m_Register = new IRegister(*arg0);
+    }
 }

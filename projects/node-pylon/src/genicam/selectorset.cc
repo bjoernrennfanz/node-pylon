@@ -35,7 +35,40 @@ Nan::Persistent<FunctionTemplate> SelectorSetWrap::prototype;
 Nan::Persistent<Function> SelectorSetWrap::constructor;
 
 // Supported implementations
+// CSelectorSet(IBase* pBase)
+// CSelectorSet(CSelectorSet& const arg0)
 SelectorSetWrap::SelectorSetWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_SelectorSet(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IBase")
+        {
+            ThrowException(Exception::TypeError(String::New("CSelectorSet::CSelectorSet: bad argument")));
+        }
+
+        // Unwrap obj
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // CSelectorSet(IBase* pBase)
+        m_SelectorSet = new CSelectorSet(arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CSelectorSet")
+        {
+            ThrowException(Exception::TypeError(String::New("CSelectorSet::CSelectorSet: bad argument")));
+        }
+
+        // Unwrap obj
+        SelectorSetWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorSetWrap>(info[0]->ToObject());
+        CSelectorSet* arg0 = arg0_wrap->GetWrapped();
+
+        // CSelectorSet(CSelectorSet& const arg0)
+        m_SelectorSet = new CSelectorSet(*arg0);
+    }
 }

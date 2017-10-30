@@ -36,7 +36,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>Wrap : public node::ObjectWrap
+class IntegerRefTWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -44,20 +44,20 @@ public:
 
     CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* GetWrapped() const
     {
-        return m_IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>;
+        return m_IntegerRefT;
     };
 
-    void SetWrapped(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>)
+    void SetWrapped(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT)
     {
-        m_IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger> = integerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>;
+        m_IntegerRefT = integerRefT;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>);
+    static v8::Handle<v8::Value> NewInstance(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>Wrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>Wrap();
+    IntegerRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~IntegerRefTWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -75,5 +75,5 @@ private:
     static NAN_METHOD(ImposeMax);
 
     // Wrapped object
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* m_IntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>;
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* m_IntegerRefT;
 };

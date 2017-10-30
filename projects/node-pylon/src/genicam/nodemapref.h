@@ -39,7 +39,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap : public node::ObjectWrap
+class NodeMapRefTWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -47,20 +47,20 @@ public:
 
     CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* GetWrapped() const
     {
-        return m_NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>;
+        return m_NodeMapRefT;
     };
 
-    void SetWrapped(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>)
+    void SetWrapped(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT)
     {
-        m_NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams> = nodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>;
+        m_NodeMapRefT = nodeMapRefT;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>);
+    static v8::Handle<v8::Value> NewInstance(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>Wrap();
+    NodeMapRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~NodeMapRefTWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -84,5 +84,5 @@ private:
     static NAN_METHOD(CastToIDestroy);
 
     // Wrapped object
-    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* m_NodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>;
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* m_NodeMapRefT;
 };

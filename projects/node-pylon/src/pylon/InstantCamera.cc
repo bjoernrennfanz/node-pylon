@@ -35,7 +35,49 @@ Nan::Persistent<FunctionTemplate> InstantCameraWrap::prototype;
 Nan::Persistent<Function> InstantCameraWrap::constructor;
 
 // Supported implementations
+// CInstantCamera()
+// CInstantCamera(CInstantCamera& const arg0)
+// CInstantCamera(IPylonDevice* pDevice, ECleanup cleanupProcedure)
 InstantCameraWrap::InstantCameraWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_InstantCamera(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CInstantCamera()
+        m_InstantCamera = new CInstantCamera();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CInstantCamera")
+        {
+            ThrowException(Exception::TypeError(String::New("CInstantCamera::CInstantCamera: bad argument")));
+        }
+
+        // Unwrap obj
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // CInstantCamera(CInstantCamera& const arg0)
+        m_InstantCamera = new CInstantCamera(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IPylonDevice")
+        {
+            ThrowException(Exception::TypeError(String::New("CInstantCamera::CInstantCamera: bad argument")));
+        }
+
+        // Unwrap obj
+        PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
+        IPylonDevice* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        ECleanup arg1 = static_cast<ECleanup>(info[1]->NumberValue());
+
+        // CInstantCamera(IPylonDevice* pDevice, ECleanup cleanupProcedure)
+        m_InstantCamera = new CInstantCamera(arg0, arg1);
+    }
 }

@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> SelectorWrap::prototype;
 Nan::Persistent<Function> SelectorWrap::constructor;
 
 // Supported implementations
+// ISelector()
+// ISelector(ISelector& const arg0)
 SelectorWrap::SelectorWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Selector(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // ISelector()
+        m_Selector = new ISelector();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "ISelector")
+        {
+            ThrowException(Exception::TypeError(String::New("ISelector::ISelector: bad argument")));
+        }
+
+        // Unwrap obj
+        SelectorWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorWrap>(info[0]->ToObject());
+        ISelector* arg0 = arg0_wrap->GetWrapped();
+
+        // ISelector(ISelector& const arg0)
+        m_Selector = new ISelector(*arg0);
+    }
 }

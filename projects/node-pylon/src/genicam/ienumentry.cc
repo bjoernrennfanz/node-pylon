@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> EnumEntryWrap::prototype;
 Nan::Persistent<Function> EnumEntryWrap::constructor;
 
 // Supported implementations
+// IEnumEntry()
+// IEnumEntry(IEnumEntry& const arg0)
 EnumEntryWrap::EnumEntryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EnumEntry(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IEnumEntry()
+        m_EnumEntry = new IEnumEntry();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IEnumEntry")
+        {
+            ThrowException(Exception::TypeError(String::New("IEnumEntry::IEnumEntry: bad argument")));
+        }
+
+        // Unwrap obj
+        EnumEntryWrap* arg0_wrap = ObjectWrap::Unwrap<EnumEntryWrap>(info[0]->ToObject());
+        IEnumEntry* arg0 = arg0_wrap->GetWrapped();
+
+        // IEnumEntry(IEnumEntry& const arg0)
+        m_EnumEntry = new IEnumEntry(*arg0);
+    }
 }

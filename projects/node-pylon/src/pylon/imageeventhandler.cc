@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> ImageEventHandlerWrap::prototype;
 Nan::Persistent<Function> ImageEventHandlerWrap::constructor;
 
 // Supported implementations
+// CImageEventHandler()
+// CImageEventHandler(CImageEventHandler& const arg0)
 ImageEventHandlerWrap::ImageEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ImageEventHandler(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CImageEventHandler()
+        m_ImageEventHandler = new CImageEventHandler();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CImageEventHandler")
+        {
+            ThrowException(Exception::TypeError(String::New("CImageEventHandler::CImageEventHandler: bad argument")));
+        }
+
+        // Unwrap obj
+        ImageEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info[0]->ToObject());
+        CImageEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // CImageEventHandler(CImageEventHandler& const arg0)
+        m_ImageEventHandler = new CImageEventHandler(*arg0);
+    }
 }

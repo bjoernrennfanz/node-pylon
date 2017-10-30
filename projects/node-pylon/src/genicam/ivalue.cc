@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> ValueWrap::prototype;
 Nan::Persistent<Function> ValueWrap::constructor;
 
 // Supported implementations
+// IValue()
+// IValue(IValue& const arg0)
 ValueWrap::ValueWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Value(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IValue()
+        m_Value = new IValue();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IValue")
+        {
+            ThrowException(Exception::TypeError(String::New("IValue::IValue: bad argument")));
+        }
+
+        // Unwrap obj
+        ValueWrap* arg0_wrap = ObjectWrap::Unwrap<ValueWrap>(info[0]->ToObject());
+        IValue* arg0 = arg0_wrap->GetWrapped();
+
+        // IValue(IValue& const arg0)
+        m_Value = new IValue(*arg0);
+    }
 }

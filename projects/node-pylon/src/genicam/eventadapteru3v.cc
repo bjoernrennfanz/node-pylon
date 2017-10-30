@@ -35,7 +35,40 @@ Nan::Persistent<FunctionTemplate> EventAdapterU3VWrap::prototype;
 Nan::Persistent<Function> EventAdapterU3VWrap::constructor;
 
 // Supported implementations
+// CEventAdapterU3V(INodeMap* pNodeMap)
+// CEventAdapterU3V(CEventAdapterU3V& const arg0)
 EventAdapterU3VWrap::EventAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventAdapterU3V(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CEventAdapterU3V::CEventAdapterU3V: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // CEventAdapterU3V(INodeMap* pNodeMap)
+        m_EventAdapterU3V = new CEventAdapterU3V(arg0);
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CEventAdapterU3V")
+        {
+            ThrowException(Exception::TypeError(String::New("CEventAdapterU3V::CEventAdapterU3V: bad argument")));
+        }
+
+        // Unwrap obj
+        EventAdapterU3VWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterU3VWrap>(info[0]->ToObject());
+        CEventAdapterU3V* arg0 = arg0_wrap->GetWrapped();
+
+        // CEventAdapterU3V(CEventAdapterU3V& const arg0)
+        m_EventAdapterU3V = new CEventAdapterU3V(*arg0);
+    }
 }

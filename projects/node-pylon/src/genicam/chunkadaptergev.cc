@@ -31,11 +31,47 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkAdapterGEVWrap::prototype;
-Nan::Persistent<Function> hunkAdapterGEVWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkAdapterGEVWrap::prototype;
+Nan::Persistent<Function> ChunkAdapterGEVWrap::constructor;
 
 // Supported implementations
-hunkAdapterGEVWrap::hunkAdapterGEVWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkAdapterGEV(NULL)
+// CChunkAdapterGEV(CChunkAdapterGEV& const arg0)
+// CChunkAdapterGEV(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+ChunkAdapterGEVWrap::ChunkAdapterGEVWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkAdapterGEV(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CChunkAdapterGEV")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterGEV::CChunkAdapterGEV: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkAdapterGEVWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterGEVWrap>(info[0]->ToObject());
+        CChunkAdapterGEV* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkAdapterGEV(CChunkAdapterGEV& const arg0)
+        m_ChunkAdapterGEV = new CChunkAdapterGEV(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapterGEV::CChunkAdapterGEV: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // CChunkAdapterGEV(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+        m_ChunkAdapterGEV = new CChunkAdapterGEV(arg0, arg1);
+    }
 }

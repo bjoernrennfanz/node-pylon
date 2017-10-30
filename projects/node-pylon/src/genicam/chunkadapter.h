@@ -46,12 +46,12 @@ public:
         return m_ChunkAdapter;
     };
 
-    void SetWrapped(CChunkAdapter* hunkAdapter)
+    void SetWrapped(CChunkAdapter* chunkAdapter)
     {
-        m_ChunkAdapter = hunkAdapter;
+        m_ChunkAdapter = chunkAdapter;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CChunkAdapter* hunkAdapter);
+    static v8::Handle<v8::Value> NewInstance(CChunkAdapter* chunkAdapter);
 
 private:
     static Nan::Persistent<v8::Function> constructor;

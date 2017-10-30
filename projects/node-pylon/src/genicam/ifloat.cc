@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap::prototype;
-Nan::Persistent<Function> FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap::constructor;
+Nan::Persistent<FunctionTemplate> FloatRefTWrap::prototype;
+Nan::Persistent<Function> FloatRefTWrap::constructor;
 
 // Supported implementations
-FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap::FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>(NULL)
+// CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>()
+// CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>& const arg0)
+FloatRefTWrap::FloatRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_FloatRefT(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>()
+        m_FloatRefT = new CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>")
+        {
+            ThrowException(Exception::TypeError(String::New("CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>::CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>: bad argument")));
+        }
+
+        // Unwrap obj
+        FloatRefTWrap* arg0_wrap = ObjectWrap::Unwrap<FloatRefTWrap>(info[0]->ToObject());
+        CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* arg0 = arg0_wrap->GetWrapped();
+
+        // CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>& const arg0)
+        m_FloatRefT = new CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>(*arg0);
+    }
 }

@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> AcquireSingleFrameConfigurationWrap::prototype
 Nan::Persistent<Function> AcquireSingleFrameConfigurationWrap::constructor;
 
 // Supported implementations
+// CAcquireSingleFrameConfiguration()
+// CAcquireSingleFrameConfiguration(CAcquireSingleFrameConfiguration& const arg0)
 AcquireSingleFrameConfigurationWrap::AcquireSingleFrameConfigurationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_AcquireSingleFrameConfiguration(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CAcquireSingleFrameConfiguration()
+        m_AcquireSingleFrameConfiguration = new CAcquireSingleFrameConfiguration();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CAcquireSingleFrameConfiguration")
+        {
+            ThrowException(Exception::TypeError(String::New("CAcquireSingleFrameConfiguration::CAcquireSingleFrameConfiguration: bad argument")));
+        }
+
+        // Unwrap obj
+        AcquireSingleFrameConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<AcquireSingleFrameConfigurationWrap>(info[0]->ToObject());
+        CAcquireSingleFrameConfiguration* arg0 = arg0_wrap->GetWrapped();
+
+        // CAcquireSingleFrameConfiguration(CAcquireSingleFrameConfiguration& const arg0)
+        m_AcquireSingleFrameConfiguration = new CAcquireSingleFrameConfiguration(*arg0);
+    }
 }

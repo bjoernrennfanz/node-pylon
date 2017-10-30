@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> FeaturePersistenceWrap::prototype;
 Nan::Persistent<Function> FeaturePersistenceWrap::constructor;
 
 // Supported implementations
+// CFeaturePersistence()
+// CFeaturePersistence(CFeaturePersistence& const arg0)
 FeaturePersistenceWrap::FeaturePersistenceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_FeaturePersistence(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CFeaturePersistence()
+        m_FeaturePersistence = new CFeaturePersistence();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CFeaturePersistence")
+        {
+            ThrowException(Exception::TypeError(String::New("CFeaturePersistence::CFeaturePersistence: bad argument")));
+        }
+
+        // Unwrap obj
+        FeaturePersistenceWrap* arg0_wrap = ObjectWrap::Unwrap<FeaturePersistenceWrap>(info[0]->ToObject());
+        CFeaturePersistence* arg0 = arg0_wrap->GetWrapped();
+
+        // CFeaturePersistence(CFeaturePersistence& const arg0)
+        m_FeaturePersistence = new CFeaturePersistence(*arg0);
+    }
 }

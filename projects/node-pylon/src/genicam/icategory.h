@@ -36,7 +36,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class ategoryWrap : public node::ObjectWrap
+class CategoryWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -44,25 +44,25 @@ public:
 
     ICategory* GetWrapped() const
     {
-        return m_ategory;
+        return m_Category;
     };
 
-    void SetWrapped(ICategory* ategory)
+    void SetWrapped(ICategory* category)
     {
-        m_ategory = ategory;
+        m_Category = category;
     };
 
-    static v8::Handle<v8::Value> NewInstance(ICategory* ategory);
+    static v8::Handle<v8::Value> NewInstance(ICategory* category);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    ategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~ategoryWrap();
+    CategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~CategoryWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
     static NAN_METHOD(GetFeatures);
 
     // Wrapped object
-    ICategory* m_ategory;
+    ICategory* m_Category;
 };

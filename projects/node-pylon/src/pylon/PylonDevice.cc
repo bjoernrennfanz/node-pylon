@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> PylonDeviceWrap::prototype;
 Nan::Persistent<Function> PylonDeviceWrap::constructor;
 
 // Supported implementations
+// IPylonDevice()
+// IPylonDevice(IPylonDevice& const arg0)
 PylonDeviceWrap::PylonDeviceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_PylonDevice(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IPylonDevice()
+        m_PylonDevice = new IPylonDevice();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IPylonDevice")
+        {
+            ThrowException(Exception::TypeError(String::New("IPylonDevice::IPylonDevice: bad argument")));
+        }
+
+        // Unwrap obj
+        PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
+        IPylonDevice* arg0 = arg0_wrap->GetWrapped();
+
+        // IPylonDevice(IPylonDevice& const arg0)
+        m_PylonDevice = new IPylonDevice(*arg0);
+    }
 }

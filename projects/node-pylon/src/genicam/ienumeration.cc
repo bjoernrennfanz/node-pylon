@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> EnumerationWrap::prototype;
 Nan::Persistent<Function> EnumerationWrap::constructor;
 
 // Supported implementations
+// IEnumeration()
+// IEnumeration(IEnumeration& const arg0)
 EnumerationWrap::EnumerationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Enumeration(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IEnumeration()
+        m_Enumeration = new IEnumeration();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IEnumeration")
+        {
+            ThrowException(Exception::TypeError(String::New("IEnumeration::IEnumeration: bad argument")));
+        }
+
+        // Unwrap obj
+        EnumerationWrap* arg0_wrap = ObjectWrap::Unwrap<EnumerationWrap>(info[0]->ToObject());
+        IEnumeration* arg0 = arg0_wrap->GetWrapped();
+
+        // IEnumeration(IEnumeration& const arg0)
+        m_Enumeration = new IEnumeration(*arg0);
+    }
 }

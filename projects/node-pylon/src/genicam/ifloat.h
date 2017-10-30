@@ -36,7 +36,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap : public node::ObjectWrap
+class FloatRefTWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -44,20 +44,20 @@ public:
 
     CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* GetWrapped() const
     {
-        return m_FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>;
+        return m_FloatRefT;
     };
 
-    void SetWrapped(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>)
+    void SetWrapped(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT)
     {
-        m_FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat> = floatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>;
+        m_FloatRefT = floatRefT;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>);
+    static v8::Handle<v8::Value> NewInstance(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>Wrap();
+    FloatRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~FloatRefTWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -79,5 +79,5 @@ private:
     static NAN_METHOD(ImposeMax);
 
     // Wrapped object
-    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* m_FloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>;
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* m_FloatRefT;
 };

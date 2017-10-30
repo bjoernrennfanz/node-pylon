@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> InfoBaseWrap::prototype;
 Nan::Persistent<Function> InfoBaseWrap::constructor;
 
 // Supported implementations
+// CInfoBase()
+// CInfoBase(CInfoBase& const arg0)
 InfoBaseWrap::InfoBaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_InfoBase(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CInfoBase()
+        m_InfoBase = new CInfoBase();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CInfoBase")
+        {
+            ThrowException(Exception::TypeError(String::New("CInfoBase::CInfoBase: bad argument")));
+        }
+
+        // Unwrap obj
+        InfoBaseWrap* arg0_wrap = ObjectWrap::Unwrap<InfoBaseWrap>(info[0]->ToObject());
+        CInfoBase* arg0 = arg0_wrap->GetWrapped();
+
+        // CInfoBase(CInfoBase& const arg0)
+        m_InfoBase = new CInfoBase(*arg0);
+    }
 }

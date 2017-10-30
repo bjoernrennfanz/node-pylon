@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> BooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>Wrap::prototype;
-Nan::Persistent<Function> BooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>Wrap::constructor;
+Nan::Persistent<FunctionTemplate> BooleanRefTWrap::prototype;
+Nan::Persistent<Function> BooleanRefTWrap::constructor;
 
 // Supported implementations
-BooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>Wrap::BooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>Wrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_BooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(NULL)
+// CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>()
+// CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>& const arg0)
+BooleanRefTWrap::BooleanRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_BooleanRefT(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>()
+        m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>")
+        {
+            ThrowException(Exception::TypeError(String::New("CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>::CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>: bad argument")));
+        }
+
+        // Unwrap obj
+        BooleanRefTWrap* arg0_wrap = ObjectWrap::Unwrap<BooleanRefTWrap>(info[0]->ToObject());
+        CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* arg0 = arg0_wrap->GetWrapped();
+
+        // CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>& const arg0)
+        m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(*arg0);
+    }
 }

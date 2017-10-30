@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> NodeWrap::prototype;
 Nan::Persistent<Function> NodeWrap::constructor;
 
 // Supported implementations
+// INode()
+// INode(INode& const arg0)
 NodeWrap::NodeWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Node(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // INode()
+        m_Node = new INode();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INode")
+        {
+            ThrowException(Exception::TypeError(String::New("INode::INode: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
+        INode* arg0 = arg0_wrap->GetWrapped();
+
+        // INode(INode& const arg0)
+        m_Node = new INode(*arg0);
+    }
 }

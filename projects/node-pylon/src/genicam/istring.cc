@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> StringWrap::prototype;
 Nan::Persistent<Function> StringWrap::constructor;
 
 // Supported implementations
+// IString()
+// IString(IString& const arg0)
 StringWrap::StringWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_String(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IString()
+        m_String = new IString();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IString")
+        {
+            ThrowException(Exception::TypeError(String::New("IString::IString: bad argument")));
+        }
+
+        // Unwrap obj
+        StringWrap* arg0_wrap = ObjectWrap::Unwrap<StringWrap>(info[0]->ToObject());
+        IString* arg0 = arg0_wrap->GetWrapped();
+
+        // IString(IString& const arg0)
+        m_String = new IString(*arg0);
+    }
 }

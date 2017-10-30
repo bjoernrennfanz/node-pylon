@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> BaseWrap::prototype;
 Nan::Persistent<Function> BaseWrap::constructor;
 
 // Supported implementations
+// IBase()
+// IBase(IBase& const arg0)
 BaseWrap::BaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_Base(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IBase()
+        m_Base = new IBase();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IBase")
+        {
+            ThrowException(Exception::TypeError(String::New("IBase::IBase: bad argument")));
+        }
+
+        // Unwrap obj
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // IBase(IBase& const arg0)
+        m_Base = new IBase(*arg0);
+    }
 }

@@ -35,7 +35,7 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class ommandWrap : public node::ObjectWrap
+class CommandWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
@@ -43,20 +43,20 @@ public:
 
     ICommand* GetWrapped() const
     {
-        return m_ommand;
+        return m_Command;
     };
 
-    void SetWrapped(ICommand* ommand)
+    void SetWrapped(ICommand* command)
     {
-        m_ommand = ommand;
+        m_Command = command;
     };
 
-    static v8::Handle<v8::Value> NewInstance(ICommand* ommand);
+    static v8::Handle<v8::Value> NewInstance(ICommand* command);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    ommandWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~ommandWrap();
+    CommandWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~CommandWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -64,5 +64,5 @@ private:
     static NAN_METHOD(IsDone);
 
     // Wrapped object
-    ICommand* m_ommand;
+    ICommand* m_Command;
 };

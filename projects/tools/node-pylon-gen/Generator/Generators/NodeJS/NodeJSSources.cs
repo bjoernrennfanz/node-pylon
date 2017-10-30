@@ -153,8 +153,9 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     WriteLine("// {0}()", classToWrap.Name);
                     WriteLine("{0} = new {1}();", classNameWrapperMember, classToWrap.Name);
-
                     WriteCloseBraceIndent();
+
+                    // Remember that we have created an constructor
                     firstConstructorCreated = true;
                 }
                 else
@@ -179,37 +180,57 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     // Output arguments checker
                     WriteLine(generatedCheckStatement);
                     WriteStartBraceIndent();
-                    WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
 
                     constructorArgumentIndex = 0;
+                    string generatedArgumentsWrapped = string.Empty;
                     foreach (Parameter parameter in constructor.Parameters)
                     {
                         if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
                         {
                             string parameterClassName = nodeJSTypePrinter.VisitParameter(parameter, false, false);
+                            string parameterClassWrapped = GenerateTrimmedClassName(parameterClassName) + "Wrap";
 
-                            WriteLine("GENICAM_NAMESPACE::gcstring info{0}_constructor = pylon_v8::ToGCString(info[{0}]->ToObject()->GetConstructorName());", constructorArgumentIndex);
+                            // Generate simple type check
+                            WriteLine("gcstring info{0}_constructor = pylon_v8::ToGCString(info[{0}]->ToObject()->GetConstructorName());", constructorArgumentIndex);
                             WriteLine("if (info{0}_constructor != \"{1}\")", constructorArgumentIndex, parameterClassName);
                             WriteStartBraceIndent();
                             WriteLine("ThrowException(Exception::TypeError(String::New(\"{0}::{0}: bad argument\")));", classToWrap.Name);
                             WriteCloseBraceIndent();
                             WriteLine(string.Empty);
 
+                            // Generate unwrap of stored object
                             WriteLine("// Unwrap obj");
+                            WriteLine("{0}* arg{1}_wrap = ObjectWrap::Unwrap<{0}>(info[{1}]->ToObject());", parameterClassWrapped, constructorArgumentIndex);
+                            WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, constructorArgumentIndex);
+                            WriteLine(string.Empty);
 
+                            // Store arguments for later usage
+                            generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
+                            generatedArgumentsWrapped += parameter.Type is PointerType ? (generatedArgumentsWrapped += (parameter.Type as PointerType).IsReference ? "*" : string.Empty) : string.Empty;
+                            generatedArgumentsWrapped += "arg" + constructorArgumentIndex;
                         }
                         else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
                         {
+                            // Generate wrapper for number values
+                            WriteLine("// Convert number value");
+                            WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", nodeJSTypePrinter.VisitParameter(parameter, false, false), constructorArgumentIndex);
+                            WriteLine(string.Empty);
 
+                            // Store arguments for later usage
+                            generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
+                            generatedArgumentsWrapped += "arg" + constructorArgumentIndex;
                         }
 
-                        WriteLine("// Unwrap obj");
-
+                        // Increment argument index
+                        constructorArgumentIndex++;
                     }
 
-
-
+                    // Generate construction of wrapped member
+                    WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
+                    WriteLine("{0} = new {1}({2});", classNameWrapperMember, classToWrap.Name, generatedArgumentsWrapped);
                     WriteCloseBraceIndent();
+
+                    // Remember that we have created an constructor
                     firstConstructorCreated = true;
                 }
             }

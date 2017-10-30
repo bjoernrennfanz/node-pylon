@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace Pylon;
 
-Nan::Persistent<FunctionTemplate> mageWrap::prototype;
-Nan::Persistent<Function> mageWrap::constructor;
+Nan::Persistent<FunctionTemplate> ImageWrap::prototype;
+Nan::Persistent<Function> ImageWrap::constructor;
 
 // Supported implementations
-mageWrap::mageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_mage(NULL)
+// IImage()
+// IImage(IImage& const arg0)
+ImageWrap::ImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Image(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IImage()
+        m_Image = new IImage();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IImage")
+        {
+            ThrowException(Exception::TypeError(String::New("IImage::IImage: bad argument")));
+        }
+
+        // Unwrap obj
+        ImageWrap* arg0_wrap = ObjectWrap::Unwrap<ImageWrap>(info[0]->ToObject());
+        IImage* arg0 = arg0_wrap->GetWrapped();
+
+        // IImage(IImage& const arg0)
+        m_Image = new IImage(*arg0);
+    }
 }

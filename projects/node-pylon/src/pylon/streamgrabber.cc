@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> StreamGrabberWrap::prototype;
 Nan::Persistent<Function> StreamGrabberWrap::constructor;
 
 // Supported implementations
+// IStreamGrabber()
+// IStreamGrabber(IStreamGrabber& const arg0)
 StreamGrabberWrap::StreamGrabberWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_StreamGrabber(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // IStreamGrabber()
+        m_StreamGrabber = new IStreamGrabber();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "IStreamGrabber")
+        {
+            ThrowException(Exception::TypeError(String::New("IStreamGrabber::IStreamGrabber: bad argument")));
+        }
+
+        // Unwrap obj
+        StreamGrabberWrap* arg0_wrap = ObjectWrap::Unwrap<StreamGrabberWrap>(info[0]->ToObject());
+        IStreamGrabber* arg0 = arg0_wrap->GetWrapped();
+
+        // IStreamGrabber(IStreamGrabber& const arg0)
+        m_StreamGrabber = new IStreamGrabber(*arg0);
+    }
 }

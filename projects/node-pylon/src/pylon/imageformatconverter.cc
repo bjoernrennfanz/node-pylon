@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> ImageFormatConverterWrap::prototype;
 Nan::Persistent<Function> ImageFormatConverterWrap::constructor;
 
 // Supported implementations
+// CImageFormatConverter()
+// CImageFormatConverter(CImageFormatConverter& const src)
 ImageFormatConverterWrap::ImageFormatConverterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ImageFormatConverter(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CImageFormatConverter()
+        m_ImageFormatConverter = new CImageFormatConverter();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CImageFormatConverter")
+        {
+            ThrowException(Exception::TypeError(String::New("CImageFormatConverter::CImageFormatConverter: bad argument")));
+        }
+
+        // Unwrap obj
+        ImageFormatConverterWrap* arg0_wrap = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info[0]->ToObject());
+        CImageFormatConverter* arg0 = arg0_wrap->GetWrapped();
+
+        // CImageFormatConverter(CImageFormatConverter& const src)
+        m_ImageFormatConverter = new CImageFormatConverter(*arg0);
+    }
 }

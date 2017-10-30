@@ -31,11 +31,34 @@
 using namespace v8;
 using namespace Pylon;
 
-Nan::Persistent<FunctionTemplate> ameraEventHandlerWrap::prototype;
-Nan::Persistent<Function> ameraEventHandlerWrap::constructor;
+Nan::Persistent<FunctionTemplate> CameraEventHandlerWrap::prototype;
+Nan::Persistent<Function> CameraEventHandlerWrap::constructor;
 
 // Supported implementations
-ameraEventHandlerWrap::ameraEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_ameraEventHandler(NULL)
+// CCameraEventHandler()
+// CCameraEventHandler(CCameraEventHandler& const arg0)
+CameraEventHandlerWrap::CameraEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_CameraEventHandler(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CCameraEventHandler()
+        m_CameraEventHandler = new CCameraEventHandler();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CCameraEventHandler")
+        {
+            ThrowException(Exception::TypeError(String::New("CCameraEventHandler::CCameraEventHandler: bad argument")));
+        }
+
+        // Unwrap obj
+        CameraEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info[0]->ToObject());
+        CCameraEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // CCameraEventHandler(CCameraEventHandler& const arg0)
+        m_CameraEventHandler = new CCameraEventHandler(*arg0);
+    }
 }

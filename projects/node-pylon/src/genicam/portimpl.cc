@@ -35,7 +35,30 @@ Nan::Persistent<FunctionTemplate> PortImplWrap::prototype;
 Nan::Persistent<Function> PortImplWrap::constructor;
 
 // Supported implementations
+// CPortImpl()
+// CPortImpl(CPortImpl& const arg0)
 PortImplWrap::PortImplWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_PortImpl(NULL)
 {
+    // Check constructor arguments
+    if (info.Length() == 0)
+    {
+        // CPortImpl()
+        m_PortImpl = new CPortImpl();
+    }
+    else if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CPortImpl")
+        {
+            ThrowException(Exception::TypeError(String::New("CPortImpl::CPortImpl: bad argument")));
+        }
+
+        // Unwrap obj
+        PortImplWrap* arg0_wrap = ObjectWrap::Unwrap<PortImplWrap>(info[0]->ToObject());
+        CPortImpl* arg0 = arg0_wrap->GetWrapped();
+
+        // CPortImpl(CPortImpl& const arg0)
+        m_PortImpl = new CPortImpl(*arg0);
+    }
 }

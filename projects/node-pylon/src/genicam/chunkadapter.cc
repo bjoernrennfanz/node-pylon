@@ -31,11 +31,47 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> hunkAdapterWrap::prototype;
-Nan::Persistent<Function> hunkAdapterWrap::constructor;
+Nan::Persistent<FunctionTemplate> ChunkAdapterWrap::prototype;
+Nan::Persistent<Function> ChunkAdapterWrap::constructor;
 
 // Supported implementations
-hunkAdapterWrap::hunkAdapterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_hunkAdapter(NULL)
+// CChunkAdapter(CChunkAdapter& const arg0)
+// CChunkAdapter(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+ChunkAdapterWrap::ChunkAdapterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_ChunkAdapter(NULL)
 {
+    // Check constructor arguments
+    if (info[0]->IsObject())
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "CChunkAdapter")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapter::CChunkAdapter: bad argument")));
+        }
+
+        // Unwrap obj
+        ChunkAdapterWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterWrap>(info[0]->ToObject());
+        CChunkAdapter* arg0 = arg0_wrap->GetWrapped();
+
+        // CChunkAdapter(CChunkAdapter& const arg0)
+        m_ChunkAdapter = new CChunkAdapter(*arg0);
+    }
+    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    {
+        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
+        if (info0_constructor != "INodeMap")
+        {
+            ThrowException(Exception::TypeError(String::New("CChunkAdapter::CChunkAdapter: bad argument")));
+        }
+
+        // Unwrap obj
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // CChunkAdapter(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
+        m_ChunkAdapter = new CChunkAdapter(arg0, arg1);
+    }
 }

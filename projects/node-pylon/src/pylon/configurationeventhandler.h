@@ -47,12 +47,12 @@ public:
         return m_ConfigurationEventHandler;
     };
 
-    void SetWrapped(CConfigurationEventHandler* onfigurationEventHandler)
+    void SetWrapped(CConfigurationEventHandler* configurationEventHandler)
     {
-        m_ConfigurationEventHandler = onfigurationEventHandler;
+        m_ConfigurationEventHandler = configurationEventHandler;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CConfigurationEventHandler* onfigurationEventHandler);
+    static v8::Handle<v8::Value> NewInstance(CConfigurationEventHandler* configurationEventHandler);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
