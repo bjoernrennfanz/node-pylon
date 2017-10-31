@@ -62,3 +62,28 @@ ValueWrap::ValueWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Value = new IValue(*arg0);
     }
 }
+
+ValueWrap::~ValueWrap()
+{
+    delete m_Value;
+}
+
+NAN_MODULE_INIT(ValueWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ValueWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getNode", GetNode);
+    Nan::SetPrototypeMethod(tpl, "toString", ToString);
+    Nan::SetPrototypeMethod(tpl, "fromString", FromString);
+    Nan::SetPrototypeMethod(tpl, "isValueCacheValid", IsValueCacheValid);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IValue").ToLocalChecked(), function);
+}

@@ -62,3 +62,26 @@ SoftwareTriggerConfigurationWrap::SoftwareTriggerConfigurationWrap(Nan::NAN_METH
         m_SoftwareTriggerConfiguration = new CSoftwareTriggerConfiguration(*arg0);
     }
 }
+
+SoftwareTriggerConfigurationWrap::~SoftwareTriggerConfigurationWrap()
+{
+    delete m_SoftwareTriggerConfiguration;
+}
+
+NAN_MODULE_INIT(SoftwareTriggerConfigurationWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("SoftwareTriggerConfigurationWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "applyConfiguration", ApplyConfiguration);
+    Nan::SetPrototypeMethod(tpl, "onOpened", OnOpened);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CSoftwareTriggerConfiguration").ToLocalChecked(), function);
+}

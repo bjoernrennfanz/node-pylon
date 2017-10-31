@@ -72,3 +72,26 @@ EventAdapterU3VWrap::EventAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_EventAdapterU3V = new CEventAdapterU3V(*arg0);
     }
 }
+
+EventAdapterU3VWrap::~EventAdapterU3VWrap()
+{
+    delete m_EventAdapterU3V;
+}
+
+NAN_MODULE_INIT(EventAdapterU3VWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("EventAdapterU3VWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "deliverMessage", DeliverMessage);
+    Nan::SetPrototypeMethod(tpl, "deliverEventMessage", DeliverEventMessage);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CEventAdapterU3V").ToLocalChecked(), function);
+}

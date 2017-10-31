@@ -33,3 +33,7 @@ using namespace Basler_ImageFormatConverterParams;
 
 Nan::Persistent<FunctionTemplate> ImageformatconverterparamsWrap::prototype;
 Nan::Persistent<Function> ImageformatconverterparamsWrap::constructor;
+
+NAN_MODULE_INIT(ImageformatconverterparamsWrap::Initialize)
+{
+}

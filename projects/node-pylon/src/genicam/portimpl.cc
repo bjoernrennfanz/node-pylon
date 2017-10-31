@@ -62,3 +62,31 @@ PortImplWrap::PortImplWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PortImpl = new CPortImpl(*arg0);
     }
 }
+
+PortImplWrap::~PortImplWrap()
+{
+    delete m_PortImpl;
+}
+
+NAN_MODULE_INIT(PortImplWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PortImplWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getAccessMode", GetAccessMode);
+    Nan::SetPrototypeMethod(tpl, "read", Read);
+    Nan::SetPrototypeMethod(tpl, "write", Write);
+    Nan::SetPrototypeMethod(tpl, "setPortImpl", SetPortImpl);
+    Nan::SetPrototypeMethod(tpl, "getSwapEndianess", GetSwapEndianess);
+    Nan::SetPrototypeMethod(tpl, "replay", Replay);
+    Nan::SetPrototypeMethod(tpl, "invalidateNode", InvalidateNode);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CPortImpl").ToLocalChecked(), function);
+}

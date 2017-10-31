@@ -62,3 +62,30 @@ ImageEventHandlerWrap::ImageEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ImageEventHandler = new CImageEventHandler(*arg0);
     }
 }
+
+ImageEventHandlerWrap::~ImageEventHandlerWrap()
+{
+    delete m_ImageEventHandler;
+}
+
+NAN_MODULE_INIT(ImageEventHandlerWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ImageEventHandlerWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "onImagesSkipped", OnImagesSkipped);
+    Nan::SetPrototypeMethod(tpl, "onImageGrabbed", OnImageGrabbed);
+    Nan::SetPrototypeMethod(tpl, "onImageEventHandlerRegistered", OnImageEventHandlerRegistered);
+    Nan::SetPrototypeMethod(tpl, "onImageEventHandlerDeregistered", OnImageEventHandlerDeregistered);
+    Nan::SetPrototypeMethod(tpl, "destroyImageEventHandler", DestroyImageEventHandler);
+    Nan::SetPrototypeMethod(tpl, "debugGetEventHandlerRegistrationCount", DebugGetEventHandlerRegistrationCount);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CImageEventHandler").ToLocalChecked(), function);
+}

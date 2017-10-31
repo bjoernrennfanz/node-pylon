@@ -94,22 +94,12 @@ private:
 
     // Wrapped functions
     static NAN_METHOD(IsReadable);
-    static NAN_METHOD(IsReadable);
-    static NAN_METHOD(IsReadable);
-    static NAN_METHOD(IsWritable);
-    static NAN_METHOD(IsWritable);
     static NAN_METHOD(IsWritable);
     static NAN_METHOD(IsImplemented);
-    static NAN_METHOD(IsImplemented);
-    static NAN_METHOD(IsImplemented);
-    static NAN_METHOD(IsAvailable);
-    static NAN_METHOD(IsAvailable);
     static NAN_METHOD(IsAvailable);
     static NAN_METHOD(Combine);
     static NAN_METHOD(IsVisible);
-    static NAN_METHOD(Combine);
     static NAN_METHOD(IsCacheable);
-    static NAN_METHOD(Combine);
 
     // Wrapped object
     INode* m_Node;

@@ -62,3 +62,45 @@ GrabResultWrap::GrabResultWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_GrabResult = new GrabResult(*arg0);
     }
 }
+
+GrabResultWrap::~GrabResultWrap()
+{
+    delete m_GrabResult;
+}
+
+NAN_MODULE_INIT(GrabResultWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("GrabResultWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "succeeded", Succeeded);
+    Nan::SetPrototypeMethod(tpl, "handle", Handle);
+    Nan::SetPrototypeMethod(tpl, "buffer", Buffer);
+    Nan::SetPrototypeMethod(tpl, "status", Status);
+    Nan::SetPrototypeMethod(tpl, "context", Context);
+    Nan::SetPrototypeMethod(tpl, "frameNr", FrameNr);
+    Nan::SetPrototypeMethod(tpl, "getPayloadType", GetPayloadType);
+    Nan::SetPrototypeMethod(tpl, "getPixelType", GetPixelType);
+    Nan::SetPrototypeMethod(tpl, "getTimeStamp", GetTimeStamp);
+    Nan::SetPrototypeMethod(tpl, "getSizeX", GetSizeX);
+    Nan::SetPrototypeMethod(tpl, "getSizeY", GetSizeY);
+    Nan::SetPrototypeMethod(tpl, "getOffsetX", GetOffsetX);
+    Nan::SetPrototypeMethod(tpl, "getOffsetY", GetOffsetY);
+    Nan::SetPrototypeMethod(tpl, "getPaddingX", GetPaddingX);
+    Nan::SetPrototypeMethod(tpl, "getPaddingY", GetPaddingY);
+    Nan::SetPrototypeMethod(tpl, "getPayloadSize", GetPayloadSize);
+    Nan::SetPrototypeMethod(tpl, "getPayloadSize_t", GetPayloadSize_t);
+    Nan::SetPrototypeMethod(tpl, "getErrorDescription", GetErrorDescription);
+    Nan::SetPrototypeMethod(tpl, "getErrorCode", GetErrorCode);
+    Nan::SetPrototypeMethod(tpl, "getImage", GetImage);
+    Nan::SetPrototypeMethod(tpl, "getBlockID", GetBlockID);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("GrabResult").ToLocalChecked(), function);
+}

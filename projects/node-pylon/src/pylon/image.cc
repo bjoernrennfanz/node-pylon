@@ -62,3 +62,34 @@ ImageWrap::ImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Image = new IImage(*arg0);
     }
 }
+
+ImageWrap::~ImageWrap()
+{
+    delete m_Image;
+}
+
+NAN_MODULE_INIT(ImageWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ImageWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "isValid", IsValid);
+    Nan::SetPrototypeMethod(tpl, "getPixelType", GetPixelType);
+    Nan::SetPrototypeMethod(tpl, "getWidth", GetWidth);
+    Nan::SetPrototypeMethod(tpl, "getHeight", GetHeight);
+    Nan::SetPrototypeMethod(tpl, "getPaddingX", GetPaddingX);
+    Nan::SetPrototypeMethod(tpl, "getOrientation", GetOrientation);
+    Nan::SetPrototypeMethod(tpl, "getBuffer", GetBuffer);
+    Nan::SetPrototypeMethod(tpl, "getImageSize", GetImageSize);
+    Nan::SetPrototypeMethod(tpl, "isUnique", IsUnique);
+    Nan::SetPrototypeMethod(tpl, "getStride", GetStride);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IImage").ToLocalChecked(), function);
+}

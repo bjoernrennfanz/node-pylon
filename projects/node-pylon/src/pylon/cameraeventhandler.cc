@@ -62,3 +62,29 @@ CameraEventHandlerWrap::CameraEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_CameraEventHandler = new CCameraEventHandler(*arg0);
     }
 }
+
+CameraEventHandlerWrap::~CameraEventHandlerWrap()
+{
+    delete m_CameraEventHandler;
+}
+
+NAN_MODULE_INIT(CameraEventHandlerWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("CameraEventHandlerWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "onCameraEvent", OnCameraEvent);
+    Nan::SetPrototypeMethod(tpl, "onCameraEventHandlerRegistered", OnCameraEventHandlerRegistered);
+    Nan::SetPrototypeMethod(tpl, "onCameraEventHandlerDeregistered", OnCameraEventHandlerDeregistered);
+    Nan::SetPrototypeMethod(tpl, "destroyCameraEventHandler", DestroyCameraEventHandler);
+    Nan::SetPrototypeMethod(tpl, "debugGetEventHandlerRegistrationCount", DebugGetEventHandlerRegistrationCount);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CCameraEventHandler").ToLocalChecked(), function);
+}

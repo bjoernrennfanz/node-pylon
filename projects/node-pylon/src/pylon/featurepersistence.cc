@@ -62,3 +62,28 @@ FeaturePersistenceWrap::FeaturePersistenceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_FeaturePersistence = new CFeaturePersistence(*arg0);
     }
 }
+
+FeaturePersistenceWrap::~FeaturePersistenceWrap()
+{
+    delete m_FeaturePersistence;
+}
+
+NAN_MODULE_INIT(FeaturePersistenceWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("FeaturePersistenceWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "load", Load);
+    Nan::SetPrototypeMethod(tpl, "save", Save);
+    Nan::SetPrototypeMethod(tpl, "loadFromString", LoadFromString);
+    Nan::SetPrototypeMethod(tpl, "saveToString", SaveToString);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CFeaturePersistence").ToLocalChecked(), function);
+}

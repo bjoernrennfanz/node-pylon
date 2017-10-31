@@ -62,3 +62,29 @@ SelectorDigitWrap::SelectorDigitWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_SelectorDigit = new ISelectorDigit(*arg0);
     }
 }
+
+SelectorDigitWrap::~SelectorDigitWrap()
+{
+    delete m_SelectorDigit;
+}
+
+NAN_MODULE_INIT(SelectorDigitWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("SelectorDigitWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setFirst", SetFirst);
+    Nan::SetPrototypeMethod(tpl, "setNext", SetNext);
+    Nan::SetPrototypeMethod(tpl, "restore", Restore);
+    Nan::SetPrototypeMethod(tpl, "toString", ToString);
+    Nan::SetPrototypeMethod(tpl, "getSelectorList", GetSelectorList);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("ISelectorDigit").ToLocalChecked(), function);
+}

@@ -33,3 +33,12 @@ using namespace Pylon;
 
 Nan::Persistent<FunctionTemplate> PylonWrap::prototype;
 Nan::Persistent<Function> PylonWrap::constructor;
+
+NAN_MODULE_INIT(PylonWrap::Initialize)
+{
+    // Register static functions in Node JS
+    Nan::Set(target, Nan::New<String>("pylonInitialize").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::PylonInitialize)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("pylonTerminate").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::PylonTerminate)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("getPylonVersion").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::GetPylonVersion)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("getPylonVersionString").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::GetPylonVersionString)).ToLocalChecked());
+}

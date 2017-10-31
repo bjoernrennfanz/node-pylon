@@ -62,3 +62,36 @@ StreamGrabberWrap::StreamGrabberWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_StreamGrabber = new IStreamGrabber(*arg0);
     }
 }
+
+StreamGrabberWrap::~StreamGrabberWrap()
+{
+    delete m_StreamGrabber;
+}
+
+NAN_MODULE_INIT(StreamGrabberWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("StreamGrabberWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "open", Open);
+    Nan::SetPrototypeMethod(tpl, "close", Close);
+    Nan::SetPrototypeMethod(tpl, "isOpen", IsOpen);
+    Nan::SetPrototypeMethod(tpl, "registerBuffer", RegisterBuffer);
+    Nan::SetPrototypeMethod(tpl, "deregisterBuffer", DeregisterBuffer);
+    Nan::SetPrototypeMethod(tpl, "prepareGrab", PrepareGrab);
+    Nan::SetPrototypeMethod(tpl, "finishGrab", FinishGrab);
+    Nan::SetPrototypeMethod(tpl, "queueBuffer", QueueBuffer);
+    Nan::SetPrototypeMethod(tpl, "cancelGrab", CancelGrab);
+    Nan::SetPrototypeMethod(tpl, "retrieveResult", RetrieveResult);
+    Nan::SetPrototypeMethod(tpl, "getWaitObject", GetWaitObject);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IStreamGrabber").ToLocalChecked(), function);
+}

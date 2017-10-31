@@ -72,3 +72,39 @@ ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ChunkPort = new CChunkPort(*arg0);
     }
 }
+
+ChunkPortWrap::~ChunkPortWrap()
+{
+    delete m_ChunkPort;
+}
+
+NAN_MODULE_INIT(ChunkPortWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ChunkPortWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getAccessMode", GetAccessMode);
+    Nan::SetPrototypeMethod(tpl, "getPrincipalInterfaceType", GetPrincipalInterfaceType);
+    Nan::SetPrototypeMethod(tpl, "read", Read);
+    Nan::SetPrototypeMethod(tpl, "write", Write);
+    Nan::SetPrototypeMethod(tpl, "setPortImpl", SetPortImpl);
+    Nan::SetPrototypeMethod(tpl, "getSwapEndianess", GetSwapEndianess);
+    Nan::SetPrototypeMethod(tpl, "invalidateNode", InvalidateNode);
+    Nan::SetPrototypeMethod(tpl, "attachPort", AttachPort);
+    Nan::SetPrototypeMethod(tpl, "detachPort", DetachPort);
+    Nan::SetPrototypeMethod(tpl, "attachChunk", AttachChunk);
+    Nan::SetPrototypeMethod(tpl, "detachChunk", DetachChunk);
+    Nan::SetPrototypeMethod(tpl, "getChunkIDLength", GetChunkIDLength);
+    Nan::SetPrototypeMethod(tpl, "checkChunkID", CheckChunkID);
+    Nan::SetPrototypeMethod(tpl, "updateBuffer", UpdateBuffer);
+    Nan::SetPrototypeMethod(tpl, "clearCache", ClearCache);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CChunkPort").ToLocalChecked(), function);
+}

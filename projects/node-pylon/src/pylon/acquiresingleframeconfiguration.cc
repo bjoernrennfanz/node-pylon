@@ -62,3 +62,26 @@ AcquireSingleFrameConfigurationWrap::AcquireSingleFrameConfigurationWrap(Nan::NA
         m_AcquireSingleFrameConfiguration = new CAcquireSingleFrameConfiguration(*arg0);
     }
 }
+
+AcquireSingleFrameConfigurationWrap::~AcquireSingleFrameConfigurationWrap()
+{
+    delete m_AcquireSingleFrameConfiguration;
+}
+
+NAN_MODULE_INIT(AcquireSingleFrameConfigurationWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("AcquireSingleFrameConfigurationWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "applyConfiguration", ApplyConfiguration);
+    Nan::SetPrototypeMethod(tpl, "onOpened", OnOpened);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CAcquireSingleFrameConfiguration").ToLocalChecked(), function);
+}

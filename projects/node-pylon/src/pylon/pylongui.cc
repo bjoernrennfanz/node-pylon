@@ -33,3 +33,9 @@ using namespace Pylon;
 
 Nan::Persistent<FunctionTemplate> PylonguiWrap::prototype;
 Nan::Persistent<Function> PylonguiWrap::constructor;
+
+NAN_MODULE_INIT(PylonguiWrap::Initialize)
+{
+    // Register static functions in Node JS
+    Nan::Set(target, Nan::New<String>("displayImage").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonguiWrap::DisplayImage)).ToLocalChecked());
+}

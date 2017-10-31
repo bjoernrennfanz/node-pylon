@@ -32,3 +32,7 @@ using namespace v8;
 
 Nan::Persistent<FunctionTemplate> PixeltypeWrap::prototype;
 Nan::Persistent<Function> PixeltypeWrap::constructor;
+
+NAN_MODULE_INIT(PixeltypeWrap::Initialize)
+{
+}

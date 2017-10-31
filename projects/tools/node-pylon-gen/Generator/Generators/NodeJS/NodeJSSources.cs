@@ -30,6 +30,7 @@ using System.Linq;
 using NodePylonGen.Config;
 using CppSharp.Generators;
 using BindingContext = NodePylonGen.Generators.BindingContext;
+using System;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -106,14 +107,20 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Generate NodeJS wrapper prototypes
             GenerateWrapperClassPersistentFunctions(classNameWrap);
 
+            // Check if we need constructor & destructor
             if (classToWrapTypeReference != null)
             {
                 // Generate constructors
-                GenerateWrapperClassConstructors(classToWrapTypeReference, typeReferenceCollector);
+                GenerateWrapperClassConstructors(classToWrapTypeReference);
+                GenerateWrapperClassDestructors(classToWrapTypeReference);
             }
+
+            // Generate initialize
+            GenerateWrapperInitialize(classToWrapTypeReference, classNameWrap, typeReferenceCollector);
+
         }
 
-        private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference, NodeJSTypeReferenceCollector typeReferenceCollector)
+        private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference)
         {
             NodeJSTypePrinter nodeJSTypePrinter = new NodeJSTypePrinter(Context);
             NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(Context);
@@ -191,18 +198,20 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                             string parameterClassWrapped = GenerateTrimmedClassName(parameterClassName) + "Wrap";
 
                             // Generate simple type check
+                            PushBlock(BlockKind.MethodBody);
                             WriteLine("gcstring info{0}_constructor = pylon_v8::ToGCString(info[{0}]->ToObject()->GetConstructorName());", constructorArgumentIndex);
                             WriteLine("if (info{0}_constructor != \"{1}\")", constructorArgumentIndex, parameterClassName);
                             WriteStartBraceIndent();
                             WriteLine("ThrowException(Exception::TypeError(String::New(\"{0}::{0}: bad argument\")));", classToWrap.Name);
                             WriteCloseBraceIndent();
-                            WriteLine(string.Empty);
+                            PopBlock(NewLineKind.BeforeNextBlock);
 
                             // Generate unwrap of stored object
+                            PushBlock(BlockKind.MethodBody);
                             WriteLine("// Unwrap obj");
                             WriteLine("{0}* arg{1}_wrap = ObjectWrap::Unwrap<{0}>(info[{1}]->ToObject());", parameterClassWrapped, constructorArgumentIndex);
                             WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, constructorArgumentIndex);
-                            WriteLine(string.Empty);
+                            PopBlock(NewLineKind.BeforeNextBlock);
 
                             // Store arguments for later usage
                             generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
@@ -212,9 +221,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                         else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
                         {
                             // Generate wrapper for number values
+                            PushBlock(BlockKind.MethodBody);
                             WriteLine("// Convert number value");
                             WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", nodeJSTypePrinter.VisitParameter(parameter, false, false), constructorArgumentIndex);
-                            WriteLine(string.Empty);
+                            PopBlock(NewLineKind.BeforeNextBlock);
 
                             // Store arguments for later usage
                             generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
@@ -226,8 +236,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     }
 
                     // Generate construction of wrapped member
+                    PushBlock(BlockKind.MethodBody);
                     WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
                     WriteLine("{0} = new {1}({2});", classNameWrapperMember, classToWrap.Name, generatedArgumentsWrapped);
+                    PopBlock(NewLineKind.Never);
                     WriteCloseBraceIndent();
 
                     // Remember that we have created an constructor
@@ -239,11 +251,119 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             PopBlock(NewLineKind.BeforeNextBlock);
         }
 
+        private void GenerateWrapperClassDestructors(NodeJSTypeReference classToWrapTypeReference)
+        {
+            Class classToWrap = classToWrapTypeReference.Declaration as Class;
+            string classNameWrap = GenerateTrimmedClassName(classToWrap.Name) + "Wrap";
+            string classNameWrapperMember = "m_" + GenerateTrimmedClassName(classToWrap.Name);
+
+            // Destructor for wrapped class
+            PushBlock(BlockKind.Method);
+            WriteLine("{0}::~{0}()", classNameWrap);
+            WriteStartBraceIndent();
+            WriteLine("delete {0};", classNameWrapperMember);
+            WriteCloseBraceIndent();
+            PopBlock(NewLineKind.BeforeNextBlock);
+        }
+
         private void GenerateWrapperClassPersistentFunctions(string classNameWrap)
         {
             PushBlock(BlockKind.Template);
             WriteLine("Nan::Persistent<FunctionTemplate> {0}::prototype;", classNameWrap);
             WriteLine("Nan::Persistent<Function> {0}::constructor;", classNameWrap);
+            PopBlock(NewLineKind.BeforeNextBlock);
+        }
+
+        private void GenerateWrapperInitialize(NodeJSTypeReference classToWrapTypeReference, string classNameWrap, NodeJSTypeReferenceCollector typeReferenceCollector)
+        {
+            PushBlock(BlockKind.Method);
+            WriteLine("NAN_MODULE_INIT({0}::Initialize)", classNameWrap);
+            WriteStartBraceIndent();
+
+            // Generate constructor template code
+            if (classToWrapTypeReference !=  null)
+            {
+                // Find class to wrap
+                Class classToWrap = classToWrapTypeReference.Declaration as Class;
+
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Prepare constructor template");
+                WriteLine("Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);");
+                WriteLine("tpl->SetClassName(Nan::New(\"{0}\").ToLocalChecked());", classNameWrap);
+                WriteLine("tpl->InstanceTemplate()->SetInternalFieldCount(1);");
+                PopBlock(NewLineKind.BeforeNextBlock);
+
+                // Generate methods prototypes
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Register prototypes to template");
+
+                SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+                foreach (Method method in classToWrap.Methods)
+                {
+                    // Skip constructors
+                    if (method.IsConstructor)
+                        continue;
+
+                    // Skip on other access level than public
+                    if (method.Access != AccessSpecifier.Public)
+                        continue;
+
+                    // Process method only once
+                    if (methodsProcessed.Contains(method.Name))
+                        continue;
+
+                    // Output method declaration
+                    string methodNameNorm = method.Name;
+                    string methodNameLower = methodNameNorm.Substring(0, 1).ToLower() + methodNameNorm.Substring(1);
+                    WriteLine("Nan::SetPrototypeMethod(tpl, \"{0}\", {1});", methodNameLower, methodNameNorm);
+                    methodsProcessed.Add(method.Name);
+                }
+                PopBlock(NewLineKind.BeforeNextBlock);
+
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Register template in Node JS");
+                WriteLine("prototype.Reset(tpl);");
+                WriteLine("Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();");
+                WriteLine("constructor.Reset(function);");
+                WriteLine("Nan::Set(target, Nan::New(\"{0}\").ToLocalChecked(), function);", classToWrap.Name);
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+
+            // Find static functions
+            List<Function> functions = typeReferenceCollector.TypeReferences
+                .Where(item => ((item.Declaration is Function) && !(item.Declaration is Method)))
+                .Select(item => item.Declaration as Function).ToList();
+
+            // Generate static methods
+            if (functions.Count > 0)
+            {
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Register static functions in Node JS");
+
+                SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+                foreach (Function function in functions)
+                {
+                    // Skip on other access level than public
+                    if (function.Access != AccessSpecifier.Public)
+                        continue;
+
+                    // Process method only once
+                    if (functionsProcessed.Contains(function.Name))
+                        continue;
+
+                    // Output function declaration
+                    string functionNameNorm = function.Name;
+                    string functionNameLower = functionNameNorm.Substring(0, 1).ToLower() + functionNameNorm.Substring(1);
+                    WriteLine("Nan::Set(target, Nan::New<String>(\"{0}\").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>({1}::{2})).ToLocalChecked());", functionNameLower, classNameWrap, functionNameNorm);
+                    functionsProcessed.Add(function.Name);
+                }
+
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+
+            // TODO: Implement search of childs for initialize
+
+            WriteCloseBraceIndent();
             PopBlock(NewLineKind.BeforeNextBlock);
         }
     }

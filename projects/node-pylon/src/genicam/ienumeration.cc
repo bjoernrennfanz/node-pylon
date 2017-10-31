@@ -62,3 +62,31 @@ EnumerationWrap::EnumerationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Enumeration = new IEnumeration(*arg0);
     }
 }
+
+EnumerationWrap::~EnumerationWrap()
+{
+    delete m_Enumeration;
+}
+
+NAN_MODULE_INIT(EnumerationWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("EnumerationWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getSymbolics", GetSymbolics);
+    Nan::SetPrototypeMethod(tpl, "getEntries", GetEntries);
+    Nan::SetPrototypeMethod(tpl, "setIntValue", SetIntValue);
+    Nan::SetPrototypeMethod(tpl, "getIntValue", GetIntValue);
+    Nan::SetPrototypeMethod(tpl, "getEntryByName", GetEntryByName);
+    Nan::SetPrototypeMethod(tpl, "getEntry", GetEntry);
+    Nan::SetPrototypeMethod(tpl, "getCurrentEntry", GetCurrentEntry);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IEnumeration").ToLocalChecked(), function);
+}

@@ -62,3 +62,33 @@ ImageFormatConverterWrap::ImageFormatConverterWrap(Nan::NAN_METHOD_ARGS_TYPE inf
         m_ImageFormatConverter = new CImageFormatConverter(*arg0);
     }
 }
+
+ImageFormatConverterWrap::~ImageFormatConverterWrap()
+{
+    delete m_ImageFormatConverter;
+}
+
+NAN_MODULE_INIT(ImageFormatConverterWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ImageFormatConverterWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
+    Nan::SetPrototypeMethod(tpl, "isInitialized", IsInitialized);
+    Nan::SetPrototypeMethod(tpl, "uninitialize", Uninitialize);
+    Nan::SetPrototypeMethod(tpl, "imageHasDestinationFormat", ImageHasDestinationFormat);
+    Nan::SetPrototypeMethod(tpl, "getBufferSizeForConversion", GetBufferSizeForConversion);
+    Nan::SetPrototypeMethod(tpl, "convert", Convert);
+    Nan::SetPrototypeMethod(tpl, "isSupportedInputFormat", IsSupportedInputFormat);
+    Nan::SetPrototypeMethod(tpl, "isSupportedOutputFormat", IsSupportedOutputFormat);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CImageFormatConverter").ToLocalChecked(), function);
+}

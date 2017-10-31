@@ -75,3 +75,29 @@ NodeCallbackWrap::NodeCallbackWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_NodeCallback = new CNodeCallback(arg0, arg1);
     }
 }
+
+NodeCallbackWrap::~NodeCallbackWrap()
+{
+    delete m_NodeCallback;
+}
+
+NAN_MODULE_INIT(NodeCallbackWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("NodeCallbackWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "destroy", Destroy);
+    Nan::SetPrototypeMethod(tpl, "getNode", GetNode);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CNodeCallback").ToLocalChecked(), function);
+
+    // Register static functions in Node JS
+    Nan::Set(target, Nan::New<String>("deregister").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeCallbackWrap::Deregister)).ToLocalChecked());
+}

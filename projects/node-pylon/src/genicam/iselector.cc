@@ -62,3 +62,27 @@ SelectorWrap::SelectorWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Selector = new ISelector(*arg0);
     }
 }
+
+SelectorWrap::~SelectorWrap()
+{
+    delete m_Selector;
+}
+
+NAN_MODULE_INIT(SelectorWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("SelectorWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "isSelector", IsSelector);
+    Nan::SetPrototypeMethod(tpl, "getSelectedFeatures", GetSelectedFeatures);
+    Nan::SetPrototypeMethod(tpl, "getSelectingFeatures", GetSelectingFeatures);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("ISelector").ToLocalChecked(), function);
+}

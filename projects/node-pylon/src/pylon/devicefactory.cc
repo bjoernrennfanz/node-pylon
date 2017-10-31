@@ -62,3 +62,29 @@ DeviceFactoryWrap::DeviceFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_DeviceFactory = new IDeviceFactory(*arg0);
     }
 }
+
+DeviceFactoryWrap::~DeviceFactoryWrap()
+{
+    delete m_DeviceFactory;
+}
+
+NAN_MODULE_INIT(DeviceFactoryWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("DeviceFactoryWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "enumerateDevices", EnumerateDevices);
+    Nan::SetPrototypeMethod(tpl, "createDevice", CreateDevice);
+    Nan::SetPrototypeMethod(tpl, "createFirstDevice", CreateFirstDevice);
+    Nan::SetPrototypeMethod(tpl, "destroyDevice", DestroyDevice);
+    Nan::SetPrototypeMethod(tpl, "isDeviceAccessible", IsDeviceAccessible);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IDeviceFactory").ToLocalChecked(), function);
+}

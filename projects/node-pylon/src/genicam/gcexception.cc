@@ -33,3 +33,7 @@ using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> GcexceptionWrap::prototype;
 Nan::Persistent<Function> GcexceptionWrap::constructor;
+
+NAN_MODULE_INIT(GcexceptionWrap::Initialize)
+{
+}

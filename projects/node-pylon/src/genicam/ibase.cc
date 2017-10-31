@@ -62,3 +62,25 @@ BaseWrap::BaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Base = new IBase(*arg0);
     }
 }
+
+BaseWrap::~BaseWrap()
+{
+    delete m_Base;
+}
+
+NAN_MODULE_INIT(BaseWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("BaseWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getAccessMode", GetAccessMode);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IBase").ToLocalChecked(), function);
+}

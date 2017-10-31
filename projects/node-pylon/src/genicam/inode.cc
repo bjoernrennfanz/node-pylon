@@ -62,3 +62,62 @@ NodeWrap::NodeWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Node = new INode(*arg0);
     }
 }
+
+NodeWrap::~NodeWrap()
+{
+    delete m_Node;
+}
+
+NAN_MODULE_INIT(NodeWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("NodeWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getName", GetName);
+    Nan::SetPrototypeMethod(tpl, "getNameSpace", GetNameSpace);
+    Nan::SetPrototypeMethod(tpl, "getVisibility", GetVisibility);
+    Nan::SetPrototypeMethod(tpl, "invalidateNode", InvalidateNode);
+    Nan::SetPrototypeMethod(tpl, "isCachable", IsCachable);
+    Nan::SetPrototypeMethod(tpl, "isAccessModeCacheable", IsAccessModeCacheable);
+    Nan::SetPrototypeMethod(tpl, "getCachingMode", GetCachingMode);
+    Nan::SetPrototypeMethod(tpl, "getPollingTime", GetPollingTime);
+    Nan::SetPrototypeMethod(tpl, "getToolTip", GetToolTip);
+    Nan::SetPrototypeMethod(tpl, "getDescription", GetDescription);
+    Nan::SetPrototypeMethod(tpl, "getDisplayName", GetDisplayName);
+    Nan::SetPrototypeMethod(tpl, "getDeviceName", GetDeviceName);
+    Nan::SetPrototypeMethod(tpl, "getChildren", GetChildren);
+    Nan::SetPrototypeMethod(tpl, "getParents", GetParents);
+    Nan::SetPrototypeMethod(tpl, "registerCallback", RegisterCallback);
+    Nan::SetPrototypeMethod(tpl, "deregisterCallback", DeregisterCallback);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getEventID", GetEventID);
+    Nan::SetPrototypeMethod(tpl, "isStreamable", IsStreamable);
+    Nan::SetPrototypeMethod(tpl, "getPropertyNames", GetPropertyNames);
+    Nan::SetPrototypeMethod(tpl, "getProperty", GetProperty);
+    Nan::SetPrototypeMethod(tpl, "imposeAccessMode", ImposeAccessMode);
+    Nan::SetPrototypeMethod(tpl, "imposeVisibility", ImposeVisibility);
+    Nan::SetPrototypeMethod(tpl, "getAlias", GetAlias);
+    Nan::SetPrototypeMethod(tpl, "getCastAlias", GetCastAlias);
+    Nan::SetPrototypeMethod(tpl, "getDocuURL", GetDocuURL);
+    Nan::SetPrototypeMethod(tpl, "isDeprecated", IsDeprecated);
+    Nan::SetPrototypeMethod(tpl, "getPrincipalInterfaceType", GetPrincipalInterfaceType);
+    Nan::SetPrototypeMethod(tpl, "isFeature", IsFeature);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("INode").ToLocalChecked(), function);
+
+    // Register static functions in Node JS
+    Nan::Set(target, Nan::New<String>("isReadable").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsReadable)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("isWritable").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsWritable)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("isImplemented").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsImplemented)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("isAvailable").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsAvailable)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("combine").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::Combine)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("isVisible").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsVisible)).ToLocalChecked());
+    Nan::Set(target, Nan::New<String>("isCacheable").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsCacheable)).ToLocalChecked());
+}

@@ -62,3 +62,25 @@ ReferenceTWrap::ReferenceTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ReferenceT = new CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>(*arg0);
     }
 }
+
+ReferenceTWrap::~ReferenceTWrap()
+{
+    delete m_ReferenceT;
+}
+
+NAN_MODULE_INIT(ReferenceTWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ReferenceTWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setReference", SetReference);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>").ToLocalChecked(), function);
+}

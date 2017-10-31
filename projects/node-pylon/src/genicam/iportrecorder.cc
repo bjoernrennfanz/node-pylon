@@ -62,3 +62,26 @@ PortRecorderWrap::PortRecorderWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PortRecorder = new IPortRecorder(*arg0);
     }
 }
+
+PortRecorderWrap::~PortRecorderWrap()
+{
+    delete m_PortRecorder;
+}
+
+NAN_MODULE_INIT(PortRecorderWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PortRecorderWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "startRecording", StartRecording);
+    Nan::SetPrototypeMethod(tpl, "stopRecording", StopRecording);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IPortRecorder").ToLocalChecked(), function);
+}

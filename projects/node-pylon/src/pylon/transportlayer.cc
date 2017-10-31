@@ -62,3 +62,28 @@ TransportLayerWrap::TransportLayerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_TransportLayer = new ITransportLayer(*arg0);
     }
 }
+
+TransportLayerWrap::~TransportLayerWrap()
+{
+    delete m_TransportLayer;
+}
+
+NAN_MODULE_INIT(TransportLayerWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("TransportLayerWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getTlInfo", GetTlInfo);
+    Nan::SetPrototypeMethod(tpl, "createDeviceInfo", CreateDeviceInfo);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+    Nan::SetPrototypeMethod(tpl, "enumerateInterfaces", EnumerateInterfaces);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("ITransportLayer").ToLocalChecked(), function);
+}

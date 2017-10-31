@@ -62,3 +62,27 @@ GrabResultPtrWrap::GrabResultPtrWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_GrabResultPtr = new CGrabResultPtr(*arg0);
     }
 }
+
+GrabResultPtrWrap::~GrabResultPtrWrap()
+{
+    delete m_GrabResultPtr;
+}
+
+NAN_MODULE_INIT(GrabResultPtrWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("GrabResultPtrWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "isValid", IsValid);
+    Nan::SetPrototypeMethod(tpl, "release", Release);
+    Nan::SetPrototypeMethod(tpl, "isUnique", IsUnique);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CGrabResultPtr").ToLocalChecked(), function);
+}

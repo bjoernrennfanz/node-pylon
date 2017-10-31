@@ -62,3 +62,28 @@ RegisterWrap::RegisterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Register = new IRegister(*arg0);
     }
 }
+
+RegisterWrap::~RegisterWrap()
+{
+    delete m_Register;
+}
+
+NAN_MODULE_INIT(RegisterWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("RegisterWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "set", Set);
+    Nan::SetPrototypeMethod(tpl, "get", Get);
+    Nan::SetPrototypeMethod(tpl, "getLength", GetLength);
+    Nan::SetPrototypeMethod(tpl, "getAddress", GetAddress);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IRegister").ToLocalChecked(), function);
+}

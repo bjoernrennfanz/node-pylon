@@ -62,3 +62,26 @@ CommandWrap::CommandWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Command = new ICommand(*arg0);
     }
 }
+
+CommandWrap::~CommandWrap()
+{
+    delete m_Command;
+}
+
+NAN_MODULE_INIT(CommandWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("CommandWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "execute", Execute);
+    Nan::SetPrototypeMethod(tpl, "isDone", IsDone);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("ICommand").ToLocalChecked(), function);
+}

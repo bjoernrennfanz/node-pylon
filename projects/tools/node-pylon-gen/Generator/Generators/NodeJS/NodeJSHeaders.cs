@@ -234,14 +234,20 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             {
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("// Wrapped functions");
+                SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
                 foreach (Function function in functions)
                 {
                     // Skip on other access level than public
                     if (function.Access != AccessSpecifier.Public)
                         continue;
 
+                    // Process method only once
+                    if (functionsProcessed.Contains(function.Name))
+                        continue;
+
                     // Output method declaration
                     WriteLine("static NAN_METHOD({0});", function.Name);
+                    functionsProcessed.Add(function.Name);
                 }
                 PopBlock(NewLineKind.BeforeNextBlock);
             }

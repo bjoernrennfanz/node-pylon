@@ -75,3 +75,31 @@ ChunkAdapterWrap::ChunkAdapterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ChunkAdapter = new CChunkAdapter(arg0, arg1);
     }
 }
+
+ChunkAdapterWrap::~ChunkAdapterWrap()
+{
+    delete m_ChunkAdapter;
+}
+
+NAN_MODULE_INIT(ChunkAdapterWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ChunkAdapterWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "attachNodeMap", AttachNodeMap);
+    Nan::SetPrototypeMethod(tpl, "detachNodeMap", DetachNodeMap);
+    Nan::SetPrototypeMethod(tpl, "checkBufferLayout", CheckBufferLayout);
+    Nan::SetPrototypeMethod(tpl, "attachBuffer", AttachBuffer);
+    Nan::SetPrototypeMethod(tpl, "detachBuffer", DetachBuffer);
+    Nan::SetPrototypeMethod(tpl, "updateBuffer", UpdateBuffer);
+    Nan::SetPrototypeMethod(tpl, "clearCaches", ClearCaches);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CChunkAdapter").ToLocalChecked(), function);
+}

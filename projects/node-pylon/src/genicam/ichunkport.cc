@@ -62,3 +62,26 @@ ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ChunkPort = new IChunkPort(*arg0);
     }
 }
+
+ChunkPortWrap::~ChunkPortWrap()
+{
+    delete m_ChunkPort;
+}
+
+NAN_MODULE_INIT(ChunkPortWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ChunkPortWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getChunkID", GetChunkID);
+    Nan::SetPrototypeMethod(tpl, "cacheChunkData", CacheChunkData);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IChunkPort").ToLocalChecked(), function);
+}

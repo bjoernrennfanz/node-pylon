@@ -62,3 +62,36 @@ IntegerRefTWrap::IntegerRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_IntegerRefT = new CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>(*arg0);
     }
 }
+
+IntegerRefTWrap::~IntegerRefTWrap()
+{
+    delete m_IntegerRefT;
+}
+
+NAN_MODULE_INIT(IntegerRefTWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("IntegerRefTWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setValue", SetValue);
+    Nan::SetPrototypeMethod(tpl, "getValue", GetValue);
+    Nan::SetPrototypeMethod(tpl, "getMin", GetMin);
+    Nan::SetPrototypeMethod(tpl, "getMax", GetMax);
+    Nan::SetPrototypeMethod(tpl, "getIncMode", GetIncMode);
+    Nan::SetPrototypeMethod(tpl, "getInc", GetInc);
+    Nan::SetPrototypeMethod(tpl, "getListOfValidValues", GetListOfValidValues);
+    Nan::SetPrototypeMethod(tpl, "getRepresentation", GetRepresentation);
+    Nan::SetPrototypeMethod(tpl, "getUnit", GetUnit);
+    Nan::SetPrototypeMethod(tpl, "getFloatAlias", GetFloatAlias);
+    Nan::SetPrototypeMethod(tpl, "imposeMin", ImposeMin);
+    Nan::SetPrototypeMethod(tpl, "imposeMax", ImposeMax);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>").ToLocalChecked(), function);
+}

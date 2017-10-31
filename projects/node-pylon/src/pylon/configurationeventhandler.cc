@@ -62,3 +62,44 @@ ConfigurationEventHandlerWrap::ConfigurationEventHandlerWrap(Nan::NAN_METHOD_ARG
         m_ConfigurationEventHandler = new CConfigurationEventHandler(*arg0);
     }
 }
+
+ConfigurationEventHandlerWrap::~ConfigurationEventHandlerWrap()
+{
+    delete m_ConfigurationEventHandler;
+}
+
+NAN_MODULE_INIT(ConfigurationEventHandlerWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ConfigurationEventHandlerWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "onAttach", OnAttach);
+    Nan::SetPrototypeMethod(tpl, "onAttached", OnAttached);
+    Nan::SetPrototypeMethod(tpl, "onDetach", OnDetach);
+    Nan::SetPrototypeMethod(tpl, "onDetached", OnDetached);
+    Nan::SetPrototypeMethod(tpl, "onDestroy", OnDestroy);
+    Nan::SetPrototypeMethod(tpl, "onDestroyed", OnDestroyed);
+    Nan::SetPrototypeMethod(tpl, "onOpen", OnOpen);
+    Nan::SetPrototypeMethod(tpl, "onOpened", OnOpened);
+    Nan::SetPrototypeMethod(tpl, "onClose", OnClose);
+    Nan::SetPrototypeMethod(tpl, "onClosed", OnClosed);
+    Nan::SetPrototypeMethod(tpl, "onGrabStart", OnGrabStart);
+    Nan::SetPrototypeMethod(tpl, "onGrabStarted", OnGrabStarted);
+    Nan::SetPrototypeMethod(tpl, "onGrabStop", OnGrabStop);
+    Nan::SetPrototypeMethod(tpl, "onGrabStopped", OnGrabStopped);
+    Nan::SetPrototypeMethod(tpl, "onGrabError", OnGrabError);
+    Nan::SetPrototypeMethod(tpl, "onCameraDeviceRemoved", OnCameraDeviceRemoved);
+    Nan::SetPrototypeMethod(tpl, "onConfigurationRegistered", OnConfigurationRegistered);
+    Nan::SetPrototypeMethod(tpl, "onConfigurationDeregistered", OnConfigurationDeregistered);
+    Nan::SetPrototypeMethod(tpl, "destroyConfiguration", DestroyConfiguration);
+    Nan::SetPrototypeMethod(tpl, "debugGetEventHandlerRegistrationCount", DebugGetEventHandlerRegistrationCount);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CConfigurationEventHandler").ToLocalChecked(), function);
+}

@@ -62,3 +62,28 @@ PylonImageBaseWrap::PylonImageBaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PylonImageBase = new CPylonImageBase(*arg0);
     }
 }
+
+PylonImageBaseWrap::~PylonImageBaseWrap()
+{
+    delete m_PylonImageBase;
+}
+
+NAN_MODULE_INIT(PylonImageBaseWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PylonImageBaseWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "save", Save);
+    Nan::SetPrototypeMethod(tpl, "load", Load);
+    Nan::SetPrototypeMethod(tpl, "canSaveWithoutConversion", CanSaveWithoutConversion);
+    Nan::SetPrototypeMethod(tpl, "getPixelData", GetPixelData);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CPylonImageBase").ToLocalChecked(), function);
+}

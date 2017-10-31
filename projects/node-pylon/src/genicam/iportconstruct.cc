@@ -62,3 +62,26 @@ PortConstructWrap::PortConstructWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PortConstruct = new IPortConstruct(*arg0);
     }
 }
+
+PortConstructWrap::~PortConstructWrap()
+{
+    delete m_PortConstruct;
+}
+
+NAN_MODULE_INIT(PortConstructWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PortConstructWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setPortImpl", SetPortImpl);
+    Nan::SetPrototypeMethod(tpl, "getSwapEndianess", GetSwapEndianess);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IPortConstruct").ToLocalChecked(), function);
+}

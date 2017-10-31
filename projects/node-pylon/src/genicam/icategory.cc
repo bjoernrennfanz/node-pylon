@@ -62,3 +62,25 @@ CategoryWrap::CategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_Category = new ICategory(*arg0);
     }
 }
+
+CategoryWrap::~CategoryWrap()
+{
+    delete m_Category;
+}
+
+NAN_MODULE_INIT(CategoryWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("CategoryWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getFeatures", GetFeatures);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("ICategory").ToLocalChecked(), function);
+}

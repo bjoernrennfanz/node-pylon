@@ -71,3 +71,37 @@ InstantCameraArrayWrap::InstantCameraArrayWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_InstantCameraArray = new CInstantCameraArray(*arg0);
     }
 }
+
+InstantCameraArrayWrap::~InstantCameraArrayWrap()
+{
+    delete m_InstantCameraArray;
+}
+
+NAN_MODULE_INIT(InstantCameraArrayWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("InstantCameraArrayWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
+    Nan::SetPrototypeMethod(tpl, "isPylonDeviceAttached", IsPylonDeviceAttached);
+    Nan::SetPrototypeMethod(tpl, "isCameraDeviceRemoved", IsCameraDeviceRemoved);
+    Nan::SetPrototypeMethod(tpl, "destroyDevice", DestroyDevice);
+    Nan::SetPrototypeMethod(tpl, "detachDevice", DetachDevice);
+    Nan::SetPrototypeMethod(tpl, "open", Open);
+    Nan::SetPrototypeMethod(tpl, "isOpen", IsOpen);
+    Nan::SetPrototypeMethod(tpl, "close", Close);
+    Nan::SetPrototypeMethod(tpl, "getSize", GetSize);
+    Nan::SetPrototypeMethod(tpl, "startGrabbing", StartGrabbing);
+    Nan::SetPrototypeMethod(tpl, "retrieveResult", RetrieveResult);
+    Nan::SetPrototypeMethod(tpl, "stopGrabbing", StopGrabbing);
+    Nan::SetPrototypeMethod(tpl, "isGrabbing", IsGrabbing);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CInstantCameraArray").ToLocalChecked(), function);
+}

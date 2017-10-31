@@ -81,3 +81,67 @@ InstantCameraWrap::InstantCameraWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_InstantCamera = new CInstantCamera(arg0, arg1);
     }
 }
+
+InstantCameraWrap::~InstantCameraWrap()
+{
+    delete m_InstantCamera;
+}
+
+NAN_MODULE_INIT(InstantCameraWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("InstantCameraWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "attach", Attach);
+    Nan::SetPrototypeMethod(tpl, "isPylonDeviceAttached", IsPylonDeviceAttached);
+    Nan::SetPrototypeMethod(tpl, "isCameraDeviceRemoved", IsCameraDeviceRemoved);
+    Nan::SetPrototypeMethod(tpl, "hasOwnership", HasOwnership);
+    Nan::SetPrototypeMethod(tpl, "destroyDevice", DestroyDevice);
+    Nan::SetPrototypeMethod(tpl, "detachDevice", DetachDevice);
+    Nan::SetPrototypeMethod(tpl, "open", Open);
+    Nan::SetPrototypeMethod(tpl, "isOpen", IsOpen);
+    Nan::SetPrototypeMethod(tpl, "close", Close);
+    Nan::SetPrototypeMethod(tpl, "startGrabbing", StartGrabbing);
+    Nan::SetPrototypeMethod(tpl, "retrieveResult", RetrieveResult);
+    Nan::SetPrototypeMethod(tpl, "stopGrabbing", StopGrabbing);
+    Nan::SetPrototypeMethod(tpl, "isGrabbing", IsGrabbing);
+    Nan::SetPrototypeMethod(tpl, "grabOne", GrabOne);
+    Nan::SetPrototypeMethod(tpl, "getQueuedBufferCount", GetQueuedBufferCount);
+    Nan::SetPrototypeMethod(tpl, "getGrabResultWaitObject", GetGrabResultWaitObject);
+    Nan::SetPrototypeMethod(tpl, "getGrabStopWaitObject", GetGrabStopWaitObject);
+    Nan::SetPrototypeMethod(tpl, "getCameraEventWaitObject", GetCameraEventWaitObject);
+    Nan::SetPrototypeMethod(tpl, "registerConfiguration", RegisterConfiguration);
+    Nan::SetPrototypeMethod(tpl, "deregisterConfiguration", DeregisterConfiguration);
+    Nan::SetPrototypeMethod(tpl, "registerImageEventHandler", RegisterImageEventHandler);
+    Nan::SetPrototypeMethod(tpl, "deregisterImageEventHandler", DeregisterImageEventHandler);
+    Nan::SetPrototypeMethod(tpl, "registerCameraEventHandler", RegisterCameraEventHandler);
+    Nan::SetPrototypeMethod(tpl, "deregisterCameraEventHandler", DeregisterCameraEventHandler);
+    Nan::SetPrototypeMethod(tpl, "waitForFrameTriggerReady", WaitForFrameTriggerReady);
+    Nan::SetPrototypeMethod(tpl, "canWaitForFrameTriggerReady", CanWaitForFrameTriggerReady);
+    Nan::SetPrototypeMethod(tpl, "executeSoftwareTrigger", ExecuteSoftwareTrigger);
+    Nan::SetPrototypeMethod(tpl, "setCameraContext", SetCameraContext);
+    Nan::SetPrototypeMethod(tpl, "getCameraContext", GetCameraContext);
+    Nan::SetPrototypeMethod(tpl, "getDeviceInfo", GetDeviceInfo);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getTLNodeMap", GetTLNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getStreamGrabberNodeMap", GetStreamGrabberNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getEventGrabberNodeMap", GetEventGrabberNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getInstantCameraNodeMap", GetInstantCameraNodeMap);
+    Nan::SetPrototypeMethod(tpl, "setBufferFactory", SetBufferFactory);
+    Nan::SetPrototypeMethod(tpl, "is1394", Is1394);
+    Nan::SetPrototypeMethod(tpl, "isGigE", IsGigE);
+    Nan::SetPrototypeMethod(tpl, "isUsb", IsUsb);
+    Nan::SetPrototypeMethod(tpl, "isCameraLink", IsCameraLink);
+    Nan::SetPrototypeMethod(tpl, "getSfncVersion", GetSfncVersion);
+    Nan::SetPrototypeMethod(tpl, "getExtensionInterface", GetExtensionInterface);
+    Nan::SetPrototypeMethod(tpl, "isBcon", IsBcon);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CInstantCamera").ToLocalChecked(), function);
+}

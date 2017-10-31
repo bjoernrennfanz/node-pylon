@@ -72,3 +72,30 @@ SelectorSetWrap::SelectorSetWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_SelectorSet = new CSelectorSet(*arg0);
     }
 }
+
+SelectorSetWrap::~SelectorSetWrap()
+{
+    delete m_SelectorSet;
+}
+
+NAN_MODULE_INIT(SelectorSetWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("SelectorSetWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "isEmpty", IsEmpty);
+    Nan::SetPrototypeMethod(tpl, "setFirst", SetFirst);
+    Nan::SetPrototypeMethod(tpl, "setNext", SetNext);
+    Nan::SetPrototypeMethod(tpl, "restore", Restore);
+    Nan::SetPrototypeMethod(tpl, "toString", ToString);
+    Nan::SetPrototypeMethod(tpl, "getSelectorList", GetSelectorList);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CSelectorSet").ToLocalChecked(), function);
+}

@@ -62,3 +62,26 @@ AcquireContinuousConfigurationWrap::AcquireContinuousConfigurationWrap(Nan::NAN_
         m_AcquireContinuousConfiguration = new CAcquireContinuousConfiguration(*arg0);
     }
 }
+
+AcquireContinuousConfigurationWrap::~AcquireContinuousConfigurationWrap()
+{
+    delete m_AcquireContinuousConfiguration;
+}
+
+NAN_MODULE_INIT(AcquireContinuousConfigurationWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("AcquireContinuousConfigurationWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "applyConfiguration", ApplyConfiguration);
+    Nan::SetPrototypeMethod(tpl, "onOpened", OnOpened);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CAcquireContinuousConfiguration").ToLocalChecked(), function);
+}

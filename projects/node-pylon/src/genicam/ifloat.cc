@@ -62,3 +62,40 @@ FloatRefTWrap::FloatRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_FloatRefT = new CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>(*arg0);
     }
 }
+
+FloatRefTWrap::~FloatRefTWrap()
+{
+    delete m_FloatRefT;
+}
+
+NAN_MODULE_INIT(FloatRefTWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("FloatRefTWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setValue", SetValue);
+    Nan::SetPrototypeMethod(tpl, "getValue", GetValue);
+    Nan::SetPrototypeMethod(tpl, "getMin", GetMin);
+    Nan::SetPrototypeMethod(tpl, "getMax", GetMax);
+    Nan::SetPrototypeMethod(tpl, "hasInc", HasInc);
+    Nan::SetPrototypeMethod(tpl, "getIncMode", GetIncMode);
+    Nan::SetPrototypeMethod(tpl, "getInc", GetInc);
+    Nan::SetPrototypeMethod(tpl, "getListOfValidValues", GetListOfValidValues);
+    Nan::SetPrototypeMethod(tpl, "getRepresentation", GetRepresentation);
+    Nan::SetPrototypeMethod(tpl, "getUnit", GetUnit);
+    Nan::SetPrototypeMethod(tpl, "getDisplayNotation", GetDisplayNotation);
+    Nan::SetPrototypeMethod(tpl, "getDisplayPrecision", GetDisplayPrecision);
+    Nan::SetPrototypeMethod(tpl, "getIntAlias", GetIntAlias);
+    Nan::SetPrototypeMethod(tpl, "getEnumAlias", GetEnumAlias);
+    Nan::SetPrototypeMethod(tpl, "imposeMin", ImposeMin);
+    Nan::SetPrototypeMethod(tpl, "imposeMax", ImposeMax);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>").ToLocalChecked(), function);
+}

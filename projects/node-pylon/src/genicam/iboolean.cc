@@ -62,3 +62,26 @@ BooleanRefTWrap::BooleanRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(*arg0);
     }
 }
+
+BooleanRefTWrap::~BooleanRefTWrap()
+{
+    delete m_BooleanRefT;
+}
+
+NAN_MODULE_INIT(BooleanRefTWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("BooleanRefTWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "setValue", SetValue);
+    Nan::SetPrototypeMethod(tpl, "getValue", GetValue);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>").ToLocalChecked(), function);
+}

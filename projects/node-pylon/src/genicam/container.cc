@@ -34,3 +34,7 @@ using namespace Pylon;
 
 Nan::Persistent<FunctionTemplate> ContainerWrap::prototype;
 Nan::Persistent<Function> ContainerWrap::constructor;
+
+NAN_MODULE_INIT(ContainerWrap::Initialize)
+{
+}

@@ -75,3 +75,26 @@ ChunkAdapterU3VWrap::ChunkAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ChunkAdapterU3V = new CChunkAdapterU3V(arg0, arg1);
     }
 }
+
+ChunkAdapterU3VWrap::~ChunkAdapterU3VWrap()
+{
+    delete m_ChunkAdapterU3V;
+}
+
+NAN_MODULE_INIT(ChunkAdapterU3VWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ChunkAdapterU3VWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "checkBufferLayout", CheckBufferLayout);
+    Nan::SetPrototypeMethod(tpl, "attachBuffer", AttachBuffer);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CChunkAdapterU3V").ToLocalChecked(), function);
+}

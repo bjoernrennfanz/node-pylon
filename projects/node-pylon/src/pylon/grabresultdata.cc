@@ -62,3 +62,52 @@ GrabResultDataWrap::GrabResultDataWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_GrabResultData = new CGrabResultData(*arg0);
     }
 }
+
+GrabResultDataWrap::~GrabResultDataWrap()
+{
+    delete m_GrabResultData;
+}
+
+NAN_MODULE_INIT(GrabResultDataWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("GrabResultDataWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "grabSucceeded", GrabSucceeded);
+    Nan::SetPrototypeMethod(tpl, "getErrorDescription", GetErrorDescription);
+    Nan::SetPrototypeMethod(tpl, "getErrorCode", GetErrorCode);
+    Nan::SetPrototypeMethod(tpl, "getPayloadType", GetPayloadType);
+    Nan::SetPrototypeMethod(tpl, "getPixelType", GetPixelType);
+    Nan::SetPrototypeMethod(tpl, "getWidth", GetWidth);
+    Nan::SetPrototypeMethod(tpl, "getHeight", GetHeight);
+    Nan::SetPrototypeMethod(tpl, "getOffsetX", GetOffsetX);
+    Nan::SetPrototypeMethod(tpl, "getOffsetY", GetOffsetY);
+    Nan::SetPrototypeMethod(tpl, "getPaddingX", GetPaddingX);
+    Nan::SetPrototypeMethod(tpl, "getPaddingY", GetPaddingY);
+    Nan::SetPrototypeMethod(tpl, "getBuffer", GetBuffer);
+    Nan::SetPrototypeMethod(tpl, "getPayloadSize", GetPayloadSize);
+    Nan::SetPrototypeMethod(tpl, "getFrameNumber", GetFrameNumber);
+    Nan::SetPrototypeMethod(tpl, "getBlockID", GetBlockID);
+    Nan::SetPrototypeMethod(tpl, "getTimeStamp", GetTimeStamp);
+    Nan::SetPrototypeMethod(tpl, "getStride", GetStride);
+    Nan::SetPrototypeMethod(tpl, "getImageSize", GetImageSize);
+    Nan::SetPrototypeMethod(tpl, "getCameraContext", GetCameraContext);
+    Nan::SetPrototypeMethod(tpl, "getID", GetID);
+    Nan::SetPrototypeMethod(tpl, "getImageNumber", GetImageNumber);
+    Nan::SetPrototypeMethod(tpl, "getNumberOfSkippedImages", GetNumberOfSkippedImages);
+    Nan::SetPrototypeMethod(tpl, "isChunkDataAvailable", IsChunkDataAvailable);
+    Nan::SetPrototypeMethod(tpl, "getChunkDataNodeMap", GetChunkDataNodeMap);
+    Nan::SetPrototypeMethod(tpl, "hasCRC", HasCRC);
+    Nan::SetPrototypeMethod(tpl, "checkCRC", CheckCRC);
+    Nan::SetPrototypeMethod(tpl, "getBufferContext", GetBufferContext);
+    Nan::SetPrototypeMethod(tpl, "getGrabResultDataImpl", GetGrabResultDataImpl);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CGrabResultData").ToLocalChecked(), function);
+}

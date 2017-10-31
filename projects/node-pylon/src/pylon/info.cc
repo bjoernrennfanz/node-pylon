@@ -62,3 +62,43 @@ InfoBaseWrap::InfoBaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_InfoBase = new CInfoBase(*arg0);
     }
 }
+
+InfoBaseWrap::~InfoBaseWrap()
+{
+    delete m_InfoBase;
+}
+
+NAN_MODULE_INIT(InfoBaseWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("InfoBaseWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getFriendlyName", GetFriendlyName);
+    Nan::SetPrototypeMethod(tpl, "setFriendlyName", SetFriendlyName);
+    Nan::SetPrototypeMethod(tpl, "isFriendlyNameAvailable", IsFriendlyNameAvailable);
+    Nan::SetPrototypeMethod(tpl, "getFullName", GetFullName);
+    Nan::SetPrototypeMethod(tpl, "setFullName", SetFullName);
+    Nan::SetPrototypeMethod(tpl, "isFullNameAvailable", IsFullNameAvailable);
+    Nan::SetPrototypeMethod(tpl, "getVendorName", GetVendorName);
+    Nan::SetPrototypeMethod(tpl, "setVendorName", SetVendorName);
+    Nan::SetPrototypeMethod(tpl, "isVendorNameAvailable", IsVendorNameAvailable);
+    Nan::SetPrototypeMethod(tpl, "getDeviceClass", GetDeviceClass);
+    Nan::SetPrototypeMethod(tpl, "setDeviceClass", SetDeviceClass);
+    Nan::SetPrototypeMethod(tpl, "isDeviceClassAvailable", IsDeviceClassAvailable);
+    Nan::SetPrototypeMethod(tpl, "getPropertyNotAvailable", GetPropertyNotAvailable);
+    Nan::SetPrototypeMethod(tpl, "getPropertyNames", GetPropertyNames);
+    Nan::SetPrototypeMethod(tpl, "getPropertyAvailable", GetPropertyAvailable);
+    Nan::SetPrototypeMethod(tpl, "getPropertyValue", GetPropertyValue);
+    Nan::SetPrototypeMethod(tpl, "setPropertyValue", SetPropertyValue);
+    Nan::SetPrototypeMethod(tpl, "isUserProvided", IsUserProvided);
+    Nan::SetPrototypeMethod(tpl, "isSubset", IsSubset);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CInfoBase").ToLocalChecked(), function);
+}

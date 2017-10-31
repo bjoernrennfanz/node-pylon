@@ -33,3 +33,7 @@ using namespace Basler_InstantCameraParams;
 
 Nan::Persistent<FunctionTemplate> InstantcameraparamsWrap::prototype;
 Nan::Persistent<Function> InstantcameraparamsWrap::constructor;
+
+NAN_MODULE_INIT(InstantcameraparamsWrap::Initialize)
+{
+}

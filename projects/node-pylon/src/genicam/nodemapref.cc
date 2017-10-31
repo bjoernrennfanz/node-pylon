@@ -98,3 +98,42 @@ NodeMapRefTWrap::NodeMapRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(arg0, arg0, *arg1);
     }
 }
+
+NodeMapRefTWrap::~NodeMapRefTWrap()
+{
+    delete m_NodeMapRefT;
+}
+
+NAN_MODULE_INIT(NodeMapRefTWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("NodeMapRefTWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "_Destroy", _Destroy);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromFile", _LoadXMLFromFile);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromZIPFile", _LoadXMLFromZIPFile);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromZIPData", _LoadXMLFromZIPData);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromFileInject", _LoadXMLFromFileInject);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromString", _LoadXMLFromString);
+    Nan::SetPrototypeMethod(tpl, "_LoadXMLFromStringInject", _LoadXMLFromStringInject);
+    Nan::SetPrototypeMethod(tpl, "_GetSupportedSchemaVersions", _GetSupportedSchemaVersions);
+    Nan::SetPrototypeMethod(tpl, "_GetDeviceName", _GetDeviceName);
+    Nan::SetPrototypeMethod(tpl, "_Poll", _Poll);
+    Nan::SetPrototypeMethod(tpl, "_ClearXMLCache", _ClearXMLCache);
+    Nan::SetPrototypeMethod(tpl, "_GetNodes", _GetNodes);
+    Nan::SetPrototypeMethod(tpl, "_GetNode", _GetNode);
+    Nan::SetPrototypeMethod(tpl, "_InvalidateNodes", _InvalidateNodes);
+    Nan::SetPrototypeMethod(tpl, "_Connect", _Connect);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>").ToLocalChecked(), function);
+
+    // Register static functions in Node JS
+    Nan::Set(target, Nan::New<String>("castToIDestroy").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeMapRefTWrap::CastToIDestroy)).ToLocalChecked());
+}

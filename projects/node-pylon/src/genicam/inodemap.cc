@@ -62,3 +62,32 @@ NodeMapWrap::NodeMapWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_NodeMap = new INodeMap(*arg0);
     }
 }
+
+NodeMapWrap::~NodeMapWrap()
+{
+    delete m_NodeMap;
+}
+
+NAN_MODULE_INIT(NodeMapWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("NodeMapWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getNodes", GetNodes);
+    Nan::SetPrototypeMethod(tpl, "getNode", GetNode);
+    Nan::SetPrototypeMethod(tpl, "invalidateNodes", InvalidateNodes);
+    Nan::SetPrototypeMethod(tpl, "connect", Connect);
+    Nan::SetPrototypeMethod(tpl, "getDeviceName", GetDeviceName);
+    Nan::SetPrototypeMethod(tpl, "poll", Poll);
+    Nan::SetPrototypeMethod(tpl, "getLock", GetLock);
+    Nan::SetPrototypeMethod(tpl, "getNumNodes", GetNumNodes);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("INodeMap").ToLocalChecked(), function);
+}

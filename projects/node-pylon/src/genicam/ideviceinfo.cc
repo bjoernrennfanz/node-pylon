@@ -62,3 +62,33 @@ DeviceInfoWrap::DeviceInfoWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_DeviceInfo = new IDeviceInfo(*arg0);
     }
 }
+
+DeviceInfoWrap::~DeviceInfoWrap()
+{
+    delete m_DeviceInfo;
+}
+
+NAN_MODULE_INIT(DeviceInfoWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("DeviceInfoWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getModelName", GetModelName);
+    Nan::SetPrototypeMethod(tpl, "getVendorName", GetVendorName);
+    Nan::SetPrototypeMethod(tpl, "getToolTip", GetToolTip);
+    Nan::SetPrototypeMethod(tpl, "getStandardNameSpace", GetStandardNameSpace);
+    Nan::SetPrototypeMethod(tpl, "getGenApiVersion", GetGenApiVersion);
+    Nan::SetPrototypeMethod(tpl, "getSchemaVersion", GetSchemaVersion);
+    Nan::SetPrototypeMethod(tpl, "getDeviceVersion", GetDeviceVersion);
+    Nan::SetPrototypeMethod(tpl, "getProductGuid", GetProductGuid);
+    Nan::SetPrototypeMethod(tpl, "getVersionGuid", GetVersionGuid);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IDeviceInfo").ToLocalChecked(), function);
+}

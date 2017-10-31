@@ -62,3 +62,28 @@ EnumEntryWrap::EnumEntryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_EnumEntry = new IEnumEntry(*arg0);
     }
 }
+
+EnumEntryWrap::~EnumEntryWrap()
+{
+    delete m_EnumEntry;
+}
+
+NAN_MODULE_INIT(EnumEntryWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("EnumEntryWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getValue", GetValue);
+    Nan::SetPrototypeMethod(tpl, "getSymbolic", GetSymbolic);
+    Nan::SetPrototypeMethod(tpl, "getNumericValue", GetNumericValue);
+    Nan::SetPrototypeMethod(tpl, "isSelfClearing", IsSelfClearing);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IEnumEntry").ToLocalChecked(), function);
+}

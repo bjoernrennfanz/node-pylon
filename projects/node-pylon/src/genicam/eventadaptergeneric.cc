@@ -72,3 +72,25 @@ EventAdapterGenericWrap::EventAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_EventAdapterGeneric = new CEventAdapterGeneric(*arg0);
     }
 }
+
+EventAdapterGenericWrap::~EventAdapterGenericWrap()
+{
+    delete m_EventAdapterGeneric;
+}
+
+NAN_MODULE_INIT(EventAdapterGenericWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("EventAdapterGenericWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "deliverMessage", DeliverMessage);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CEventAdapterGeneric").ToLocalChecked(), function);
+}

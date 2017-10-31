@@ -62,3 +62,48 @@ PylonImageWrap::PylonImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PylonImage = new CPylonImage(*arg0);
     }
 }
+
+PylonImageWrap::~PylonImageWrap()
+{
+    delete m_PylonImage;
+}
+
+NAN_MODULE_INIT(PylonImageWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PylonImageWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "create", Create);
+    Nan::SetPrototypeMethod(tpl, "copyImage", CopyImage);
+    Nan::SetPrototypeMethod(tpl, "attachGrabResultBuffer", AttachGrabResultBuffer);
+    Nan::SetPrototypeMethod(tpl, "attachUserBuffer", AttachUserBuffer);
+    Nan::SetPrototypeMethod(tpl, "isValid", IsValid);
+    Nan::SetPrototypeMethod(tpl, "getPixelType", GetPixelType);
+    Nan::SetPrototypeMethod(tpl, "getWidth", GetWidth);
+    Nan::SetPrototypeMethod(tpl, "getHeight", GetHeight);
+    Nan::SetPrototypeMethod(tpl, "getPaddingX", GetPaddingX);
+    Nan::SetPrototypeMethod(tpl, "getOrientation", GetOrientation);
+    Nan::SetPrototypeMethod(tpl, "getBuffer", GetBuffer);
+    Nan::SetPrototypeMethod(tpl, "getImageSize", GetImageSize);
+    Nan::SetPrototypeMethod(tpl, "isUnique", IsUnique);
+    Nan::SetPrototypeMethod(tpl, "getStride", GetStride);
+    Nan::SetPrototypeMethod(tpl, "isSupportedPixelType", IsSupportedPixelType);
+    Nan::SetPrototypeMethod(tpl, "isAdditionalPaddingSupported", IsAdditionalPaddingSupported);
+    Nan::SetPrototypeMethod(tpl, "reset", Reset);
+    Nan::SetPrototypeMethod(tpl, "release", Release);
+    Nan::SetPrototypeMethod(tpl, "isUserBufferAttached", IsUserBufferAttached);
+    Nan::SetPrototypeMethod(tpl, "isGrabResultBufferAttached", IsGrabResultBufferAttached);
+    Nan::SetPrototypeMethod(tpl, "getAllocatedBufferSize", GetAllocatedBufferSize);
+    Nan::SetPrototypeMethod(tpl, "changePixelType", ChangePixelType);
+    Nan::SetPrototypeMethod(tpl, "getPlane", GetPlane);
+    Nan::SetPrototypeMethod(tpl, "getAoi", GetAoi);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CPylonImage").ToLocalChecked(), function);
+}

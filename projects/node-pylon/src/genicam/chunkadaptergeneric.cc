@@ -75,3 +75,26 @@ ChunkAdapterGenericWrap::ChunkAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ChunkAdapterGeneric = new CChunkAdapterGeneric(arg0, arg1);
     }
 }
+
+ChunkAdapterGenericWrap::~ChunkAdapterGenericWrap()
+{
+    delete m_ChunkAdapterGeneric;
+}
+
+NAN_MODULE_INIT(ChunkAdapterGenericWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ChunkAdapterGenericWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "checkBufferLayout", CheckBufferLayout);
+    Nan::SetPrototypeMethod(tpl, "attachBuffer", AttachBuffer);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CChunkAdapterGeneric").ToLocalChecked(), function);
+}

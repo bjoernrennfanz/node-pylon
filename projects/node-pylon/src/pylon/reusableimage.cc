@@ -62,3 +62,28 @@ ReusableImageWrap::ReusableImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_ReusableImage = new IReusableImage(*arg0);
     }
 }
+
+ReusableImageWrap::~ReusableImageWrap()
+{
+    delete m_ReusableImage;
+}
+
+NAN_MODULE_INIT(ReusableImageWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("ReusableImageWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "isSupportedPixelType", IsSupportedPixelType);
+    Nan::SetPrototypeMethod(tpl, "isAdditionalPaddingSupported", IsAdditionalPaddingSupported);
+    Nan::SetPrototypeMethod(tpl, "reset", Reset);
+    Nan::SetPrototypeMethod(tpl, "release", Release);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IReusableImage").ToLocalChecked(), function);
+}

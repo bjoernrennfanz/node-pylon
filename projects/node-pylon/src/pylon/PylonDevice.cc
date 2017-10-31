@@ -62,3 +62,37 @@ PylonDeviceWrap::PylonDeviceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_PylonDevice = new IPylonDevice(*arg0);
     }
 }
+
+PylonDeviceWrap::~PylonDeviceWrap()
+{
+    delete m_PylonDevice;
+}
+
+NAN_MODULE_INIT(PylonDeviceWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("PylonDeviceWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getNumStreamGrabberChannels", GetNumStreamGrabberChannels);
+    Nan::SetPrototypeMethod(tpl, "getStreamGrabber", GetStreamGrabber);
+    Nan::SetPrototypeMethod(tpl, "getEventGrabber", GetEventGrabber);
+    Nan::SetPrototypeMethod(tpl, "getNodeMap", GetNodeMap);
+    Nan::SetPrototypeMethod(tpl, "getTLNodeMap", GetTLNodeMap);
+    Nan::SetPrototypeMethod(tpl, "createChunkParser", CreateChunkParser);
+    Nan::SetPrototypeMethod(tpl, "destroyChunkParser", DestroyChunkParser);
+    Nan::SetPrototypeMethod(tpl, "createEventAdapter", CreateEventAdapter);
+    Nan::SetPrototypeMethod(tpl, "destroyEventAdapter", DestroyEventAdapter);
+    Nan::SetPrototypeMethod(tpl, "createSelfReliantChunkParser", CreateSelfReliantChunkParser);
+    Nan::SetPrototypeMethod(tpl, "destroySelfReliantChunkParser", DestroySelfReliantChunkParser);
+    Nan::SetPrototypeMethod(tpl, "registerRemovalCallback", RegisterRemovalCallback);
+    Nan::SetPrototypeMethod(tpl, "deregisterRemovalCallback", DeregisterRemovalCallback);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("IPylonDevice").ToLocalChecked(), function);
+}

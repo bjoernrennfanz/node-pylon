@@ -72,3 +72,37 @@ EventPortWrap::EventPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         m_EventPort = new CEventPort(*arg0);
     }
 }
+
+EventPortWrap::~EventPortWrap()
+{
+    delete m_EventPort;
+}
+
+NAN_MODULE_INIT(EventPortWrap::Initialize)
+{
+    // Prepare constructor template
+    Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("EventPortWrap").ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Register prototypes to template
+    Nan::SetPrototypeMethod(tpl, "getAccessMode", GetAccessMode);
+    Nan::SetPrototypeMethod(tpl, "getPrincipalInterfaceType", GetPrincipalInterfaceType);
+    Nan::SetPrototypeMethod(tpl, "read", Read);
+    Nan::SetPrototypeMethod(tpl, "write", Write);
+    Nan::SetPrototypeMethod(tpl, "setPortImpl", SetPortImpl);
+    Nan::SetPrototypeMethod(tpl, "getSwapEndianess", GetSwapEndianess);
+    Nan::SetPrototypeMethod(tpl, "invalidateNode", InvalidateNode);
+    Nan::SetPrototypeMethod(tpl, "attachNode", AttachNode);
+    Nan::SetPrototypeMethod(tpl, "detachNode", DetachNode);
+    Nan::SetPrototypeMethod(tpl, "getEventIDLength", GetEventIDLength);
+    Nan::SetPrototypeMethod(tpl, "checkEventID", CheckEventID);
+    Nan::SetPrototypeMethod(tpl, "attachEvent", AttachEvent);
+    Nan::SetPrototypeMethod(tpl, "detachEvent", DetachEvent);
+
+    // Register template in Node JS
+    prototype.Reset(tpl);
+    Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(target, Nan::New("CEventPort").ToLocalChecked(), function);
+}
