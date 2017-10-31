@@ -80,6 +80,7 @@ private:
     static NAN_METHOD(_InvalidateNodes);
     static NAN_METHOD(_Connect);
 
+private:
     // Wrapped functions
     static NAN_METHOD(CastToIDestroy);
 

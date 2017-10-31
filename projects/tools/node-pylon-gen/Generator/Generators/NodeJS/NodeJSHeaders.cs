@@ -185,17 +185,21 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             }
             else
             {
-                WriteLine("");
+                // Only add empty line when we have static functions
+                if (functions.Count > 0)
+                {
+                    WriteLine("");
+                }
             }
-
-            // Private members prototypes
-            PopIndent();
-            WriteLine("private:");
-            PushIndent();
 
             // Check if we have an class to warp
             if (!string.IsNullOrEmpty(className))
             {
+                // Private members prototypes
+                PopIndent();
+                WriteLine("private:");
+                PushIndent();
+
                 // Constructor & destructor of wrapper class
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("static Nan::Persistent<v8::Function> constructor;");
@@ -232,6 +236,11 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Functions
             if (functions.Count > 0)
             {
+                // Private members prototypes
+                PopIndent();
+                WriteLine("private:");
+                PushIndent();
+
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("// Wrapped functions");
                 SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);

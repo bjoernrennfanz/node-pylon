@@ -92,6 +92,7 @@ private:
     static NAN_METHOD(GetPrincipalInterfaceType);
     static NAN_METHOD(IsFeature);
 
+private:
     // Wrapped functions
     static NAN_METHOD(IsReadable);
     static NAN_METHOD(IsWritable);

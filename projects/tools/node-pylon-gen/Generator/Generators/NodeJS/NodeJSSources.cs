@@ -281,7 +281,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             WriteStartBraceIndent();
 
             // Generate constructor template code
-            if (classToWrapTypeReference !=  null)
+            if (classToWrapTypeReference != null)
             {
                 // Find class to wrap
                 Class classToWrap = classToWrapTypeReference.Declaration as Class;
@@ -362,6 +362,24 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             }
 
             // TODO: Implement search of childs for initialize
+            IEnumerable<ConfigMapping> configFilesLoaded = Context.ConfigurationContext.ConfigFilesLoaded;
+            foreach (ConfigMapping configFileLoad in configFilesLoaded)
+            {
+                string configFileLoadedWrappedName = (configFileLoad.Module != null ? GenerateTrimmedClassName(configFileLoad.Module) : string.Empty);
+                if (!(string.IsNullOrEmpty(configFileLoadedWrappedName)))
+                {
+                    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                    configFileLoadedWrappedName = textInfo.ToTitleCase(configFileLoadedWrappedName) + "Wrap";
+                    if (configFileLoadedWrappedName == classNameWrap)
+                    {
+                        foreach (IncludeMapping include in configFileLoad.Includes)
+                        {
+
+                        }
+                    }
+                }
+
+            }
 
             WriteCloseBraceIndent();
             PopBlock(NewLineKind.BeforeNextBlock);

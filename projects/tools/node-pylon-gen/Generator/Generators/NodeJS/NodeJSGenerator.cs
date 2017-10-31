@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using BindingContext = NodePylonGen.Generators.BindingContext;
 using CppSharp.AST;
-using CppSharp.Generators;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
 

@@ -94,6 +94,22 @@ namespace NodePylonGen.Generator
             List<GeneratorOutput> outputs = new List<GeneratorOutput>();
             List<TranslationUnit> units = Context.ASTContext.TranslationUnits.GetGenerated().ToList();
 
+            // Get modules list from loaded config
+            List<string> modules = Context.ConfigurationContext.ConfigFilesLoaded
+                .Where(config => !string.IsNullOrEmpty(config.Module))
+                .Select(config => config.Module).ToList();
+            
+            // Check if all modules are in units list
+            foreach (string module in modules)
+            {
+                if (!units.Exists(unit => unit.FileNameWithoutExtension == module))
+                {
+                    // Add missing units
+                    TranslationUnit missingUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == module);
+                    units.Add(missingUnit);
+                }
+            }
+
             if (Context.Options.IsJavaGenerator)
             {
                GenerateSingleTemplate(outputs, units);

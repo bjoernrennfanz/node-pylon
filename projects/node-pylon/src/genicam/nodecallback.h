@@ -64,6 +64,7 @@ private:
     static NAN_METHOD(Destroy);
     static NAN_METHOD(GetNode);
 
+private:
     // Wrapped functions
     static NAN_METHOD(Deregister);
 

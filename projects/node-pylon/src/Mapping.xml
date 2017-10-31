@@ -27,6 +27,7 @@
 
 	<!-- Base includes -->
 	<include file="pylon/PylonBase.h" alias="Pylon" />
+    <include file="GenICam.h" alias="Genicam" />
 
 	<!-- Include pylon and genicam mappings -->
 	<file>pylon\Mapping.xml</file>

@@ -39,6 +39,4 @@ class FilestreamWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
-
-private:
 };

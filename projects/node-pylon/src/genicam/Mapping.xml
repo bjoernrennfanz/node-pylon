@@ -29,8 +29,6 @@
 	<module>genicam</module>
 
 	<!-- Module includes -->
-	<include file="GenICam.h" />
-	<include file="GenICamVersion.h" />
 	<include file="Base/GCException.h" />
 	<include file="GenApi/ChunkAdapter.h" />
 	<include file="GenApi/ChunkAdapterGeneric.h" />

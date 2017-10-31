@@ -30,12 +30,11 @@
 #include <node.h>
 #include <nan.h>
 
-#include <GenApi/EnumClasses.h>
+#include <GenICam.h>
 
 using namespace v8;
-using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class EnumclassesWrap : public node::ObjectWrap
+class GenicamWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
