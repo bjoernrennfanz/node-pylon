@@ -28,7 +28,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using NodePylonGen.Config;
-using CppSharp.Generators;
 using BindingContext = NodePylonGen.Generators.BindingContext;
 using System;
 
@@ -39,6 +38,9 @@ namespace NodePylonGen.Generator.Generators.NodeJS
     /// </summary>
     public class NodeJSSources : NodeJSTemplate
     {
+        private SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+        private SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+
         public NodeJSSources(BindingContext context, IEnumerable<TranslationUnit> units)
             : base(context, units)
         {
@@ -51,12 +53,17 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             GenerateLegalFilePreamble(CommentKind.BCPL);
             GenerateFilePreamble(CommentKind.BCPL);
 
-            // Generate name of own include
+            // Generate of own include
             PushBlock(BlockKind.Includes);
             WriteLine("#include \"{0}.h\"", Path.GetFileNameWithoutExtension(FilePath).Replace('\\', '/'));
             WriteLine("#include \"{0}.h\"", GetMarshalHelperPath("pylon_v8"));
             PopBlock(NewLineKind.BeforeNextBlock);
 
+            // Generate of nested includes
+            PushBlock(BlockKind.IncludesForwardReferences);
+            GenerateNestedIncludeImplementations();
+            PopBlock(NewLineKind.BeforeNextBlock);
+            
             // Generate namespace for forward references.
             PushBlock(BlockKind.Usings);
             WriteLine("using namespace v8;");
@@ -136,7 +143,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             PushBlock(BlockKind.Method);
             WriteLine("// Supported implementations");
             foreach (Method constructor in constructors.OrderBy(s => s.Parameters.Count))
-            {                    
+            {
                 WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
             }
 
@@ -246,7 +253,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     firstConstructorCreated = true;
                 }
             }
-        
+
             WriteCloseBraceIndent();
             PopBlock(NewLineKind.BeforeNextBlock);
         }
@@ -297,7 +304,6 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("// Register prototypes to template");
 
-                SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
                 foreach (Method method in classToWrap.Methods)
                 {
                     // Skip constructors
@@ -318,6 +324,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     WriteLine("Nan::SetPrototypeMethod(tpl, \"{0}\", {1});", methodNameLower, methodNameNorm);
                     methodsProcessed.Add(method.Name);
                 }
+
                 PopBlock(NewLineKind.BeforeNextBlock);
 
                 PushBlock(BlockKind.MethodBody);
@@ -340,7 +347,6 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("// Register static functions in Node JS");
 
-                SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
                 foreach (Function function in functions)
                 {
                     // Skip on other access level than public
@@ -361,7 +367,89 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 PopBlock(NewLineKind.BeforeNextBlock);
             }
 
-            // TODO: Implement search of childs for initialize
+            // Generate nested class initialize
+            IEnumerable<IncludeMapping> nestedIncludes = GetNestedIncludes(classNameWrap);
+            if (nestedIncludes.Count() > 0)
+            {
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// Initialize dynamic classes");
+
+                foreach (IncludeMapping include in nestedIncludes)
+                {
+                    string includeClassNameWrap = string.Empty;
+                    string includeId = string.IsNullOrEmpty(include.Alias) ? include.Id : include.Alias.ToLower();
+                    TranslationUnit includeUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == includeId);
+
+                    NodeJSTypeReferenceCollector includeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+                    includeReferenceCollector.Process(includeUnit);
+
+                    NodeJSTypeReference includeToWrapTypeReference = includeReferenceCollector.TypeReferences
+                        .Where(item => item.Declaration is Class)
+                        .Where(item => item.Declaration.Name.ToLower().Contains(includeUnit.Name.ToLower()))
+                        .FirstOrDefault();
+
+                    // Check if nested class was found
+                    if (includeToWrapTypeReference != null)
+                    {
+                        string className = (includeToWrapTypeReference.Declaration as Class).Name;
+                        includeClassNameWrap = GenerateTrimmedClassName(className) + "Wrap";
+                    }
+                    else
+                    {
+                        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                        includeClassNameWrap = textInfo.ToTitleCase(includeUnit.FileNameWithoutExtension) + "Wrap";
+                    }
+
+                    WriteLine("{0}::Initialize(target);", includeClassNameWrap);
+                }
+
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+
+            WriteCloseBraceIndent();
+            PopBlock(NewLineKind.BeforeNextBlock);
+        }
+
+        private void GenerateNestedIncludeImplementations()
+        {
+            NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+            typeReferenceCollector.Process(TranslationUnit);
+
+            // Find own class to wrap
+            NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
+                .Where(item => item.Declaration is Class)
+                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .FirstOrDefault();
+
+            string className = string.Empty;
+            string classNameWrap = string.Empty;
+
+            // Generate wrapper class name
+            if (classToWrapTypeReference != null)
+            {
+                className = (classToWrapTypeReference.Declaration as Class).Name;
+                classNameWrap = GenerateTrimmedClassName(className) + "Wrap";
+            }
+            else
+            {
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                classNameWrap = textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension) + "Wrap";
+            }
+
+            // Generate nested class initialize
+            IEnumerable<IncludeMapping> nestedIncludes = GetNestedIncludes(classNameWrap);
+            if (nestedIncludes.Count() > 0)
+            {
+                foreach (IncludeMapping include in nestedIncludes)
+                {
+                    string includeId = string.IsNullOrEmpty(include.Alias) ? include.Id : include.Alias.ToLower();
+                    WriteLine("#include \"{0}/{1}.h\"", TranslationUnit.FileNameWithoutExtension.ToLower(), includeId);
+                }
+            }
+        }
+
+        private IEnumerable<IncludeMapping> GetNestedIncludes(string classNameWrap)
+        {
             IEnumerable<ConfigMapping> configFilesLoaded = Context.ConfigurationContext.ConfigFilesLoaded;
             foreach (ConfigMapping configFileLoad in configFilesLoaded)
             {
@@ -372,17 +460,14 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     configFileLoadedWrappedName = textInfo.ToTitleCase(configFileLoadedWrappedName) + "Wrap";
                     if (configFileLoadedWrappedName == classNameWrap)
                     {
-                        foreach (IncludeMapping include in configFileLoad.Includes)
-                        {
-
-                        }
+                        return configFileLoad.Includes;
                     }
                 }
-
             }
 
-            WriteCloseBraceIndent();
-            PopBlock(NewLineKind.BeforeNextBlock);
+            // Return empty list
+            return new List<IncludeMapping>();
         }
+
     }
 }

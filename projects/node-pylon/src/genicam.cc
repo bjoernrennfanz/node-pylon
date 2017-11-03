@@ -28,6 +28,47 @@
 #include "genicam.h"
 #include "pylon_v8.h"
 
+#include "genicam/gcexception.h"
+#include "genicam/chunkadapter.h"
+#include "genicam/chunkadaptergeneric.h"
+#include "genicam/chunkadaptergev.h"
+#include "genicam/chunkadapteru3v.h"
+#include "genicam/chunkport.h"
+#include "genicam/container.h"
+#include "genicam/enumclasses.h"
+#include "genicam/eventadapter.h"
+#include "genicam/eventadaptergeneric.h"
+#include "genicam/eventadaptergev.h"
+#include "genicam/eventadapteru3v.h"
+#include "genicam/eventport.h"
+#include "genicam/filestream.h"
+#include "genicam/ibase.h"
+#include "genicam/iboolean.h"
+#include "genicam/icategory.h"
+#include "genicam/ichunkport.h"
+#include "genicam/icommand.h"
+#include "genicam/ideviceinfo.h"
+#include "genicam/ienumentry.h"
+#include "genicam/ienumeration.h"
+#include "genicam/ifloat.h"
+#include "genicam/iinteger.h"
+#include "genicam/inode.h"
+#include "genicam/inodemap.h"
+#include "genicam/iport.h"
+#include "genicam/iportconstruct.h"
+#include "genicam/iportrecorder.h"
+#include "genicam/iregister.h"
+#include "genicam/iselector.h"
+#include "genicam/iselectordigit.h"
+#include "genicam/istring.h"
+#include "genicam/ivalue.h"
+#include "genicam/nodecallback.h"
+#include "genicam/nodemapref.h"
+#include "genicam/portimpl.h"
+#include "genicam/reference.h"
+#include "genicam/selectorset.h"
+#include "genicam/types.h"
+
 using namespace v8;
 
 Nan::Persistent<FunctionTemplate> GenicamWrap::prototype;
@@ -35,4 +76,45 @@ Nan::Persistent<Function> GenicamWrap::constructor;
 
 NAN_MODULE_INIT(GenicamWrap::Initialize)
 {
+    // Initialize dynamic classes
+    GcexceptionWrap::Initialize(target);
+    ChunkAdapterWrap::Initialize(target);
+    ChunkAdapterGenericWrap::Initialize(target);
+    ChunkAdapterGEVWrap::Initialize(target);
+    ChunkAdapterU3VWrap::Initialize(target);
+    ChunkPortWrap::Initialize(target);
+    ContainerWrap::Initialize(target);
+    EnumclassesWrap::Initialize(target);
+    EventAdapterWrap::Initialize(target);
+    EventAdapterGenericWrap::Initialize(target);
+    EventAdapterGEVWrap::Initialize(target);
+    EventAdapterU3VWrap::Initialize(target);
+    EventPortWrap::Initialize(target);
+    FilestreamWrap::Initialize(target);
+    BaseWrap::Initialize(target);
+    BooleanRefTWrap::Initialize(target);
+    CategoryWrap::Initialize(target);
+    ChunkPortWrap::Initialize(target);
+    CommandWrap::Initialize(target);
+    DeviceInfoWrap::Initialize(target);
+    EnumEntryWrap::Initialize(target);
+    EnumerationWrap::Initialize(target);
+    FloatRefTWrap::Initialize(target);
+    IntegerRefTWrap::Initialize(target);
+    NodeWrap::Initialize(target);
+    NodeMapWrap::Initialize(target);
+    PortWrap::Initialize(target);
+    PortConstructWrap::Initialize(target);
+    PortRecorderWrap::Initialize(target);
+    RegisterWrap::Initialize(target);
+    SelectorWrap::Initialize(target);
+    SelectorDigitWrap::Initialize(target);
+    StringWrap::Initialize(target);
+    ValueWrap::Initialize(target);
+    NodeCallbackWrap::Initialize(target);
+    NodeMapRefTWrap::Initialize(target);
+    PortImplWrap::Initialize(target);
+    ReferenceTWrap::Initialize(target);
+    SelectorSetWrap::Initialize(target);
+    TypesWrap::Initialize(target);
 }

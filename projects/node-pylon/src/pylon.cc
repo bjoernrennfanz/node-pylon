@@ -28,6 +28,36 @@
 #include "pylon.h"
 #include "pylon_v8.h"
 
+#include "pylon/imageformatconverterparams.h"
+#include "pylon/instantcameraparams.h"
+#include "pylon/acquirecontinuousconfiguration.h"
+#include "pylon/acquiresingleframeconfiguration.h"
+#include "pylon/cameraeventhandler.h"
+#include "pylon/configurationeventhandler.h"
+#include "pylon/pylondevice.h"
+#include "pylon/devicefactory.h"
+#include "pylon/deviceinfo.h"
+#include "pylon/featurepersistence.h"
+#include "pylon/grabresultdata.h"
+#include "pylon/grabresultptr.h"
+#include "pylon/image.h"
+#include "pylon/imageeventhandler.h"
+#include "pylon/imageformatconverter.h"
+#include "pylon/info.h"
+#include "pylon/instantcamera.h"
+#include "pylon/instantcameraarray.h"
+#include "pylon/payloadtype.h"
+#include "pylon/pixeltype.h"
+#include "pylon/pylongui.h"
+#include "pylon/pylonimage.h"
+#include "pylon/pylonimagebase.h"
+#include "pylon/result.h"
+#include "pylon/reusableimage.h"
+#include "pylon/softwaretriggerconfiguration.h"
+#include "pylon/streamgrabber.h"
+#include "pylon/tlfactory.h"
+#include "pylon/transportlayer.h"
+
 using namespace v8;
 using namespace Pylon;
 
@@ -41,4 +71,35 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     Nan::Set(target, Nan::New<String>("pylonTerminate").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::PylonTerminate)).ToLocalChecked());
     Nan::Set(target, Nan::New<String>("getPylonVersion").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::GetPylonVersion)).ToLocalChecked());
     Nan::Set(target, Nan::New<String>("getPylonVersionString").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(PylonWrap::GetPylonVersionString)).ToLocalChecked());
+
+    // Initialize dynamic classes
+    ImageformatconverterparamsWrap::Initialize(target);
+    InstantcameraparamsWrap::Initialize(target);
+    AcquireContinuousConfigurationWrap::Initialize(target);
+    AcquireSingleFrameConfigurationWrap::Initialize(target);
+    CameraEventHandlerWrap::Initialize(target);
+    ConfigurationEventHandlerWrap::Initialize(target);
+    PylonDeviceWrap::Initialize(target);
+    DeviceFactoryWrap::Initialize(target);
+    DeviceInfoWrap::Initialize(target);
+    FeaturePersistenceWrap::Initialize(target);
+    GrabResultDataWrap::Initialize(target);
+    GrabResultPtrWrap::Initialize(target);
+    ImageWrap::Initialize(target);
+    ImageEventHandlerWrap::Initialize(target);
+    ImageFormatConverterWrap::Initialize(target);
+    InfoBaseWrap::Initialize(target);
+    InstantCameraWrap::Initialize(target);
+    InstantCameraArrayWrap::Initialize(target);
+    PayloadtypeWrap::Initialize(target);
+    PixeltypeWrap::Initialize(target);
+    PylonguiWrap::Initialize(target);
+    PylonImageWrap::Initialize(target);
+    PylonImageBaseWrap::Initialize(target);
+    GrabResultWrap::Initialize(target);
+    ReusableImageWrap::Initialize(target);
+    SoftwareTriggerConfigurationWrap::Initialize(target);
+    StreamGrabberWrap::Initialize(target);
+    TlFactoryWrap::Initialize(target);
+    TransportLayerWrap::Initialize(target);
 }
