@@ -32,9 +32,6 @@ using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 using namespace Pylon;
 
-Nan::Persistent<FunctionTemplate> ContainerWrap::prototype;
-Nan::Persistent<Function> ContainerWrap::constructor;
-
 NAN_MODULE_INIT(ContainerWrap::Initialize)
 {
 }

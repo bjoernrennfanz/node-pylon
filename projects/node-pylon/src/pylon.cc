@@ -48,6 +48,7 @@
 #include "pylon/instantcameraarray.h"
 #include "pylon/payloadtype.h"
 #include "pylon/pixeltype.h"
+#include "pylon/pixelformatconverter.h"
 #include "pylon/pylongui.h"
 #include "pylon/pylonimage.h"
 #include "pylon/pylonimagebase.h"
@@ -60,9 +61,6 @@
 
 using namespace v8;
 using namespace Pylon;
-
-Nan::Persistent<FunctionTemplate> PylonWrap::prototype;
-Nan::Persistent<Function> PylonWrap::constructor;
 
 NAN_MODULE_INIT(PylonWrap::Initialize)
 {
@@ -93,6 +91,7 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     InstantCameraArrayWrap::Initialize(target);
     PayloadtypeWrap::Initialize(target);
     PixeltypeWrap::Initialize(target);
+    PixelFormatConverterWrap::Initialize(target);
     PylonguiWrap::Initialize(target);
     PylonImageWrap::Initialize(target);
     PylonImageBaseWrap::Initialize(target);
@@ -103,3 +102,5 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     TlFactoryWrap::Initialize(target);
     TransportLayerWrap::Initialize(target);
 }
+
+NODE_MODULE(pylon, PylonWrap::Initialize)

@@ -111,12 +111,12 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 classNameWrap = textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension) + "Wrap";
             }
 
-            // Generate NodeJS wrapper prototypes
-            GenerateWrapperClassPersistentFunctions(classNameWrap);
-
             // Check if we need constructor & destructor
             if (classToWrapTypeReference != null)
             {
+                // Generate NodeJS wrapper prototypes
+                GenerateWrapperClassPersistentFunctions(classNameWrap);
+
                 // Generate constructors
                 GenerateWrapperClassConstructors(classToWrapTypeReference);
                 GenerateWrapperClassDestructors(classToWrapTypeReference);
@@ -125,6 +125,14 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Generate initialize
             GenerateWrapperInitialize(classToWrapTypeReference, classNameWrap, typeReferenceCollector);
 
+            // Check if translation unit is an module
+            if (Context.ConfigurationContext.ConfigFilesLoaded.Where(config => ((config.Module != null) && (config.Module == TranslationUnit.FileNameWithoutExtension))).Count() > 0)
+            {
+                // Generate Node JS initialize for specified module
+                PushBlock(BlockKind.Footer);
+                WriteLine("NODE_MODULE({0}, {1}::Initialize)", TranslationUnit.FileNameWithoutExtension, classNameWrap);
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
         }
 
         private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference)

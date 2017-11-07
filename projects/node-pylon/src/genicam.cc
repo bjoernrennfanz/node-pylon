@@ -71,9 +71,6 @@
 
 using namespace v8;
 
-Nan::Persistent<FunctionTemplate> GenicamWrap::prototype;
-Nan::Persistent<Function> GenicamWrap::constructor;
-
 NAN_MODULE_INIT(GenicamWrap::Initialize)
 {
     // Initialize dynamic classes
@@ -118,3 +115,5 @@ NAN_MODULE_INIT(GenicamWrap::Initialize)
     SelectorSetWrap::Initialize(target);
     TypesWrap::Initialize(target);
 }
+
+NODE_MODULE(genicam, GenicamWrap::Initialize)

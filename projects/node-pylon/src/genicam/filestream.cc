@@ -31,9 +31,6 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> FilestreamWrap::prototype;
-Nan::Persistent<Function> FilestreamWrap::constructor;
-
 NAN_MODULE_INIT(FilestreamWrap::Initialize)
 {
 }

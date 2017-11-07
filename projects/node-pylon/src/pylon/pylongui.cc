@@ -31,9 +31,6 @@
 using namespace v8;
 using namespace Pylon;
 
-Nan::Persistent<FunctionTemplate> PylonguiWrap::prototype;
-Nan::Persistent<Function> PylonguiWrap::constructor;
-
 NAN_MODULE_INIT(PylonguiWrap::Initialize)
 {
     // Register static functions in Node JS

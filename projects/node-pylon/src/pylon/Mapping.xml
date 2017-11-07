@@ -49,6 +49,7 @@
 	<include file="pylon/InstantCameraArray.h" />
 	<include file="pylon/PayloadType.h" />
 	<include file="pylon/PixelType.h" />
+	<include file="pylon/PixelFormatConverter.h" />
 	<include file="pylon/PylonGUI.h" />
 	<include file="pylon/PylonImage.h" />
 	<include file="pylon/PylonImageBase.h" />
