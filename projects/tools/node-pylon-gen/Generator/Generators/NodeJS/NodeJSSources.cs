@@ -30,6 +30,7 @@ using System.Linq;
 using NodePylonGen.Config;
 using BindingContext = NodePylonGen.Generators.BindingContext;
 using System;
+using NodePylonGen.Utils;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -41,9 +42,15 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         private SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
         private SortedSet<string> functionsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
 
+        private NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter;
+        private NodeJSTypePrinter nodeJSTypePrinter;       
+
         public NodeJSSources(BindingContext context, IEnumerable<TranslationUnit> units)
             : base(context, units)
         {
+            nodeJSTypePrinter = new NodeJSTypePrinter(context);
+            nodeJSTypePrinter.PrintScopeKind = TypePrintScopeKind.Local;
+            nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(context);
         }
 
         public override string FileExtension => "cc";
@@ -90,10 +97,9 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
             typeReferenceCollector.Process(TranslationUnit);
 
-            // Find own class to wrap
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;
@@ -102,8 +108,8 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Generate wrapper class name
             if (classToWrapTypeReference != null)
             {
-                className = (classToWrapTypeReference.Declaration as Class).Name;
-                classNameWrap = GenerateTrimmedClassName(className) + "Wrap";
+                className = nodeJSTypePrinter.VisitDeclaration(classToWrapTypeReference.Declaration);
+                classNameWrap = NodeJSClassHelper.GenerateClassWrapName(className);
             }
             else
             {
@@ -120,10 +126,24 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 // Generate constructors
                 GenerateWrapperClassConstructors(classToWrapTypeReference);
                 GenerateWrapperClassDestructors(classToWrapTypeReference);
+
+                // TODO: New Instance & New
             }
 
             // Generate initialize
             GenerateWrapperInitialize(classToWrapTypeReference, classNameWrap, typeReferenceCollector);
+
+            // Check if we need to generate methods
+            if (methodsProcessed.Count > 0)
+            {
+                GenerateWrapperMethods(classToWrapTypeReference, classNameWrap, typeReferenceCollector);
+            }
+
+            // Check if we need to generate functions
+            if (functionsProcessed.Count > 0)
+            {
+                GenerateWrapperFunctions(classNameWrap, typeReferenceCollector);
+            }
 
             // Check if translation unit is an module
             if (Context.ConfigurationContext.ConfigFilesLoaded.Where(config => ((config.Module != null) && (config.Module == TranslationUnit.FileNameWithoutExtension))).Count() > 0)
@@ -135,15 +155,94 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             }
         }
 
+        private void GenerateWrapperFunctions(string classNameWrap, NodeJSTypeReferenceCollector typeReferenceCollector)
+        {
+            // Loop over all static functions
+            foreach (string functionName in functionsProcessed)
+            {
+                PushBlock(BlockKind.Method);
+                WriteLine("NAN_METHOD({0}::{1})", classNameWrap, functionName);
+                WriteStartBraceIndent();
+
+                bool firstFunctionCreated = false;
+                int functionArgumentIndex = 0;
+
+                // Find overloaded static functions
+                IEnumerable<Function> functionOverloads = typeReferenceCollector.TypeReferences
+                    .Where(item => ((item.Declaration is Function) && !(item.Declaration is Method)))
+                    .Select(item => item.Declaration as Function)
+                    .Where(s => s.Name == functionName).OrderByDescending(s => s.Parameters.Count);
+
+                foreach (Function overloadFunction in functionOverloads)
+                {
+
+                }
+
+                WriteCloseBraceIndent();
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+        }
+
+        private void GenerateWrapperMethods(NodeJSTypeReference classToWrapTypeReference, string classNameWrap, NodeJSTypeReferenceCollector typeReferenceCollector)
+        {
+            // Find class to wrap
+            Class classToWrap = classToWrapTypeReference.Declaration as Class;
+            
+            // Loop over all public methods
+            foreach (string methodName in methodsProcessed)
+            {
+                PushBlock(BlockKind.Method);
+                WriteLine("NAN_METHOD({0}::{1})", classNameWrap, methodName);
+                WriteStartBraceIndent();
+
+                // Generate class object wrap
+                string classNameNorm = NodeJSClassHelper.GenerateTrimmedClassName(classToWrap.Name);
+                string classNameWrapper = NodeJSClassHelper.GenerateWrapperClassName(classToWrap.Name);
+                string classNameNormLower = classNameNorm.Substring(0, 1).ToLower() + classNameNorm.Substring(1);
+
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("{0}* {1} = ObjectWrap::Unwrap<{0}>(info.This());", classNameWrap, classNameWrapper);
+                WriteLine("{0}* {1} = {2}->GetWrapped();", classToWrap.Name, classNameNormLower, classNameWrapper);
+                PopBlock(NewLineKind.BeforeNextBlock);
+
+                // Find overloaded methods
+                IEnumerable<Method> overloadMethods = classToWrap.Methods
+                    .Where(s => s.Name == methodName)
+                    .OrderByDescending(s => s.Parameters.Count);
+
+                bool firstMethodCreated = false;
+                foreach (Method overloadMethod in overloadMethods)
+                {
+                    // Generate other constructors than default
+                    string generatedIfStatement = (firstMethodCreated ? "else " : string.Empty);
+                    generatedIfStatement += "if " + nodeJSTypeCheckPrinter.GenerateCheckStatement(overloadMethod.Parameters);
+
+                    // Output arguments checker
+                    PushBlock(BlockKind.MethodBody);
+                    WriteLine(generatedIfStatement);
+                    WriteStartBraceIndent();
+
+                    // Generate wrapper for parameter arguments
+                    string generatedArgumentsWrapped = nodeJSTypePrinter.GenerateParameterWrapper(this, overloadMethod.Parameters);
+
+                    WriteCloseBraceIndent();
+                    PopBlock(NewLineKind.Never);
+
+                    // Remember that we have created an method
+                    firstMethodCreated = true;
+                }
+
+                WriteCloseBraceIndent();
+                PopBlock(NewLineKind.BeforeNextBlock);
+            }
+        }
+
         private void GenerateWrapperClassConstructors(NodeJSTypeReference classToWrapTypeReference)
         {
-            NodeJSTypePrinter nodeJSTypePrinter = new NodeJSTypePrinter(Context);
-            NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(Context);
-            nodeJSTypePrinter.PrintScopeKind = TypePrintScopeKind.Local;
-
             Class classToWrap = classToWrapTypeReference.Declaration as Class;
-            string classNameWrap = GenerateTrimmedClassName(classToWrap.Name) + "Wrap";
-            string classNameWrapperMember = "m_" + GenerateTrimmedClassName(classToWrap.Name);
+
+            string classNameWrap = NodeJSClassHelper.GenerateClassWrapName(classToWrap.Name);
+            string classNameWrapperMember = NodeJSClassHelper.GenerateClassWrapperMember(classToWrap.Name);
 
             IEnumerable<Method> constructors = classToWrap.Constructors.OrderByDescending(s => s.Parameters.Count);
 
@@ -161,105 +260,31 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             WriteStartBraceIndent();
 
             bool firstConstructorCreated = false;
-            int constructorArgumentIndex = 0;
 
             // Generate check for constructor arguments
             WriteLine("// Check constructor arguments");
             foreach (Method constructor in constructors.OrderBy(s => s.Parameters.Count))
             {
-                // Generate default constructor here when needed
-                if (constructor.Parameters.Count == 0 && !firstConstructorCreated)
-                {
-                    WriteLine("if (info.Length() == 0)");
-                    WriteStartBraceIndent();
+                // Generate other constructors than default
+                string generatedCheckStatement = (firstConstructorCreated ? "else " : string.Empty);
+                generatedCheckStatement += "if " + nodeJSTypeCheckPrinter.GenerateCheckStatement(constructor.Parameters);
 
-                    WriteLine("// {0}()", classToWrap.Name);
-                    WriteLine("{0} = new {1}();", classNameWrapperMember, classToWrap.Name);
-                    WriteCloseBraceIndent();
+                // Output arguments checker
+                WriteLine(generatedCheckStatement);
+                WriteStartBraceIndent();
 
-                    // Remember that we have created an constructor
-                    firstConstructorCreated = true;
-                }
-                else
-                {
-                    // Generate other constructors than default
-                    string generatedCheckStatement = (firstConstructorCreated ? "else " : string.Empty);
-                    generatedCheckStatement += "if " + (constructor.Parameters.Count > 1 ? "(" : string.Empty);
+                // Generate wrapper for parameter arguments
+                string generatedArgumentsWrapped = nodeJSTypePrinter.GenerateParameterWrapper(this, constructor.Parameters);
 
-                    constructorArgumentIndex = 0;
-                    foreach (Parameter parameter in constructor.Parameters)
-                    {
-                        // Generate argument check foreach parameter
-                        generatedCheckStatement += constructorArgumentIndex > 0 ? " && " : string.Empty;
-                        generatedCheckStatement += "(info[" + constructorArgumentIndex + "]->" + nodeJSTypeCheckPrinter.VisitParameter(parameter) + ")";
+                // Generate construction of wrapped member
+                PushBlock(BlockKind.MethodBody);
+                WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
+                WriteLine("{0} = new {1}({2});", classNameWrapperMember, classToWrap.Name, generatedArgumentsWrapped);
+                PopBlock(NewLineKind.Never);
+                WriteCloseBraceIndent();
 
-                        // Increment argument index
-                        constructorArgumentIndex++;
-                    }
-
-                    generatedCheckStatement += (constructor.Parameters.Count > 1 ? ")" : string.Empty);
-
-                    // Output arguments checker
-                    WriteLine(generatedCheckStatement);
-                    WriteStartBraceIndent();
-
-                    constructorArgumentIndex = 0;
-                    string generatedArgumentsWrapped = string.Empty;
-                    foreach (Parameter parameter in constructor.Parameters)
-                    {
-                        if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
-                        {
-                            string parameterClassName = nodeJSTypePrinter.VisitParameter(parameter, false, false);
-                            string parameterClassWrapped = GenerateTrimmedClassName(parameterClassName) + "Wrap";
-
-                            // Generate simple type check
-                            PushBlock(BlockKind.MethodBody);
-                            WriteLine("gcstring info{0}_constructor = pylon_v8::ToGCString(info[{0}]->ToObject()->GetConstructorName());", constructorArgumentIndex);
-                            WriteLine("if (info{0}_constructor != \"{1}\")", constructorArgumentIndex, parameterClassName);
-                            WriteStartBraceIndent();
-                            WriteLine("ThrowException(Exception::TypeError(String::New(\"{0}::{0}: bad argument\")));", classToWrap.Name);
-                            WriteCloseBraceIndent();
-                            PopBlock(NewLineKind.BeforeNextBlock);
-
-                            // Generate unwrap of stored object
-                            PushBlock(BlockKind.MethodBody);
-                            WriteLine("// Unwrap obj");
-                            WriteLine("{0}* arg{1}_wrap = ObjectWrap::Unwrap<{0}>(info[{1}]->ToObject());", parameterClassWrapped, constructorArgumentIndex);
-                            WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, constructorArgumentIndex);
-                            PopBlock(NewLineKind.BeforeNextBlock);
-
-                            // Store arguments for later usage
-                            generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
-                            generatedArgumentsWrapped += parameter.Type is PointerType ? (generatedArgumentsWrapped += (parameter.Type as PointerType).IsReference ? "*" : string.Empty) : string.Empty;
-                            generatedArgumentsWrapped += "arg" + constructorArgumentIndex;
-                        }
-                        else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
-                        {
-                            // Generate wrapper for number values
-                            PushBlock(BlockKind.MethodBody);
-                            WriteLine("// Convert number value");
-                            WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", nodeJSTypePrinter.VisitParameter(parameter, false, false), constructorArgumentIndex);
-                            PopBlock(NewLineKind.BeforeNextBlock);
-
-                            // Store arguments for later usage
-                            generatedArgumentsWrapped += constructorArgumentIndex > 0 ? ", " : string.Empty;
-                            generatedArgumentsWrapped += "arg" + constructorArgumentIndex;
-                        }
-
-                        // Increment argument index
-                        constructorArgumentIndex++;
-                    }
-
-                    // Generate construction of wrapped member
-                    PushBlock(BlockKind.MethodBody);
-                    WriteLine("// {0}({1})", classToWrap.Name, nodeJSTypePrinter.VisitParameters(constructor.Parameters, true));
-                    WriteLine("{0} = new {1}({2});", classNameWrapperMember, classToWrap.Name, generatedArgumentsWrapped);
-                    PopBlock(NewLineKind.Never);
-                    WriteCloseBraceIndent();
-
-                    // Remember that we have created an constructor
-                    firstConstructorCreated = true;
-                }
+                // Remember that we have created an constructor
+                firstConstructorCreated = true;
             }
 
             WriteCloseBraceIndent();
@@ -269,8 +294,8 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         private void GenerateWrapperClassDestructors(NodeJSTypeReference classToWrapTypeReference)
         {
             Class classToWrap = classToWrapTypeReference.Declaration as Class;
-            string classNameWrap = GenerateTrimmedClassName(classToWrap.Name) + "Wrap";
-            string classNameWrapperMember = "m_" + GenerateTrimmedClassName(classToWrap.Name);
+            string classNameWrap = NodeJSClassHelper.GenerateClassWrapName(classToWrap.Name);
+            string classNameWrapperMember = NodeJSClassHelper.GenerateClassWrapperMember(classToWrap.Name);
 
             // Destructor for wrapped class
             PushBlock(BlockKind.Method);
@@ -391,21 +416,22 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     NodeJSTypeReferenceCollector includeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
                     includeReferenceCollector.Process(includeUnit);
 
+                    // Find own class to wrap
                     NodeJSTypeReference includeToWrapTypeReference = includeReferenceCollector.TypeReferences
                         .Where(item => item.Declaration is Class)
-                        .Where(item => item.Declaration.Name.ToLower().Contains(includeUnit.Name.ToLower()))
+                        .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(includeUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                         .FirstOrDefault();
 
                     // Check if nested class was found
                     if (includeToWrapTypeReference != null)
                     {
                         string className = (includeToWrapTypeReference.Declaration as Class).Name;
-                        includeClassNameWrap = GenerateTrimmedClassName(className) + "Wrap";
+                        includeClassNameWrap = NodeJSClassHelper.GenerateClassWrapName(className);
                     }
                     else
                     {
                         TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                        includeClassNameWrap = textInfo.ToTitleCase(includeUnit.FileNameWithoutExtension) + "Wrap";
+                        includeClassNameWrap = NodeJSClassHelper.GenerateClassWrapName(textInfo.ToTitleCase(includeUnit.FileNameWithoutExtension));
                     }
 
                     WriteLine("{0}::Initialize(target);", includeClassNameWrap);
@@ -426,7 +452,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Find own class to wrap
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;
@@ -435,13 +461,13 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Generate wrapper class name
             if (classToWrapTypeReference != null)
             {
-                className = (classToWrapTypeReference.Declaration as Class).Name;
-                classNameWrap = GenerateTrimmedClassName(className) + "Wrap";
+                className = nodeJSTypePrinter.VisitDeclaration(classToWrapTypeReference.Declaration);
+                classNameWrap = NodeJSClassHelper.GenerateClassWrapName(className);
             }
             else
             {
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                classNameWrap = textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension) + "Wrap";
+                classNameWrap = NodeJSClassHelper.GenerateClassWrapName(textInfo.ToTitleCase(TranslationUnit.FileNameWithoutExtension));
             }
 
             // Generate nested class initialize
@@ -461,7 +487,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             IEnumerable<ConfigMapping> configFilesLoaded = Context.ConfigurationContext.ConfigFilesLoaded;
             foreach (ConfigMapping configFileLoad in configFilesLoaded)
             {
-                string configFileLoadedWrappedName = (configFileLoad.Module != null ? GenerateTrimmedClassName(configFileLoad.Module) : string.Empty);
+                string configFileLoadedWrappedName = (configFileLoad.Module != null ? NodeJSClassHelper.GenerateTrimmedClassName(configFileLoad.Module) : string.Empty);
                 if (!(string.IsNullOrEmpty(configFileLoadedWrappedName)))
                 {
                     TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
@@ -476,6 +502,5 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Return empty list
             return new List<IncludeMapping>();
         }
-
     }
 }

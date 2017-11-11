@@ -46,15 +46,9 @@ CategoryWrap::CategoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // ICategory()
         m_Category = new ICategory();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ICategory")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "ICategory")
-        {
-            ThrowException(Exception::TypeError(String::New("ICategory::ICategory: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         CategoryWrap* arg0_wrap = ObjectWrap::Unwrap<CategoryWrap>(info[0]->ToObject());
         ICategory* arg0 = arg0_wrap->GetWrapped();
 
@@ -83,4 +77,17 @@ NAN_MODULE_INIT(CategoryWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("ICategory").ToLocalChecked(), function);
+}
+
+NAN_METHOD(CategoryWrap::GetFeatures)
+{
+    CategoryWrap* wrappedCategory = ObjectWrap::Unwrap<CategoryWrap>(info.This());
+    ICategory* category = wrappedCategory->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
+    {
+        // Unwrap object
+        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        value_vector* arg0 = arg0_wrap->GetWrapped();
+    }
 }

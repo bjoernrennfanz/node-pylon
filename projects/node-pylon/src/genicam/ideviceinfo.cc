@@ -46,15 +46,9 @@ DeviceInfoWrap::DeviceInfoWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IDeviceInfo()
         m_DeviceInfo = new IDeviceInfo();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IDeviceInfo")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IDeviceInfo")
-        {
-            ThrowException(Exception::TypeError(String::New("IDeviceInfo::IDeviceInfo: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
         IDeviceInfo* arg0 = arg0_wrap->GetWrapped();
 
@@ -91,4 +85,107 @@ NAN_MODULE_INIT(DeviceInfoWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IDeviceInfo").ToLocalChecked(), function);
+}
+
+NAN_METHOD(DeviceInfoWrap::GetDeviceVersion)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")))
+    {
+        // Unwrap object
+        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        Version_t* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetGenApiVersion)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "unsigned short")))
+    {
+        // Unwrap object
+        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        Version_t* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        unsigned shortWrap* arg1_wrap = ObjectWrap::Unwrap<unsigned shortWrap>(info[1]->ToObject());
+        unsigned short* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetModelName)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetProductGuid)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetSchemaVersion)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")))
+    {
+        // Unwrap object
+        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        Version_t* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetStandardNameSpace)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetToolTip)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetVendorName)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(DeviceInfoWrap::GetVersionGuid)
+{
+    DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
+    IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

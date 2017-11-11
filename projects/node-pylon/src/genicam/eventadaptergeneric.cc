@@ -41,30 +41,18 @@ EventAdapterGenericWrap::EventAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventAdapterGeneric(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterGeneric::CEventAdapterGeneric: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // CEventAdapterGeneric(INodeMap* pNodeMap)
         m_EventAdapterGeneric = new CEventAdapterGeneric(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CEventAdapterGeneric")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CEventAdapterGeneric")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterGeneric::CEventAdapterGeneric: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EventAdapterGenericWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterGenericWrap>(info[0]->ToObject());
         CEventAdapterGeneric* arg0 = arg0_wrap->GetWrapped();
 
@@ -93,4 +81,45 @@ NAN_MODULE_INIT(EventAdapterGenericWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CEventAdapterGeneric").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EventAdapterGenericWrap::DeliverMessage)
+{
+    EventAdapterGenericWrap* wrappedEventAdapterGeneric = ObjectWrap::Unwrap<EventAdapterGenericWrap>(info.This());
+    CEventAdapterGeneric* eventAdapterGeneric = wrappedEventAdapterGeneric->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Convert from number value
+        __uint128_t arg2 = static_cast<__uint128_t>(info[2]->NumberValue());
+    }
+    else if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Unwrap object
+        gcstringWrap* arg2_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[2]->ToObject());
+        gcstring* arg2 = arg2_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
 }

@@ -41,30 +41,18 @@ ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ChunkPort(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPort")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkPort::CChunkPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
         IPort* arg0 = arg0_wrap->GetWrapped();
 
         // CChunkPort(IPort* pPort)
         m_ChunkPort = new CChunkPort(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CChunkPort")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CChunkPort")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkPort::CChunkPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ChunkPortWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkPortWrap>(info[0]->ToObject());
         CChunkPort* arg0 = arg0_wrap->GetWrapped();
 
@@ -107,4 +95,201 @@ NAN_MODULE_INIT(ChunkPortWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CChunkPort").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ChunkPortWrap::AttachChunk)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 4) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsBoolean())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::AttachPort)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::CheckChunkID)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg1 = static_cast<int>(info[1]->NumberValue());
+    }
+    else if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __uint128_t arg0 = static_cast<__uint128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::ClearCache)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::DetachChunk)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::DetachPort)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::GetAccessMode)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::GetChunkIDLength)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::GetPrincipalInterfaceType)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::GetSwapEndianess)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::InvalidateNode)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::Read)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::SetPortImpl)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::UpdateBuffer)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::Write)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    CChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
 }

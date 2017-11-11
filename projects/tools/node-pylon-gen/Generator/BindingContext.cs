@@ -24,6 +24,7 @@ using NodePylonGen.Config;
 using NodePylonGen.Generator;
 using NodePylonGen.Generator.Model;
 using NodePylonGen.Parser.Model;
+using System.Collections;
 
 namespace NodePylonGen.Generators
 {
@@ -31,7 +32,7 @@ namespace NodePylonGen.Generators
     {
         public ConfigMapping ConfigurationContext { get; private set; }
         public CppModule ParserContext { get; private set; }
-
+        
         /// <summary>
         /// Gets the driver options of this instance
         /// </summary>

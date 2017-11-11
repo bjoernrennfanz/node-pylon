@@ -46,15 +46,9 @@ PortImplWrap::PortImplWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CPortImpl()
         m_PortImpl = new CPortImpl();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CPortImpl")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CPortImpl")
-        {
-            ThrowException(Exception::TypeError(String::New("CPortImpl::CPortImpl: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PortImplWrap* arg0_wrap = ObjectWrap::Unwrap<PortImplWrap>(info[0]->ToObject());
         CPortImpl* arg0 = arg0_wrap->GetWrapped();
 
@@ -89,4 +83,98 @@ NAN_MODULE_INIT(PortImplWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CPortImpl").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PortImplWrap::GetAccessMode)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PortImplWrap::GetSwapEndianess)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PortImplWrap::InvalidateNode)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PortImplWrap::Read)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(PortImplWrap::Replay)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPortWriteList")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        PortWriteListWrap* arg0_wrap = ObjectWrap::Unwrap<PortWriteListWrap>(info[0]->ToObject());
+        IPortWriteList* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PortImplWrap::SetPortImpl)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PortImplWrap::Write)
+{
+    PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
+    CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
 }

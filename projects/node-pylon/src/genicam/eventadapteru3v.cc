@@ -41,30 +41,18 @@ EventAdapterU3VWrap::EventAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventAdapterU3V(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterU3V::CEventAdapterU3V: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // CEventAdapterU3V(INodeMap* pNodeMap)
         m_EventAdapterU3V = new CEventAdapterU3V(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CEventAdapterU3V")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CEventAdapterU3V")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterU3V::CEventAdapterU3V: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EventAdapterU3VWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterU3VWrap>(info[0]->ToObject());
         CEventAdapterU3V* arg0 = arg0_wrap->GetWrapped();
 
@@ -94,4 +82,33 @@ NAN_MODULE_INIT(EventAdapterU3VWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CEventAdapterU3V").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EventAdapterU3VWrap::DeliverEventMessage)
+{
+    EventAdapterU3VWrap* wrappedEventAdapterU3V = ObjectWrap::Unwrap<EventAdapterU3VWrap>(info.This());
+    CEventAdapterU3V* eventAdapterU3V = wrappedEventAdapterU3V->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "U3V_EVENT_MESSAGE")))
+    {
+        // Unwrap object
+        U3V_EVENT_MESSAGEWrap* arg0_wrap = ObjectWrap::Unwrap<U3V_EVENT_MESSAGEWrap>(info[0]->ToObject());
+        U3V_EVENT_MESSAGE* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EventAdapterU3VWrap::DeliverMessage)
+{
+    EventAdapterU3VWrap* wrappedEventAdapterU3V = ObjectWrap::Unwrap<EventAdapterU3VWrap>(info.This());
+    CEventAdapterU3V* eventAdapterU3V = wrappedEventAdapterU3V->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
 }

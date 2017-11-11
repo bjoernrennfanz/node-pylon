@@ -132,6 +132,8 @@
     <Compile Include="Parser\Model\CppType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\NodeJSClassHelper.cs" />
+    <Compile Include="Utils\ObjectExtensions.cs" />
     <Compile Include="Utils\StringEnum.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -36,6 +36,7 @@
 	<include file="pylon/CameraEventHandler.h" />
 	<include file="pylon/ConfigurationEventHandler.h" />
 	<include file="pylon/Device.h" alias="PylonDevice"/>
+	<include file="pylon/DeviceAccessMode.h" />
 	<include file="pylon/DeviceFactory.h" />
 	<include file="pylon/DeviceInfo.h" />
 	<include file="pylon/FeaturePersistence.h" />

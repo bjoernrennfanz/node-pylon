@@ -47,23 +47,17 @@ InstantCameraArrayWrap::InstantCameraArrayWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CInstantCameraArray()
         m_InstantCameraArray = new CInstantCameraArray();
     }
-    else if (info[0]->IsNumber())
+    else if ((info.Length() == 1) && info[0]->IsNumber())
     {
-        // Convert number value
+        // Convert from number value
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
 
         // CInstantCameraArray(unsigned int numberOfCameras)
         m_InstantCameraArray = new CInstantCameraArray(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCameraArray")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CInstantCameraArray")
-        {
-            ThrowException(Exception::TypeError(String::New("CInstantCameraArray::CInstantCameraArray: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         InstantCameraArrayWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info[0]->ToObject());
         CInstantCameraArray* arg0 = arg0_wrap->GetWrapped();
 
@@ -104,4 +98,150 @@ NAN_MODULE_INIT(InstantCameraArrayWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CInstantCameraArray").ToLocalChecked(), function);
+}
+
+NAN_METHOD(InstantCameraArrayWrap::Close)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::DestroyDevice)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::DetachDevice)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::GetSize)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::Initialize)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::IsCameraDeviceRemoved)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::IsGrabbing)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::IsOpen)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::IsPylonDeviceAttached)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::Open)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::RetrieveResult)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "CGrabResultPtr")) && info[2]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Unwrap object
+        GrabResultPtrWrap* arg1_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[1]->ToObject());
+        CGrabResultPtr* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::StartGrabbing)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        EGrabStrategy arg0 = static_cast<EGrabStrategy>(info[0]->NumberValue());
+
+        // Convert from number value
+        EGrabLoop arg1 = static_cast<EGrabLoop>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraArrayWrap::StopGrabbing)
+{
+    InstantCameraArrayWrap* wrappedInstantCameraArray = ObjectWrap::Unwrap<InstantCameraArrayWrap>(info.This());
+    CInstantCameraArray* instantCameraArray = wrappedInstantCameraArray->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

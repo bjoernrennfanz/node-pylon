@@ -46,15 +46,9 @@ TransportLayerWrap::TransportLayerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // ITransportLayer()
         m_TransportLayer = new ITransportLayer();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ITransportLayer")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "ITransportLayer")
-        {
-            ThrowException(Exception::TypeError(String::New("ITransportLayer::ITransportLayer: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         TransportLayerWrap* arg0_wrap = ObjectWrap::Unwrap<TransportLayerWrap>(info[0]->ToObject());
         ITransportLayer* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,47 @@ NAN_MODULE_INIT(TransportLayerWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("ITransportLayer").ToLocalChecked(), function);
+}
+
+NAN_METHOD(TransportLayerWrap::CreateDeviceInfo)
+{
+    TransportLayerWrap* wrappedTransportLayer = ObjectWrap::Unwrap<TransportLayerWrap>(info.This());
+    ITransportLayer* transportLayer = wrappedTransportLayer->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(TransportLayerWrap::EnumerateInterfaces)
+{
+    TransportLayerWrap* wrappedTransportLayer = ObjectWrap::Unwrap<TransportLayerWrap>(info.This());
+    ITransportLayer* transportLayer = wrappedTransportLayer->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "InterfaceInfoList")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        nterfaceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<nterfaceInfoListWrap>(info[0]->ToObject());
+        InterfaceInfoList* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TransportLayerWrap::GetNodeMap)
+{
+    TransportLayerWrap* wrappedTransportLayer = ObjectWrap::Unwrap<TransportLayerWrap>(info.This());
+    ITransportLayer* transportLayer = wrappedTransportLayer->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(TransportLayerWrap::GetTlInfo)
+{
+    TransportLayerWrap* wrappedTransportLayer = ObjectWrap::Unwrap<TransportLayerWrap>(info.This());
+    ITransportLayer* transportLayer = wrappedTransportLayer->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

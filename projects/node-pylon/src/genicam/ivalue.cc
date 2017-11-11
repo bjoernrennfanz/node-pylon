@@ -46,15 +46,9 @@ ValueWrap::ValueWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IValue()
         m_Value = new IValue();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IValue")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IValue")
-        {
-            ThrowException(Exception::TypeError(String::New("IValue::IValue: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ValueWrap* arg0_wrap = ObjectWrap::Unwrap<ValueWrap>(info[0]->ToObject());
         IValue* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,47 @@ NAN_MODULE_INIT(ValueWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IValue").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ValueWrap::FromString)
+{
+    ValueWrap* wrappedValue = ObjectWrap::Unwrap<ValueWrap>(info.This());
+    IValue* value = wrappedValue->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ValueWrap::GetNode)
+{
+    ValueWrap* wrappedValue = ObjectWrap::Unwrap<ValueWrap>(info.This());
+    IValue* value = wrappedValue->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ValueWrap::IsValueCacheValid)
+{
+    ValueWrap* wrappedValue = ObjectWrap::Unwrap<ValueWrap>(info.This());
+    IValue* value = wrappedValue->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ValueWrap::ToString)
+{
+    ValueWrap* wrappedValue = ObjectWrap::Unwrap<ValueWrap>(info.This());
+    IValue* value = wrappedValue->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
 }

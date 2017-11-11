@@ -21,11 +21,14 @@
 // SOFTWARE.
 
 using BindingContext = NodePylonGen.Generators.BindingContext;
+using Type = CppSharp.AST.Type;
 using CppSharp.AST;
 using CppSharp.AST.Extensions;
 using CppSharp.Generators;
 using CppSharp.Types;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -35,6 +38,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         private const string NodeV8IsString = "IsString()";
         private const string NodeV8IsBoolean = "IsBoolean()";
         private const string NodeV8IsNumber = "IsNumber()";
+        private const string NodeV8IsArray = "IsArray()";
 
         public BindingContext Context { get; private set; }
 
@@ -45,13 +49,25 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         {
             Context = context;
         }
+
         public override TypePrinterResult VisitParameter(Parameter param, bool hasName = true)
         {
             return param.QualifiedType.Visit(this);
         }
 
+        public override TypePrinterResult VisitClassDecl(Class @class)
+        {
+            return NodeV8IsObject;
+        }
+
         public override TypePrinterResult VisitPointerType(PointerType pointer, TypeQualifiers quals)
         {
+            Type pointee = pointer.GetFinalPointee();
+            if (pointee != null)
+            {
+                return pointee.Visit(this);
+            }
+
             return NodeV8IsObject;
         }
 
@@ -61,12 +77,12 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             {
                 case PrimitiveType.Bool: return NodeV8IsBoolean;
                 case PrimitiveType.Void: return NodeV8IsObject;
-                case PrimitiveType.Char16: return NodeV8IsObject;
-                case PrimitiveType.Char32: return NodeV8IsObject;
-                case PrimitiveType.WideChar: return NodeV8IsObject;
-                case PrimitiveType.Char: return NodeV8IsObject;
-                case PrimitiveType.SChar: return NodeV8IsObject;
-                case PrimitiveType.UChar: return NodeV8IsObject;
+                case PrimitiveType.Char16: return NodeV8IsString;
+                case PrimitiveType.Char32: return NodeV8IsString;
+                case PrimitiveType.WideChar: return NodeV8IsString;
+                case PrimitiveType.Char: return NodeV8IsString;
+                case PrimitiveType.SChar: return NodeV8IsString;
+                case PrimitiveType.UChar: return NodeV8IsString;
                 case PrimitiveType.Short: return NodeV8IsNumber;
                 case PrimitiveType.UShort: return NodeV8IsNumber;
                 case PrimitiveType.Int: return NodeV8IsNumber;
@@ -94,8 +110,21 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         {
             // Mapping Enums to Number type
             if (type.Description.StartsWith("E")) return NodeV8IsNumber;
+            if (type.Description.EndsWith("Enums")) return NodeV8IsNumber;
 
-            throw new NotSupportedException();
+            // Mapping unknown interfaces, classes and structs to object type
+            if (type.Description.StartsWith("I")) return NodeV8IsObject;
+            if (type.Description.StartsWith("C")) return NodeV8IsObject;
+            if (type.Description.StartsWith("S")) return NodeV8IsObject;
+
+            Console.WriteLine("Skip " + type.Description + "...");
+            return String.Empty;
+            //throw new NotSupportedException();
+        }
+
+        public bool ParameterIsArray(Parameter param)
+        {
+            return VisitParameter(param).ToString() == NodeV8IsArray;
         }
 
         public bool ParameterIsObject(Parameter param)
@@ -111,6 +140,55 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         public bool ParameterIsBoolean(Parameter param)
         {
             return VisitParameter(param).ToString() == NodeV8IsBoolean;
+        }
+
+        public bool ParameterIsString(Parameter param)
+        {
+            return VisitParameter(param).ToString() == NodeV8IsString;
+        }
+
+        public string GenerateCheckStatement(IEnumerable<Parameter> parameters)
+        {
+            NodeJSTypePrinter nodeJSTypePrinter = new NodeJSTypePrinter(Context);
+            nodeJSTypePrinter.PrintScopeKind = TypePrintScopeKind.Local;
+
+            string generatedCheckStatement = (parameters.Count() >= 1 ? "(" : string.Empty);
+            generatedCheckStatement += "(info.Length() == " + parameters.Count() + ")";
+            generatedCheckStatement += parameters.Count() > 0 ? " && " : string.Empty;
+
+            int methodArgumentIndex = 0;
+            foreach (Parameter parameter in parameters)
+            {
+                string parameterTypeName = nodeJSTypePrinter.VisitParameter(parameter, false, false);
+                generatedCheckStatement += methodArgumentIndex > 0 ? " && " : string.Empty;
+
+                if (ParameterIsObject(parameter))
+                {
+                    generatedCheckStatement += "(info[" + methodArgumentIndex + "]->IsObject() && ";
+                    generatedCheckStatement += "(pylon_v8::ToGCString(info[" + methodArgumentIndex + "]->ToObject()->GetConstructorName()) == \"" + parameterTypeName + "\"))";
+                }
+                else if (ParameterIsNumber(parameter))
+                {
+                    generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsNumber()";
+                }
+                else if (ParameterIsBoolean(parameter))
+                {
+                    generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsBoolean()";
+                }
+                else if (ParameterIsString(parameter))
+                {
+                    generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsString()";
+                }
+                else if (ParameterIsArray(parameter))
+                {
+                    generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsArray()";
+                }
+
+                methodArgumentIndex++;
+            }
+
+            generatedCheckStatement += parameters.Count() >= 1 ? ")" : string.Empty;
+            return generatedCheckStatement;
         }
     }
 }

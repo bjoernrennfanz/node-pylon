@@ -46,15 +46,9 @@ PylonDeviceWrap::PylonDeviceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IPylonDevice()
         m_PylonDevice = new IPylonDevice();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPylonDevice")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPylonDevice")
-        {
-            ThrowException(Exception::TypeError(String::New("IPylonDevice::IPylonDevice: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
         IPylonDevice* arg0 = arg0_wrap->GetWrapped();
 
@@ -95,4 +89,151 @@ NAN_MODULE_INIT(PylonDeviceWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IPylonDevice").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PylonDeviceWrap::CreateChunkParser)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::CreateEventAdapter)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::CreateSelfReliantChunkParser)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::DeregisterRemovalCallback)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")))
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::DestroyChunkParser)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IChunkParser")))
+    {
+        // Unwrap object
+        ChunkParserWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkParserWrap>(info[0]->ToObject());
+        IChunkParser* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::DestroyEventAdapter)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IEventAdapter")))
+    {
+        // Unwrap object
+        EventAdapterWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterWrap>(info[0]->ToObject());
+        IEventAdapter* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::DestroySelfReliantChunkParser)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ISelfReliantChunkParser")))
+    {
+        // Unwrap object
+        SelfReliantChunkParserWrap* arg0_wrap = ObjectWrap::Unwrap<SelfReliantChunkParserWrap>(info[0]->ToObject());
+        ISelfReliantChunkParser* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::GetEventGrabber)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::GetNodeMap)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::GetNumStreamGrabberChannels)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::GetStreamGrabber)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::GetTLNodeMap)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PylonDeviceWrap::RegisterRemovalCallback)
+{
+    PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
+    IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Callback1<Pylon::IPylonDevice *>")))
+    {
+        // Unwrap object
+        allback1Wrap* arg0_wrap = ObjectWrap::Unwrap<allback1Wrap>(info[0]->ToObject());
+        Callback1<Pylon::IPylonDevice *>* arg0 = arg0_wrap->GetWrapped();
+    }
 }

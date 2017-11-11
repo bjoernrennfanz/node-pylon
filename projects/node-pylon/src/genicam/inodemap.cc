@@ -46,15 +46,9 @@ NodeMapWrap::NodeMapWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // INodeMap()
         m_NodeMap = new INodeMap();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("INodeMap::INodeMap: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
@@ -90,4 +84,105 @@ NAN_MODULE_INIT(NodeMapWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("INodeMap").ToLocalChecked(), function);
+}
+
+NAN_METHOD(NodeMapWrap::Connect)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapWrap::GetDeviceName)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapWrap::GetLock)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapWrap::GetNode)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapWrap::GetNodes)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
+    {
+        // Unwrap object
+        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        node_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapWrap::GetNumNodes)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapWrap::InvalidateNodes)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapWrap::Poll)
+{
+    NodeMapWrap* wrappedNodeMap = ObjectWrap::Unwrap<NodeMapWrap>(info.This());
+    INodeMap* nodeMap = wrappedNodeMap->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
 }

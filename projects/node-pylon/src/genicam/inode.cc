@@ -46,15 +46,9 @@ NodeWrap::NodeWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // INode()
         m_Node = new INode();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INode")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INode")
-        {
-            ThrowException(Exception::TypeError(String::New("INode::INode: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
         INode* arg0 = arg0_wrap->GetWrapped();
 
@@ -120,4 +114,354 @@ NAN_MODULE_INIT(NodeWrap::Initialize)
     Nan::Set(target, Nan::New<String>("combine").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::Combine)).ToLocalChecked());
     Nan::Set(target, Nan::New<String>("isVisible").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsVisible)).ToLocalChecked());
     Nan::Set(target, Nan::New<String>("isCacheable").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeWrap::IsCacheable)).ToLocalChecked());
+}
+
+NAN_METHOD(NodeWrap::DeregisterCallback)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        int arg0 = static_cast<int>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeWrap::GetAlias)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetCachingMode)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetCastAlias)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetChildren)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        node_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        ELinkType arg1 = static_cast<ELinkType>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeWrap::GetDescription)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetDeviceName)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetDisplayName)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetDocuURL)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetEventID)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetName)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetNameSpace)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetNodeMap)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetParents)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
+    {
+        // Unwrap object
+        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        node_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeWrap::GetPollingTime)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetPrincipalInterfaceType)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetProperty)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg2_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[2]->ToObject());
+        gcstring* arg2 = arg2_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeWrap::GetPropertyNames)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeWrap::GetToolTip)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::GetVisibility)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::ImposeAccessMode)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeWrap::ImposeVisibility)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EVisibility arg0 = static_cast<EVisibility>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeWrap::InvalidateNode)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::IsAccessModeCacheable)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::IsCachable)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::IsDeprecated)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::IsFeature)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::IsStreamable)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeWrap::RegisterCallback)
+{
+    NodeWrap* wrappedNode = ObjectWrap::Unwrap<NodeWrap>(info.This());
+    INode* node = wrappedNode->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CNodeCallback")))
+    {
+        // Unwrap object
+        NodeCallbackWrap* arg0_wrap = ObjectWrap::Unwrap<NodeCallbackWrap>(info[0]->ToObject());
+        CNodeCallback* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeWrap::Combine)
+{
+}
+
+NAN_METHOD(NodeWrap::IsAvailable)
+{
+}
+
+NAN_METHOD(NodeWrap::IsCacheable)
+{
+}
+
+NAN_METHOD(NodeWrap::IsImplemented)
+{
+}
+
+NAN_METHOD(NodeWrap::IsReadable)
+{
+}
+
+NAN_METHOD(NodeWrap::IsVisible)
+{
+}
+
+NAN_METHOD(NodeWrap::IsWritable)
+{
 }

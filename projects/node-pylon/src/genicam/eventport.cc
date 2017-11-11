@@ -41,30 +41,18 @@ EventPortWrap::EventPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventPort(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INode")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INode")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventPort::CEventPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
         INode* arg0 = arg0_wrap->GetWrapped();
 
         // CEventPort(INode* pNode)
         m_EventPort = new CEventPort(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CEventPort")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CEventPort")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventPort::CEventPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EventPortWrap* arg0_wrap = ObjectWrap::Unwrap<EventPortWrap>(info[0]->ToObject());
         CEventPort* arg0 = arg0_wrap->GetWrapped();
 
@@ -105,4 +93,175 @@ NAN_MODULE_INIT(EventPortWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CEventPort").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EventPortWrap::AttachEvent)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(EventPortWrap::AttachNode)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INode")))
+    {
+        // Unwrap object
+        NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
+        INode* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EventPortWrap::CheckEventID)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg1 = static_cast<int>(info[1]->NumberValue());
+    }
+    else if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __uint128_t arg0 = static_cast<__uint128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(EventPortWrap::DetachEvent)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::DetachNode)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::GetAccessMode)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::GetEventIDLength)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::GetPrincipalInterfaceType)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::GetSwapEndianess)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::InvalidateNode)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EventPortWrap::Read)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(EventPortWrap::SetPortImpl)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EventPortWrap::Write)
+{
+    EventPortWrap* wrappedEventPort = ObjectWrap::Unwrap<EventPortWrap>(info.This());
+    CEventPort* eventPort = wrappedEventPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
 }

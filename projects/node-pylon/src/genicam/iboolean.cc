@@ -46,15 +46,9 @@ BooleanRefTWrap::BooleanRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>()
         m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>")
-        {
-            ThrowException(Exception::TypeError(String::New("CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>::CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         BooleanRefTWrap* arg0_wrap = ObjectWrap::Unwrap<BooleanRefTWrap>(info[0]->ToObject());
         CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,24 @@ NAN_MODULE_INIT(BooleanRefTWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>").ToLocalChecked(), function);
+}
+
+NAN_METHOD(BooleanRefTWrap::GetValue)
+{
+    BooleanRefTWrap* wrappedBooleanRefT = ObjectWrap::Unwrap<BooleanRefTWrap>(info.This());
+    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT = wrappedBooleanRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(BooleanRefTWrap::SetValue)
+{
+    BooleanRefTWrap* wrappedBooleanRefT = ObjectWrap::Unwrap<BooleanRefTWrap>(info.This());
+    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT = wrappedBooleanRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
 }

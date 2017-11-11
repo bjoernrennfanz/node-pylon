@@ -42,55 +42,31 @@ NodeMapRefTWrap::NodeMapRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_NodeMapRefT(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "gcstring")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(gcstring& const DeviceName)
         m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(*arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapRefTWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapRefTWrap>(info[0]->ToObject());
         CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* arg0 = arg0_wrap->GetWrapped();
 
         // CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>& const Them)
         m_NodeMapRefT = new CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>(*arg0);
     }
-    else if ((info[0]->IsObject()) && (info[1]->IsObject()))
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
-        gcstring info1_constructor = pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName());
-        if (info1_constructor != "gcstring")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>::CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
@@ -136,4 +112,211 @@ NAN_MODULE_INIT(NodeMapRefTWrap::Initialize)
 
     // Register static functions in Node JS
     Nan::Set(target, Nan::New<String>("castToIDestroy").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeMapRefTWrap::CastToIDestroy)).ToLocalChecked());
+}
+
+NAN_METHOD(NodeMapRefTWrap::_ClearXMLCache)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_Connect)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_Destroy)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_GetDeviceName)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_GetNode)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_GetNodes)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
+    {
+        // Unwrap object
+        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        node_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_GetSupportedSchemaVersions)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_InvalidateNodes)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromFile)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromFileInject)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromString)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromStringInject)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromZIPData)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromZIPFile)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::_Poll)
+{
+    NodeMapRefTWrap* wrappedNodeMapRefT = ObjectWrap::Unwrap<NodeMapRefTWrap>(info.This());
+    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT = wrappedNodeMapRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(NodeMapRefTWrap::CastToIDestroy)
+{
 }

@@ -46,15 +46,9 @@ TlFactoryWrap::TlFactoryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CTlFactory()
         m_TlFactory = new CTlFactory();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CTlFactory")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CTlFactory")
-        {
-            ThrowException(Exception::TypeError(String::New("CTlFactory::CTlFactory: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         TlFactoryWrap* arg0_wrap = ObjectWrap::Unwrap<TlFactoryWrap>(info[0]->ToObject());
         CTlFactory* arg0 = arg0_wrap->GetWrapped();
 
@@ -91,4 +85,168 @@ NAN_MODULE_INIT(TlFactoryWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CTlFactory").ToLocalChecked(), function);
+}
+
+NAN_METHOD(TlFactoryWrap::CreateDevice)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstring_vectorWrap* arg1_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[1]->ToObject());
+        gcstring_vector* arg1 = arg1_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")))
+    {
+        // Unwrap object
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::CreateFirstDevice)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstring_vectorWrap* arg1_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[1]->ToObject());
+        gcstring_vector* arg1 = arg1_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")))
+    {
+        // Unwrap object
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::CreateTl)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CTlInfo")))
+    {
+        // Unwrap object
+        TlInfoWrap* arg0_wrap = ObjectWrap::Unwrap<TlInfoWrap>(info[0]->ToObject());
+        CTlInfo* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::DestroyDevice)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPylonDevice")))
+    {
+        // Unwrap object
+        PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
+        IPylonDevice* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::EnumerateDevices)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && info[2]->IsBoolean())
+    {
+        // Unwrap object
+        DeviceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoListWrap>(info[0]->ToObject());
+        DeviceInfoList* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        DeviceInfoListWrap* arg1_wrap = ObjectWrap::Unwrap<DeviceInfoListWrap>(info[1]->ToObject());
+        DeviceInfoList* arg1 = arg1_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        DeviceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoListWrap>(info[0]->ToObject());
+        DeviceInfoList* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::EnumerateTls)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "TlInfoList")))
+    {
+        // Unwrap object
+        TlInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<TlInfoListWrap>(info[0]->ToObject());
+        TlInfoList* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::GetInstance)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::IsDeviceAccessible)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "AccessModeSet")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "EDeviceAccessiblityInfo")))
+    {
+        // Unwrap object
+        DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
+        CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        AccessModeSetWrap* arg1_wrap = ObjectWrap::Unwrap<AccessModeSetWrap>(info[1]->ToObject());
+        AccessModeSet* arg1 = arg1_wrap->GetWrapped();
+
+        // Unwrap object
+        EDeviceAccessiblityInfoWrap* arg2_wrap = ObjectWrap::Unwrap<EDeviceAccessiblityInfoWrap>(info[2]->ToObject());
+        EDeviceAccessiblityInfo* arg2 = arg2_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(TlFactoryWrap::ReleaseTl)
+{
+    TlFactoryWrap* wrappedTlFactory = ObjectWrap::Unwrap<TlFactoryWrap>(info.This());
+    CTlFactory* tlFactory = wrappedTlFactory->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ITransportLayer")))
+    {
+        // Unwrap object
+        TransportLayerWrap* arg0_wrap = ObjectWrap::Unwrap<TransportLayerWrap>(info[0]->ToObject());
+        ITransportLayer* arg0 = arg0_wrap->GetWrapped();
+    }
 }

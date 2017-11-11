@@ -46,15 +46,9 @@ PylonImageBaseWrap::PylonImageBaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CPylonImageBase()
         m_PylonImageBase = new CPylonImageBase();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CPylonImageBase")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CPylonImageBase")
-        {
-            ThrowException(Exception::TypeError(String::New("CPylonImageBase::CPylonImageBase: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PylonImageBaseWrap* arg0_wrap = ObjectWrap::Unwrap<PylonImageBaseWrap>(info[0]->ToObject());
         CPylonImageBase* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,64 @@ NAN_MODULE_INIT(PylonImageBaseWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CPylonImageBase").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PylonImageBaseWrap::CanSaveWithoutConversion)
+{
+    PylonImageBaseWrap* wrappedPylonImageBase = ObjectWrap::Unwrap<PylonImageBaseWrap>(info.This());
+    CPylonImageBase* pylonImageBase = wrappedPylonImageBase->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EImageFileFormat arg0 = static_cast<EImageFileFormat>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(PylonImageBaseWrap::GetPixelData)
+{
+    PylonImageBaseWrap* wrappedPylonImageBase = ObjectWrap::Unwrap<PylonImageBaseWrap>(info.This());
+    CPylonImageBase* pylonImageBase = wrappedPylonImageBase->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(PylonImageBaseWrap::Load)
+{
+    PylonImageBaseWrap* wrappedPylonImageBase = ObjectWrap::Unwrap<PylonImageBaseWrap>(info.This());
+    CPylonImageBase* pylonImageBase = wrappedPylonImageBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PylonImageBaseWrap::Save)
+{
+    PylonImageBaseWrap* wrappedPylonImageBase = ObjectWrap::Unwrap<PylonImageBaseWrap>(info.This());
+    CPylonImageBase* pylonImageBase = wrappedPylonImageBase->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "CImagePersistenceOptions")))
+    {
+        // Convert from number value
+        EImageFileFormat arg0 = static_cast<EImageFileFormat>(info[0]->NumberValue());
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Unwrap object
+        ImagePersistenceOptionsWrap* arg2_wrap = ObjectWrap::Unwrap<ImagePersistenceOptionsWrap>(info[2]->ToObject());
+        CImagePersistenceOptions* arg2 = arg2_wrap->GetWrapped();
+    }
 }

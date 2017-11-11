@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <pylon/TlFactory.h>
+#include "deviceaccessmode.h"
 #include "deviceinfo.h"
 #include "pylondevice.h"
 

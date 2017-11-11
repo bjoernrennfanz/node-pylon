@@ -46,15 +46,9 @@ ImageWrap::ImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IImage()
         m_Image = new IImage();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IImage")
-        {
-            ThrowException(Exception::TypeError(String::New("IImage::IImage: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ImageWrap* arg0_wrap = ObjectWrap::Unwrap<ImageWrap>(info[0]->ToObject());
         IImage* arg0 = arg0_wrap->GetWrapped();
 
@@ -92,4 +86,110 @@ NAN_MODULE_INIT(ImageWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IImage").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ImageWrap::GetBuffer)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+    else if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetHeight)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetImageSize)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetOrientation)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetPaddingX)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetPixelType)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::GetStride)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned int")))
+    {
+        // Unwrap object
+        unsigned intWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned intWrap>(info[0]->ToObject());
+        unsigned int* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageWrap::GetWidth)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::IsUnique)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageWrap::IsValid)
+{
+    ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
+    IImage* image = wrappedImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

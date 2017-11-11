@@ -41,34 +41,22 @@ ChunkAdapterU3VWrap::ChunkAdapterU3VWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ChunkAdapterU3V(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CChunkAdapterU3V")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CChunkAdapterU3V")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkAdapterU3V::CChunkAdapterU3V: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ChunkAdapterU3VWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info[0]->ToObject());
         CChunkAdapterU3V* arg0 = arg0_wrap->GetWrapped();
 
         // CChunkAdapterU3V(CChunkAdapterU3V& const arg0)
         m_ChunkAdapterU3V = new CChunkAdapterU3V(*arg0);
     }
-    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")) && info[1]->IsNumber())
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkAdapterU3V::CChunkAdapterU3V: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
-        // Convert number value
+        // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // CChunkAdapterU3V(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
@@ -97,4 +85,40 @@ NAN_MODULE_INIT(ChunkAdapterU3VWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CChunkAdapterU3V").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ChunkAdapterU3VWrap::AttachBuffer)
+{
+    ChunkAdapterU3VWrap* wrappedChunkAdapterU3V = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info.This());
+    CChunkAdapterU3V* chunkAdapterU3V = wrappedChunkAdapterU3V->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Unwrap object
+        AttachStatistics_tWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[2]->ToObject());
+        AttachStatistics_t* arg2 = arg2_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ChunkAdapterU3VWrap::CheckBufferLayout)
+{
+    ChunkAdapterU3VWrap* wrappedChunkAdapterU3V = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info.This());
+    CChunkAdapterU3V* chunkAdapterU3V = wrappedChunkAdapterU3V->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+    }
 }

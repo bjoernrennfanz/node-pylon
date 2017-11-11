@@ -46,15 +46,9 @@ PortConstructWrap::PortConstructWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IPortConstruct()
         m_PortConstruct = new IPortConstruct();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPortConstruct")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPortConstruct")
-        {
-            ThrowException(Exception::TypeError(String::New("IPortConstruct::IPortConstruct: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PortConstructWrap* arg0_wrap = ObjectWrap::Unwrap<PortConstructWrap>(info[0]->ToObject());
         IPortConstruct* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,27 @@ NAN_MODULE_INIT(PortConstructWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IPortConstruct").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PortConstructWrap::GetSwapEndianess)
+{
+    PortConstructWrap* wrappedPortConstruct = ObjectWrap::Unwrap<PortConstructWrap>(info.This());
+    IPortConstruct* portConstruct = wrappedPortConstruct->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PortConstructWrap::SetPortImpl)
+{
+    PortConstructWrap* wrappedPortConstruct = ObjectWrap::Unwrap<PortConstructWrap>(info.This());
+    IPortConstruct* portConstruct = wrappedPortConstruct->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
+    {
+        // Unwrap object
+        PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
+        IPort* arg0 = arg0_wrap->GetWrapped();
+    }
 }

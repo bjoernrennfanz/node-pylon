@@ -46,15 +46,9 @@ StreamGrabberWrap::StreamGrabberWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IStreamGrabber()
         m_StreamGrabber = new IStreamGrabber();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IStreamGrabber")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IStreamGrabber")
-        {
-            ThrowException(Exception::TypeError(String::New("IStreamGrabber::IStreamGrabber: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         StreamGrabberWrap* arg0_wrap = ObjectWrap::Unwrap<StreamGrabberWrap>(info[0]->ToObject());
         IStreamGrabber* arg0 = arg0_wrap->GetWrapped();
 
@@ -94,4 +88,143 @@ NAN_MODULE_INIT(StreamGrabberWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IStreamGrabber").ToLocalChecked(), function);
+}
+
+NAN_METHOD(StreamGrabberWrap::CancelGrab)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::Close)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::DeregisterBuffer)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")))
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::FinishGrab)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::GetNodeMap)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::GetWaitObject)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::IsOpen)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::Open)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::PrepareGrab)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::QueueBuffer)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "void")))
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        voidWrap* arg1_wrap = ObjectWrap::Unwrap<voidWrap>(info[1]->ToObject());
+        void* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::RegisterBuffer)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(StreamGrabberWrap::RetrieveResult)
+{
+    StreamGrabberWrap* wrappedStreamGrabber = ObjectWrap::Unwrap<StreamGrabberWrap>(info.This());
+    IStreamGrabber* streamGrabber = wrappedStreamGrabber->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GrabResult")))
+    {
+        // Unwrap object
+        GrabResultWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultWrap>(info[0]->ToObject());
+        GrabResult* arg0 = arg0_wrap->GetWrapped();
+    }
 }

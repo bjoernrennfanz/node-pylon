@@ -46,15 +46,9 @@ GrabResultPtrWrap::GrabResultPtrWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CGrabResultPtr()
         m_GrabResultPtr = new CGrabResultPtr();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CGrabResultPtr")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CGrabResultPtr")
-        {
-            ThrowException(Exception::TypeError(String::New("CGrabResultPtr::CGrabResultPtr: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         GrabResultPtrWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[0]->ToObject());
         CGrabResultPtr* arg0 = arg0_wrap->GetWrapped();
 
@@ -85,4 +79,34 @@ NAN_MODULE_INIT(GrabResultPtrWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CGrabResultPtr").ToLocalChecked(), function);
+}
+
+NAN_METHOD(GrabResultPtrWrap::IsUnique)
+{
+    GrabResultPtrWrap* wrappedGrabResultPtr = ObjectWrap::Unwrap<GrabResultPtrWrap>(info.This());
+    CGrabResultPtr* grabResultPtr = wrappedGrabResultPtr->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultPtrWrap::IsValid)
+{
+    GrabResultPtrWrap* wrappedGrabResultPtr = ObjectWrap::Unwrap<GrabResultPtrWrap>(info.This());
+    CGrabResultPtr* grabResultPtr = wrappedGrabResultPtr->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultPtrWrap::Release)
+{
+    GrabResultPtrWrap* wrappedGrabResultPtr = ObjectWrap::Unwrap<GrabResultPtrWrap>(info.This());
+    CGrabResultPtr* grabResultPtr = wrappedGrabResultPtr->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

@@ -46,15 +46,9 @@ ImageFormatConverterWrap::ImageFormatConverterWrap(Nan::NAN_METHOD_ARGS_TYPE inf
         // CImageFormatConverter()
         m_ImageFormatConverter = new CImageFormatConverter();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CImageFormatConverter")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CImageFormatConverter")
-        {
-            ThrowException(Exception::TypeError(String::New("CImageFormatConverter::CImageFormatConverter: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ImageFormatConverterWrap* arg0_wrap = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info[0]->ToObject());
         CImageFormatConverter* arg0 = arg0_wrap->GetWrapped();
 
@@ -91,4 +85,209 @@ NAN_MODULE_INIT(ImageFormatConverterWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CImageFormatConverter").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ImageFormatConverterWrap::Convert)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 9) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "void")) && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber() && info[7]->IsNumber() && info[8]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Unwrap object
+        voidWrap* arg2_wrap = ObjectWrap::Unwrap<voidWrap>(info[2]->ToObject());
+        void* arg2 = arg2_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg3 = static_cast<unsigned int>(info[3]->NumberValue());
+
+        // Convert from number value
+        EPixelType arg4 = static_cast<EPixelType>(info[4]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg5 = static_cast<unsigned int>(info[5]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg6 = static_cast<unsigned int>(info[6]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg7 = static_cast<unsigned int>(info[7]->NumberValue());
+
+        // Convert from number value
+        EImageOrientation arg8 = static_cast<EImageOrientation>(info[8]->NumberValue());
+    }
+    else if ((info.Length() == 8) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReusableImage")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "void")) && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber() && info[7]->IsNumber())
+    {
+        // Unwrap object
+        ReusableImageWrap* arg0_wrap = ObjectWrap::Unwrap<ReusableImageWrap>(info[0]->ToObject());
+        IReusableImage* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        voidWrap* arg1_wrap = ObjectWrap::Unwrap<voidWrap>(info[1]->ToObject());
+        void* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
+
+        // Convert from number value
+        EPixelType arg3 = static_cast<EPixelType>(info[3]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg4 = static_cast<unsigned int>(info[4]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg5 = static_cast<unsigned int>(info[5]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg6 = static_cast<unsigned int>(info[6]->NumberValue());
+
+        // Convert from number value
+        EImageOrientation arg7 = static_cast<EImageOrientation>(info[7]->NumberValue());
+    }
+    else if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "IImage")))
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Unwrap object
+        ImageWrap* arg2_wrap = ObjectWrap::Unwrap<ImageWrap>(info[2]->ToObject());
+        IImage* arg2 = arg2_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReusableImage")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "IImage")))
+    {
+        // Unwrap object
+        ReusableImageWrap* arg0_wrap = ObjectWrap::Unwrap<ReusableImageWrap>(info[0]->ToObject());
+        IReusableImage* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        ImageWrap* arg1_wrap = ObjectWrap::Unwrap<ImageWrap>(info[1]->ToObject());
+        IImage* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::GetBufferSizeForConversion)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
+    {
+        // Unwrap object
+        ImageWrap* arg0_wrap = ObjectWrap::Unwrap<ImageWrap>(info[0]->ToObject());
+        IImage* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::GetNodeMap)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::ImageHasDestinationFormat)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Convert from number value
+        EImageOrientation arg2 = static_cast<EImageOrientation>(info[2]->NumberValue());
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
+    {
+        // Unwrap object
+        ImageWrap* arg0_wrap = ObjectWrap::Unwrap<ImageWrap>(info[0]->ToObject());
+        IImage* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::Initialize)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::IsInitialized)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::IsSupportedInputFormat)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::IsSupportedOutputFormat)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ImageFormatConverterWrap::Uninitialize)
+{
+    ImageFormatConverterWrap* wrappedImageFormatConverter = ObjectWrap::Unwrap<ImageFormatConverterWrap>(info.This());
+    CImageFormatConverter* imageFormatConverter = wrappedImageFormatConverter->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

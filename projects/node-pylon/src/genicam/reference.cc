@@ -46,15 +46,9 @@ ReferenceTWrap::ReferenceTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>()
         m_ReferenceT = new CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>")
-        {
-            ThrowException(Exception::TypeError(String::New("CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>::CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ReferenceTWrap* arg0_wrap = ObjectWrap::Unwrap<ReferenceTWrap>(info[0]->ToObject());
         CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* arg0 = arg0_wrap->GetWrapped();
 
@@ -83,4 +77,17 @@ NAN_MODULE_INIT(ReferenceTWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ReferenceTWrap::SetReference)
+{
+    ReferenceTWrap* wrappedReferenceT = ObjectWrap::Unwrap<ReferenceTWrap>(info.This());
+    CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* referenceT = wrappedReferenceT->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+    }
 }

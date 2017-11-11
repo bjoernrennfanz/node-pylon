@@ -46,15 +46,9 @@ EnumEntryWrap::EnumEntryWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IEnumEntry()
         m_EnumEntry = new IEnumEntry();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IEnumEntry")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IEnumEntry")
-        {
-            ThrowException(Exception::TypeError(String::New("IEnumEntry::IEnumEntry: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EnumEntryWrap* arg0_wrap = ObjectWrap::Unwrap<EnumEntryWrap>(info[0]->ToObject());
         IEnumEntry* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,44 @@ NAN_MODULE_INIT(EnumEntryWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IEnumEntry").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EnumEntryWrap::GetNumericValue)
+{
+    EnumEntryWrap* wrappedEnumEntry = ObjectWrap::Unwrap<EnumEntryWrap>(info.This());
+    IEnumEntry* enumEntry = wrappedEnumEntry->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EnumEntryWrap::GetSymbolic)
+{
+    EnumEntryWrap* wrappedEnumEntry = ObjectWrap::Unwrap<EnumEntryWrap>(info.This());
+    IEnumEntry* enumEntry = wrappedEnumEntry->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EnumEntryWrap::GetValue)
+{
+    EnumEntryWrap* wrappedEnumEntry = ObjectWrap::Unwrap<EnumEntryWrap>(info.This());
+    IEnumEntry* enumEntry = wrappedEnumEntry->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(EnumEntryWrap::IsSelfClearing)
+{
+    EnumEntryWrap* wrappedEnumEntry = ObjectWrap::Unwrap<EnumEntryWrap>(info.This());
+    IEnumEntry* enumEntry = wrappedEnumEntry->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

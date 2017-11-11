@@ -46,15 +46,9 @@ StringWrap::StringWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IString()
         m_String = new IString();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IString")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IString")
-        {
-            ThrowException(Exception::TypeError(String::New("IString::IString: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         StringWrap* arg0_wrap = ObjectWrap::Unwrap<StringWrap>(info[0]->ToObject());
         IString* arg0 = arg0_wrap->GetWrapped();
 
@@ -85,4 +79,37 @@ NAN_MODULE_INIT(StringWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IString").ToLocalChecked(), function);
+}
+
+NAN_METHOD(StringWrap::GetMaxLength)
+{
+    StringWrap* wrappedString = ObjectWrap::Unwrap<StringWrap>(info.This());
+    IString* string = wrappedString->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(StringWrap::GetValue)
+{
+    StringWrap* wrappedString = ObjectWrap::Unwrap<StringWrap>(info.This());
+    IString* string = wrappedString->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(StringWrap::SetValue)
+{
+    StringWrap* wrappedString = ObjectWrap::Unwrap<StringWrap>(info.This());
+    IString* string = wrappedString->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
 }

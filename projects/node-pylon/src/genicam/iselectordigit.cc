@@ -46,15 +46,9 @@ SelectorDigitWrap::SelectorDigitWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // ISelectorDigit()
         m_SelectorDigit = new ISelectorDigit();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ISelectorDigit")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "ISelectorDigit")
-        {
-            ThrowException(Exception::TypeError(String::New("ISelectorDigit::ISelectorDigit: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         SelectorDigitWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorDigitWrap>(info[0]->ToObject());
         ISelectorDigit* arg0 = arg0_wrap->GetWrapped();
 
@@ -87,4 +81,57 @@ NAN_MODULE_INIT(SelectorDigitWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("ISelectorDigit").ToLocalChecked(), function);
+}
+
+NAN_METHOD(SelectorDigitWrap::GetSelectorList)
+{
+    SelectorDigitWrap* wrappedSelectorDigit = ObjectWrap::Unwrap<SelectorDigitWrap>(info.This());
+    ISelectorDigit* selectorDigit = wrappedSelectorDigit->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        value_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(SelectorDigitWrap::Restore)
+{
+    SelectorDigitWrap* wrappedSelectorDigit = ObjectWrap::Unwrap<SelectorDigitWrap>(info.This());
+    ISelectorDigit* selectorDigit = wrappedSelectorDigit->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(SelectorDigitWrap::SetFirst)
+{
+    SelectorDigitWrap* wrappedSelectorDigit = ObjectWrap::Unwrap<SelectorDigitWrap>(info.This());
+    ISelectorDigit* selectorDigit = wrappedSelectorDigit->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(SelectorDigitWrap::SetNext)
+{
+    SelectorDigitWrap* wrappedSelectorDigit = ObjectWrap::Unwrap<SelectorDigitWrap>(info.This());
+    ISelectorDigit* selectorDigit = wrappedSelectorDigit->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(SelectorDigitWrap::ToString)
+{
+    SelectorDigitWrap* wrappedSelectorDigit = ObjectWrap::Unwrap<SelectorDigitWrap>(info.This());
+    ISelectorDigit* selectorDigit = wrappedSelectorDigit->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

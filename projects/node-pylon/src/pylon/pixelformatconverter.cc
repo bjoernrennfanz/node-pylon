@@ -46,15 +46,9 @@ PixelFormatConverterWrap::PixelFormatConverterWrap(Nan::NAN_METHOD_ARGS_TYPE inf
         // CPixelFormatConverter()
         m_PixelFormatConverter = new CPixelFormatConverter();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CPixelFormatConverter")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CPixelFormatConverter")
-        {
-            ThrowException(Exception::TypeError(String::New("CPixelFormatConverter::CPixelFormatConverter: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PixelFormatConverterWrap* arg0_wrap = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info[0]->ToObject());
         CPixelFormatConverter* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,70 @@ NAN_MODULE_INIT(PixelFormatConverterWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CPixelFormatConverter").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PixelFormatConverterWrap::Convert)
+{
+    PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
+    CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
+
+    if ((info.Length() == 6) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "void")) && info[3]->IsNumber() && (info[4]->IsObject() && (pylon_v8::ToGCString(info[4]->ToObject()->GetConstructorName()) == "SImageFormat")) && (info[5]->IsObject() && (pylon_v8::ToGCString(info[5]->ToObject()->GetConstructorName()) == "SOutputImageFormat")))
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Unwrap object
+        voidWrap* arg2_wrap = ObjectWrap::Unwrap<voidWrap>(info[2]->ToObject());
+        void* arg2 = arg2_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg3 = static_cast<unsigned int>(info[3]->NumberValue());
+
+        // Unwrap object
+        SImageFormatWrap* arg4_wrap = ObjectWrap::Unwrap<SImageFormatWrap>(info[4]->ToObject());
+        SImageFormat* arg4 = arg4_wrap->GetWrapped();
+
+        // Unwrap object
+        SOutputImageFormatWrap* arg5_wrap = ObjectWrap::Unwrap<SOutputImageFormatWrap>(info[5]->ToObject());
+        SOutputImageFormat* arg5 = arg5_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PixelFormatConverterWrap::Init)
+{
+    PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
+    CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "SImageFormat")))
+    {
+        // Unwrap object
+        SImageFormatWrap* arg0_wrap = ObjectWrap::Unwrap<SImageFormatWrap>(info[0]->ToObject());
+        SImageFormat* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PixelFormatConverterWrap::IsInitialized)
+{
+    PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
+    CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(PixelFormatConverterWrap::SetOutputBitAlignment)
+{
+    PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
+    CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        OutputBitAlignmentEnums arg0 = static_cast<OutputBitAlignmentEnums>(info[0]->NumberValue());
+    }
 }

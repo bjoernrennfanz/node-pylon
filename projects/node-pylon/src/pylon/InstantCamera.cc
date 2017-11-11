@@ -47,34 +47,22 @@ InstantCameraWrap::InstantCameraWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CInstantCamera()
         m_InstantCamera = new CInstantCamera();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CInstantCamera")
-        {
-            ThrowException(Exception::TypeError(String::New("CInstantCamera::CInstantCamera: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
 
         // CInstantCamera(CInstantCamera& const arg0)
         m_InstantCamera = new CInstantCamera(*arg0);
     }
-    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPylonDevice")) && info[1]->IsNumber())
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPylonDevice")
-        {
-            ThrowException(Exception::TypeError(String::New("CInstantCamera::CInstantCamera: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
         IPylonDevice* arg0 = arg0_wrap->GetWrapped();
 
-        // Convert number value
+        // Convert from number value
         ECleanup arg1 = static_cast<ECleanup>(info[1]->NumberValue());
 
         // CInstantCamera(IPylonDevice* pDevice, ECleanup cleanupProcedure)
@@ -144,4 +132,537 @@ NAN_MODULE_INIT(InstantCameraWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CInstantCamera").ToLocalChecked(), function);
+}
+
+NAN_METHOD(InstantCameraWrap::Attach)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPylonDevice")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
+        IPylonDevice* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        ECleanup arg1 = static_cast<ECleanup>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::CanWaitForFrameTriggerReady)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::Close)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::DeregisterCameraEventHandler)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CCameraEventHandler")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        CameraEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info[0]->ToObject());
+        CCameraEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::DeregisterConfiguration)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CConfigurationEventHandler")))
+    {
+        // Unwrap object
+        ConfigurationEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info[0]->ToObject());
+        CConfigurationEventHandler* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::DeregisterImageEventHandler)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CImageEventHandler")))
+    {
+        // Unwrap object
+        ImageEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info[0]->ToObject());
+        CImageEventHandler* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::DestroyDevice)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::DetachDevice)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::ExecuteSoftwareTrigger)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetCameraContext)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetCameraEventWaitObject)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetDeviceInfo)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetEventGrabberNodeMap)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetExtensionInterface)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetGrabResultWaitObject)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetGrabStopWaitObject)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetInstantCameraNodeMap)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetNodeMap)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetQueuedBufferCount)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetSfncVersion)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetStreamGrabberNodeMap)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GetTLNodeMap)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::GrabOne)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "CGrabResultPtr")) && info[2]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Unwrap object
+        GrabResultPtrWrap* arg1_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[1]->ToObject());
+        CGrabResultPtr* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::HasOwnership)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::Is1394)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsBcon)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsCameraDeviceRemoved)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsCameraLink)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsGigE)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsGrabbing)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsOpen)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsPylonDeviceAttached)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::IsUsb)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::Open)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::RegisterCameraEventHandler)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 6) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CCameraEventHandler")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber())
+    {
+        // Unwrap object
+        CameraEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info[0]->ToObject());
+        CCameraEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg2 = static_cast<int>(info[2]->NumberValue());
+
+        // Convert from number value
+        ERegistrationMode arg3 = static_cast<ERegistrationMode>(info[3]->NumberValue());
+
+        // Convert from number value
+        ECleanup arg4 = static_cast<ECleanup>(info[4]->NumberValue());
+
+        // Convert from number value
+        ECameraEventAvailability arg5 = static_cast<ECameraEventAvailability>(info[5]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::RegisterConfiguration)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CConfigurationEventHandler")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        ConfigurationEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info[0]->ToObject());
+        CConfigurationEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        ERegistrationMode arg1 = static_cast<ERegistrationMode>(info[1]->NumberValue());
+
+        // Convert from number value
+        ECleanup arg2 = static_cast<ECleanup>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::RegisterImageEventHandler)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CImageEventHandler")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        ImageEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info[0]->ToObject());
+        CImageEventHandler* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        ERegistrationMode arg1 = static_cast<ERegistrationMode>(info[1]->NumberValue());
+
+        // Convert from number value
+        ECleanup arg2 = static_cast<ECleanup>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::RetrieveResult)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "CGrabResultPtr")) && info[2]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Unwrap object
+        GrabResultPtrWrap* arg1_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[1]->ToObject());
+        CGrabResultPtr* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::SetBufferFactory)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBufferFactory")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        BufferFactoryWrap* arg0_wrap = ObjectWrap::Unwrap<BufferFactoryWrap>(info[0]->ToObject());
+        IBufferFactory* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        ECleanup arg1 = static_cast<ECleanup>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::SetCameraContext)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        int arg0 = static_cast<int>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::StartGrabbing)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 3) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Convert from number value
+        EGrabStrategy arg1 = static_cast<EGrabStrategy>(info[1]->NumberValue());
+
+        // Convert from number value
+        EGrabLoop arg2 = static_cast<EGrabLoop>(info[2]->NumberValue());
+    }
+    else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        EGrabStrategy arg0 = static_cast<EGrabStrategy>(info[0]->NumberValue());
+
+        // Convert from number value
+        EGrabLoop arg1 = static_cast<EGrabLoop>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::StopGrabbing)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InstantCameraWrap::WaitForFrameTriggerReady)
+{
+    InstantCameraWrap* wrappedInstantCamera = ObjectWrap::Unwrap<InstantCameraWrap>(info.This());
+    CInstantCamera* instantCamera = wrappedInstantCamera->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Convert from number value
+        ETimeoutHandling arg1 = static_cast<ETimeoutHandling>(info[1]->NumberValue());
+    }
 }

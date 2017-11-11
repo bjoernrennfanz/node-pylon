@@ -46,15 +46,9 @@ GrabResultDataWrap::GrabResultDataWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CGrabResultData()
         m_GrabResultData = new CGrabResultData();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CGrabResultData")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CGrabResultData")
-        {
-            ThrowException(Exception::TypeError(String::New("CGrabResultData::CGrabResultData: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         GrabResultDataWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultDataWrap>(info[0]->ToObject());
         CGrabResultData* arg0 = arg0_wrap->GetWrapped();
 
@@ -110,4 +104,287 @@ NAN_MODULE_INIT(GrabResultDataWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CGrabResultData").ToLocalChecked(), function);
+}
+
+NAN_METHOD(GrabResultDataWrap::CheckCRC)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetBlockID)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetBuffer)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetBufferContext)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetCameraContext)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetChunkDataNodeMap)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetErrorCode)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetErrorDescription)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetFrameNumber)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetGrabResultDataImpl)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetHeight)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetID)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetImageNumber)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetImageSize)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetNumberOfSkippedImages)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetOffsetX)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetOffsetY)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetPaddingX)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetPaddingY)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetPayloadSize)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetPayloadType)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetPixelType)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetStride)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned int")))
+    {
+        // Unwrap object
+        unsigned intWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned intWrap>(info[0]->ToObject());
+        unsigned int* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetTimeStamp)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GetWidth)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::GrabSucceeded)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::HasCRC)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultDataWrap::IsChunkDataAvailable)
+{
+    GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
+    CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

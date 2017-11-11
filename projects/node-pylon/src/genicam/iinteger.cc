@@ -46,15 +46,9 @@ IntegerRefTWrap::IntegerRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>()
         m_IntegerRefT = new CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>")
-        {
-            ThrowException(Exception::TypeError(String::New("CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>::CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         IntegerRefTWrap* arg0_wrap = ObjectWrap::Unwrap<IntegerRefTWrap>(info[0]->ToObject());
         CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* arg0 = arg0_wrap->GetWrapped();
 
@@ -94,4 +88,130 @@ NAN_MODULE_INIT(IntegerRefTWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>").ToLocalChecked(), function);
+}
+
+NAN_METHOD(IntegerRefTWrap::GetFloatAlias)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetInc)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetIncMode)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetListOfValidValues)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetMax)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetMin)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetRepresentation)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetUnit)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::GetValue)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::ImposeMax)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::ImposeMin)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(IntegerRefTWrap::SetValue)
+{
+    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
+    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsBoolean())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
 }

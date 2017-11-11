@@ -46,15 +46,9 @@ CommandWrap::CommandWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // ICommand()
         m_Command = new ICommand();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ICommand")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "ICommand")
-        {
-            ThrowException(Exception::TypeError(String::New("ICommand::ICommand: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         CommandWrap* arg0_wrap = ObjectWrap::Unwrap<CommandWrap>(info[0]->ToObject());
         ICommand* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,24 @@ NAN_MODULE_INIT(CommandWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("ICommand").ToLocalChecked(), function);
+}
+
+NAN_METHOD(CommandWrap::Execute)
+{
+    CommandWrap* wrappedCommand = ObjectWrap::Unwrap<CommandWrap>(info.This());
+    ICommand* command = wrappedCommand->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(CommandWrap::IsDone)
+{
+    CommandWrap* wrappedCommand = ObjectWrap::Unwrap<CommandWrap>(info.This());
+    ICommand* command = wrappedCommand->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
 }

@@ -46,15 +46,9 @@ PortWrap::PortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IPort()
         m_Port = new IPort();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPort")
-        {
-            ThrowException(Exception::TypeError(String::New("IPort::IPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
         IPort* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,42 @@ NAN_MODULE_INIT(PortWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IPort").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PortWrap::Read)
+{
+    PortWrap* wrappedPort = ObjectWrap::Unwrap<PortWrap>(info.This());
+    IPort* port = wrappedPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(PortWrap::Write)
+{
+    PortWrap* wrappedPort = ObjectWrap::Unwrap<PortWrap>(info.This());
+    IPort* port = wrappedPort->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    {
+        // Unwrap object
+        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
+        void* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+    }
 }

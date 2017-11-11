@@ -46,15 +46,9 @@ AcquireContinuousConfigurationWrap::AcquireContinuousConfigurationWrap(Nan::NAN_
         // CAcquireContinuousConfiguration()
         m_AcquireContinuousConfiguration = new CAcquireContinuousConfiguration();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CAcquireContinuousConfiguration")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CAcquireContinuousConfiguration")
-        {
-            ThrowException(Exception::TypeError(String::New("CAcquireContinuousConfiguration::CAcquireContinuousConfiguration: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         AcquireContinuousConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<AcquireContinuousConfigurationWrap>(info[0]->ToObject());
         CAcquireContinuousConfiguration* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,30 @@ NAN_MODULE_INIT(AcquireContinuousConfigurationWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CAcquireContinuousConfiguration").ToLocalChecked(), function);
+}
+
+NAN_METHOD(AcquireContinuousConfigurationWrap::ApplyConfiguration)
+{
+    AcquireContinuousConfigurationWrap* wrappedAcquireContinuousConfiguration = ObjectWrap::Unwrap<AcquireContinuousConfigurationWrap>(info.This());
+    CAcquireContinuousConfiguration* acquireContinuousConfiguration = wrappedAcquireContinuousConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
+    {
+        // Unwrap object
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(AcquireContinuousConfigurationWrap::OnOpened)
+{
+    AcquireContinuousConfigurationWrap* wrappedAcquireContinuousConfiguration = ObjectWrap::Unwrap<AcquireContinuousConfigurationWrap>(info.This());
+    CAcquireContinuousConfiguration* acquireContinuousConfiguration = wrappedAcquireContinuousConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
 }

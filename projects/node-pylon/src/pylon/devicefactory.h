@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <pylon/DeviceFactory.h>
+#include "deviceaccessmode.h"
 #include "pylondevice.h"
 
 using namespace v8;

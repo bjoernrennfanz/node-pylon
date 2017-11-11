@@ -23,6 +23,9 @@
 using BindingContext = NodePylonGen.Generators.BindingContext;
 using CppSharp.AST;
 using CppSharp.Types;
+using System.Collections.Generic;
+using CppSharp;
+using NodePylonGen.Utils;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -62,6 +65,59 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             result += (quals.IsConst ? " const" : string.Empty);
 
             return result;
+        }
+
+        public string GenerateParameterWrapper(NodeJSTemplate callee, IEnumerable<Parameter> parameters)
+        {
+            int parameterArgumentIndex = 0;
+            string generatedArgumentsWrapped = string.Empty;
+            NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(Context);
+
+            foreach (Parameter parameter in parameters)
+            {
+                if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
+                {
+                    string parameterClassName = VisitParameter(parameter, false, false);
+                    string parameterClassWrapped =  NodeJSClassHelper.GenerateClassWrapName(parameterClassName);
+
+                    // Generate unwrap of stored object
+                    callee.PushBlock(BlockKind.MethodBody);
+                    callee.WriteLine("// Unwrap object");
+                    callee.WriteLine("{0}* arg{1}_wrap = ObjectWrap::Unwrap<{0}>(info[{1}]->ToObject());", parameterClassWrapped, parameterArgumentIndex);
+                    callee.WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, parameterArgumentIndex);
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
+
+                    // Store arguments for later usage
+                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
+                    generatedArgumentsWrapped += parameter.Type is PointerType ? (generatedArgumentsWrapped += (parameter.Type as PointerType).IsReference ? "*" : string.Empty) : string.Empty;
+                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
+                }
+                else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
+                {
+                    // Generate wrapper for number values
+                    callee.PushBlock(BlockKind.MethodBody);
+                    callee.WriteLine("// Convert from number value");
+                    callee.WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
+
+                    // Store arguments for later usage
+                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
+                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
+                }
+                else if (nodeJSTypeCheckPrinter.ParameterIsBoolean(parameter))
+                {
+
+                }
+                else if (nodeJSTypeCheckPrinter.ParameterIsString(parameter))
+                {
+
+                }
+
+                // Increment argument index
+                parameterArgumentIndex++;
+            }
+
+            return generatedArgumentsWrapped;
         }
     }
 }

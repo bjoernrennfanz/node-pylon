@@ -46,15 +46,9 @@ EnumerationWrap::EnumerationWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IEnumeration()
         m_Enumeration = new IEnumeration();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IEnumeration")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IEnumeration")
-        {
-            ThrowException(Exception::TypeError(String::New("IEnumeration::IEnumeration: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EnumerationWrap* arg0_wrap = ObjectWrap::Unwrap<EnumerationWrap>(info[0]->ToObject());
         IEnumeration* arg0 = arg0_wrap->GetWrapped();
 
@@ -89,4 +83,87 @@ NAN_MODULE_INIT(EnumerationWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IEnumeration").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EnumerationWrap::GetCurrentEntry)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(EnumerationWrap::GetEntries)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
+    {
+        // Unwrap object
+        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        node_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EnumerationWrap::GetEntry)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(EnumerationWrap::GetEntryByName)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EnumerationWrap::GetIntValue)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(EnumerationWrap::GetSymbolics)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EnumerationWrap::SetIntValue)
+{
+    EnumerationWrap* wrappedEnumeration = ObjectWrap::Unwrap<EnumerationWrap>(info.This());
+    IEnumeration* enumeration = wrappedEnumeration->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsBoolean())
+    {
+        // Convert from number value
+        __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+    }
 }

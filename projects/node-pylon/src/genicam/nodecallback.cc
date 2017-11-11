@@ -41,34 +41,22 @@ NodeCallbackWrap::NodeCallbackWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_NodeCallback(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CNodeCallback")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CNodeCallback")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeCallback::CNodeCallback: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeCallbackWrap* arg0_wrap = ObjectWrap::Unwrap<NodeCallbackWrap>(info[0]->ToObject());
         CNodeCallback* arg0 = arg0_wrap->GetWrapped();
 
         // CNodeCallback(CNodeCallback& const arg0)
         m_NodeCallback = new CNodeCallback(*arg0);
     }
-    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INode")) && info[1]->IsNumber())
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INode")
-        {
-            ThrowException(Exception::TypeError(String::New("CNodeCallback::CNodeCallback: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeWrap* arg0_wrap = ObjectWrap::Unwrap<NodeWrap>(info[0]->ToObject());
         INode* arg0 = arg0_wrap->GetWrapped();
 
-        // Convert number value
+        // Convert from number value
         ECallbackType arg1 = static_cast<ECallbackType>(info[1]->NumberValue());
 
         // CNodeCallback(INode* pNode, ECallbackType CallbackType)
@@ -100,4 +88,28 @@ NAN_MODULE_INIT(NodeCallbackWrap::Initialize)
 
     // Register static functions in Node JS
     Nan::Set(target, Nan::New<String>("deregister").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(NodeCallbackWrap::Deregister)).ToLocalChecked());
+}
+
+NAN_METHOD(NodeCallbackWrap::Destroy)
+{
+    NodeCallbackWrap* wrappedNodeCallback = ObjectWrap::Unwrap<NodeCallbackWrap>(info.This());
+    CNodeCallback* nodeCallback = wrappedNodeCallback->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeCallbackWrap::GetNode)
+{
+    NodeCallbackWrap* wrappedNodeCallback = ObjectWrap::Unwrap<NodeCallbackWrap>(info.This());
+    CNodeCallback* nodeCallback = wrappedNodeCallback->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(NodeCallbackWrap::Deregister)
+{
 }

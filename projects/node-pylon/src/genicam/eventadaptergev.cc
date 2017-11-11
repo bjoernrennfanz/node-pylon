@@ -41,30 +41,18 @@ EventAdapterGEVWrap::EventAdapterGEVWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventAdapterGEV(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterGEV::CEventAdapterGEV: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // CEventAdapterGEV(INodeMap* pNodeMap)
         m_EventAdapterGEV = new CEventAdapterGEV(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CEventAdapterGEV")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CEventAdapterGEV")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapterGEV::CEventAdapterGEV: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EventAdapterGEVWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterGEVWrap>(info[0]->ToObject());
         CEventAdapterGEV* arg0 = arg0_wrap->GetWrapped();
 
@@ -94,4 +82,51 @@ NAN_MODULE_INIT(EventAdapterGEVWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CEventAdapterGEV").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
+{
+    EventAdapterGEVWrap* wrappedEventAdapterGEV = ObjectWrap::Unwrap<EventAdapterGEVWrap>(info.This());
+    CEventAdapterGEV* eventAdapterGEV = wrappedEventAdapterGEV->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENTDATA_REQUEST_EXTENDED_ID")))
+    {
+        // Unwrap object
+        GVCP_EVENTDATA_REQUEST_EXTENDED_IDWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENTDATA_REQUEST_EXTENDED_IDWrap>(info[0]->ToObject());
+        GVCP_EVENTDATA_REQUEST_EXTENDED_ID* arg0 = arg0_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST_EXTENDED_ID")))
+    {
+        // Unwrap object
+        GVCP_EVENT_REQUEST_EXTENDED_IDWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENT_REQUEST_EXTENDED_IDWrap>(info[0]->ToObject());
+        GVCP_EVENT_REQUEST_EXTENDED_ID* arg0 = arg0_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENTDATA_REQUEST")))
+    {
+        // Unwrap object
+        GVCP_EVENTDATA_REQUESTWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENTDATA_REQUESTWrap>(info[0]->ToObject());
+        GVCP_EVENTDATA_REQUEST* arg0 = arg0_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST")))
+    {
+        // Unwrap object
+        GVCP_EVENT_REQUESTWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENT_REQUESTWrap>(info[0]->ToObject());
+        GVCP_EVENT_REQUEST* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EventAdapterGEVWrap::DeliverMessage)
+{
+    EventAdapterGEVWrap* wrappedEventAdapterGEV = ObjectWrap::Unwrap<EventAdapterGEVWrap>(info.This());
+    CEventAdapterGEV* eventAdapterGEV = wrappedEventAdapterGEV->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
 }

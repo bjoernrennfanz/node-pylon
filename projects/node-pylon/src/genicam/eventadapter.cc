@@ -42,30 +42,18 @@ EventAdapterWrap::EventAdapterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_EventAdapter(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapter::CEventAdapter: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // CEventAdapter(INodeMap* pNodeMap)
         m_EventAdapter = new CEventAdapter(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CEventAdapter")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CEventAdapter")
-        {
-            ThrowException(Exception::TypeError(String::New("CEventAdapter::CEventAdapter: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         EventAdapterWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterWrap>(info[0]->ToObject());
         CEventAdapter* arg0 = arg0_wrap->GetWrapped();
 
@@ -96,4 +84,43 @@ NAN_MODULE_INIT(EventAdapterWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CEventAdapter").ToLocalChecked(), function);
+}
+
+NAN_METHOD(EventAdapterWrap::AttachNodeMap)
+{
+    EventAdapterWrap* wrappedEventAdapter = ObjectWrap::Unwrap<EventAdapterWrap>(info.This());
+    CEventAdapter* eventAdapter = wrappedEventAdapter->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
+    {
+        // Unwrap object
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(EventAdapterWrap::DeliverMessage)
+{
+    EventAdapterWrap* wrappedEventAdapter = ObjectWrap::Unwrap<EventAdapterWrap>(info.This());
+    CEventAdapter* eventAdapter = wrappedEventAdapter->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(EventAdapterWrap::DetachNodeMap)
+{
+    EventAdapterWrap* wrappedEventAdapter = ObjectWrap::Unwrap<EventAdapterWrap>(info.This());
+    CEventAdapter* eventAdapter = wrappedEventAdapter->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

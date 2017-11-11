@@ -46,15 +46,9 @@ FloatRefTWrap::FloatRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>()
         m_FloatRefT = new CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>")
-        {
-            ThrowException(Exception::TypeError(String::New("CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>::CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         FloatRefTWrap* arg0_wrap = ObjectWrap::Unwrap<FloatRefTWrap>(info[0]->ToObject());
         CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* arg0 = arg0_wrap->GetWrapped();
 
@@ -98,4 +92,170 @@ NAN_MODULE_INIT(FloatRefTWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>").ToLocalChecked(), function);
+}
+
+NAN_METHOD(FloatRefTWrap::GetDisplayNotation)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetDisplayPrecision)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetEnumAlias)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetInc)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetIncMode)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetIntAlias)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetListOfValidValues)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetMax)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetMin)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetRepresentation)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetUnit)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::GetValue)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::HasInc)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::ImposeMax)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        double arg0 = static_cast<double>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::ImposeMin)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        double arg0 = static_cast<double>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(FloatRefTWrap::SetValue)
+{
+    FloatRefTWrap* wrappedFloatRefT = ObjectWrap::Unwrap<FloatRefTWrap>(info.This());
+    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT = wrappedFloatRefT->GetWrapped();
+
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsBoolean())
+    {
+        // Convert from number value
+        double arg0 = static_cast<double>(info[0]->NumberValue());
+    }
 }

@@ -41,30 +41,18 @@ SelectorSetWrap::SelectorSetWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_SelectorSet(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IBase")
-        {
-            ThrowException(Exception::TypeError(String::New("CSelectorSet::CSelectorSet: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // CSelectorSet(IBase* pBase)
         m_SelectorSet = new CSelectorSet(arg0);
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CSelectorSet")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CSelectorSet")
-        {
-            ThrowException(Exception::TypeError(String::New("CSelectorSet::CSelectorSet: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         SelectorSetWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorSetWrap>(info[0]->ToObject());
         CSelectorSet* arg0 = arg0_wrap->GetWrapped();
 
@@ -98,4 +86,67 @@ NAN_MODULE_INIT(SelectorSetWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CSelectorSet").ToLocalChecked(), function);
+}
+
+NAN_METHOD(SelectorSetWrap::GetSelectorList)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")) && info[1]->IsBoolean())
+    {
+        // Unwrap object
+        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        value_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(SelectorSetWrap::IsEmpty)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(SelectorSetWrap::Restore)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(SelectorSetWrap::SetFirst)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(SelectorSetWrap::SetNext)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+    }
+}
+
+NAN_METHOD(SelectorSetWrap::ToString)
+{
+    SelectorSetWrap* wrappedSelectorSet = ObjectWrap::Unwrap<SelectorSetWrap>(info.This());
+    CSelectorSet* selectorSet = wrappedSelectorSet->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

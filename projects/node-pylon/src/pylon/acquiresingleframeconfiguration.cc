@@ -46,15 +46,9 @@ AcquireSingleFrameConfigurationWrap::AcquireSingleFrameConfigurationWrap(Nan::NA
         // CAcquireSingleFrameConfiguration()
         m_AcquireSingleFrameConfiguration = new CAcquireSingleFrameConfiguration();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CAcquireSingleFrameConfiguration")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CAcquireSingleFrameConfiguration")
-        {
-            ThrowException(Exception::TypeError(String::New("CAcquireSingleFrameConfiguration::CAcquireSingleFrameConfiguration: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         AcquireSingleFrameConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<AcquireSingleFrameConfigurationWrap>(info[0]->ToObject());
         CAcquireSingleFrameConfiguration* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,30 @@ NAN_MODULE_INIT(AcquireSingleFrameConfigurationWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CAcquireSingleFrameConfiguration").ToLocalChecked(), function);
+}
+
+NAN_METHOD(AcquireSingleFrameConfigurationWrap::ApplyConfiguration)
+{
+    AcquireSingleFrameConfigurationWrap* wrappedAcquireSingleFrameConfiguration = ObjectWrap::Unwrap<AcquireSingleFrameConfigurationWrap>(info.This());
+    CAcquireSingleFrameConfiguration* acquireSingleFrameConfiguration = wrappedAcquireSingleFrameConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
+    {
+        // Unwrap object
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(AcquireSingleFrameConfigurationWrap::OnOpened)
+{
+    AcquireSingleFrameConfigurationWrap* wrappedAcquireSingleFrameConfiguration = ObjectWrap::Unwrap<AcquireSingleFrameConfigurationWrap>(info.This());
+    CAcquireSingleFrameConfiguration* acquireSingleFrameConfiguration = wrappedAcquireSingleFrameConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
 }

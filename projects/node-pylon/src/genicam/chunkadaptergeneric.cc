@@ -41,34 +41,22 @@ ChunkAdapterGenericWrap::ChunkAdapterGenericWrap(Nan::NAN_METHOD_ARGS_TYPE info)
   : m_ChunkAdapterGeneric(NULL)
 {
     // Check constructor arguments
-    if (info[0]->IsObject())
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CChunkAdapterGeneric")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CChunkAdapterGeneric")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkAdapterGeneric::CChunkAdapterGeneric: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ChunkAdapterGenericWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkAdapterGenericWrap>(info[0]->ToObject());
         CChunkAdapterGeneric* arg0 = arg0_wrap->GetWrapped();
 
         // CChunkAdapterGeneric(CChunkAdapterGeneric& const arg0)
         m_ChunkAdapterGeneric = new CChunkAdapterGeneric(*arg0);
     }
-    else if ((info[0]->IsObject()) && (info[1]->IsNumber()))
+    else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")) && info[1]->IsNumber())
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "INodeMap")
-        {
-            ThrowException(Exception::TypeError(String::New("CChunkAdapterGeneric::CChunkAdapterGeneric: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
-        // Convert number value
+        // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // CChunkAdapterGeneric(INodeMap* pNodeMap, __int128_t MaxChunkCacheSize)
@@ -97,4 +85,74 @@ NAN_MODULE_INIT(ChunkAdapterGenericWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CChunkAdapterGeneric").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ChunkAdapterGenericWrap::AttachBuffer)
+{
+    ChunkAdapterGenericWrap* wrappedChunkAdapterGeneric = ObjectWrap::Unwrap<ChunkAdapterGenericWrap>(info.This());
+    CChunkAdapterGeneric* chunkAdapterGeneric = wrappedChunkAdapterGeneric->GetWrapped();
+
+    if ((info.Length() == 4) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "SingleChunkDataStr_t")) && info[2]->IsNumber() && (info[3]->IsObject() && (pylon_v8::ToGCString(info[3]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        SingleChunkDataStr_tWrap* arg1_wrap = ObjectWrap::Unwrap<SingleChunkDataStr_tWrap>(info[1]->ToObject());
+        SingleChunkDataStr_t* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+
+        // Unwrap object
+        AttachStatistics_tWrap* arg3_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[3]->ToObject());
+        AttachStatistics_t* arg3 = arg3_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 4) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "SingleChunkData_t")) && info[2]->IsNumber() && (info[3]->IsObject() && (pylon_v8::ToGCString(info[3]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        SingleChunkData_tWrap* arg1_wrap = ObjectWrap::Unwrap<SingleChunkData_tWrap>(info[1]->ToObject());
+        SingleChunkData_t* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+
+        // Unwrap object
+        AttachStatistics_tWrap* arg3_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[3]->ToObject());
+        AttachStatistics_t* arg3 = arg3_wrap->GetWrapped();
+    }
+    else if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Unwrap object
+        AttachStatistics_tWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[2]->ToObject());
+        AttachStatistics_t* arg2 = arg2_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ChunkAdapterGenericWrap::CheckBufferLayout)
+{
+    ChunkAdapterGenericWrap* wrappedChunkAdapterGeneric = ObjectWrap::Unwrap<ChunkAdapterGenericWrap>(info.This());
+    CChunkAdapterGeneric* chunkAdapterGeneric = wrappedChunkAdapterGeneric->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+    }
 }

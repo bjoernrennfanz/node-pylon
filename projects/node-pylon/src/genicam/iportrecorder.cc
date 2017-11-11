@@ -46,15 +46,9 @@ PortRecorderWrap::PortRecorderWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IPortRecorder()
         m_PortRecorder = new IPortRecorder();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPortRecorder")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IPortRecorder")
-        {
-            ThrowException(Exception::TypeError(String::New("IPortRecorder::IPortRecorder: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         PortRecorderWrap* arg0_wrap = ObjectWrap::Unwrap<PortRecorderWrap>(info[0]->ToObject());
         IPortRecorder* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,27 @@ NAN_MODULE_INIT(PortRecorderWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IPortRecorder").ToLocalChecked(), function);
+}
+
+NAN_METHOD(PortRecorderWrap::StartRecording)
+{
+    PortRecorderWrap* wrappedPortRecorder = ObjectWrap::Unwrap<PortRecorderWrap>(info.This());
+    IPortRecorder* portRecorder = wrappedPortRecorder->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPortWriteList")))
+    {
+        // Unwrap object
+        PortWriteListWrap* arg0_wrap = ObjectWrap::Unwrap<PortWriteListWrap>(info[0]->ToObject());
+        IPortWriteList* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(PortRecorderWrap::StopRecording)
+{
+    PortRecorderWrap* wrappedPortRecorder = ObjectWrap::Unwrap<PortRecorderWrap>(info.This());
+    IPortRecorder* portRecorder = wrappedPortRecorder->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

@@ -23,6 +23,7 @@
 using CppSharp;
 using CppSharp.AST;
 using NodePylonGen.Generators;
+using NodePylonGen.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -46,14 +47,14 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         {
             GenerateLegalFilePreamble(CommentKind.BCPL);
             GenerateFilePreamble(CommentKind.BCPL);
-            
+
             PushBlock(BlockKind.Includes);
             WriteLine("#pragma once");
             NewLine();
 
             // Generate #include for interop
             WriteLine("#include <node.h>");
-            WriteLine("#include <nan.h>");           
+            WriteLine("#include <nan.h>");
             NewLine();
 
             // Generate #include forward references.
@@ -118,7 +119,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => item.Declaration.Name.ToLower().Contains(TranslationUnit.Name.ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;
@@ -130,12 +131,9 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             {
                 className = (classToWrapTypeReference.Declaration as Class).Name;
 
-                // Remove C or I prefix from class name
-                string trimmedClassName = GenerateTrimmedClassName(className);
-
                 // Generate wrapper and member names
-                classNameWrap = trimmedClassName + "Wrap";
-                classNameWrapperMember = "m_" + trimmedClassName;
+                classNameWrap = NodeJSClassHelper.GenerateClassWrapName(className);
+                classNameWrapperMember = NodeJSClassHelper.GenerateClassWrapperMember(className);
             }
             else
             {
@@ -171,16 +169,16 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                 // Create get wrapped method
                 PushBlock(BlockKind.Method);
-                WriteLine("void SetWrapped({0}* {1})", className, ConvertToParameterName(className));
+                WriteLine("void SetWrapped({0}* {1})", className, NodeJSClassHelper.ConvertToParameterName(className));
                 WriteStartBraceIndent();
-                WriteLine("{0} = {1};", classNameWrapperMember, ConvertToParameterName(className));
+                WriteLine("{0} = {1};", classNameWrapperMember, NodeJSClassHelper.ConvertToParameterName(className));
                 PopIndent();
                 WriteLine("};");
                 PopBlock(NewLineKind.BeforeNextBlock);
 
                 // New instance prototype
                 PushBlock(BlockKind.MethodBody);
-                WriteLine("static v8::Handle<v8::Value> NewInstance({0}* {1});", className, ConvertToParameterName(className));
+                WriteLine("static v8::Handle<v8::Value> NewInstance({0}* {1});", className, NodeJSClassHelper.ConvertToParameterName(className));
                 PopBlock(NewLineKind.Always);
             }
             else
@@ -208,29 +206,33 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 WriteLine("static NAN_METHOD(New);");
                 PopBlock(NewLineKind.Always);
 
-                // Methods
-                PushBlock(BlockKind.MethodBody);
-                WriteLine("// Wrapped methods");
-                SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
-                foreach (Method method in (classToWrapTypeReference.Declaration as Class).Methods)
+                // Check if methods available
+                if ((classToWrapTypeReference.Declaration as Class).Methods.Count > 0)
                 {
-                    // Skip constructors
-                    if (method.IsConstructor)
-                        continue;
+                    // Methods
+                    PushBlock(BlockKind.MethodBody);
+                    WriteLine("// Wrapped methods");
+                    SortedSet<string> methodsProcessed = new SortedSet<string>(StringComparer.InvariantCulture);
+                    foreach (Method method in (classToWrapTypeReference.Declaration as Class).Methods)
+                    {
+                        // Skip constructors
+                        if (method.IsConstructor)
+                            continue;
 
-                    // Skip on other access level than public
-                    if (method.Access != AccessSpecifier.Public)
-                        continue;
+                        // Skip on other access level than public
+                        if (method.Access != AccessSpecifier.Public)
+                            continue;
 
-                    // Process method only once
-                    if (methodsProcessed.Contains(method.Name))
-                        continue;
+                        // Process method only once
+                        if (methodsProcessed.Contains(method.Name))
+                            continue;
 
-                    // Output method declaration
-                    WriteLine("static NAN_METHOD({0});", method.Name);
-                    methodsProcessed.Add(method.Name);
+                        // Output method declaration
+                        WriteLine("static NAN_METHOD({0});", method.Name);
+                        methodsProcessed.Add(method.Name);
+                    }
+                    PopBlock(NewLineKind.BeforeNextBlock);
                 }
-                PopBlock(NewLineKind.BeforeNextBlock);
             }
 
             // Functions

@@ -46,15 +46,9 @@ ConfigurationEventHandlerWrap::ConfigurationEventHandlerWrap(Nan::NAN_METHOD_ARG
         // CConfigurationEventHandler()
         m_ConfigurationEventHandler = new CConfigurationEventHandler();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CConfigurationEventHandler")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CConfigurationEventHandler")
-        {
-            ThrowException(Exception::TypeError(String::New("CConfigurationEventHandler::CConfigurationEventHandler: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ConfigurationEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info[0]->ToObject());
         CConfigurationEventHandler* arg0 = arg0_wrap->GetWrapped();
 
@@ -102,4 +96,262 @@ NAN_MODULE_INIT(ConfigurationEventHandlerWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CConfigurationEventHandler").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::DestroyConfiguration)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnAttach)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnAttached)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnCameraDeviceRemoved)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnClose)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnClosed)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationDeregistered)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationRegistered)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroy)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroyed)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnDetach)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnDetached)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabError)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "char")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        charWrap* arg1_wrap = ObjectWrap::Unwrap<charWrap>(info[1]->ToObject());
+        char* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStart)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStarted)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStop)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStopped)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnOpen)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ConfigurationEventHandlerWrap::OnOpened)
+{
+    ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
+    CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
 }

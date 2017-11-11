@@ -46,15 +46,9 @@ ReusableImageWrap::ReusableImageWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IReusableImage()
         m_ReusableImage = new IReusableImage();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReusableImage")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IReusableImage")
-        {
-            ThrowException(Exception::TypeError(String::New("IReusableImage::IReusableImage: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ReusableImageWrap* arg0_wrap = ObjectWrap::Unwrap<ReusableImageWrap>(info[0]->ToObject());
         IReusableImage* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,74 @@ NAN_MODULE_INIT(ReusableImageWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IReusableImage").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ReusableImageWrap::IsAdditionalPaddingSupported)
+{
+    ReusableImageWrap* wrappedReusableImage = ObjectWrap::Unwrap<ReusableImageWrap>(info.This());
+    IReusableImage* reusableImage = wrappedReusableImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ReusableImageWrap::IsSupportedPixelType)
+{
+    ReusableImageWrap* wrappedReusableImage = ObjectWrap::Unwrap<ReusableImageWrap>(info.This());
+    IReusableImage* reusableImage = wrappedReusableImage->GetWrapped();
+
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+    }
+}
+
+NAN_METHOD(ReusableImageWrap::Release)
+{
+    ReusableImageWrap* wrappedReusableImage = ObjectWrap::Unwrap<ReusableImageWrap>(info.This());
+    IReusableImage* reusableImage = wrappedReusableImage->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ReusableImageWrap::Reset)
+{
+    ReusableImageWrap* wrappedReusableImage = ObjectWrap::Unwrap<ReusableImageWrap>(info.This());
+    IReusableImage* reusableImage = wrappedReusableImage->GetWrapped();
+
+    if ((info.Length() == 5) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg3 = static_cast<unsigned int>(info[3]->NumberValue());
+
+        // Convert from number value
+        EImageOrientation arg4 = static_cast<EImageOrientation>(info[4]->NumberValue());
+    }
+    else if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
+    {
+        // Convert from number value
+        EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Convert from number value
+        unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
+
+        // Convert from number value
+        EImageOrientation arg3 = static_cast<EImageOrientation>(info[3]->NumberValue());
+    }
 }

@@ -46,15 +46,9 @@ RegisterWrap::RegisterWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IRegister()
         m_Register = new IRegister();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IRegister")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IRegister")
-        {
-            ThrowException(Exception::TypeError(String::New("IRegister::IRegister: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         RegisterWrap* arg0_wrap = ObjectWrap::Unwrap<RegisterWrap>(info[0]->ToObject());
         IRegister* arg0 = arg0_wrap->GetWrapped();
 
@@ -86,4 +80,56 @@ NAN_MODULE_INIT(RegisterWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IRegister").ToLocalChecked(), function);
+}
+
+NAN_METHOD(RegisterWrap::Get)
+{
+    RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
+    IRegister* register = wrappedRegister->GetWrapped();
+
+    if ((info.Length() == 4) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsBoolean() && info[3]->IsBoolean())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+    }
+}
+
+NAN_METHOD(RegisterWrap::GetAddress)
+{
+    RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
+    IRegister* register = wrappedRegister->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(RegisterWrap::GetLength)
+{
+    RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
+    IRegister* register = wrappedRegister->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(RegisterWrap::Set)
+{
+    RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
+    IRegister* register = wrappedRegister->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsBoolean())
+    {
+        // Unwrap object
+        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
+        unsigned char* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+    }
 }

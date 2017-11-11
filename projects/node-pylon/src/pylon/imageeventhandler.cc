@@ -46,15 +46,9 @@ ImageEventHandlerWrap::ImageEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CImageEventHandler()
         m_ImageEventHandler = new CImageEventHandler();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CImageEventHandler")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CImageEventHandler")
-        {
-            ThrowException(Exception::TypeError(String::New("CImageEventHandler::CImageEventHandler: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ImageEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info[0]->ToObject());
         CImageEventHandler* arg0 = arg0_wrap->GetWrapped();
 
@@ -88,4 +82,83 @@ NAN_MODULE_INIT(ImageEventHandlerWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CImageEventHandler").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ImageEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageEventHandlerWrap::DestroyImageEventHandler)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerDeregistered)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerRegistered)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageEventHandlerWrap::OnImageGrabbed)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "CGrabResultPtr")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        GrabResultPtrWrap* arg1_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[1]->ToObject());
+        CGrabResultPtr* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(ImageEventHandlerWrap::OnImagesSkipped)
+{
+    ImageEventHandlerWrap* wrappedImageEventHandler = ObjectWrap::Unwrap<ImageEventHandlerWrap>(info.This());
+    CImageEventHandler* imageEventHandler = wrappedImageEventHandler->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && info[1]->IsNumber())
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+    }
 }

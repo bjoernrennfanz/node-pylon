@@ -46,15 +46,9 @@ GrabResultWrap::GrabResultWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // GrabResult()
         m_GrabResult = new GrabResult();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GrabResult")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "GrabResult")
-        {
-            ThrowException(Exception::TypeError(String::New("GrabResult::GrabResult: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         GrabResultWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultWrap>(info[0]->ToObject());
         GrabResult* arg0 = arg0_wrap->GetWrapped();
 
@@ -103,4 +97,214 @@ NAN_MODULE_INIT(GrabResultWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("GrabResult").ToLocalChecked(), function);
+}
+
+NAN_METHOD(GrabResultWrap::Buffer)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::Context)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::FrameNr)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetBlockID)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetErrorCode)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetErrorDescription)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetImage)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetOffsetX)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetOffsetY)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPaddingX)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPaddingY)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPayloadSize)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPayloadSize_t)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPayloadType)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetPixelType)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetSizeX)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetSizeY)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::GetTimeStamp)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::Handle)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::Status)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(GrabResultWrap::Succeeded)
+{
+    GrabResultWrap* wrappedGrabResult = ObjectWrap::Unwrap<GrabResultWrap>(info.This());
+    GrabResult* grabResult = wrappedGrabResult->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

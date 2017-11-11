@@ -26,6 +26,11 @@ using BindingContext = NodePylonGen.Generators.BindingContext;
 using CppSharp.AST;
 using NodePylonGen.Config;
 using NodePylonGen.Parser.Model;
+using System.Linq;
+using NodePylonGen.Utils;
+using System.Collections;
+using System.IO;
+using System.Reflection;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -44,7 +49,77 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public override bool SetupPasses()
         {
+
             return true;
+        }
+
+        public override void Process()
+        {
+            SortedList<string, TranslationUnit> missingTranslationUnits = new SortedList<string, TranslationUnit>();
+
+            // Get list of generated units
+            List<TranslationUnit> units = Context.ASTContext.TranslationUnits.GetGenerated().ToList();
+            foreach(TranslationUnit unit in units)
+            {
+                NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
+                typeReferenceCollector.Process(unit);
+
+                NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
+                    .Where(item => item.Declaration is Class)
+                    .Where(item => unit.FileNameWithoutExtension.ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
+                    .FirstOrDefault();
+
+                IEnumerable<NodeJSTypeReference> classToWrapTypeReferences = typeReferenceCollector.TypeReferences
+                    .Where(item => item.Declaration is Class);
+
+                // Check if no class reference where found
+                if ((classToWrapTypeReference == null) && (classToWrapTypeReferences.Count() > 0))
+                {
+                    foreach (NodeJSTypeReference currentReference in classToWrapTypeReferences)
+                    {
+                        // Check if missing unit was already added
+                        if (missingTranslationUnits.ContainsKey(currentReference.Declaration.Name))
+                            continue;
+
+                        // Check if missing unit exists with trimmed name
+                        if (units.Exists(u => NodeJSClassHelper.GenerateTrimmedClassName(u.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(currentReference.Declaration.Name).ToLower())))
+                            continue;
+
+                        // Make deep copy of current unit
+                        TranslationUnit missingTranslationUnit = unit.Copy();
+
+                        // Change names of copy
+                        missingTranslationUnit.Name = currentReference.Declaration.Name;
+                        missingTranslationUnit.OriginalName = currentReference.Declaration.Name;
+
+                        // Change public fields
+                        string missingTranslationUnitFileName = NodeJSClassHelper.GenerateTrimmedClassName(currentReference.Declaration.Name).ToLower() + ".gen";
+                        string missingTranslationUnitFileRelativePath = unit.FileRelativePath;
+
+                        // Update public fields
+                        missingTranslationUnit.FilePath = Path.Combine(Path.GetDirectoryName(unit.FilePath), missingTranslationUnitFileName);
+
+                        // Update private fields with reflection
+                        FieldInfo fileNameFieldInfo = missingTranslationUnit.GetType().GetField("fileName", BindingFlags.NonPublic | BindingFlags.Instance);
+                        fileNameFieldInfo.SetValue(missingTranslationUnit, missingTranslationUnitFileName);
+
+                        FieldInfo fileNameWithoutExtensionFieldInfo = missingTranslationUnit.GetType().GetField("fileNameWithoutExtension", BindingFlags.NonPublic | BindingFlags.Instance);
+                        fileNameWithoutExtensionFieldInfo.SetValue(missingTranslationUnit, Path.GetFileNameWithoutExtension(missingTranslationUnitFileName));
+
+                        FieldInfo fileRelativeDirectoryFieldInfo = missingTranslationUnit.GetType().GetField("fileRelativeDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
+                        fileRelativeDirectoryFieldInfo.SetValue(missingTranslationUnit, Path.GetDirectoryName(missingTranslationUnitFileRelativePath));
+
+                        FieldInfo fileRelativePathFieldInfo = missingTranslationUnit.GetType().GetField("fileRelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
+                        fileRelativePathFieldInfo.SetValue(missingTranslationUnit, Path.Combine(Path.GetDirectoryName(missingTranslationUnitFileRelativePath), missingTranslationUnitFileName));
+
+                        // Add to collection for later processing
+                        missingTranslationUnits.Add(currentReference.Declaration.Name, missingTranslationUnit);
+                    }
+                }
+            }
+
+            // Insert missing items
+            Context.ASTContext.TranslationUnits.AddRange(missingTranslationUnits.Values);
         }
 
         public override List<CodeGenerator> GenerateCode(IEnumerable<TranslationUnit> units)

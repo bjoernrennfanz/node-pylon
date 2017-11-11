@@ -46,15 +46,9 @@ CameraEventHandlerWrap::CameraEventHandlerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CCameraEventHandler()
         m_CameraEventHandler = new CCameraEventHandler();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CCameraEventHandler")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CCameraEventHandler")
-        {
-            ThrowException(Exception::TypeError(String::New("CCameraEventHandler::CCameraEventHandler: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         CameraEventHandlerWrap* arg0_wrap = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info[0]->ToObject());
         CCameraEventHandler* arg0 = arg0_wrap->GetWrapped();
 
@@ -87,4 +81,84 @@ NAN_MODULE_INIT(CameraEventHandlerWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CCameraEventHandler").ToLocalChecked(), function);
+}
+
+NAN_METHOD(CameraEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
+{
+    CameraEventHandlerWrap* wrappedCameraEventHandler = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info.This());
+    CCameraEventHandler* cameraEventHandler = wrappedCameraEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(CameraEventHandlerWrap::DestroyCameraEventHandler)
+{
+    CameraEventHandlerWrap* wrappedCameraEventHandler = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info.This());
+    CCameraEventHandler* cameraEventHandler = wrappedCameraEventHandler->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(CameraEventHandlerWrap::OnCameraEvent)
+{
+    CameraEventHandlerWrap* wrappedCameraEventHandler = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info.This());
+    CCameraEventHandler* cameraEventHandler = wrappedCameraEventHandler->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "INode")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg1 = static_cast<int>(info[1]->NumberValue());
+
+        // Unwrap object
+        NodeWrap* arg2_wrap = ObjectWrap::Unwrap<NodeWrap>(info[2]->ToObject());
+        INode* arg2 = arg2_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerDeregistered)
+{
+    CameraEventHandlerWrap* wrappedCameraEventHandler = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info.This());
+    CCameraEventHandler* cameraEventHandler = wrappedCameraEventHandler->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && info[2]->IsNumber())
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg2 = static_cast<int>(info[2]->NumberValue());
+    }
+}
+
+NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerRegistered)
+{
+    CameraEventHandlerWrap* wrappedCameraEventHandler = ObjectWrap::Unwrap<CameraEventHandlerWrap>(info.This());
+    CCameraEventHandler* cameraEventHandler = wrappedCameraEventHandler->GetWrapped();
+
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && info[2]->IsNumber())
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from number value
+        int arg2 = static_cast<int>(info[2]->NumberValue());
+    }
 }

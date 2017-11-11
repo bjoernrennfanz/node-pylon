@@ -46,15 +46,9 @@ SoftwareTriggerConfigurationWrap::SoftwareTriggerConfigurationWrap(Nan::NAN_METH
         // CSoftwareTriggerConfiguration()
         m_SoftwareTriggerConfiguration = new CSoftwareTriggerConfiguration();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CSoftwareTriggerConfiguration")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CSoftwareTriggerConfiguration")
-        {
-            ThrowException(Exception::TypeError(String::New("CSoftwareTriggerConfiguration::CSoftwareTriggerConfiguration: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         SoftwareTriggerConfigurationWrap* arg0_wrap = ObjectWrap::Unwrap<SoftwareTriggerConfigurationWrap>(info[0]->ToObject());
         CSoftwareTriggerConfiguration* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,30 @@ NAN_MODULE_INIT(SoftwareTriggerConfigurationWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CSoftwareTriggerConfiguration").ToLocalChecked(), function);
+}
+
+NAN_METHOD(SoftwareTriggerConfigurationWrap::ApplyConfiguration)
+{
+    SoftwareTriggerConfigurationWrap* wrappedSoftwareTriggerConfiguration = ObjectWrap::Unwrap<SoftwareTriggerConfigurationWrap>(info.This());
+    CSoftwareTriggerConfiguration* softwareTriggerConfiguration = wrappedSoftwareTriggerConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "INodeMap")))
+    {
+        // Unwrap object
+        NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
+        INodeMap* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(SoftwareTriggerConfigurationWrap::OnOpened)
+{
+    SoftwareTriggerConfigurationWrap* wrappedSoftwareTriggerConfiguration = ObjectWrap::Unwrap<SoftwareTriggerConfigurationWrap>(info.This());
+    CSoftwareTriggerConfiguration* softwareTriggerConfiguration = wrappedSoftwareTriggerConfiguration->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")))
+    {
+        // Unwrap object
+        InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
+        CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+    }
 }

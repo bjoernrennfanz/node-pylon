@@ -46,15 +46,9 @@ ChunkPortWrap::ChunkPortWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // IChunkPort()
         m_ChunkPort = new IChunkPort();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IChunkPort")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "IChunkPort")
-        {
-            ThrowException(Exception::TypeError(String::New("IChunkPort::IChunkPort: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         ChunkPortWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkPortWrap>(info[0]->ToObject());
         IChunkPort* arg0 = arg0_wrap->GetWrapped();
 
@@ -84,4 +78,24 @@ NAN_MODULE_INIT(ChunkPortWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("IChunkPort").ToLocalChecked(), function);
+}
+
+NAN_METHOD(ChunkPortWrap::CacheChunkData)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    IChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(ChunkPortWrap::GetChunkID)
+{
+    ChunkPortWrap* wrappedChunkPort = ObjectWrap::Unwrap<ChunkPortWrap>(info.This());
+    IChunkPort* chunkPort = wrappedChunkPort->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

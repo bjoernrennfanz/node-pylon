@@ -46,15 +46,9 @@ SelectorWrap::SelectorWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // ISelector()
         m_Selector = new ISelector();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "ISelector")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "ISelector")
-        {
-            ThrowException(Exception::TypeError(String::New("ISelector::ISelector: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         SelectorWrap* arg0_wrap = ObjectWrap::Unwrap<SelectorWrap>(info[0]->ToObject());
         ISelector* arg0 = arg0_wrap->GetWrapped();
 
@@ -85,4 +79,40 @@ NAN_MODULE_INIT(SelectorWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("ISelector").ToLocalChecked(), function);
+}
+
+NAN_METHOD(SelectorWrap::GetSelectedFeatures)
+{
+    SelectorWrap* wrappedSelector = ObjectWrap::Unwrap<SelectorWrap>(info.This());
+    ISelector* selector = wrappedSelector->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
+    {
+        // Unwrap object
+        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        value_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(SelectorWrap::GetSelectingFeatures)
+{
+    SelectorWrap* wrappedSelector = ObjectWrap::Unwrap<SelectorWrap>(info.This());
+    ISelector* selector = wrappedSelector->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
+    {
+        // Unwrap object
+        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        value_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(SelectorWrap::IsSelector)
+{
+    SelectorWrap* wrappedSelector = ObjectWrap::Unwrap<SelectorWrap>(info.This());
+    ISelector* selector = wrappedSelector->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
 }

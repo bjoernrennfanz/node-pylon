@@ -35,6 +35,7 @@
 #include "pylon/cameraeventhandler.h"
 #include "pylon/configurationeventhandler.h"
 #include "pylon/pylondevice.h"
+#include "pylon/deviceaccessmode.h"
 #include "pylon/devicefactory.h"
 #include "pylon/deviceinfo.h"
 #include "pylon/featurepersistence.h"
@@ -78,6 +79,7 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     CameraEventHandlerWrap::Initialize(target);
     ConfigurationEventHandlerWrap::Initialize(target);
     PylonDeviceWrap::Initialize(target);
+    DeviceaccessmodeWrap::Initialize(target);
     DeviceFactoryWrap::Initialize(target);
     DeviceInfoWrap::Initialize(target);
     FeaturePersistenceWrap::Initialize(target);
@@ -101,6 +103,22 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     StreamGrabberWrap::Initialize(target);
     TlFactoryWrap::Initialize(target);
     TransportLayerWrap::Initialize(target);
+}
+
+NAN_METHOD(PylonWrap::GetPylonVersion)
+{
+}
+
+NAN_METHOD(PylonWrap::GetPylonVersionString)
+{
+}
+
+NAN_METHOD(PylonWrap::PylonInitialize)
+{
+}
+
+NAN_METHOD(PylonWrap::PylonTerminate)
+{
 }
 
 NODE_MODULE(pylon, PylonWrap::Initialize)

@@ -46,15 +46,9 @@ InfoBaseWrap::InfoBaseWrap(Nan::NAN_METHOD_ARGS_TYPE info)
         // CInfoBase()
         m_InfoBase = new CInfoBase();
     }
-    else if (info[0]->IsObject())
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInfoBase")))
     {
-        gcstring info0_constructor = pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName());
-        if (info0_constructor != "CInfoBase")
-        {
-            ThrowException(Exception::TypeError(String::New("CInfoBase::CInfoBase: bad argument")));
-        }
-
-        // Unwrap obj
+        // Unwrap object
         InfoBaseWrap* arg0_wrap = ObjectWrap::Unwrap<InfoBaseWrap>(info[0]->ToObject());
         CInfoBase* arg0 = arg0_wrap->GetWrapped();
 
@@ -101,4 +95,229 @@ NAN_MODULE_INIT(InfoBaseWrap::Initialize)
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(target, Nan::New("CInfoBase").ToLocalChecked(), function);
+}
+
+NAN_METHOD(InfoBaseWrap::GetDeviceClass)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetFriendlyName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetFullName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetPropertyAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetPropertyNames)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
+    {
+        // Unwrap object
+        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetPropertyNotAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetPropertyValue)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::GetVendorName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsDeviceClassAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsFriendlyNameAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsFullNameAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsSubset)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IProperties")))
+    {
+        // Unwrap object
+        PropertiesWrap* arg0_wrap = ObjectWrap::Unwrap<PropertiesWrap>(info[0]->ToObject());
+        IProperties* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsUserProvided)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::IsVendorNameAvailable)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if (info.Length() == 0)
+    {
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::SetDeviceClass)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::SetFriendlyName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::SetFullName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::SetPropertyValue)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Unwrap object
+        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        gcstring* arg1 = arg1_wrap->GetWrapped();
+    }
+}
+
+NAN_METHOD(InfoBaseWrap::SetVendorName)
+{
+    InfoBaseWrap* wrappedInfoBase = ObjectWrap::Unwrap<InfoBaseWrap>(info.This());
+    CInfoBase* infoBase = wrappedInfoBase->GetWrapped();
+
+    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
+    {
+        // Unwrap object
+        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        gcstring* arg0 = arg0_wrap->GetWrapped();
+    }
 }
