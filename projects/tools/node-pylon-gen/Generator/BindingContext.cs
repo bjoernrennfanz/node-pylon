@@ -33,6 +33,7 @@ namespace NodePylonGen.Generators
         public ConfigMapping ConfigurationContext { get; private set; }
         public CppModule ParserContext { get; private set; }
         
+        public SortedList FoundEnums = new SortedList();
         /// <summary>
         /// Gets the driver options of this instance
         /// </summary>
@@ -45,7 +46,8 @@ namespace NodePylonGen.Generators
             ParserContext = moduleContext;
             Options = driverOptions;
 
-            ASTConverter converter = new ASTConverter(configurationContext, moduleContext);
+            FoundEnums = new SortedList();
+            ASTConverter converter = new ASTConverter(this, configurationContext, moduleContext);
             ASTContext = converter.Convert();
         }
     }

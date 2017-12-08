@@ -119,7 +119,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => TranslationUnit.FileNameWithoutExtension.ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Equals(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;

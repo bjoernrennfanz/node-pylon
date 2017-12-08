@@ -29,6 +29,7 @@ using CppSharp.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NodePylonGen.Utils;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -39,6 +40,9 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         private const string NodeV8IsBoolean = "IsBoolean()";
         private const string NodeV8IsNumber = "IsNumber()";
         private const string NodeV8IsArray = "IsArray()";
+
+        // Special cases
+        private const string NodeV8IsTypedBuffer = "TypedBuffer";
 
         public BindingContext Context { get; private set; }
 
@@ -65,10 +69,19 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             Type pointee = pointer.GetFinalPointee();
             if (pointee != null)
             {
-                return pointee.Visit(this);
+                if ((pointee is BuiltinType) && pointer.IsPointer())
+                {
+                    if ((pointee as BuiltinType).Type == PrimitiveType.Void)
+                    {
+                        return NodeV8IsTypedBuffer;
+                    }
+                }
+
+                TypePrinterResult pointeeType = pointee.Visit(this);
+                return pointeeType;
             }
 
-            return NodeV8IsObject;
+            throw new NotSupportedException();
         }
 
         public override TypePrinterResult VisitPrimitiveType(PrimitiveType primitive, TypeQualifiers quals)
@@ -112,14 +125,15 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             if (type.Description.StartsWith("E")) return NodeV8IsNumber;
             if (type.Description.EndsWith("Enums")) return NodeV8IsNumber;
 
-            // Mapping unknown interfaces, classes and structs to object type
-            if (type.Description.StartsWith("I")) return NodeV8IsObject;
-            if (type.Description.StartsWith("C")) return NodeV8IsObject;
-            if (type.Description.StartsWith("S")) return NodeV8IsObject;
+            // Search for known objects
+            if (Context.ASTContext.TranslationUnits.GetGenerated().ToList().Exists(u => NodeJSClassHelper.GenerateTrimmedClassName(u.FileNameWithoutExtension).ToLower().Equals(NodeJSClassHelper.GenerateTrimmedClassName(type.Description).ToLower())))
+                return NodeV8IsObject;
 
-            Console.WriteLine("Skip " + type.Description + "...");
-            return String.Empty;
-            //throw new NotSupportedException();
+            // Mapping special Windows types
+            if (type.Description.StartsWith("wchar_t")) return NodeV8IsString;
+
+            // Map other unknown always as buffer type
+            return NodeV8IsTypedBuffer;
         }
 
         public bool ParameterIsArray(Parameter param)
@@ -147,7 +161,13 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             return VisitParameter(param).ToString() == NodeV8IsString;
         }
 
-        public string GenerateCheckStatement(IEnumerable<Parameter> parameters)
+        public bool ParameterIsTypedBuffer(Parameter param)
+        {
+            return VisitParameter(param).ToString() == NodeV8IsTypedBuffer;
+        }
+
+
+    public string GenerateCheckStatement(IEnumerable<Parameter> parameters)
         {
             NodeJSTypePrinter nodeJSTypePrinter = new NodeJSTypePrinter(Context);
             nodeJSTypePrinter.PrintScopeKind = TypePrintScopeKind.Local;
@@ -182,6 +202,10 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 else if (ParameterIsArray(parameter))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsArray()";
+                }
+                else if (ParameterIsTypedBuffer(parameter))
+                {
+                    generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsObject()";
                 }
 
                 methodArgumentIndex++;

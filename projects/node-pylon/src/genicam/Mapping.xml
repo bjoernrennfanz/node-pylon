@@ -29,7 +29,12 @@
 	<module>genicam</module>
 
 	<!-- Module includes -->
+	<include file="Base/GCTypes.h" />
+	<include file="Base/GCString.h" />
+	<include file="Base/GCArray.h" />
+	<include file="Base/GCStringVector.h" />
 	<include file="Base/GCException.h" />
+	<include file="Base/GCUtilities.h" />
 	<include file="GenApi/ChunkAdapter.h" />
 	<include file="GenApi/ChunkAdapterGeneric.h" />
 	<include file="GenApi/ChunkAdapterGEV.h" />

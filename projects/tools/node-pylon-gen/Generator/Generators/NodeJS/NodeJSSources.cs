@@ -99,7 +99,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Equals(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;
@@ -164,18 +164,37 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 WriteLine("NAN_METHOD({0}::{1})", classNameWrap, functionName);
                 WriteStartBraceIndent();
 
-                bool firstFunctionCreated = false;
-                int functionArgumentIndex = 0;
-
                 // Find overloaded static functions
                 IEnumerable<Function> functionOverloads = typeReferenceCollector.TypeReferences
                     .Where(item => ((item.Declaration is Function) && !(item.Declaration is Method)))
                     .Select(item => item.Declaration as Function)
                     .Where(s => s.Name == functionName).OrderByDescending(s => s.Parameters.Count);
 
+                bool firstFunctionCreated = false;
                 foreach (Function overloadFunction in functionOverloads)
                 {
+                    // Generate other constructors than default
+                    string generatedIfStatement = (firstFunctionCreated ? "else " : string.Empty);
+                    generatedIfStatement += "if " + nodeJSTypeCheckPrinter.GenerateCheckStatement(overloadFunction.Parameters);
 
+                    // Output arguments checker
+                    PushBlock(BlockKind.MethodBody);
+                    WriteLine(generatedIfStatement);
+                    WriteStartBraceIndent();
+
+                    // Generate wrapper for parameter arguments
+                    string generatedArgumentsWrapped = nodeJSTypePrinter.GenerateParameterWrapper(this, overloadFunction.Parameters);
+                    if (!string.IsNullOrEmpty(generatedArgumentsWrapped)) WriteLine("");
+
+                    // Call wrapped method
+                    WriteLine("// Call wrapped function");
+                    WriteLine("{0}({1});", overloadFunction.Name, generatedArgumentsWrapped);
+
+                    WriteCloseBraceIndent();
+                    PopBlock(NewLineKind.Never);
+
+                    // Remember that we have created an function
+                    firstFunctionCreated = true;
                 }
 
                 WriteCloseBraceIndent();
@@ -224,6 +243,11 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     // Generate wrapper for parameter arguments
                     string generatedArgumentsWrapped = nodeJSTypePrinter.GenerateParameterWrapper(this, overloadMethod.Parameters);
+                    if (!string.IsNullOrEmpty(generatedArgumentsWrapped)) WriteLine("");
+
+                    // Call wrapped method
+                    WriteLine("// Call wrapped method");
+                    WriteLine("{0}->{1}({2});", classNameNormLower, overloadMethod.Name, generatedArgumentsWrapped);
 
                     WriteCloseBraceIndent();
                     PopBlock(NewLineKind.Never);
@@ -418,7 +442,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     // Find own class to wrap
                     NodeJSTypeReference includeToWrapTypeReference = includeReferenceCollector.TypeReferences
                         .Where(item => item.Declaration is Class)
-                        .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(includeUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
+                        .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(includeUnit.FileNameWithoutExtension).ToLower().Equals(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                         .FirstOrDefault();
 
                     // Check if nested class was found
@@ -451,7 +475,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             // Find own class to wrap
             NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
                 .Where(item => item.Declaration is Class)
-                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
+                .Where(item => NodeJSClassHelper.GenerateTrimmedClassName(TranslationUnit.FileNameWithoutExtension).ToLower().Equals(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
                 .FirstOrDefault();
 
             string className = string.Empty;

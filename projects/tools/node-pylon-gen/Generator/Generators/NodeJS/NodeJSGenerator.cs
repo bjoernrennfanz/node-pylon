@@ -59,21 +59,16 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             // Get list of generated units
             List<TranslationUnit> units = Context.ASTContext.TranslationUnits.GetGenerated().ToList();
-            foreach(TranslationUnit unit in units)
+            foreach (TranslationUnit unit in units)
             {
                 NodeJSTypeReferenceCollector typeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
                 typeReferenceCollector.Process(unit);
-
-                NodeJSTypeReference classToWrapTypeReference = typeReferenceCollector.TypeReferences
-                    .Where(item => item.Declaration is Class)
-                    .Where(item => unit.FileNameWithoutExtension.ToLower().Contains(NodeJSClassHelper.GenerateTrimmedClassName(item.Declaration.Name).ToLower()))
-                    .FirstOrDefault();
 
                 IEnumerable<NodeJSTypeReference> classToWrapTypeReferences = typeReferenceCollector.TypeReferences
                     .Where(item => item.Declaration is Class);
 
                 // Check if no class reference where found
-                if ((classToWrapTypeReference == null) && (classToWrapTypeReferences.Count() > 0))
+                if (classToWrapTypeReferences.Count() > 0)
                 {
                     foreach (NodeJSTypeReference currentReference in classToWrapTypeReferences)
                     {

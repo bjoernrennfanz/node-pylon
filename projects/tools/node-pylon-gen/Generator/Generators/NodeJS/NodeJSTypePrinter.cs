@@ -26,11 +26,15 @@ using CppSharp.Types;
 using System.Collections.Generic;
 using CppSharp;
 using NodePylonGen.Utils;
+using CppSharp.AST.Extensions;
+using System.Linq;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
     public class NodeJSTypePrinter : CppTypePrinter
     {
+        private static string[] stringStaticCastFilter = { "unsigned", "wchar_t" };
+
         public BindingContext Context { get; private set; }
 
         public DriverOptions Options => Context.Options;
@@ -78,7 +82,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
                 {
                     string parameterClassName = VisitParameter(parameter, false, false);
-                    string parameterClassWrapped =  NodeJSClassHelper.GenerateClassWrapName(parameterClassName);
+                    string parameterClassWrapped = NodeJSClassHelper.GenerateClassWrapName(parameterClassName);
 
                     // Generate unwrap of stored object
                     callee.PushBlock(BlockKind.MethodBody);
@@ -86,48 +90,80 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     callee.WriteLine("{0}* arg{1}_wrap = ObjectWrap::Unwrap<{0}>(info[{1}]->ToObject());", parameterClassWrapped, parameterArgumentIndex);
                     callee.WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, parameterArgumentIndex);
                     callee.PopBlock(NewLineKind.BeforeNextBlock);
-
-                    // Store arguments for later usage
-                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
-                    generatedArgumentsWrapped += parameter.Type is PointerType ? (generatedArgumentsWrapped += (parameter.Type as PointerType).IsReference ? "*" : string.Empty) : string.Empty;
-                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
                 }
                 else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
                 {
                     // Generate wrapper for number values
                     callee.PushBlock(BlockKind.MethodBody);
-                    callee.WriteLine("// Convert from number value");
-                    callee.WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", VisitParameter(parameter, false, false), parameterArgumentIndex);
-                    callee.PopBlock(NewLineKind.BeforeNextBlock);
 
-                    // Store arguments for later usage
-                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
-                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
+                    PointerType parameterPointerType = parameter.Type as PointerType;
+                    if (parameterPointerType != null && parameterPointerType.IsPointer())
+                    {
+                        callee.WriteLine("// Convert from number value to pointer");
+                        callee.WriteLine("{0} arg{1}_value = static_cast<{0}>(info[{1}]->NumberValue());", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                        callee.WriteLine("{0}* arg{1} = &arg{1}_value;", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    }
+                    else
+                    {
+                        callee.WriteLine("// Convert from number value");
+                        callee.WriteLine("{0} arg{1} = static_cast<{0}>(info[{1}]->NumberValue());", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    }
+
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
                 else if (nodeJSTypeCheckPrinter.ParameterIsBoolean(parameter))
                 {
                     // Generate wrapper for number values
                     callee.PushBlock(BlockKind.MethodBody);
-                    callee.WriteLine("// Convert from boolean value");
-                    callee.WriteLine("{0} arg{1} = info[{1}]->BooleanValue();", VisitParameter(parameter, false, false), parameterArgumentIndex);
-                    callee.PopBlock(NewLineKind.BeforeNextBlock);
 
-                    // Store arguments for later usage
-                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
-                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
+                    PointerType parameterPointerType = parameter.Type as PointerType;
+                    if (parameterPointerType != null && parameterPointerType.IsPointer())
+                    {
+                        callee.WriteLine("// Convert from boolean value to pointer");
+                        callee.WriteLine("{0} arg{1}_value = info[{1}]->BooleanValue();", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                        callee.WriteLine("{0}* arg{1} = &arg{1}_value;", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    }
+                    else
+                    {
+                        callee.WriteLine("// Convert from boolean value");
+                        callee.WriteLine("{0} arg{1} = info[{1}]->BooleanValue();", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    }
+
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
                 else if (nodeJSTypeCheckPrinter.ParameterIsString(parameter))
                 {
-                    // Generate wrapper for number values
+                    string parameterToWrap = string.Format("{0}{1}", VisitParameter(parameter, false, false), (parameter.Type is PointerType ? ((parameter.Type as PointerType).IsPointer() ? "*" : string.Empty) : string.Empty));
+                    string generatedStringWrapperLine = string.Format("{0} arg{1} = ", parameterToWrap, parameterArgumentIndex);
+                    // Generate wrapper for string values
                     callee.PushBlock(BlockKind.MethodBody);
                     callee.WriteLine("// Convert from string value");
-                    callee.WriteLine("{0} arg{1} = pylon_v8::ToGCString(info[{1}]->ToString());", VisitParameter(parameter, false, false), parameterArgumentIndex);
-                    callee.PopBlock(NewLineKind.BeforeNextBlock);
 
-                    // Store arguments for later usage
-                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
-                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
+                    // Check if cast is needed
+                    generatedStringWrapperLine += stringStaticCastFilter.Any(filter => parameterToWrap.Contains(filter)) ? string.Format("static_cast<{0}>(", parameterToWrap) : string.Empty;
+
+                    // Generate conversation
+                    generatedStringWrapperLine += string.Format("pylon_v8::ToGCString(info[{0}]->ToString())", parameterArgumentIndex);
+                    generatedStringWrapperLine += parameterToWrap.Contains("wchar_t") ? ".w_str()" : ".c_str()";
+                    generatedStringWrapperLine += parameterToWrap.Contains("*") ? "" : "[0]";
+
+                    // Add closing tag if cast was needed
+                    generatedStringWrapperLine += stringStaticCastFilter.Any(filter => parameterToWrap.Contains(filter)) ? ");" : ";";
+
+                    callee.WriteLine(generatedStringWrapperLine);
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
+                else if (nodeJSTypeCheckPrinter.ParameterIsTypedBuffer(parameter))
+                {
+                    callee.PushBlock(BlockKind.MethodBody);
+                    callee.WriteLine("// TODO: Implement wrapper for {0}", VisitParameter(parameter, false, false));
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
+                }
+
+                // Store arguments for later usage
+                generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
+                generatedArgumentsWrapped += parameter.Type is PointerType ? ((parameter.Type as PointerType).IsReference ? "*" : string.Empty) : string.Empty;
+                generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
 
                 // Increment argument index
                 parameterArgumentIndex++;

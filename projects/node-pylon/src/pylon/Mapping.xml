@@ -34,7 +34,9 @@
 	<include file="pylon/AcquireContinuousConfiguration.h" />
 	<include file="pylon/AcquireSingleFrameConfiguration.h" />
 	<include file="pylon/CameraEventHandler.h" />
+	<include file="pylon/ChunkParser.h" />
 	<include file="pylon/ConfigurationEventHandler.h" />
+	<include file="pylon/Container.h" />
 	<include file="pylon/Device.h" alias="PylonDevice"/>
 	<include file="pylon/DeviceAccessMode.h" />
 	<include file="pylon/DeviceFactory.h" />

@@ -28,6 +28,13 @@ namespace NodePylonGen.Utils
     public static class NodeJSClassHelper
     {
         /// <summary>
+        /// Class Names from GeniCam that needs special handling
+        /// </summary>
+        private static string[] genicamSpecialClassFilter = { "ibase", "iboolean", "icategory", "ichunkport", "ivalue", "icommand",
+            "ideviceinfo", "ienumentry", "ienumeration", "ifloat", "iinteger", "inode", "inodemap", "iport", "iportconstruct",
+            "iportrecorder", "iregister", "iselector", "iselectordigit", "istring", "ivalue" };
+
+        /// <summary>
         /// Convert given class name to name used for parameters
         /// </summary>
         public static string ConvertToParameterName(string name)
@@ -48,21 +55,29 @@ namespace NodePylonGen.Utils
             string trimmedClassName = className;
             if (className.Substring(0, 2).Contains("CC") || className.Substring(0, 2).Contains("II") || className.Substring(0, 2).Contains("IC"))
             {
-                trimmedClassName = className.Substring(1);
+                trimmedClassName = trimmedClassName.Substring(1);
             }
             else
             {
                 // Trim only when 2 characters at the begin are uppercase
                 if (trimmedClassName.Substring(0, 2).All(c => char.IsUpper(c)))
                 {
-                    trimmedClassName = className.TrimStart('I').TrimStart('C');
+                    trimmedClassName = trimmedClassName.TrimStart('I').TrimStart('C');
                 }
-            }
+                else
+                {
+                    // Filter special GeniCam class namings
+                    if (genicamSpecialClassFilter.Any(filter => filter.Equals(className)))
+                    {
+                        trimmedClassName = trimmedClassName.Substring(1, 1).ToUpper() + className.Substring(2);
+                    }
 
-            // Convert GeniCam names
-            if (trimmedClassName.StartsWith("gc"))
-            {
-                trimmedClassName = trimmedClassName.Substring(0, 3).ToUpper() + trimmedClassName.Substring(3);
+                    // Convert GeniCam names
+                    if (trimmedClassName.StartsWith("gc"))
+                    {
+                        trimmedClassName = trimmedClassName.Substring(0, 3).ToUpper() + trimmedClassName.Substring(3);
+                    }
+                }
             }
 
             // Check if trimmed name contains template parameter
@@ -72,23 +87,42 @@ namespace NodePylonGen.Utils
                 trimmedClassName = trimmedClassName.Substring(0, trimmedClassName.IndexOf("<"));
             }
 
+            // Remove type indicators
+            if (trimmedClassName.EndsWith("_t"))
+            {
+                trimmedClassName = trimmedClassName.Replace("_t", "");
+            }
+
             // Convert underscores and uppercase followed character
             if (trimmedClassName.Contains("_"))
             {
                 string searchPattern = @"_";
-                foreach (Match match in Regex.Matches(trimmedClassName, searchPattern))
-                {
-                    // Check if found index is not at the end
-                    if ((match.Index + 2) < trimmedClassName.Count())
-                    {
-                        // Split string
-                        string front = trimmedClassName.Substring(0, match.Index);
-                        string upper = trimmedClassName.Substring(match.Index + 1, 1).ToUpper();
-                        string back = trimmedClassName.Substring(match.Index + 2);
+                MatchCollection matches = Regex.Matches(trimmedClassName, searchPattern);
 
-                        // Assemble string again
-                        trimmedClassName = front + upper + back;
+                // Check if we have matches
+                if (matches.Count > 0)
+                {
+                    do
+                    {
+                        // Get first entry
+                        Match match = matches[0];
+
+                        // Check if found index is not at the end
+                        if ((match.Index + 2) < trimmedClassName.Count())
+                        {
+                            // Split string
+                            string beforeMatch = trimmedClassName.Substring(0, match.Index);
+                            string upperPart = trimmedClassName.Substring(match.Index + 1, 1).ToUpper();
+                            string lowerPart = trimmedClassName.Substring(match.Index + 2).ToLower();
+
+                            // Assemble string again
+                            trimmedClassName = beforeMatch + upperPart + lowerPart;
+
+                            // Refresh matches
+                            matches = Regex.Matches(trimmedClassName, searchPattern);
+                        }
                     }
+                    while (matches.Count > 0);
                 }
             }
 

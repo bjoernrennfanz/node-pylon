@@ -28,11 +28,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static CppSharp.AST.ArrayType;
+using BindingContext = NodePylonGen.Generators.BindingContext;
 
 namespace NodePylonGen.Generator.Model
 {
     public class ASTConverter : CppIncludeVisitor
     {
+        private BindingContext bindingContext;
         private ASTContext currentASTContext;
         private ConfigMapping configurationContext;
 
@@ -40,9 +42,10 @@ namespace NodePylonGen.Generator.Model
 
         private readonly Dictionary<CppElement, Declaration> cppElementToDeclarationMapping;
 
-        public ASTConverter(ConfigMapping configurationContext, CppModule moduleContext)
+        public ASTConverter(BindingContext bindingContext, ConfigMapping configurationContext, CppModule moduleContext)
         {
             this.configurationContext = configurationContext;
+            this.bindingContext = bindingContext;
             this.moduleContext = moduleContext;
 
             cppElementToDeclarationMapping = new Dictionary<CppElement, Declaration>();
@@ -279,17 +282,42 @@ namespace NodePylonGen.Generator.Model
 
         public override bool VisitCppStruct(CppStruct cppStruct)
         {
-            
+            Declaration unitDecl;
+            cppElementToDeclarationMapping.TryGetValue(cppStruct.ParentInclude, out unitDecl);
+            TranslationUnit unit = unitDecl != null ? unitDecl as TranslationUnit : FindDeclParent<TranslationUnit>(cppStruct.ParentInclude);
+
+            Namespace @namespace = null;
+            Class @structAsClass = null;
+
+            // Check if we have an namespace
+            if (!string.IsNullOrEmpty(cppStruct.Namespace))
+            {
+                @namespace = unit.FindCreateNamespace(cppStruct.Namespace.TrimStart(':'));
+                @structAsClass = @namespace.FindClass(cppStruct.Name, true, true);
+            }
+            else
+            {
+                @structAsClass = unit.FindClass(cppStruct.Name, true, true);
+            }
+
+            @structAsClass.Type = ClassType.ValueType;
+
+            cppElementToDeclarationMapping.Add(cppStruct, @structAsClass);
             return base.VisitCppStruct(cppStruct);
         }
 
         public override bool VisitCppEnum(CppEnum cppEnum)
         {
+            Enumeration @enum = new Enumeration();
+
             return base.VisitCppEnum(cppEnum);
         }
 
         public override bool VisitCppConstant(CppConstant cppConstant)
         {
+
+
+
             return base.VisitCppConstant(cppConstant);
         }
 
