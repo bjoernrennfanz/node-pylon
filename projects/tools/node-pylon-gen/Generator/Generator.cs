@@ -25,7 +25,7 @@ using NodePylonGen.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Reflection;
 using CodeGenerator = NodePylonGen.Generator.Generators.CodeGenerator;
 
 namespace NodePylonGen.Generator
@@ -108,6 +108,16 @@ namespace NodePylonGen.Generator
                     TranslationUnit missingUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == module);
                     units.Add(missingUnit);
                 }
+
+                // Module and fix path
+                TranslationUnit moduleUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == module);
+
+                // Update private fields with reflection
+                FieldInfo fileRelativeDirectoryFieldInfo = moduleUnit.GetType().GetField("fileRelativeDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
+                fileRelativeDirectoryFieldInfo.SetValue(moduleUnit, string.Empty);
+
+                FieldInfo fileRelativePathFieldInfo = moduleUnit.GetType().GetField("fileRelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
+                fileRelativePathFieldInfo.SetValue(moduleUnit, moduleUnit.FileName);
             }
 
             if (Context.Options.IsJavaGenerator)

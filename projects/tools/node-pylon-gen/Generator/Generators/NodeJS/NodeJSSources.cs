@@ -401,17 +401,16 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             }
 
             // Generate nested class initialize
-            IEnumerable<IncludeMapping> nestedIncludes = GetNestedIncludes(classNameWrap);
+            IEnumerable<string> nestedIncludes = GetNestedIncludes(classNameWrap);
             if (nestedIncludes.Count() > 0)
             {
                 PushBlock(BlockKind.MethodBody);
                 WriteLine("// Initialize dynamic classes");
 
-                foreach (IncludeMapping include in nestedIncludes)
+                foreach (string include in nestedIncludes)
                 {
                     string includeClassNameWrap = string.Empty;
-                    string includeId = string.IsNullOrEmpty(include.Alias) ? include.Id : include.Alias.ToLower();
-                    TranslationUnit includeUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == includeId);
+                    TranslationUnit includeUnit = Context.ASTContext.TranslationUnits.Find(unit => unit.FileNameWithoutExtension == include);
 
                     NodeJSTypeReferenceCollector includeReferenceCollector = new NodeJSTypeReferenceCollector(Context.ConfigurationContext, Context.TypeMaps, Context.Options);
                     includeReferenceCollector.Process(includeUnit);
@@ -471,36 +470,51 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             }
 
             // Generate nested class initialize
-            IEnumerable<IncludeMapping> nestedIncludes = GetNestedIncludes(classNameWrap);
+            IEnumerable<string> nestedIncludes = GetNestedIncludes(classNameWrap);
             if (nestedIncludes.Count() > 0)
             {
-                foreach (IncludeMapping include in nestedIncludes)
+                foreach (string include in nestedIncludes)
                 {
-                    string includeId = string.IsNullOrEmpty(include.Alias) ? include.Id : include.Alias.ToLower();
-                    WriteLine("#include \"{0}/{1}.h\"", TranslationUnit.FileNameWithoutExtension.ToLower(), includeId);
+                    //string includeId = string.IsNullOrEmpty(include.Alias) ? include.Id : include.Alias.ToLower();
+                    WriteLine("#include \"{0}/{1}.h\"", TranslationUnit.FileNameWithoutExtension.ToLower(), include);
                 }
             }
         }
 
-        private IEnumerable<IncludeMapping> GetNestedIncludes(string classNameWrap)
+        private IEnumerable<string> GetNestedIncludes(string classNameWrap)
         {
             IEnumerable<ConfigMapping> configFilesLoaded = Context.ConfigurationContext.ConfigFilesLoaded;
             foreach (ConfigMapping configFileLoad in configFilesLoaded)
             {
-                string configFileLoadedWrappedName = (configFileLoad.Module != null ? NodeJSClassHelper.GenerateTrimmedClassName(configFileLoad.Module) : string.Empty);
-                if (!(string.IsNullOrEmpty(configFileLoadedWrappedName)))
+                string configFileLoadedName = (configFileLoad.Module != null ? NodeJSClassHelper.GenerateTrimmedClassName(configFileLoad.Module) : string.Empty);
+                if (!(string.IsNullOrEmpty(configFileLoadedName)))
                 {
                     TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                    configFileLoadedWrappedName = textInfo.ToTitleCase(configFileLoadedWrappedName) + "Wrap";
+                    string configFileLoadedWrappedName = textInfo.ToTitleCase(configFileLoadedName) + "Wrap";
                     if (configFileLoadedWrappedName == classNameWrap)
                     {
-                        return configFileLoad.Includes;
+                        // Workaround for GeniCam files
+                        if (configFileLoadedName.ToLower().Contains("genicam"))
+                        {
+                            // Search all GeniCam related files and remove doubles
+                            return Context.ASTContext.TranslationUnits.GetGenerated()
+                                .Where(unit => !unit.FileRelativeDirectory.ToLower().Contains("pylon"))
+                                .Where(unit => !string.IsNullOrEmpty(unit.FileRelativeDirectory))
+                                .Select(unit => unit.FileNameWithoutExtension).Distinct().ToList();
+                        }
+                        else
+                        {
+                            // Search all pylon related files and remove doubles
+                            return Context.ASTContext.TranslationUnits.GetGenerated()
+                                .Where(unit => unit.FileRelativeDirectory.ToLower().Contains(configFileLoadedName.ToLower()))
+                                .Select(unit => unit.FileNameWithoutExtension).Distinct().ToList();
+                        }
                     }
                 }
             }
 
             // Return empty list
-            return new List<IncludeMapping>();
+            return new List<string>();
         }
     }
 }

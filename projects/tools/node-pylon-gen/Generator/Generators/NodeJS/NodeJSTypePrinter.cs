@@ -106,11 +106,27 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 }
                 else if (nodeJSTypeCheckPrinter.ParameterIsBoolean(parameter))
                 {
+                    // Generate wrapper for number values
+                    callee.PushBlock(BlockKind.MethodBody);
+                    callee.WriteLine("// Convert from boolean value");
+                    callee.WriteLine("{0} arg{1} = info[{1}]->BooleanValue();", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
 
+                    // Store arguments for later usage
+                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
+                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
                 }
                 else if (nodeJSTypeCheckPrinter.ParameterIsString(parameter))
                 {
+                    // Generate wrapper for number values
+                    callee.PushBlock(BlockKind.MethodBody);
+                    callee.WriteLine("// Convert from string value");
+                    callee.WriteLine("{0} arg{1} = pylon_v8::ToGCString(info[{1}]->ToString());", VisitParameter(parameter, false, false), parameterArgumentIndex);
+                    callee.PopBlock(NewLineKind.BeforeNextBlock);
 
+                    // Store arguments for later usage
+                    generatedArgumentsWrapped += parameterArgumentIndex > 0 ? ", " : string.Empty;
+                    generatedArgumentsWrapped += "arg" + parameterArgumentIndex;
                 }
 
                 // Increment argument index
