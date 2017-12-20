@@ -95,20 +95,29 @@ NAN_METHOD(DeviceFactoryWrap::CreateDevice)
         CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstring_vectorWrap* arg1_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[1]->ToObject());
+        GCStringVectorWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringVectorWrap>(info[1]->ToObject());
         gcstring_vector* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->CreateDevice(*arg0, *arg1);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->CreateDevice(*arg0);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")))
     {
         // Unwrap object
         DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
         CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->CreateDevice(*arg0);
     }
 }
 
@@ -124,14 +133,20 @@ NAN_METHOD(DeviceFactoryWrap::CreateFirstDevice)
         CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstring_vectorWrap* arg1_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[1]->ToObject());
+        GCStringVectorWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringVectorWrap>(info[1]->ToObject());
         gcstring_vector* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->CreateFirstDevice(*arg0, *arg1);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")))
     {
         // Unwrap object
         DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
         CDeviceInfo* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->CreateFirstDevice(*arg0);
     }
 }
 
@@ -145,6 +160,9 @@ NAN_METHOD(DeviceFactoryWrap::DestroyDevice)
         // Unwrap object
         PylonDeviceWrap* arg0_wrap = ObjectWrap::Unwrap<PylonDeviceWrap>(info[0]->ToObject());
         IPylonDevice* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceFactory->DestroyDevice(arg0);
     }
 }
 
@@ -162,12 +180,24 @@ NAN_METHOD(DeviceFactoryWrap::EnumerateDevices)
         // Unwrap object
         DeviceInfoListWrap* arg1_wrap = ObjectWrap::Unwrap<DeviceInfoListWrap>(info[1]->ToObject());
         DeviceInfoList* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg2 = info[2]->BooleanValue();
+
+        // Call wrapped method
+        deviceFactory->EnumerateDevices(*arg0, *arg1, arg2);
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && info[1]->IsBoolean())
     {
         // Unwrap object
         DeviceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoListWrap>(info[0]->ToObject());
         DeviceInfoList* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        deviceFactory->EnumerateDevices(*arg0, arg1);
     }
 }
 
@@ -176,7 +206,7 @@ NAN_METHOD(DeviceFactoryWrap::IsDeviceAccessible)
     DeviceFactoryWrap* wrappedDeviceFactory = ObjectWrap::Unwrap<DeviceFactoryWrap>(info.This());
     IDeviceFactory* deviceFactory = wrappedDeviceFactory->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "AccessModeSet")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "EDeviceAccessiblityInfo")))
+    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CDeviceInfo")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "AccessModeSet")) && info[2]->IsNumber())
     {
         // Unwrap object
         DeviceInfoWrap* arg0_wrap = ObjectWrap::Unwrap<DeviceInfoWrap>(info[0]->ToObject());
@@ -186,8 +216,11 @@ NAN_METHOD(DeviceFactoryWrap::IsDeviceAccessible)
         AccessModeSetWrap* arg1_wrap = ObjectWrap::Unwrap<AccessModeSetWrap>(info[1]->ToObject());
         AccessModeSet* arg1 = arg1_wrap->GetWrapped();
 
-        // Unwrap object
-        EDeviceAccessiblityInfoWrap* arg2_wrap = ObjectWrap::Unwrap<EDeviceAccessiblityInfoWrap>(info[2]->ToObject());
-        EDeviceAccessiblityInfo* arg2 = arg2_wrap->GetWrapped();
+        // Convert from number value to pointer
+        EDeviceAccessiblityInfo arg2_value = static_cast<EDeviceAccessiblityInfo>(info[2]->NumberValue());
+        EDeviceAccessiblityInfo* arg2 = &arg2_value;
+
+        // Call wrapped method
+        deviceFactory->IsDeviceAccessible(*arg0, arg1, arg2);
     }
 }

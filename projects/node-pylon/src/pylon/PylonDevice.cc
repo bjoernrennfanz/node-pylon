@@ -98,6 +98,8 @@ NAN_METHOD(PylonDeviceWrap::CreateChunkParser)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->CreateChunkParser();
     }
 }
 
@@ -108,6 +110,8 @@ NAN_METHOD(PylonDeviceWrap::CreateEventAdapter)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->CreateEventAdapter();
     }
 }
 
@@ -118,6 +122,8 @@ NAN_METHOD(PylonDeviceWrap::CreateSelfReliantChunkParser)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->CreateSelfReliantChunkParser();
     }
 }
 
@@ -126,11 +132,12 @@ NAN_METHOD(PylonDeviceWrap::DeregisterRemovalCallback)
     PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
     IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")))
+    if ((info.Length() == 1) && info[0]->IsObject())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
+
+        // Call wrapped method
+        pylonDevice->DeregisterRemovalCallback(arg0);
     }
 }
 
@@ -144,6 +151,9 @@ NAN_METHOD(PylonDeviceWrap::DestroyChunkParser)
         // Unwrap object
         ChunkParserWrap* arg0_wrap = ObjectWrap::Unwrap<ChunkParserWrap>(info[0]->ToObject());
         IChunkParser* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonDevice->DestroyChunkParser(arg0);
     }
 }
 
@@ -157,6 +167,9 @@ NAN_METHOD(PylonDeviceWrap::DestroyEventAdapter)
         // Unwrap object
         EventAdapterWrap* arg0_wrap = ObjectWrap::Unwrap<EventAdapterWrap>(info[0]->ToObject());
         IEventAdapter* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonDevice->DestroyEventAdapter(arg0);
     }
 }
 
@@ -170,6 +183,9 @@ NAN_METHOD(PylonDeviceWrap::DestroySelfReliantChunkParser)
         // Unwrap object
         SelfReliantChunkParserWrap* arg0_wrap = ObjectWrap::Unwrap<SelfReliantChunkParserWrap>(info[0]->ToObject());
         ISelfReliantChunkParser* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonDevice->DestroySelfReliantChunkParser(arg0);
     }
 }
 
@@ -180,6 +196,8 @@ NAN_METHOD(PylonDeviceWrap::GetEventGrabber)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->GetEventGrabber();
     }
 }
 
@@ -190,6 +208,8 @@ NAN_METHOD(PylonDeviceWrap::GetNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->GetNodeMap();
     }
 }
 
@@ -200,6 +220,8 @@ NAN_METHOD(PylonDeviceWrap::GetNumStreamGrabberChannels)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->GetNumStreamGrabberChannels();
     }
 }
 
@@ -212,6 +234,9 @@ NAN_METHOD(PylonDeviceWrap::GetStreamGrabber)
     {
         // Convert from number value
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonDevice->GetStreamGrabber(arg0);
     }
 }
 
@@ -222,6 +247,8 @@ NAN_METHOD(PylonDeviceWrap::GetTLNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonDevice->GetTLNodeMap();
     }
 }
 
@@ -230,10 +257,11 @@ NAN_METHOD(PylonDeviceWrap::RegisterRemovalCallback)
     PylonDeviceWrap* wrappedPylonDevice = ObjectWrap::Unwrap<PylonDeviceWrap>(info.This());
     IPylonDevice* pylonDevice = wrappedPylonDevice->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Callback1<Pylon::IPylonDevice *>")))
+    if ((info.Length() == 1) && info[0]->IsObject())
     {
-        // Unwrap object
-        allback1Wrap* arg0_wrap = ObjectWrap::Unwrap<allback1Wrap>(info[0]->ToObject());
-        Callback1<Pylon::IPylonDevice *>* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for Callback1<Pylon::IPylonDevice *>
+
+        // Call wrapped method
+        pylonDevice->RegisterRemovalCallback(*arg0);
     }
 }

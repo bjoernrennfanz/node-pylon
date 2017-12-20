@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <GenApi/IValue.h>
+#include "../Base/gcstring.h"
 #include "iboolean.h"
 #include "ifloat.h"
 #include "iinteger.h"
@@ -38,6 +39,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 class ValueWrap : public node::ObjectWrap
 {

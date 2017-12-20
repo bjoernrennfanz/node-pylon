@@ -87,14 +87,22 @@ NAN_METHOD(RegisterWrap::Get)
     RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
     IRegister* register = wrappedRegister->GetWrapped();
 
-    if ((info.Length() == 4) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsBoolean() && info[3]->IsBoolean())
+    if ((info.Length() == 4) && info[0]->IsString() && info[1]->IsNumber() && info[2]->IsBoolean() && info[3]->IsBoolean())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from boolean value
+        bool arg2 = info[2]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg3 = info[3]->BooleanValue();
+
+        // Call wrapped method
+        register->Get(arg0, arg1, arg2, arg3);
     }
 }
 
@@ -105,6 +113,8 @@ NAN_METHOD(RegisterWrap::GetAddress)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        register->GetAddress();
     }
 }
 
@@ -115,6 +125,8 @@ NAN_METHOD(RegisterWrap::GetLength)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        register->GetLength();
     }
 }
 
@@ -123,13 +135,18 @@ NAN_METHOD(RegisterWrap::Set)
     RegisterWrap* wrappedRegister = ObjectWrap::Unwrap<RegisterWrap>(info.This());
     IRegister* register = wrappedRegister->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && info[2]->IsBoolean())
+    if ((info.Length() == 3) && info[0]->IsString() && info[1]->IsNumber() && info[2]->IsBoolean())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Convert from boolean value
+        bool arg2 = info[2]->BooleanValue();
+
+        // Call wrapped method
+        register->Set(arg0, arg1, arg2);
     }
 }

@@ -108,6 +108,8 @@ NAN_METHOD(DeviceInfoWrap::GetDeviceFactory)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetDeviceFactory();
     }
 }
 
@@ -118,6 +120,8 @@ NAN_METHOD(DeviceInfoWrap::GetDeviceVersion)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetDeviceVersion();
     }
 }
 
@@ -128,6 +132,8 @@ NAN_METHOD(DeviceInfoWrap::GetModelName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetModelName();
     }
 }
 
@@ -138,6 +144,8 @@ NAN_METHOD(DeviceInfoWrap::GetSerialNumber)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetSerialNumber();
     }
 }
 
@@ -148,6 +156,8 @@ NAN_METHOD(DeviceInfoWrap::GetUserDefinedName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetUserDefinedName();
     }
 }
 
@@ -158,6 +168,8 @@ NAN_METHOD(DeviceInfoWrap::GetXMLSource)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetXMLSource();
     }
 }
 
@@ -168,6 +180,8 @@ NAN_METHOD(DeviceInfoWrap::IsDeviceFactoryAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsDeviceFactoryAvailable();
     }
 }
 
@@ -178,6 +192,8 @@ NAN_METHOD(DeviceInfoWrap::IsDeviceVersionAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsDeviceVersionAvailable();
     }
 }
 
@@ -188,6 +204,8 @@ NAN_METHOD(DeviceInfoWrap::IsModelNameAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsModelNameAvailable();
     }
 }
 
@@ -198,6 +216,8 @@ NAN_METHOD(DeviceInfoWrap::IsSerialNumberAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsSerialNumberAvailable();
     }
 }
 
@@ -208,6 +228,8 @@ NAN_METHOD(DeviceInfoWrap::IsUserDefinedNameAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsUserDefinedNameAvailable();
     }
 }
 
@@ -218,6 +240,8 @@ NAN_METHOD(DeviceInfoWrap::IsXMLSourceAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->IsXMLSourceAvailable();
     }
 }
 
@@ -229,8 +253,11 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceClass)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetDeviceClass(*arg0);
     }
 }
 
@@ -242,8 +269,11 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceFactory)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetDeviceFactory(*arg0);
     }
 }
 
@@ -255,8 +285,11 @@ NAN_METHOD(DeviceInfoWrap::SetDeviceVersion)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetDeviceVersion(*arg0);
     }
 }
 
@@ -268,8 +301,11 @@ NAN_METHOD(DeviceInfoWrap::SetFriendlyName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetFriendlyName(*arg0);
     }
 }
 
@@ -281,8 +317,11 @@ NAN_METHOD(DeviceInfoWrap::SetFullName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetFullName(*arg0);
     }
 }
 
@@ -294,8 +333,11 @@ NAN_METHOD(DeviceInfoWrap::SetModelName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetModelName(*arg0);
     }
 }
 
@@ -307,12 +349,15 @@ NAN_METHOD(DeviceInfoWrap::SetPropertyValue)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetPropertyValue(*arg0, *arg1);
     }
 }
 
@@ -324,8 +369,11 @@ NAN_METHOD(DeviceInfoWrap::SetSerialNumber)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetSerialNumber(*arg0);
     }
 }
 
@@ -337,8 +385,11 @@ NAN_METHOD(DeviceInfoWrap::SetUserDefinedName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetUserDefinedName(*arg0);
     }
 }
 
@@ -350,8 +401,11 @@ NAN_METHOD(DeviceInfoWrap::SetVendorName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetVendorName(*arg0);
     }
 }
 
@@ -363,7 +417,10 @@ NAN_METHOD(DeviceInfoWrap::SetXMLSource)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->SetXMLSource(*arg0);
     }
 }

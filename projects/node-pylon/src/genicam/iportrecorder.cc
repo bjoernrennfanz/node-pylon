@@ -90,6 +90,9 @@ NAN_METHOD(PortRecorderWrap::StartRecording)
         // Unwrap object
         PortWriteListWrap* arg0_wrap = ObjectWrap::Unwrap<PortWriteListWrap>(info[0]->ToObject());
         IPortWriteList* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        portRecorder->StartRecording(arg0);
     }
 }
 
@@ -100,5 +103,7 @@ NAN_METHOD(PortRecorderWrap::StopRecording)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        portRecorder->StopRecording();
     }
 }

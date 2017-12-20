@@ -89,8 +89,11 @@ NAN_METHOD(SelectorWrap::GetSelectedFeatures)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
     {
         // Unwrap object
-        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        ValueVectorWrap* arg0_wrap = ObjectWrap::Unwrap<ValueVectorWrap>(info[0]->ToObject());
         value_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        selector->GetSelectedFeatures(*arg0);
     }
 }
 
@@ -102,8 +105,11 @@ NAN_METHOD(SelectorWrap::GetSelectingFeatures)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
     {
         // Unwrap object
-        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        ValueVectorWrap* arg0_wrap = ObjectWrap::Unwrap<ValueVectorWrap>(info[0]->ToObject());
         value_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        selector->GetSelectingFeatures(*arg0);
     }
 }
 
@@ -114,5 +120,7 @@ NAN_METHOD(SelectorWrap::IsSelector)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selector->IsSelector();
     }
 }

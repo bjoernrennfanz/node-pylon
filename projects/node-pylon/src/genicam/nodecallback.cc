@@ -97,6 +97,8 @@ NAN_METHOD(NodeCallbackWrap::Destroy)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeCallback->Destroy();
     }
 }
 
@@ -107,9 +109,19 @@ NAN_METHOD(NodeCallbackWrap::GetNode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeCallback->GetNode();
     }
 }
 
 NAN_METHOD(NodeCallbackWrap::Deregister)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        int arg0 = static_cast<int>(info[0]->NumberValue());
+
+        // Call wrapped function
+        Deregister(arg0);
+    }
 }

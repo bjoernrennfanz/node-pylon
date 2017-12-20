@@ -35,28 +35,28 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-class BooleanRefTWrap : public node::ObjectWrap
+class BooleanWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
     static Nan::Persistent<v8::FunctionTemplate> prototype;
 
-    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* GetWrapped() const
+    IBoolean* GetWrapped() const
     {
-        return m_BooleanRefT;
+        return m_Boolean;
     };
 
-    void SetWrapped(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT)
+    void SetWrapped(IBoolean* boolean)
     {
-        m_BooleanRefT = booleanRefT;
+        m_Boolean = boolean;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT);
+    static v8::Handle<v8::Value> NewInstance(IBoolean* boolean);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    BooleanRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~BooleanRefTWrap();
+    BooleanWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~BooleanWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -64,5 +64,5 @@ private:
     static NAN_METHOD(GetValue);
 
     // Wrapped object
-    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* m_BooleanRefT;
+    IBoolean* m_Boolean;
 };

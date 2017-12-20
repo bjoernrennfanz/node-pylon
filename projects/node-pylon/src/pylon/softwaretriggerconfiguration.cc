@@ -90,6 +90,9 @@ NAN_METHOD(SoftwareTriggerConfigurationWrap::ApplyConfiguration)
         // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        softwareTriggerConfiguration->ApplyConfiguration(*arg0);
     }
 }
 
@@ -103,5 +106,8 @@ NAN_METHOD(SoftwareTriggerConfigurationWrap::OnOpened)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        softwareTriggerConfiguration->OnOpened(*arg0);
     }
 }

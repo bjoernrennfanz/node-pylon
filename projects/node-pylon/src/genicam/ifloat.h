@@ -31,33 +31,35 @@
 #include <nan.h>
 
 #include <GenApi/IFloat.h>
+#include "../Base/gcstring.h"
 #include "ienumeration.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-class FloatRefTWrap : public node::ObjectWrap
+class FloatWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
     static Nan::Persistent<v8::FunctionTemplate> prototype;
 
-    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* GetWrapped() const
+    IFloat* GetWrapped() const
     {
-        return m_FloatRefT;
+        return m_Float;
     };
 
-    void SetWrapped(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT)
+    void SetWrapped(IFloat* float)
     {
-        m_FloatRefT = floatRefT;
+        m_Float = float;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* floatRefT);
+    static v8::Handle<v8::Value> NewInstance(IFloat* float);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    FloatRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~FloatRefTWrap();
+    FloatWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~FloatWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -73,11 +75,9 @@ private:
     static NAN_METHOD(GetUnit);
     static NAN_METHOD(GetDisplayNotation);
     static NAN_METHOD(GetDisplayPrecision);
-    static NAN_METHOD(GetIntAlias);
-    static NAN_METHOD(GetEnumAlias);
     static NAN_METHOD(ImposeMin);
     static NAN_METHOD(ImposeMax);
 
     // Wrapped object
-    CFloatRefT<GenApi_3_0_Basler_pylon_v5_0::IFloat>* m_FloatRefT;
+    IFloat* m_Float;
 };

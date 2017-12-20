@@ -31,9 +31,11 @@
 #include <nan.h>
 
 #include <GenApi/EnumClasses.h>
+#include "../Base/gcstring.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 class EnumclassesWrap : public node::ObjectWrap
 {

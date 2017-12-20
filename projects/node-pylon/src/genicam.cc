@@ -28,13 +28,16 @@
 #include "genicam.h"
 #include "pylon_v8.h"
 
+#include "genicam/gctypes.h"
+#include "genicam/gcstring.h"
+#include "genicam/gcstringvector.h"
 #include "genicam/gcexception.h"
+#include "genicam/gcutilities.h"
 #include "genicam/chunkadapter.h"
 #include "genicam/chunkadaptergeneric.h"
 #include "genicam/chunkadaptergev.h"
 #include "genicam/chunkadapteru3v.h"
 #include "genicam/chunkport.h"
-#include "genicam/container.h"
 #include "genicam/enumclasses.h"
 #include "genicam/eventadapter.h"
 #include "genicam/eventadaptergeneric.h"
@@ -67,20 +70,76 @@
 #include "genicam/portimpl.h"
 #include "genicam/reference.h"
 #include "genicam/selectorset.h"
-#include "genicam/types.h"
+#include "genicam/accessexception.h"
+#include "genicam/attachstatistics.h"
+#include "genicam/badallocexception.h"
+#include "genicam/basereft.h"
+#include "genicam/booleanreft.h"
+#include "genicam/floatreft.h"
+#include "genicam/genericxmlloaderparams.h"
+#include "genicam/integerreft.h"
+#include "genicam/nodemapreft.h"
+#include "genicam/referencet.h"
+#include "genicam/valuereft.h"
+#include "genicam/dynamiccastexception.h"
+#include "genicam/eaccessmodeclass.h"
+#include "genicam/ecachingmodeclass.h"
+#include "genicam/edisplaynotationclass.h"
+#include "genicam/eendianessclass.h"
+#include "genicam/egenapischemaversionclass.h"
+#include "genicam/einputdirectionclass.h"
+#include "genicam/enamespaceclass.h"
+#include "genicam/erepresentationclass.h"
+#include "genicam/esignclass.h"
+#include "genicam/eslopeclass.h"
+#include "genicam/estandardnamespaceclass.h"
+#include "genicam/evisibilityclass.h"
+#include "genicam/exceptionreporter.h"
+#include "genicam/eyesnoclass.h"
+#include "genicam/fileprotocoladapter.h"
+#include "genicam/gcwchar.h"
+#include "genicam/genericexception.h"
+#include "genicam/gvcpchunktrailer.h"
+#include "genicam/gvcpeventitem.h"
+#include "genicam/gvcpeventitembasic.h"
+#include "genicam/gvcpeventitemextendedid.h"
+#include "genicam/gvcpeventrequest.h"
+#include "genicam/gvcpeventrequestextendedid.h"
+#include "genicam/gvcpeventdatarequest.h"
+#include "genicam/gvcpeventdatarequestextendedid.h"
+#include "genicam/gvcprequestheader.h"
+#include "genicam/enumreference.h"
+#include "genicam/invalidargumentexception.h"
+#include "genicam/portreplay.h"
+#include "genicam/portwritelist.h"
+#include "genicam/logicalerrorexception.h"
+#include "genicam/outofrangeexception.h"
+#include "genicam/propertyexception.h"
+#include "genicam/runtimeexception.h"
+#include "genicam/singlechunkdata.h"
+#include "genicam/singlechunkdatastr.h"
+#include "genicam/timeoutexception.h"
+#include "genicam/u3vchunktrailer.h"
+#include "genicam/u3vcommandheader.h"
+#include "genicam/u3veventdata.h"
+#include "genicam/u3veventmessage.h"
+#include "genicam/version.h"
 
 using namespace v8;
 
 NAN_MODULE_INIT(GenicamWrap::Initialize)
 {
     // Initialize dynamic classes
+    GctypesWrap::Initialize(target);
+    GCStringWrap::Initialize(target);
+    GCStringVectorWrap::Initialize(target);
     GcexceptionWrap::Initialize(target);
+    GcutilitiesWrap::Initialize(target);
     ChunkAdapterWrap::Initialize(target);
     ChunkAdapterGenericWrap::Initialize(target);
     ChunkAdapterGEVWrap::Initialize(target);
     ChunkAdapterU3VWrap::Initialize(target);
     ChunkPortWrap::Initialize(target);
-    ContainerWrap::Initialize(target);
     EnumclassesWrap::Initialize(target);
     EventAdapterWrap::Initialize(target);
     EventAdapterGenericWrap::Initialize(target);
@@ -89,15 +148,15 @@ NAN_MODULE_INIT(GenicamWrap::Initialize)
     EventPortWrap::Initialize(target);
     FilestreamWrap::Initialize(target);
     BaseWrap::Initialize(target);
-    BooleanRefTWrap::Initialize(target);
+    BooleanWrap::Initialize(target);
     CategoryWrap::Initialize(target);
     ChunkPortWrap::Initialize(target);
     CommandWrap::Initialize(target);
     DeviceInfoWrap::Initialize(target);
     EnumEntryWrap::Initialize(target);
     EnumerationWrap::Initialize(target);
-    FloatRefTWrap::Initialize(target);
-    IntegerRefTWrap::Initialize(target);
+    FloatWrap::Initialize(target);
+    IntegerWrap::Initialize(target);
     NodeWrap::Initialize(target);
     NodeMapWrap::Initialize(target);
     PortWrap::Initialize(target);
@@ -109,11 +168,64 @@ NAN_MODULE_INIT(GenicamWrap::Initialize)
     StringWrap::Initialize(target);
     ValueWrap::Initialize(target);
     NodeCallbackWrap::Initialize(target);
-    NodeMapRefTWrap::Initialize(target);
+    NodeMapRefWrap::Initialize(target);
     PortImplWrap::Initialize(target);
-    ReferenceTWrap::Initialize(target);
+    ReferenceWrap::Initialize(target);
     SelectorSetWrap::Initialize(target);
-    TypesWrap::Initialize(target);
+    AccessExceptionWrap::Initialize(target);
+    AttachStatisticsWrap::Initialize(target);
+    BadAllocExceptionWrap::Initialize(target);
+    BaseRefTWrap::Initialize(target);
+    BooleanRefTWrap::Initialize(target);
+    FloatRefTWrap::Initialize(target);
+    GenericXmlloaderparamsWrap::Initialize(target);
+    IntegerRefTWrap::Initialize(target);
+    NodeMapRefTWrap::Initialize(target);
+    ReferenceTWrap::Initialize(target);
+    ValueRefTWrap::Initialize(target);
+    DynamicCastExceptionWrap::Initialize(target);
+    EAccessModeClassWrap::Initialize(target);
+    ECachingModeClassWrap::Initialize(target);
+    EDisplayNotationClassWrap::Initialize(target);
+    EEndianessClassWrap::Initialize(target);
+    EGenApiSchemaVersionClassWrap::Initialize(target);
+    EInputDirectionClassWrap::Initialize(target);
+    ENameSpaceClassWrap::Initialize(target);
+    ERepresentationClassWrap::Initialize(target);
+    ESignClassWrap::Initialize(target);
+    ESlopeClassWrap::Initialize(target);
+    EStandardNameSpaceClassWrap::Initialize(target);
+    EVisibilityClassWrap::Initialize(target);
+    ExceptionReporterWrap::Initialize(target);
+    EYesNoClassWrap::Initialize(target);
+    FileProtocolAdapterWrap::Initialize(target);
+    GCWcharWrap::Initialize(target);
+    GenericExceptionWrap::Initialize(target);
+    GVCPChunkTrailerWrap::Initialize(target);
+    GVCPEventItemWrap::Initialize(target);
+    GVCPEventItemBasicWrap::Initialize(target);
+    GVCPEventItemExtendedIdWrap::Initialize(target);
+    GVCPEventRequestWrap::Initialize(target);
+    GVCPEventRequestExtendedIdWrap::Initialize(target);
+    GVCPEventdataRequestWrap::Initialize(target);
+    GVCPEventdataRequestExtendedIdWrap::Initialize(target);
+    GVCPRequestHeaderWrap::Initialize(target);
+    EnumReferenceWrap::Initialize(target);
+    InvalidArgumentExceptionWrap::Initialize(target);
+    PortReplayWrap::Initialize(target);
+    PortWriteListWrap::Initialize(target);
+    LogicalErrorExceptionWrap::Initialize(target);
+    OutOfRangeExceptionWrap::Initialize(target);
+    PropertyExceptionWrap::Initialize(target);
+    RuntimeExceptionWrap::Initialize(target);
+    SingleChunkDataWrap::Initialize(target);
+    SingleChunkDataStrWrap::Initialize(target);
+    TimeoutExceptionWrap::Initialize(target);
+    U3VChunkTrailerWrap::Initialize(target);
+    U3VCommandHeaderWrap::Initialize(target);
+    U3VEventDataWrap::Initialize(target);
+    U3VEventMessageWrap::Initialize(target);
+    VersionWrap::Initialize(target);
 }
 
 NODE_MODULE(genicam, GenicamWrap::Initialize)

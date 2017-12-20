@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> ValueWrap::prototype;
 Nan::Persistent<Function> ValueWrap::constructor;
@@ -90,8 +91,14 @@ NAN_METHOD(ValueWrap::FromString)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && info[1]->IsBoolean())
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        value->FromString(*arg0, arg1);
     }
 }
 
@@ -102,6 +109,8 @@ NAN_METHOD(ValueWrap::GetNode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        value->GetNode();
     }
 }
 
@@ -112,6 +121,8 @@ NAN_METHOD(ValueWrap::IsValueCacheValid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        value->IsValueCacheValid();
     }
 }
 
@@ -122,5 +133,13 @@ NAN_METHOD(ValueWrap::ToString)
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        value->ToString(arg0, arg1);
     }
 }

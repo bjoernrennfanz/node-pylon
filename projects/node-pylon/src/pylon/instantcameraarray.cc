@@ -107,6 +107,8 @@ NAN_METHOD(InstantCameraArrayWrap::Close)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->Close();
     }
 }
 
@@ -117,6 +119,8 @@ NAN_METHOD(InstantCameraArrayWrap::DestroyDevice)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->DestroyDevice();
     }
 }
 
@@ -127,6 +131,8 @@ NAN_METHOD(InstantCameraArrayWrap::DetachDevice)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->DetachDevice();
     }
 }
 
@@ -137,6 +143,8 @@ NAN_METHOD(InstantCameraArrayWrap::GetSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->GetSize();
     }
 }
 
@@ -149,6 +157,9 @@ NAN_METHOD(InstantCameraArrayWrap::Initialize)
     {
         // Convert from number value
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        instantCameraArray->Initialize(arg0);
     }
 }
 
@@ -159,6 +170,8 @@ NAN_METHOD(InstantCameraArrayWrap::IsCameraDeviceRemoved)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->IsCameraDeviceRemoved();
     }
 }
 
@@ -169,6 +182,8 @@ NAN_METHOD(InstantCameraArrayWrap::IsGrabbing)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->IsGrabbing();
     }
 }
 
@@ -179,6 +194,8 @@ NAN_METHOD(InstantCameraArrayWrap::IsOpen)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->IsOpen();
     }
 }
 
@@ -189,6 +206,8 @@ NAN_METHOD(InstantCameraArrayWrap::IsPylonDeviceAttached)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->IsPylonDeviceAttached();
     }
 }
 
@@ -199,6 +218,8 @@ NAN_METHOD(InstantCameraArrayWrap::Open)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->Open();
     }
 }
 
@@ -218,6 +239,9 @@ NAN_METHOD(InstantCameraArrayWrap::RetrieveResult)
 
         // Convert from number value
         ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
+
+        // Call wrapped method
+        instantCameraArray->RetrieveResult(arg0, *arg1, arg2);
     }
 }
 
@@ -233,6 +257,9 @@ NAN_METHOD(InstantCameraArrayWrap::StartGrabbing)
 
         // Convert from number value
         EGrabLoop arg1 = static_cast<EGrabLoop>(info[1]->NumberValue());
+
+        // Call wrapped method
+        instantCameraArray->StartGrabbing(arg0, arg1);
     }
 }
 
@@ -243,5 +270,7 @@ NAN_METHOD(InstantCameraArrayWrap::StopGrabbing)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        instantCameraArray->StopGrabbing();
     }
 }

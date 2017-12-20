@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <pylon/Device.h>
+#include "chunkparser.h"
 
 using namespace v8;
 using namespace Pylon;

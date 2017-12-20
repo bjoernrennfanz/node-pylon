@@ -96,6 +96,9 @@ NAN_METHOD(EventAdapterWrap::AttachNodeMap)
         // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        eventAdapter->AttachNodeMap(arg0);
     }
 }
 
@@ -104,14 +107,16 @@ NAN_METHOD(EventAdapterWrap::DeliverMessage)
     EventAdapterWrap* wrappedEventAdapter = ObjectWrap::Unwrap<EventAdapterWrap>(info.This());
     CEventAdapter* eventAdapter = wrappedEventAdapter->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Call wrapped method
+        eventAdapter->DeliverMessage(arg0, arg1);
     }
 }
 
@@ -122,5 +127,7 @@ NAN_METHOD(EventAdapterWrap::DetachNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        eventAdapter->DetachNodeMap();
     }
 }

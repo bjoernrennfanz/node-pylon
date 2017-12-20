@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> NodeMapWrap::prototype;
 Nan::Persistent<Function> NodeMapWrap::constructor;
@@ -98,14 +99,20 @@ NAN_METHOD(NodeMapWrap::Connect)
         IPort* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        nodeMap->Connect(arg0, *arg1);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
     {
         // Unwrap object
         PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
         IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        nodeMap->Connect(arg0);
     }
 }
 
@@ -116,6 +123,8 @@ NAN_METHOD(NodeMapWrap::GetDeviceName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeMap->GetDeviceName();
     }
 }
 
@@ -126,6 +135,8 @@ NAN_METHOD(NodeMapWrap::GetLock)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeMap->GetLock();
     }
 }
 
@@ -137,8 +148,11 @@ NAN_METHOD(NodeMapWrap::GetNode)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        nodeMap->GetNode(*arg0);
     }
 }
 
@@ -150,8 +164,11 @@ NAN_METHOD(NodeMapWrap::GetNodes)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
     {
         // Unwrap object
-        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        NodeVectorWrap* arg0_wrap = ObjectWrap::Unwrap<NodeVectorWrap>(info[0]->ToObject());
         node_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        nodeMap->GetNodes(*arg0);
     }
 }
 
@@ -162,6 +179,8 @@ NAN_METHOD(NodeMapWrap::GetNumNodes)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeMap->GetNumNodes();
     }
 }
 
@@ -172,6 +191,8 @@ NAN_METHOD(NodeMapWrap::InvalidateNodes)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        nodeMap->InvalidateNodes();
     }
 }
 
@@ -184,5 +205,8 @@ NAN_METHOD(NodeMapWrap::Poll)
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Call wrapped method
+        nodeMap->Poll(arg0);
     }
 }

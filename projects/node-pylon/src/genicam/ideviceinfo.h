@@ -31,9 +31,12 @@
 #include <nan.h>
 
 #include <GenApi/IDeviceInfo.h>
+#include "../Base/gcstring.h"
+#include "../Base/gctypes.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 class DeviceInfoWrap : public node::ObjectWrap
 {

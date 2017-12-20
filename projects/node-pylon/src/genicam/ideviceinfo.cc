@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> DeviceInfoWrap::prototype;
 Nan::Persistent<Function> DeviceInfoWrap::constructor;
@@ -95,8 +96,11 @@ NAN_METHOD(DeviceInfoWrap::GetDeviceVersion)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")))
     {
         // Unwrap object
-        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        VersionWrap* arg0_wrap = ObjectWrap::Unwrap<VersionWrap>(info[0]->ToObject());
         Version_t* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->GetDeviceVersion(*arg0);
     }
 }
 
@@ -105,15 +109,17 @@ NAN_METHOD(DeviceInfoWrap::GetGenApiVersion)
     DeviceInfoWrap* wrappedDeviceInfo = ObjectWrap::Unwrap<DeviceInfoWrap>(info.This());
     IDeviceInfo* deviceInfo = wrappedDeviceInfo->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "unsigned short")))
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")) && info[1]->IsNumber())
     {
         // Unwrap object
-        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        VersionWrap* arg0_wrap = ObjectWrap::Unwrap<VersionWrap>(info[0]->ToObject());
         Version_t* arg0 = arg0_wrap->GetWrapped();
 
-        // Unwrap object
-        unsigned shortWrap* arg1_wrap = ObjectWrap::Unwrap<unsigned shortWrap>(info[1]->ToObject());
-        unsigned short* arg1 = arg1_wrap->GetWrapped();
+        // Convert from number value
+        unsigned short arg1 = static_cast<unsigned short>(info[1]->NumberValue());
+
+        // Call wrapped method
+        deviceInfo->GetGenApiVersion(*arg0, *arg1);
     }
 }
 
@@ -124,6 +130,8 @@ NAN_METHOD(DeviceInfoWrap::GetModelName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetModelName();
     }
 }
 
@@ -134,6 +142,8 @@ NAN_METHOD(DeviceInfoWrap::GetProductGuid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetProductGuid();
     }
 }
 
@@ -145,8 +155,11 @@ NAN_METHOD(DeviceInfoWrap::GetSchemaVersion)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "Version_t")))
     {
         // Unwrap object
-        Version_tWrap* arg0_wrap = ObjectWrap::Unwrap<Version_tWrap>(info[0]->ToObject());
+        VersionWrap* arg0_wrap = ObjectWrap::Unwrap<VersionWrap>(info[0]->ToObject());
         Version_t* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        deviceInfo->GetSchemaVersion(*arg0);
     }
 }
 
@@ -157,6 +170,8 @@ NAN_METHOD(DeviceInfoWrap::GetStandardNameSpace)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetStandardNameSpace();
     }
 }
 
@@ -167,6 +182,8 @@ NAN_METHOD(DeviceInfoWrap::GetToolTip)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetToolTip();
     }
 }
 
@@ -177,6 +194,8 @@ NAN_METHOD(DeviceInfoWrap::GetVendorName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetVendorName();
     }
 }
 
@@ -187,5 +206,7 @@ NAN_METHOD(DeviceInfoWrap::GetVersionGuid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        deviceInfo->GetVersionGuid();
     }
 }

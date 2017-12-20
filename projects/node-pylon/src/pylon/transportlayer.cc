@@ -89,6 +89,8 @@ NAN_METHOD(TransportLayerWrap::CreateDeviceInfo)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        transportLayer->CreateDeviceInfo();
     }
 }
 
@@ -100,8 +102,14 @@ NAN_METHOD(TransportLayerWrap::EnumerateInterfaces)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "InterfaceInfoList")) && info[1]->IsBoolean())
     {
         // Unwrap object
-        nterfaceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<nterfaceInfoListWrap>(info[0]->ToObject());
+        InterfaceInfoListWrap* arg0_wrap = ObjectWrap::Unwrap<InterfaceInfoListWrap>(info[0]->ToObject());
         InterfaceInfoList* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        transportLayer->EnumerateInterfaces(*arg0, arg1);
     }
 }
 
@@ -112,6 +120,8 @@ NAN_METHOD(TransportLayerWrap::GetNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        transportLayer->GetNodeMap();
     }
 }
 
@@ -122,5 +132,7 @@ NAN_METHOD(TransportLayerWrap::GetTlInfo)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        transportLayer->GetTlInfo();
     }
 }

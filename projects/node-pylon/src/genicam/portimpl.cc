@@ -92,6 +92,8 @@ NAN_METHOD(PortImplWrap::GetAccessMode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        portImpl->GetAccessMode();
     }
 }
 
@@ -102,6 +104,8 @@ NAN_METHOD(PortImplWrap::GetSwapEndianess)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        portImpl->GetSwapEndianess();
     }
 }
 
@@ -112,6 +116,8 @@ NAN_METHOD(PortImplWrap::InvalidateNode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        portImpl->InvalidateNode();
     }
 }
 
@@ -120,17 +126,18 @@ NAN_METHOD(PortImplWrap::Read)
     PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
     CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    if ((info.Length() == 3) && info[0]->IsObject() && info[1]->IsNumber() && info[2]->IsNumber())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Convert from number value
         __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+
+        // Call wrapped method
+        portImpl->Read(arg0, arg1, arg2);
     }
 }
 
@@ -144,6 +151,12 @@ NAN_METHOD(PortImplWrap::Replay)
         // Unwrap object
         PortWriteListWrap* arg0_wrap = ObjectWrap::Unwrap<PortWriteListWrap>(info[0]->ToObject());
         IPortWriteList* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        portImpl->Replay(arg0, arg1);
     }
 }
 
@@ -157,6 +170,9 @@ NAN_METHOD(PortImplWrap::SetPortImpl)
         // Unwrap object
         PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
         IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        portImpl->SetPortImpl(arg0);
     }
 }
 
@@ -165,16 +181,17 @@ NAN_METHOD(PortImplWrap::Write)
     PortImplWrap* wrappedPortImpl = ObjectWrap::Unwrap<PortImplWrap>(info.This());
     CPortImpl* portImpl = wrappedPortImpl->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber())
+    if ((info.Length() == 3) && info[0]->IsObject() && info[1]->IsNumber() && info[2]->IsNumber())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Convert from number value
         __int128_t arg2 = static_cast<__int128_t>(info[2]->NumberValue());
+
+        // Call wrapped method
+        portImpl->Write(arg0, arg1, arg2);
     }
 }

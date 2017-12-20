@@ -90,12 +90,18 @@ NAN_METHOD(FeaturePersistenceWrap::Load)
     if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "INodeMap")) && info[2]->IsBoolean())
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
         NodeMapWrap* arg1_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[1]->ToObject());
         INodeMap* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg2 = info[2]->BooleanValue();
+
+        // Call wrapped method
+        featurePersistence->Load(*arg0, arg1, arg2);
     }
 }
 
@@ -107,12 +113,18 @@ NAN_METHOD(FeaturePersistenceWrap::LoadFromString)
     if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "INodeMap")) && info[2]->IsBoolean())
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
         NodeMapWrap* arg1_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[1]->ToObject());
         INodeMap* arg1 = arg1_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg2 = info[2]->BooleanValue();
+
+        // Call wrapped method
+        featurePersistence->LoadFromString(*arg0, arg1, arg2);
     }
 }
 
@@ -124,12 +136,15 @@ NAN_METHOD(FeaturePersistenceWrap::Save)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
         NodeMapWrap* arg1_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[1]->ToObject());
         INodeMap* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        featurePersistence->Save(*arg0, arg1);
     }
 }
 
@@ -141,11 +156,14 @@ NAN_METHOD(FeaturePersistenceWrap::SaveToString)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "INodeMap")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
         NodeMapWrap* arg1_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[1]->ToObject());
         INodeMap* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        featurePersistence->SaveToString(*arg0, arg1);
     }
 }

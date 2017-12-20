@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> EnumEntryWrap::prototype;
 Nan::Persistent<Function> EnumEntryWrap::constructor;
@@ -89,6 +90,8 @@ NAN_METHOD(EnumEntryWrap::GetNumericValue)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        enumEntry->GetNumericValue();
     }
 }
 
@@ -99,6 +102,8 @@ NAN_METHOD(EnumEntryWrap::GetSymbolic)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        enumEntry->GetSymbolic();
     }
 }
 
@@ -109,6 +114,8 @@ NAN_METHOD(EnumEntryWrap::GetValue)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        enumEntry->GetValue();
     }
 }
 
@@ -119,5 +126,7 @@ NAN_METHOD(EnumEntryWrap::IsSelfClearing)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        enumEntry->IsSelfClearing();
     }
 }

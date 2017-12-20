@@ -92,18 +92,20 @@ NAN_METHOD(ChunkAdapterU3VWrap::AttachBuffer)
     ChunkAdapterU3VWrap* wrappedChunkAdapterU3V = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info.This());
     CChunkAdapterU3V* chunkAdapterU3V = wrappedChunkAdapterU3V->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    if ((info.Length() == 3) && info[0]->IsString() && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Unwrap object
-        AttachStatistics_tWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[2]->ToObject());
+        AttachStatisticsWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatisticsWrap>(info[2]->ToObject());
         AttachStatistics_t* arg2 = arg2_wrap->GetWrapped();
+
+        // Call wrapped method
+        chunkAdapterU3V->AttachBuffer(arg0, arg1, arg2);
     }
 }
 
@@ -112,13 +114,15 @@ NAN_METHOD(ChunkAdapterU3VWrap::CheckBufferLayout)
     ChunkAdapterU3VWrap* wrappedChunkAdapterU3V = ObjectWrap::Unwrap<ChunkAdapterU3VWrap>(info.This());
     CChunkAdapterU3V* chunkAdapterU3V = wrappedChunkAdapterU3V->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Call wrapped method
+        chunkAdapterU3V->CheckBufferLayout(arg0, arg1);
     }
 }

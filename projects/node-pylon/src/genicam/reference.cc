@@ -30,43 +30,44 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> ReferenceTWrap::prototype;
-Nan::Persistent<Function> ReferenceTWrap::constructor;
+Nan::Persistent<FunctionTemplate> ReferenceWrap::prototype;
+Nan::Persistent<Function> ReferenceWrap::constructor;
 
 // Supported implementations
-// CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>()
-// CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>(CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>& const arg0)
-ReferenceTWrap::ReferenceTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_ReferenceT(NULL)
+// IReference()
+// IReference(IReference& const arg0)
+ReferenceWrap::ReferenceWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Reference(NULL)
 {
     // Check constructor arguments
     if (info.Length() == 0)
     {
-        // CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>()
-        m_ReferenceT = new CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>();
+        // IReference()
+        m_Reference = new IReference();
     }
-    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>")))
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReference")))
     {
         // Unwrap object
-        ReferenceTWrap* arg0_wrap = ObjectWrap::Unwrap<ReferenceTWrap>(info[0]->ToObject());
-        CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* arg0 = arg0_wrap->GetWrapped();
+        ReferenceWrap* arg0_wrap = ObjectWrap::Unwrap<ReferenceWrap>(info[0]->ToObject());
+        IReference* arg0 = arg0_wrap->GetWrapped();
 
-        // CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>(CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>& const arg0)
-        m_ReferenceT = new CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>(*arg0);
+        // IReference(IReference& const arg0)
+        m_Reference = new IReference(*arg0);
     }
 }
 
-ReferenceTWrap::~ReferenceTWrap()
+ReferenceWrap::~ReferenceWrap()
 {
-    delete m_ReferenceT;
+    delete m_Reference;
 }
 
-NAN_MODULE_INIT(ReferenceTWrap::Initialize)
+NAN_MODULE_INIT(ReferenceWrap::Initialize)
 {
     // Prepare constructor template
     Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("ReferenceTWrap").ToLocalChecked());
+    tpl->SetClassName(Nan::New("ReferenceWrap").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // Register prototypes to template
@@ -76,18 +77,21 @@ NAN_MODULE_INIT(ReferenceTWrap::Initialize)
     prototype.Reset(tpl);
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
-    Nan::Set(target, Nan::New("CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>").ToLocalChecked(), function);
+    Nan::Set(target, Nan::New("IReference").ToLocalChecked(), function);
 }
 
-NAN_METHOD(ReferenceTWrap::SetReference)
+NAN_METHOD(ReferenceWrap::SetReference)
 {
-    ReferenceTWrap* wrappedReferenceT = ObjectWrap::Unwrap<ReferenceTWrap>(info.This());
-    CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* referenceT = wrappedReferenceT->GetWrapped();
+    ReferenceWrap* wrappedReference = ObjectWrap::Unwrap<ReferenceWrap>(info.This());
+    IReference* reference = wrappedReference->GetWrapped();
 
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
         // Unwrap object
         BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
         IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        reference->SetReference(arg0);
     }
 }

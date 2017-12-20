@@ -87,6 +87,8 @@ NAN_METHOD(PortConstructWrap::GetSwapEndianess)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        portConstruct->GetSwapEndianess();
     }
 }
 
@@ -100,5 +102,8 @@ NAN_METHOD(PortConstructWrap::SetPortImpl)
         // Unwrap object
         PortWrap* arg0_wrap = ObjectWrap::Unwrap<PortWrap>(info[0]->ToObject());
         IPort* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        portConstruct->SetPortImpl(arg0);
     }
 }

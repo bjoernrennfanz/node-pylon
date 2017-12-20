@@ -87,7 +87,10 @@ NAN_METHOD(CategoryWrap::GetFeatures)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")))
     {
         // Unwrap object
-        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        ValueVectorWrap* arg0_wrap = ObjectWrap::Unwrap<ValueVectorWrap>(info[0]->ToObject());
         value_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        category->GetFeatures(*arg0);
     }
 }

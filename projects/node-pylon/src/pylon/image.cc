@@ -95,9 +95,13 @@ NAN_METHOD(ImageWrap::GetBuffer)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetBuffer();
     }
     else if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetBuffer();
     }
 }
 
@@ -108,6 +112,8 @@ NAN_METHOD(ImageWrap::GetHeight)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetHeight();
     }
 }
 
@@ -118,6 +124,8 @@ NAN_METHOD(ImageWrap::GetImageSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetImageSize();
     }
 }
 
@@ -128,6 +136,8 @@ NAN_METHOD(ImageWrap::GetOrientation)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetOrientation();
     }
 }
 
@@ -138,6 +148,8 @@ NAN_METHOD(ImageWrap::GetPaddingX)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetPaddingX();
     }
 }
 
@@ -148,6 +160,8 @@ NAN_METHOD(ImageWrap::GetPixelType)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetPixelType();
     }
 }
 
@@ -156,11 +170,13 @@ NAN_METHOD(ImageWrap::GetStride)
     ImageWrap* wrappedImage = ObjectWrap::Unwrap<ImageWrap>(info.This());
     IImage* image = wrappedImage->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned int")))
+    if ((info.Length() == 1) && info[0]->IsNumber())
     {
-        // Unwrap object
-        unsigned intWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned intWrap>(info[0]->ToObject());
-        unsigned int* arg0 = arg0_wrap->GetWrapped();
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        image->GetStride(*arg0);
     }
 }
 
@@ -171,6 +187,8 @@ NAN_METHOD(ImageWrap::GetWidth)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->GetWidth();
     }
 }
 
@@ -181,6 +199,8 @@ NAN_METHOD(ImageWrap::IsUnique)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->IsUnique();
     }
 }
 
@@ -191,5 +211,7 @@ NAN_METHOD(ImageWrap::IsValid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        image->IsValid();
     }
 }

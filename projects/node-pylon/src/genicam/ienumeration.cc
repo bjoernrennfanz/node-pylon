@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> EnumerationWrap::prototype;
 Nan::Persistent<Function> EnumerationWrap::constructor;
@@ -92,6 +93,14 @@ NAN_METHOD(EnumerationWrap::GetCurrentEntry)
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        enumeration->GetCurrentEntry(arg0, arg1);
     }
 }
 
@@ -103,8 +112,11 @@ NAN_METHOD(EnumerationWrap::GetEntries)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
     {
         // Unwrap object
-        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        NodeVectorWrap* arg0_wrap = ObjectWrap::Unwrap<NodeVectorWrap>(info[0]->ToObject());
         node_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        enumeration->GetEntries(*arg0);
     }
 }
 
@@ -117,6 +129,9 @@ NAN_METHOD(EnumerationWrap::GetEntry)
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Call wrapped method
+        enumeration->GetEntry(arg0);
     }
 }
 
@@ -128,8 +143,11 @@ NAN_METHOD(EnumerationWrap::GetEntryByName)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        enumeration->GetEntryByName(*arg0);
     }
 }
 
@@ -140,6 +158,14 @@ NAN_METHOD(EnumerationWrap::GetIntValue)
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        enumeration->GetIntValue(arg0, arg1);
     }
 }
 
@@ -151,8 +177,11 @@ NAN_METHOD(EnumerationWrap::GetSymbolics)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
     {
         // Unwrap object
-        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        GCStringVectorWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringVectorWrap>(info[0]->ToObject());
         gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        enumeration->GetSymbolics(*arg0);
     }
 }
 
@@ -165,5 +194,11 @@ NAN_METHOD(EnumerationWrap::SetIntValue)
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        enumeration->SetIntValue(arg0, arg1);
     }
 }

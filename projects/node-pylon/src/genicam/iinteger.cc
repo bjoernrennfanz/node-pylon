@@ -30,43 +30,44 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> IntegerRefTWrap::prototype;
-Nan::Persistent<Function> IntegerRefTWrap::constructor;
+Nan::Persistent<FunctionTemplate> IntegerWrap::prototype;
+Nan::Persistent<Function> IntegerWrap::constructor;
 
 // Supported implementations
-// CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>()
-// CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>& const arg0)
-IntegerRefTWrap::IntegerRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_IntegerRefT(NULL)
+// IInteger()
+// IInteger(IInteger& const arg0)
+IntegerWrap::IntegerWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Integer(NULL)
 {
     // Check constructor arguments
     if (info.Length() == 0)
     {
-        // CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>()
-        m_IntegerRefT = new CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>();
+        // IInteger()
+        m_Integer = new IInteger();
     }
-    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>")))
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IInteger")))
     {
         // Unwrap object
-        IntegerRefTWrap* arg0_wrap = ObjectWrap::Unwrap<IntegerRefTWrap>(info[0]->ToObject());
-        CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* arg0 = arg0_wrap->GetWrapped();
+        IntegerWrap* arg0_wrap = ObjectWrap::Unwrap<IntegerWrap>(info[0]->ToObject());
+        IInteger* arg0 = arg0_wrap->GetWrapped();
 
-        // CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>& const arg0)
-        m_IntegerRefT = new CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>(*arg0);
+        // IInteger(IInteger& const arg0)
+        m_Integer = new IInteger(*arg0);
     }
 }
 
-IntegerRefTWrap::~IntegerRefTWrap()
+IntegerWrap::~IntegerWrap()
 {
-    delete m_IntegerRefT;
+    delete m_Integer;
 }
 
-NAN_MODULE_INIT(IntegerRefTWrap::Initialize)
+NAN_MODULE_INIT(IntegerWrap::Initialize)
 {
     // Prepare constructor template
     Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("IntegerRefTWrap").ToLocalChecked());
+    tpl->SetClassName(Nan::New("IntegerWrap").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // Register prototypes to template
@@ -79,7 +80,6 @@ NAN_MODULE_INIT(IntegerRefTWrap::Initialize)
     Nan::SetPrototypeMethod(tpl, "getListOfValidValues", GetListOfValidValues);
     Nan::SetPrototypeMethod(tpl, "getRepresentation", GetRepresentation);
     Nan::SetPrototypeMethod(tpl, "getUnit", GetUnit);
-    Nan::SetPrototypeMethod(tpl, "getFloatAlias", GetFloatAlias);
     Nan::SetPrototypeMethod(tpl, "imposeMin", ImposeMin);
     Nan::SetPrototypeMethod(tpl, "imposeMax", ImposeMax);
 
@@ -87,131 +87,158 @@ NAN_MODULE_INIT(IntegerRefTWrap::Initialize)
     prototype.Reset(tpl);
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
-    Nan::Set(target, Nan::New("CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>").ToLocalChecked(), function);
+    Nan::Set(target, Nan::New("IInteger").ToLocalChecked(), function);
 }
 
-NAN_METHOD(IntegerRefTWrap::GetFloatAlias)
+NAN_METHOD(IntegerWrap::GetInc)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetInc();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetInc)
+NAN_METHOD(IntegerWrap::GetIncMode)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetIncMode();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetIncMode)
+NAN_METHOD(IntegerWrap::GetListOfValidValues)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
-
-    if (info.Length() == 0)
-    {
-    }
-}
-
-NAN_METHOD(IntegerRefTWrap::GetListOfValidValues)
-{
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        integer->GetListOfValidValues(arg0);
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetMax)
+NAN_METHOD(IntegerWrap::GetMax)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetMax();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetMin)
+NAN_METHOD(IntegerWrap::GetMin)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetMin();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetRepresentation)
+NAN_METHOD(IntegerWrap::GetRepresentation)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetRepresentation();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetUnit)
+NAN_METHOD(IntegerWrap::GetUnit)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        integer->GetUnit();
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::GetValue)
+NAN_METHOD(IntegerWrap::GetValue)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        integer->GetValue(arg0, arg1);
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::ImposeMax)
+NAN_METHOD(IntegerWrap::ImposeMax)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if ((info.Length() == 1) && info[0]->IsNumber())
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Call wrapped method
+        integer->ImposeMax(arg0);
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::ImposeMin)
+NAN_METHOD(IntegerWrap::ImposeMin)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if ((info.Length() == 1) && info[0]->IsNumber())
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Call wrapped method
+        integer->ImposeMin(arg0);
     }
 }
 
-NAN_METHOD(IntegerRefTWrap::SetValue)
+NAN_METHOD(IntegerWrap::SetValue)
 {
-    IntegerRefTWrap* wrappedIntegerRefT = ObjectWrap::Unwrap<IntegerRefTWrap>(info.This());
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT = wrappedIntegerRefT->GetWrapped();
+    IntegerWrap* wrappedInteger = ObjectWrap::Unwrap<IntegerWrap>(info.This());
+    IInteger* integer = wrappedInteger->GetWrapped();
 
     if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsBoolean())
     {
         // Convert from number value
         __int128_t arg0 = static_cast<__int128_t>(info[0]->NumberValue());
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        integer->SetValue(arg0, arg1);
     }
 }

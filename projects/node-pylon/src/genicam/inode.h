@@ -31,11 +31,14 @@
 #include <nan.h>
 
 #include <GenApi/INode.h>
-#include "container.h"
+#include "../Base/gcstring.h"
+#include "../Base/gcstringvector.h"
+#include "../pylon/container.h"
 #include "ibase.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 class NodeWrap : public node::ObjectWrap
 {

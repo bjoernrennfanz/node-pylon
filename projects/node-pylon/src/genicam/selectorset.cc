@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> SelectorSetWrap::prototype;
 Nan::Persistent<Function> SelectorSetWrap::constructor;
@@ -96,8 +97,14 @@ NAN_METHOD(SelectorSetWrap::GetSelectorList)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")) && info[1]->IsBoolean())
     {
         // Unwrap object
-        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        ValueVectorWrap* arg0_wrap = ObjectWrap::Unwrap<ValueVectorWrap>(info[0]->ToObject());
         value_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        selectorSet->GetSelectorList(*arg0, arg1);
     }
 }
 
@@ -108,6 +115,8 @@ NAN_METHOD(SelectorSetWrap::IsEmpty)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorSet->IsEmpty();
     }
 }
 
@@ -118,6 +127,8 @@ NAN_METHOD(SelectorSetWrap::Restore)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorSet->Restore();
     }
 }
 
@@ -128,6 +139,8 @@ NAN_METHOD(SelectorSetWrap::SetFirst)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorSet->SetFirst();
     }
 }
 
@@ -138,6 +151,11 @@ NAN_METHOD(SelectorSetWrap::SetNext)
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        selectorSet->SetNext(arg0);
     }
 }
 
@@ -148,5 +166,7 @@ NAN_METHOD(SelectorSetWrap::ToString)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorSet->ToString();
     }
 }

@@ -113,6 +113,8 @@ NAN_METHOD(GrabResultDataWrap::CheckCRC)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->CheckCRC();
     }
 }
 
@@ -123,6 +125,8 @@ NAN_METHOD(GrabResultDataWrap::GetBlockID)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetBlockID();
     }
 }
 
@@ -133,6 +137,8 @@ NAN_METHOD(GrabResultDataWrap::GetBuffer)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetBuffer();
     }
 }
 
@@ -143,6 +149,8 @@ NAN_METHOD(GrabResultDataWrap::GetBufferContext)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetBufferContext();
     }
 }
 
@@ -153,6 +161,8 @@ NAN_METHOD(GrabResultDataWrap::GetCameraContext)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetCameraContext();
     }
 }
 
@@ -163,6 +173,8 @@ NAN_METHOD(GrabResultDataWrap::GetChunkDataNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetChunkDataNodeMap();
     }
 }
 
@@ -173,6 +185,8 @@ NAN_METHOD(GrabResultDataWrap::GetErrorCode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetErrorCode();
     }
 }
 
@@ -183,6 +197,8 @@ NAN_METHOD(GrabResultDataWrap::GetErrorDescription)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetErrorDescription();
     }
 }
 
@@ -193,6 +209,8 @@ NAN_METHOD(GrabResultDataWrap::GetFrameNumber)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetFrameNumber();
     }
 }
 
@@ -203,6 +221,8 @@ NAN_METHOD(GrabResultDataWrap::GetGrabResultDataImpl)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetGrabResultDataImpl();
     }
 }
 
@@ -213,6 +233,8 @@ NAN_METHOD(GrabResultDataWrap::GetHeight)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetHeight();
     }
 }
 
@@ -223,6 +245,8 @@ NAN_METHOD(GrabResultDataWrap::GetID)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetID();
     }
 }
 
@@ -233,6 +257,8 @@ NAN_METHOD(GrabResultDataWrap::GetImageNumber)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetImageNumber();
     }
 }
 
@@ -243,6 +269,8 @@ NAN_METHOD(GrabResultDataWrap::GetImageSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetImageSize();
     }
 }
 
@@ -253,6 +281,8 @@ NAN_METHOD(GrabResultDataWrap::GetNumberOfSkippedImages)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetNumberOfSkippedImages();
     }
 }
 
@@ -263,6 +293,8 @@ NAN_METHOD(GrabResultDataWrap::GetOffsetX)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetOffsetX();
     }
 }
 
@@ -273,6 +305,8 @@ NAN_METHOD(GrabResultDataWrap::GetOffsetY)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetOffsetY();
     }
 }
 
@@ -283,6 +317,8 @@ NAN_METHOD(GrabResultDataWrap::GetPaddingX)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetPaddingX();
     }
 }
 
@@ -293,6 +329,8 @@ NAN_METHOD(GrabResultDataWrap::GetPaddingY)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetPaddingY();
     }
 }
 
@@ -303,6 +341,8 @@ NAN_METHOD(GrabResultDataWrap::GetPayloadSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetPayloadSize();
     }
 }
 
@@ -313,6 +353,8 @@ NAN_METHOD(GrabResultDataWrap::GetPayloadType)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetPayloadType();
     }
 }
 
@@ -323,6 +365,8 @@ NAN_METHOD(GrabResultDataWrap::GetPixelType)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetPixelType();
     }
 }
 
@@ -331,11 +375,13 @@ NAN_METHOD(GrabResultDataWrap::GetStride)
     GrabResultDataWrap* wrappedGrabResultData = ObjectWrap::Unwrap<GrabResultDataWrap>(info.This());
     CGrabResultData* grabResultData = wrappedGrabResultData->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned int")))
+    if ((info.Length() == 1) && info[0]->IsNumber())
     {
-        // Unwrap object
-        unsigned intWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned intWrap>(info[0]->ToObject());
-        unsigned int* arg0 = arg0_wrap->GetWrapped();
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        grabResultData->GetStride(*arg0);
     }
 }
 
@@ -346,6 +392,8 @@ NAN_METHOD(GrabResultDataWrap::GetTimeStamp)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetTimeStamp();
     }
 }
 
@@ -356,6 +404,8 @@ NAN_METHOD(GrabResultDataWrap::GetWidth)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GetWidth();
     }
 }
 
@@ -366,6 +416,8 @@ NAN_METHOD(GrabResultDataWrap::GrabSucceeded)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->GrabSucceeded();
     }
 }
 
@@ -376,6 +428,8 @@ NAN_METHOD(GrabResultDataWrap::HasCRC)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->HasCRC();
     }
 }
 
@@ -386,5 +440,7 @@ NAN_METHOD(GrabResultDataWrap::IsChunkDataAvailable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultData->IsChunkDataAvailable();
     }
 }

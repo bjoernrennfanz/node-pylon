@@ -31,33 +31,35 @@
 #include <nan.h>
 
 #include <GenApi/IInteger.h>
+#include "../Base/gcstring.h"
 #include "ifloat.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-class IntegerRefTWrap : public node::ObjectWrap
+class IntegerWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
     static Nan::Persistent<v8::FunctionTemplate> prototype;
 
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* GetWrapped() const
+    IInteger* GetWrapped() const
     {
-        return m_IntegerRefT;
+        return m_Integer;
     };
 
-    void SetWrapped(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT)
+    void SetWrapped(IInteger* integer)
     {
-        m_IntegerRefT = integerRefT;
+        m_Integer = integer;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* integerRefT);
+    static v8::Handle<v8::Value> NewInstance(IInteger* integer);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    IntegerRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~IntegerRefTWrap();
+    IntegerWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~IntegerWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
@@ -70,10 +72,9 @@ private:
     static NAN_METHOD(GetListOfValidValues);
     static NAN_METHOD(GetRepresentation);
     static NAN_METHOD(GetUnit);
-    static NAN_METHOD(GetFloatAlias);
     static NAN_METHOD(ImposeMin);
     static NAN_METHOD(ImposeMax);
 
     // Wrapped object
-    CIntegerRefT<GenApi_3_0_Basler_pylon_v5_0::IInteger, GenApi_3_0_Basler_pylon_v5_0::IInteger>* m_IntegerRefT;
+    IInteger* m_Integer;
 };

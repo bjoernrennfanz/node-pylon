@@ -89,6 +89,8 @@ NAN_METHOD(ReusableImageWrap::IsAdditionalPaddingSupported)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        reusableImage->IsAdditionalPaddingSupported();
     }
 }
 
@@ -101,6 +103,9 @@ NAN_METHOD(ReusableImageWrap::IsSupportedPixelType)
     {
         // Convert from number value
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Call wrapped method
+        reusableImage->IsSupportedPixelType(arg0);
     }
 }
 
@@ -111,6 +116,8 @@ NAN_METHOD(ReusableImageWrap::Release)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        reusableImage->Release();
     }
 }
 
@@ -135,6 +142,9 @@ NAN_METHOD(ReusableImageWrap::Reset)
 
         // Convert from number value
         EImageOrientation arg4 = static_cast<EImageOrientation>(info[4]->NumberValue());
+
+        // Call wrapped method
+        reusableImage->Reset(arg0, arg1, arg2, arg3, arg4);
     }
     else if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
     {
@@ -149,5 +159,8 @@ NAN_METHOD(ReusableImageWrap::Reset)
 
         // Convert from number value
         EImageOrientation arg3 = static_cast<EImageOrientation>(info[3]->NumberValue());
+
+        // Call wrapped method
+        reusableImage->Reset(arg0, arg1, arg2, arg3);
     }
 }

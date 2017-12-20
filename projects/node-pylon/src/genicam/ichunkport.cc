@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> ChunkPortWrap::prototype;
 Nan::Persistent<Function> ChunkPortWrap::constructor;
@@ -87,6 +88,8 @@ NAN_METHOD(ChunkPortWrap::CacheChunkData)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        chunkPort->CacheChunkData();
     }
 }
 
@@ -97,5 +100,7 @@ NAN_METHOD(ChunkPortWrap::GetChunkID)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        chunkPort->GetChunkID();
     }
 }

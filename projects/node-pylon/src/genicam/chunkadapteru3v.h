@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <GenApi/ChunkAdapterU3V.h>
+#include "chunkadapter.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;

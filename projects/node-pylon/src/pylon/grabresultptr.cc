@@ -88,6 +88,8 @@ NAN_METHOD(GrabResultPtrWrap::IsUnique)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultPtr->IsUnique();
     }
 }
 
@@ -98,6 +100,8 @@ NAN_METHOD(GrabResultPtrWrap::IsValid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultPtr->IsValid();
     }
 }
 
@@ -108,5 +112,7 @@ NAN_METHOD(GrabResultPtrWrap::Release)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        grabResultPtr->Release();
     }
 }

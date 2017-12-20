@@ -91,6 +91,8 @@ NAN_METHOD(ImageEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        imageEventHandler->DebugGetEventHandlerRegistrationCount();
     }
 }
 
@@ -101,6 +103,8 @@ NAN_METHOD(ImageEventHandlerWrap::DestroyImageEventHandler)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        imageEventHandler->DestroyImageEventHandler();
     }
 }
 
@@ -114,6 +118,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerDeregistered)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        imageEventHandler->OnImageEventHandlerDeregistered(*arg0);
     }
 }
 
@@ -127,6 +134,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerRegistered)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        imageEventHandler->OnImageEventHandlerRegistered(*arg0);
     }
 }
 
@@ -144,6 +154,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageGrabbed)
         // Unwrap object
         GrabResultPtrWrap* arg1_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[1]->ToObject());
         CGrabResultPtr* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped method
+        imageEventHandler->OnImageGrabbed(*arg0, *arg1);
     }
 }
 
@@ -160,5 +173,8 @@ NAN_METHOD(ImageEventHandlerWrap::OnImagesSkipped)
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Call wrapped method
+        imageEventHandler->OnImagesSkipped(*arg0, arg1);
     }
 }

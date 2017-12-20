@@ -31,6 +31,7 @@
 #include <nan.h>
 
 #include <pylon/TransportLayer.h>
+#include "container.h"
 #include "deviceinfo.h"
 
 using namespace v8;

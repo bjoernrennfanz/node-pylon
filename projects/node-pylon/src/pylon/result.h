@@ -35,53 +35,8 @@
 using namespace v8;
 using namespace Pylon;
 
-class GrabResultWrap : public node::ObjectWrap
+class ResultWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
-    static Nan::Persistent<v8::FunctionTemplate> prototype;
-
-    GrabResult* GetWrapped() const
-    {
-        return m_GrabResult;
-    };
-
-    void SetWrapped(GrabResult* grabResult)
-    {
-        m_GrabResult = grabResult;
-    };
-
-    static v8::Handle<v8::Value> NewInstance(GrabResult* grabResult);
-
-private:
-    static Nan::Persistent<v8::Function> constructor;
-    GrabResultWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~GrabResultWrap();
-    static NAN_METHOD(New);
-
-    // Wrapped methods
-    static NAN_METHOD(Succeeded);
-    static NAN_METHOD(Handle);
-    static NAN_METHOD(Buffer);
-    static NAN_METHOD(Status);
-    static NAN_METHOD(Context);
-    static NAN_METHOD(FrameNr);
-    static NAN_METHOD(GetPayloadType);
-    static NAN_METHOD(GetPixelType);
-    static NAN_METHOD(GetTimeStamp);
-    static NAN_METHOD(GetSizeX);
-    static NAN_METHOD(GetSizeY);
-    static NAN_METHOD(GetOffsetX);
-    static NAN_METHOD(GetOffsetY);
-    static NAN_METHOD(GetPaddingX);
-    static NAN_METHOD(GetPaddingY);
-    static NAN_METHOD(GetPayloadSize);
-    static NAN_METHOD(GetPayloadSize_t);
-    static NAN_METHOD(GetErrorDescription);
-    static NAN_METHOD(GetErrorCode);
-    static NAN_METHOD(GetImage);
-    static NAN_METHOD(GetBlockID);
-
-    // Wrapped object
-    GrabResult* m_GrabResult;
 };

@@ -90,6 +90,8 @@ NAN_METHOD(CameraEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        cameraEventHandler->DebugGetEventHandlerRegistrationCount();
     }
 }
 
@@ -100,6 +102,8 @@ NAN_METHOD(CameraEventHandlerWrap::DestroyCameraEventHandler)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        cameraEventHandler->DestroyCameraEventHandler();
     }
 }
 
@@ -120,6 +124,9 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEvent)
         // Unwrap object
         NodeWrap* arg2_wrap = ObjectWrap::Unwrap<NodeWrap>(info[2]->ToObject());
         INode* arg2 = arg2_wrap->GetWrapped();
+
+        // Call wrapped method
+        cameraEventHandler->OnCameraEvent(*arg0, arg1, arg2);
     }
 }
 
@@ -135,11 +142,14 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerDeregistered)
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Convert from number value
         int arg2 = static_cast<int>(info[2]->NumberValue());
+
+        // Call wrapped method
+        cameraEventHandler->OnCameraEventHandlerDeregistered(*arg0, *arg1, arg2);
     }
 }
 
@@ -155,10 +165,13 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerRegistered)
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Convert from number value
         int arg2 = static_cast<int>(info[2]->NumberValue());
+
+        // Call wrapped method
+        cameraEventHandler->OnCameraEventHandlerRegistered(*arg0, *arg1, arg2);
     }
 }

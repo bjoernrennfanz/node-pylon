@@ -87,29 +87,24 @@ NAN_METHOD(PixelFormatConverterWrap::Convert)
     PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
     CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
 
-    if ((info.Length() == 6) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "void")) && info[3]->IsNumber() && (info[4]->IsObject() && (pylon_v8::ToGCString(info[4]->ToObject()->GetConstructorName()) == "SImageFormat")) && (info[5]->IsObject() && (pylon_v8::ToGCString(info[5]->ToObject()->GetConstructorName()) == "SOutputImageFormat")))
+    if ((info.Length() == 6) && info[0]->IsObject() && info[1]->IsNumber() && info[2]->IsObject() && info[3]->IsNumber() && info[4]->IsObject() && info[5]->IsObject())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
-        // Unwrap object
-        voidWrap* arg2_wrap = ObjectWrap::Unwrap<voidWrap>(info[2]->ToObject());
-        void* arg2 = arg2_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         unsigned int arg3 = static_cast<unsigned int>(info[3]->NumberValue());
 
-        // Unwrap object
-        SImageFormatWrap* arg4_wrap = ObjectWrap::Unwrap<SImageFormatWrap>(info[4]->ToObject());
-        SImageFormat* arg4 = arg4_wrap->GetWrapped();
+        // TODO: Implement wrapper for SImageFormat
 
-        // Unwrap object
-        SOutputImageFormatWrap* arg5_wrap = ObjectWrap::Unwrap<SOutputImageFormatWrap>(info[5]->ToObject());
-        SOutputImageFormat* arg5 = arg5_wrap->GetWrapped();
+        // TODO: Implement wrapper for SOutputImageFormat
+
+        // Call wrapped method
+        pixelFormatConverter->Convert(arg0, arg1, arg2, arg3, *arg4, *arg5);
     }
 }
 
@@ -118,11 +113,12 @@ NAN_METHOD(PixelFormatConverterWrap::Init)
     PixelFormatConverterWrap* wrappedPixelFormatConverter = ObjectWrap::Unwrap<PixelFormatConverterWrap>(info.This());
     CPixelFormatConverter* pixelFormatConverter = wrappedPixelFormatConverter->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "SImageFormat")))
+    if ((info.Length() == 1) && info[0]->IsObject())
     {
-        // Unwrap object
-        SImageFormatWrap* arg0_wrap = ObjectWrap::Unwrap<SImageFormatWrap>(info[0]->ToObject());
-        SImageFormat* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for SImageFormat
+
+        // Call wrapped method
+        pixelFormatConverter->Init(*arg0);
     }
 }
 
@@ -133,6 +129,8 @@ NAN_METHOD(PixelFormatConverterWrap::IsInitialized)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pixelFormatConverter->IsInitialized();
     }
 }
 
@@ -145,5 +143,8 @@ NAN_METHOD(PixelFormatConverterWrap::SetOutputBitAlignment)
     {
         // Convert from number value
         OutputBitAlignmentEnums arg0 = static_cast<OutputBitAlignmentEnums>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pixelFormatConverter->SetOutputBitAlignment(arg0);
     }
 }

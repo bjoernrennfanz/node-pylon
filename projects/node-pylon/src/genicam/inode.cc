@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> NodeWrap::prototype;
 Nan::Persistent<Function> NodeWrap::constructor;
@@ -125,6 +126,9 @@ NAN_METHOD(NodeWrap::DeregisterCallback)
     {
         // Convert from number value
         int arg0 = static_cast<int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        node->DeregisterCallback(arg0);
     }
 }
 
@@ -135,6 +139,8 @@ NAN_METHOD(NodeWrap::GetAlias)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetAlias();
     }
 }
 
@@ -145,6 +151,8 @@ NAN_METHOD(NodeWrap::GetCachingMode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetCachingMode();
     }
 }
 
@@ -155,6 +163,8 @@ NAN_METHOD(NodeWrap::GetCastAlias)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetCastAlias();
     }
 }
 
@@ -166,11 +176,14 @@ NAN_METHOD(NodeWrap::GetChildren)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")) && info[1]->IsNumber())
     {
         // Unwrap object
-        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        NodeVectorWrap* arg0_wrap = ObjectWrap::Unwrap<NodeVectorWrap>(info[0]->ToObject());
         node_vector* arg0 = arg0_wrap->GetWrapped();
 
         // Convert from number value
         ELinkType arg1 = static_cast<ELinkType>(info[1]->NumberValue());
+
+        // Call wrapped method
+        node->GetChildren(*arg0, arg1);
     }
 }
 
@@ -181,6 +194,8 @@ NAN_METHOD(NodeWrap::GetDescription)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetDescription();
     }
 }
 
@@ -191,6 +206,8 @@ NAN_METHOD(NodeWrap::GetDeviceName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetDeviceName();
     }
 }
 
@@ -201,6 +218,8 @@ NAN_METHOD(NodeWrap::GetDisplayName)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetDisplayName();
     }
 }
 
@@ -211,6 +230,8 @@ NAN_METHOD(NodeWrap::GetDocuURL)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetDocuURL();
     }
 }
 
@@ -221,6 +242,8 @@ NAN_METHOD(NodeWrap::GetEventID)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetEventID();
     }
 }
 
@@ -231,6 +254,11 @@ NAN_METHOD(NodeWrap::GetName)
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        node->GetName(arg0);
     }
 }
 
@@ -241,6 +269,8 @@ NAN_METHOD(NodeWrap::GetNameSpace)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetNameSpace();
     }
 }
 
@@ -251,6 +281,8 @@ NAN_METHOD(NodeWrap::GetNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetNodeMap();
     }
 }
 
@@ -262,8 +294,11 @@ NAN_METHOD(NodeWrap::GetParents)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "node_vector")))
     {
         // Unwrap object
-        node_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<node_vectorWrap>(info[0]->ToObject());
+        NodeVectorWrap* arg0_wrap = ObjectWrap::Unwrap<NodeVectorWrap>(info[0]->ToObject());
         node_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        node->GetParents(*arg0);
     }
 }
 
@@ -274,6 +309,8 @@ NAN_METHOD(NodeWrap::GetPollingTime)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetPollingTime();
     }
 }
 
@@ -284,6 +321,8 @@ NAN_METHOD(NodeWrap::GetPrincipalInterfaceType)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetPrincipalInterfaceType();
     }
 }
 
@@ -295,16 +334,19 @@ NAN_METHOD(NodeWrap::GetProperty)
     if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Unwrap object
-        gcstringWrap* arg2_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[2]->ToObject());
+        GCStringWrap* arg2_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[2]->ToObject());
         gcstring* arg2 = arg2_wrap->GetWrapped();
+
+        // Call wrapped method
+        node->GetProperty(*arg0, *arg1, *arg2);
     }
 }
 
@@ -316,8 +358,11 @@ NAN_METHOD(NodeWrap::GetPropertyNames)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
     {
         // Unwrap object
-        gcstring_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<gcstring_vectorWrap>(info[0]->ToObject());
+        GCStringVectorWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringVectorWrap>(info[0]->ToObject());
         gcstring_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        node->GetPropertyNames(*arg0);
     }
 }
 
@@ -328,6 +373,8 @@ NAN_METHOD(NodeWrap::GetToolTip)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetToolTip();
     }
 }
 
@@ -338,6 +385,8 @@ NAN_METHOD(NodeWrap::GetVisibility)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->GetVisibility();
     }
 }
 
@@ -350,6 +399,9 @@ NAN_METHOD(NodeWrap::ImposeAccessMode)
     {
         // Convert from number value
         EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Call wrapped method
+        node->ImposeAccessMode(arg0);
     }
 }
 
@@ -362,6 +414,9 @@ NAN_METHOD(NodeWrap::ImposeVisibility)
     {
         // Convert from number value
         EVisibility arg0 = static_cast<EVisibility>(info[0]->NumberValue());
+
+        // Call wrapped method
+        node->ImposeVisibility(arg0);
     }
 }
 
@@ -372,6 +427,8 @@ NAN_METHOD(NodeWrap::InvalidateNode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->InvalidateNode();
     }
 }
 
@@ -382,6 +439,8 @@ NAN_METHOD(NodeWrap::IsAccessModeCacheable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->IsAccessModeCacheable();
     }
 }
 
@@ -392,6 +451,8 @@ NAN_METHOD(NodeWrap::IsCachable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->IsCachable();
     }
 }
 
@@ -402,6 +463,8 @@ NAN_METHOD(NodeWrap::IsDeprecated)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->IsDeprecated();
     }
 }
 
@@ -412,6 +475,8 @@ NAN_METHOD(NodeWrap::IsFeature)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->IsFeature();
     }
 }
 
@@ -422,6 +487,8 @@ NAN_METHOD(NodeWrap::IsStreamable)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        node->IsStreamable();
     }
 }
 
@@ -435,33 +502,192 @@ NAN_METHOD(NodeWrap::RegisterCallback)
         // Unwrap object
         NodeCallbackWrap* arg0_wrap = ObjectWrap::Unwrap<NodeCallbackWrap>(info[0]->ToObject());
         CNodeCallback* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        node->RegisterCallback(arg0);
     }
 }
 
 NAN_METHOD(NodeWrap::Combine)
 {
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Convert from number value
+        EAccessMode arg1 = static_cast<EAccessMode>(info[1]->NumberValue());
+
+        // Call wrapped function
+        Combine(arg0, arg1);
+    }
+    else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        EVisibility arg0 = static_cast<EVisibility>(info[0]->NumberValue());
+
+        // Convert from number value
+        EVisibility arg1 = static_cast<EVisibility>(info[1]->NumberValue());
+
+        // Call wrapped function
+        Combine(arg0, arg1);
+    }
+    else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        ECachingMode arg0 = static_cast<ECachingMode>(info[0]->NumberValue());
+
+        // Convert from number value
+        ECachingMode arg1 = static_cast<ECachingMode>(info[1]->NumberValue());
+
+        // Call wrapped function
+        Combine(arg0, arg1);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsAvailable)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Call wrapped function
+        IsAvailable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsAvailable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsAvailable(*arg0);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsCacheable)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        ECachingMode arg0 = static_cast<ECachingMode>(info[0]->NumberValue());
+
+        // Call wrapped function
+        IsCacheable(arg0);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsImplemented)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Call wrapped function
+        IsImplemented(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsImplemented(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsImplemented(*arg0);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsReadable)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Call wrapped function
+        IsReadable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsReadable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsReadable(*arg0);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsVisible)
 {
+    if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
+    {
+        // Convert from number value
+        EVisibility arg0 = static_cast<EVisibility>(info[0]->NumberValue());
+
+        // Convert from number value
+        EVisibility arg1 = static_cast<EVisibility>(info[1]->NumberValue());
+
+        // Call wrapped function
+        IsVisible(arg0, arg1);
+    }
 }
 
 NAN_METHOD(NodeWrap::IsWritable)
 {
+    if ((info.Length() == 1) && info[0]->IsNumber())
+    {
+        // Convert from number value
+        EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
+
+        // Call wrapped function
+        IsWritable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsWritable(arg0);
+    }
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
+    {
+        // Unwrap object
+        BaseWrap* arg0_wrap = ObjectWrap::Unwrap<BaseWrap>(info[0]->ToObject());
+        IBase* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped function
+        IsWritable(*arg0);
+    }
 }

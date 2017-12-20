@@ -90,6 +90,9 @@ NAN_METHOD(AcquireContinuousConfigurationWrap::ApplyConfiguration)
         // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        acquireContinuousConfiguration->ApplyConfiguration(*arg0);
     }
 }
 
@@ -103,5 +106,8 @@ NAN_METHOD(AcquireContinuousConfigurationWrap::OnOpened)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        acquireContinuousConfiguration->OnOpened(*arg0);
     }
 }

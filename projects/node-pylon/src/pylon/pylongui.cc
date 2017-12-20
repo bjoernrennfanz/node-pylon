@@ -39,4 +39,16 @@ NAN_MODULE_INIT(PylonguiWrap::Initialize)
 
 NAN_METHOD(PylonguiWrap::DisplayImage)
 {
+    if ((info.Length() == 2) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "IImage")))
+    {
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Unwrap object
+        ImageWrap* arg1_wrap = ObjectWrap::Unwrap<ImageWrap>(info[1]->ToObject());
+        IImage* arg1 = arg1_wrap->GetWrapped();
+
+        // Call wrapped function
+        DisplayImage(arg0, *arg1);
+    }
 }

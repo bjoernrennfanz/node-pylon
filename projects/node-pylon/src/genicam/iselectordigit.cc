@@ -30,6 +30,7 @@
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
 Nan::Persistent<FunctionTemplate> SelectorDigitWrap::prototype;
 Nan::Persistent<Function> SelectorDigitWrap::constructor;
@@ -91,8 +92,14 @@ NAN_METHOD(SelectorDigitWrap::GetSelectorList)
     if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "value_vector")) && info[1]->IsBoolean())
     {
         // Unwrap object
-        value_vectorWrap* arg0_wrap = ObjectWrap::Unwrap<value_vectorWrap>(info[0]->ToObject());
+        ValueVectorWrap* arg0_wrap = ObjectWrap::Unwrap<ValueVectorWrap>(info[0]->ToObject());
         value_vector* arg0 = arg0_wrap->GetWrapped();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        selectorDigit->GetSelectorList(*arg0, arg1);
     }
 }
 
@@ -103,6 +110,8 @@ NAN_METHOD(SelectorDigitWrap::Restore)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorDigit->Restore();
     }
 }
 
@@ -113,6 +122,8 @@ NAN_METHOD(SelectorDigitWrap::SetFirst)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorDigit->SetFirst();
     }
 }
 
@@ -123,6 +134,11 @@ NAN_METHOD(SelectorDigitWrap::SetNext)
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        selectorDigit->SetNext(arg0);
     }
 }
 
@@ -133,5 +149,7 @@ NAN_METHOD(SelectorDigitWrap::ToString)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        selectorDigit->ToString();
     }
 }

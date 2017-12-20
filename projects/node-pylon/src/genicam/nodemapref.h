@@ -31,59 +31,47 @@
 #include <nan.h>
 
 #include <GenApi/NodeMapRef.h>
-#include "container.h"
+#include "../Base/gcstring.h"
+#include "../Base/gcstringvector.h"
+#include "../pylon/container.h"
 #include "ichunkport.h"
 #include "inode.h"
 #include "inodemap.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-class NodeMapRefTWrap : public node::ObjectWrap
+class NodeMapRefWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
     static Nan::Persistent<v8::FunctionTemplate> prototype;
 
-    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* GetWrapped() const
+    CNodeMapRef* GetWrapped() const
     {
-        return m_NodeMapRefT;
+        return m_NodeMapRef;
     };
 
-    void SetWrapped(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT)
+    void SetWrapped(CNodeMapRef* nodeMapRef)
     {
-        m_NodeMapRefT = nodeMapRefT;
+        m_NodeMapRef = nodeMapRef;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* nodeMapRefT);
+    static v8::Handle<v8::Value> NewInstance(CNodeMapRef* nodeMapRef);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    NodeMapRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~NodeMapRefTWrap();
+    NodeMapRefWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~NodeMapRefWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
-    static NAN_METHOD(_Destroy);
-    static NAN_METHOD(_LoadXMLFromFile);
-    static NAN_METHOD(_LoadXMLFromZIPFile);
-    static NAN_METHOD(_LoadXMLFromZIPData);
-    static NAN_METHOD(_LoadXMLFromFileInject);
-    static NAN_METHOD(_LoadXMLFromString);
-    static NAN_METHOD(_LoadXMLFromStringInject);
-    static NAN_METHOD(_GetSupportedSchemaVersions);
-    static NAN_METHOD(_GetDeviceName);
-    static NAN_METHOD(_Poll);
-    static NAN_METHOD(_ClearXMLCache);
-    static NAN_METHOD(_GetNodes);
-    static NAN_METHOD(_GetNode);
-    static NAN_METHOD(_InvalidateNodes);
-    static NAN_METHOD(_Connect);
 
 private:
     // Wrapped functions
     static NAN_METHOD(CastToIDestroy);
 
     // Wrapped object
-    CNodeMapRefT<GenApi_3_0_Basler_pylon_v5_0::CGeneric_XMLLoaderParams>* m_NodeMapRefT;
+    CNodeMapRef* m_NodeMapRef;
 };

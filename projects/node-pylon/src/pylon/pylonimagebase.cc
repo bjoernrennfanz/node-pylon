@@ -91,6 +91,9 @@ NAN_METHOD(PylonImageBaseWrap::CanSaveWithoutConversion)
     {
         // Convert from number value
         EImageFileFormat arg0 = static_cast<EImageFileFormat>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonImageBase->CanSaveWithoutConversion(arg0);
     }
 }
 
@@ -106,6 +109,9 @@ NAN_METHOD(PylonImageBaseWrap::GetPixelData)
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Call wrapped method
+        pylonImageBase->GetPixelData(arg0, arg1);
     }
 }
 
@@ -117,8 +123,11 @@ NAN_METHOD(PylonImageBaseWrap::Load)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")))
     {
         // Unwrap object
-        gcstringWrap* arg0_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[0]->ToObject());
+        GCStringWrap* arg0_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[0]->ToObject());
         gcstring* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonImageBase->Load(*arg0);
     }
 }
 
@@ -127,17 +136,18 @@ NAN_METHOD(PylonImageBaseWrap::Save)
     PylonImageBaseWrap* wrappedPylonImageBase = ObjectWrap::Unwrap<PylonImageBaseWrap>(info.This());
     CPylonImageBase* pylonImageBase = wrappedPylonImageBase->GetWrapped();
 
-    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "CImagePersistenceOptions")))
+    if ((info.Length() == 3) && info[0]->IsNumber() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")) && info[2]->IsObject())
     {
         // Convert from number value
         EImageFileFormat arg0 = static_cast<EImageFileFormat>(info[0]->NumberValue());
 
         // Unwrap object
-        gcstringWrap* arg1_wrap = ObjectWrap::Unwrap<gcstringWrap>(info[1]->ToObject());
+        GCStringWrap* arg1_wrap = ObjectWrap::Unwrap<GCStringWrap>(info[1]->ToObject());
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
-        // Unwrap object
-        ImagePersistenceOptionsWrap* arg2_wrap = ObjectWrap::Unwrap<ImagePersistenceOptionsWrap>(info[2]->ToObject());
-        CImagePersistenceOptions* arg2 = arg2_wrap->GetWrapped();
+        // TODO: Implement wrapper for CImagePersistenceOptions
+
+        // Call wrapped method
+        pylonImageBase->Save(arg0, *arg1, arg2);
     }
 }

@@ -92,26 +92,38 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
     if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENTDATA_REQUEST_EXTENDED_ID")))
     {
         // Unwrap object
-        GVCP_EVENTDATA_REQUEST_EXTENDED_IDWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENTDATA_REQUEST_EXTENDED_IDWrap>(info[0]->ToObject());
+        GVCPEventdataRequestExtendedIdWrap* arg0_wrap = ObjectWrap::Unwrap<GVCPEventdataRequestExtendedIdWrap>(info[0]->ToObject());
         GVCP_EVENTDATA_REQUEST_EXTENDED_ID* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        eventAdapterGEV->DeliverEventMessage(arg0);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST_EXTENDED_ID")))
     {
         // Unwrap object
-        GVCP_EVENT_REQUEST_EXTENDED_IDWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENT_REQUEST_EXTENDED_IDWrap>(info[0]->ToObject());
+        GVCPEventRequestExtendedIdWrap* arg0_wrap = ObjectWrap::Unwrap<GVCPEventRequestExtendedIdWrap>(info[0]->ToObject());
         GVCP_EVENT_REQUEST_EXTENDED_ID* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        eventAdapterGEV->DeliverEventMessage(arg0);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENTDATA_REQUEST")))
     {
         // Unwrap object
-        GVCP_EVENTDATA_REQUESTWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENTDATA_REQUESTWrap>(info[0]->ToObject());
+        GVCPEventdataRequestWrap* arg0_wrap = ObjectWrap::Unwrap<GVCPEventdataRequestWrap>(info[0]->ToObject());
         GVCP_EVENTDATA_REQUEST* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        eventAdapterGEV->DeliverEventMessage(arg0);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST")))
     {
         // Unwrap object
-        GVCP_EVENT_REQUESTWrap* arg0_wrap = ObjectWrap::Unwrap<GVCP_EVENT_REQUESTWrap>(info[0]->ToObject());
+        GVCPEventRequestWrap* arg0_wrap = ObjectWrap::Unwrap<GVCPEventRequestWrap>(info[0]->ToObject());
         GVCP_EVENT_REQUEST* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        eventAdapterGEV->DeliverEventMessage(arg0);
     }
 }
 
@@ -120,13 +132,15 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverMessage)
     EventAdapterGEVWrap* wrappedEventAdapterGEV = ObjectWrap::Unwrap<EventAdapterGEVWrap>(info.This());
     CEventAdapterGEV* eventAdapterGEV = wrappedEventAdapterGEV->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Call wrapped method
+        eventAdapterGEV->DeliverMessage(arg0, arg1);
     }
 }

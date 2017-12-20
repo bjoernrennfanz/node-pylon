@@ -31,42 +31,42 @@
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
 
-Nan::Persistent<FunctionTemplate> BooleanRefTWrap::prototype;
-Nan::Persistent<Function> BooleanRefTWrap::constructor;
+Nan::Persistent<FunctionTemplate> BooleanWrap::prototype;
+Nan::Persistent<Function> BooleanWrap::constructor;
 
 // Supported implementations
-// CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>()
-// CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>& const arg0)
-BooleanRefTWrap::BooleanRefTWrap(Nan::NAN_METHOD_ARGS_TYPE info)
-  : m_BooleanRefT(NULL)
+// IBoolean()
+// IBoolean(IBoolean& const arg0)
+BooleanWrap::BooleanWrap(Nan::NAN_METHOD_ARGS_TYPE info)
+  : m_Boolean(NULL)
 {
     // Check constructor arguments
     if (info.Length() == 0)
     {
-        // CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>()
-        m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>();
+        // IBoolean()
+        m_Boolean = new IBoolean();
     }
-    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>")))
+    else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBoolean")))
     {
         // Unwrap object
-        BooleanRefTWrap* arg0_wrap = ObjectWrap::Unwrap<BooleanRefTWrap>(info[0]->ToObject());
-        CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* arg0 = arg0_wrap->GetWrapped();
+        BooleanWrap* arg0_wrap = ObjectWrap::Unwrap<BooleanWrap>(info[0]->ToObject());
+        IBoolean* arg0 = arg0_wrap->GetWrapped();
 
-        // CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>& const arg0)
-        m_BooleanRefT = new CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>(*arg0);
+        // IBoolean(IBoolean& const arg0)
+        m_Boolean = new IBoolean(*arg0);
     }
 }
 
-BooleanRefTWrap::~BooleanRefTWrap()
+BooleanWrap::~BooleanWrap()
 {
-    delete m_BooleanRefT;
+    delete m_Boolean;
 }
 
-NAN_MODULE_INIT(BooleanRefTWrap::Initialize)
+NAN_MODULE_INIT(BooleanWrap::Initialize)
 {
     // Prepare constructor template
     Local <FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("BooleanRefTWrap").ToLocalChecked());
+    tpl->SetClassName(Nan::New("BooleanWrap").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // Register prototypes to template
@@ -77,25 +77,41 @@ NAN_MODULE_INIT(BooleanRefTWrap::Initialize)
     prototype.Reset(tpl);
     Local<Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
-    Nan::Set(target, Nan::New("CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>").ToLocalChecked(), function);
+    Nan::Set(target, Nan::New("IBoolean").ToLocalChecked(), function);
 }
 
-NAN_METHOD(BooleanRefTWrap::GetValue)
+NAN_METHOD(BooleanWrap::GetValue)
 {
-    BooleanRefTWrap* wrappedBooleanRefT = ObjectWrap::Unwrap<BooleanRefTWrap>(info.This());
-    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT = wrappedBooleanRefT->GetWrapped();
+    BooleanWrap* wrappedBoolean = ObjectWrap::Unwrap<BooleanWrap>(info.This());
+    IBoolean* boolean = wrappedBoolean->GetWrapped();
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        boolean->GetValue(arg0, arg1);
     }
 }
 
-NAN_METHOD(BooleanRefTWrap::SetValue)
+NAN_METHOD(BooleanWrap::SetValue)
 {
-    BooleanRefTWrap* wrappedBooleanRefT = ObjectWrap::Unwrap<BooleanRefTWrap>(info.This());
-    CBooleanRefT<GenApi_3_0_Basler_pylon_v5_0::IBoolean>* booleanRefT = wrappedBooleanRefT->GetWrapped();
+    BooleanWrap* wrappedBoolean = ObjectWrap::Unwrap<BooleanWrap>(info.This());
+    IBoolean* boolean = wrappedBoolean->GetWrapped();
 
     if ((info.Length() == 2) && info[0]->IsBoolean() && info[1]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Convert from boolean value
+        bool arg1 = info[1]->BooleanValue();
+
+        // Call wrapped method
+        boolean->SetValue(arg0, arg1);
     }
 }

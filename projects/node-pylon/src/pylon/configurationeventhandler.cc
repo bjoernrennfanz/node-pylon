@@ -105,6 +105,8 @@ NAN_METHOD(ConfigurationEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        configurationEventHandler->DebugGetEventHandlerRegistrationCount();
     }
 }
 
@@ -115,6 +117,8 @@ NAN_METHOD(ConfigurationEventHandlerWrap::DestroyConfiguration)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        configurationEventHandler->DestroyConfiguration();
     }
 }
 
@@ -128,6 +132,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnAttach)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnAttach(*arg0);
     }
 }
 
@@ -141,6 +148,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnAttached)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnAttached(*arg0);
     }
 }
 
@@ -154,6 +164,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnCameraDeviceRemoved)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnCameraDeviceRemoved(*arg0);
     }
 }
 
@@ -167,6 +180,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnClose)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnClose(*arg0);
     }
 }
 
@@ -180,6 +196,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnClosed)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnClosed(*arg0);
     }
 }
 
@@ -193,6 +212,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationDeregistered)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnConfigurationDeregistered(*arg0);
     }
 }
 
@@ -206,6 +228,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationRegistered)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnConfigurationRegistered(*arg0);
     }
 }
 
@@ -219,6 +244,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroy)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnDestroy(*arg0);
     }
 }
 
@@ -232,6 +260,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroyed)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnDestroyed(*arg0);
     }
 }
 
@@ -245,6 +276,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDetach)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnDetach(*arg0);
     }
 }
 
@@ -258,6 +292,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDetached)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnDetached(*arg0);
     }
 }
 
@@ -266,15 +303,17 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabError)
     ConfigurationEventHandlerWrap* wrappedConfigurationEventHandler = ObjectWrap::Unwrap<ConfigurationEventHandlerWrap>(info.This());
     CConfigurationEventHandler* configurationEventHandler = wrappedConfigurationEventHandler->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "char")))
+    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "CInstantCamera")) && info[1]->IsString())
     {
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
 
-        // Unwrap object
-        charWrap* arg1_wrap = ObjectWrap::Unwrap<charWrap>(info[1]->ToObject());
-        char* arg1 = arg1_wrap->GetWrapped();
+        // Convert from string value
+        char* arg1 = pylon_v8::ToGCString(info[1]->ToString()).c_str();
+
+        // Call wrapped method
+        configurationEventHandler->OnGrabError(*arg0, arg1);
     }
 }
 
@@ -288,6 +327,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStart)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnGrabStart(*arg0);
     }
 }
 
@@ -301,6 +343,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStarted)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnGrabStarted(*arg0);
     }
 }
 
@@ -314,6 +359,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStop)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnGrabStop(*arg0);
     }
 }
 
@@ -327,6 +375,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStopped)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnGrabStopped(*arg0);
     }
 }
 
@@ -340,6 +391,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnOpen)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnOpen(*arg0);
     }
 }
 
@@ -353,5 +407,8 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnOpened)
         // Unwrap object
         InstantCameraWrap* arg0_wrap = ObjectWrap::Unwrap<InstantCameraWrap>(info[0]->ToObject());
         CInstantCamera* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        configurationEventHandler->OnOpened(*arg0);
     }
 }

@@ -31,7 +31,7 @@
 #include <nan.h>
 
 #include <GenApi/ISelector.h>
-#include "container.h"
+#include "../pylon/container.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;

@@ -112,6 +112,9 @@ NAN_METHOD(PylonImageWrap::AttachGrabResultBuffer)
         // Unwrap object
         GrabResultPtrWrap* arg0_wrap = ObjectWrap::Unwrap<GrabResultPtrWrap>(info[0]->ToObject());
         CGrabResultPtr* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonImage->AttachGrabResultBuffer(*arg0);
     }
 }
 
@@ -120,11 +123,9 @@ NAN_METHOD(PylonImageWrap::AttachUserBuffer)
     PylonImageWrap* wrappedPylonImage = ObjectWrap::Unwrap<PylonImageWrap>(info.This());
     CPylonImage* pylonImage = wrappedPylonImage->GetWrapped();
 
-    if ((info.Length() == 7) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber())
+    if ((info.Length() == 7) && info[0]->IsObject() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
@@ -143,6 +144,9 @@ NAN_METHOD(PylonImageWrap::AttachUserBuffer)
 
         // Convert from number value
         EImageOrientation arg6 = static_cast<EImageOrientation>(info[6]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->AttachUserBuffer(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
     }
 }
 
@@ -155,6 +159,9 @@ NAN_METHOD(PylonImageWrap::ChangePixelType)
     {
         // Convert from number value
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->ChangePixelType(arg0);
     }
 }
 
@@ -163,11 +170,9 @@ NAN_METHOD(PylonImageWrap::CopyImage)
     PylonImageWrap* wrappedPylonImage = ObjectWrap::Unwrap<PylonImageWrap>(info.This());
     CPylonImage* pylonImage = wrappedPylonImage->GetWrapped();
 
-    if ((info.Length() == 7) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "void")) && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber())
+    if ((info.Length() == 7) && info[0]->IsObject() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber())
     {
-        // Unwrap object
-        voidWrap* arg0_wrap = ObjectWrap::Unwrap<voidWrap>(info[0]->ToObject());
-        void* arg0 = arg0_wrap->GetWrapped();
+        // TODO: Implement wrapper for void
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
@@ -186,6 +191,9 @@ NAN_METHOD(PylonImageWrap::CopyImage)
 
         // Convert from number value
         EImageOrientation arg6 = static_cast<EImageOrientation>(info[6]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->CopyImage(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")) && info[1]->IsNumber())
     {
@@ -195,12 +203,18 @@ NAN_METHOD(PylonImageWrap::CopyImage)
 
         // Convert from number value
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->CopyImage(*arg0, arg1);
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
     {
         // Unwrap object
         ImageWrap* arg0_wrap = ObjectWrap::Unwrap<ImageWrap>(info[0]->ToObject());
         IImage* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        pylonImage->CopyImage(*arg0);
     }
 }
 
@@ -225,6 +239,9 @@ NAN_METHOD(PylonImageWrap::Create)
 
         // Convert from number value
         EImageOrientation arg4 = static_cast<EImageOrientation>(info[4]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->Create(arg0, arg1, arg2, arg3, arg4);
     }
 }
 
@@ -235,6 +252,8 @@ NAN_METHOD(PylonImageWrap::GetAllocatedBufferSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetAllocatedBufferSize();
     }
 }
 
@@ -256,6 +275,9 @@ NAN_METHOD(PylonImageWrap::GetAoi)
 
         // Convert from number value
         unsigned int arg3 = static_cast<unsigned int>(info[3]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->GetAoi(arg0, arg1, arg2, arg3);
     }
 }
 
@@ -266,9 +288,13 @@ NAN_METHOD(PylonImageWrap::GetBuffer)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetBuffer();
     }
     else if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetBuffer();
     }
 }
 
@@ -279,6 +305,8 @@ NAN_METHOD(PylonImageWrap::GetHeight)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetHeight();
     }
 }
 
@@ -289,6 +317,8 @@ NAN_METHOD(PylonImageWrap::GetImageSize)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetImageSize();
     }
 }
 
@@ -299,6 +329,8 @@ NAN_METHOD(PylonImageWrap::GetOrientation)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetOrientation();
     }
 }
 
@@ -309,6 +341,8 @@ NAN_METHOD(PylonImageWrap::GetPaddingX)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetPaddingX();
     }
 }
 
@@ -319,6 +353,8 @@ NAN_METHOD(PylonImageWrap::GetPixelType)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetPixelType();
     }
 }
 
@@ -331,6 +367,9 @@ NAN_METHOD(PylonImageWrap::GetPlane)
     {
         // Convert from number value
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->GetPlane(arg0);
     }
 }
 
@@ -339,11 +378,13 @@ NAN_METHOD(PylonImageWrap::GetStride)
     PylonImageWrap* wrappedPylonImage = ObjectWrap::Unwrap<PylonImageWrap>(info.This());
     CPylonImage* pylonImage = wrappedPylonImage->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned int")))
+    if ((info.Length() == 1) && info[0]->IsNumber())
     {
-        // Unwrap object
-        unsigned intWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned intWrap>(info[0]->ToObject());
-        unsigned int* arg0 = arg0_wrap->GetWrapped();
+        // Convert from number value
+        unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->GetStride(*arg0);
     }
 }
 
@@ -354,6 +395,8 @@ NAN_METHOD(PylonImageWrap::GetWidth)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->GetWidth();
     }
 }
 
@@ -364,6 +407,8 @@ NAN_METHOD(PylonImageWrap::IsAdditionalPaddingSupported)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->IsAdditionalPaddingSupported();
     }
 }
 
@@ -374,6 +419,8 @@ NAN_METHOD(PylonImageWrap::IsGrabResultBufferAttached)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->IsGrabResultBufferAttached();
     }
 }
 
@@ -386,6 +433,9 @@ NAN_METHOD(PylonImageWrap::IsSupportedPixelType)
     {
         // Convert from number value
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->IsSupportedPixelType(arg0);
     }
 }
 
@@ -396,6 +446,8 @@ NAN_METHOD(PylonImageWrap::IsUnique)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->IsUnique();
     }
 }
 
@@ -406,6 +458,8 @@ NAN_METHOD(PylonImageWrap::IsUserBufferAttached)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->IsUserBufferAttached();
     }
 }
 
@@ -416,6 +470,8 @@ NAN_METHOD(PylonImageWrap::IsValid)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->IsValid();
     }
 }
 
@@ -426,6 +482,8 @@ NAN_METHOD(PylonImageWrap::Release)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        pylonImage->Release();
     }
 }
 
@@ -450,6 +508,9 @@ NAN_METHOD(PylonImageWrap::Reset)
 
         // Convert from number value
         EImageOrientation arg4 = static_cast<EImageOrientation>(info[4]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->Reset(arg0, arg1, arg2, arg3, arg4);
     }
     else if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
     {
@@ -464,5 +525,8 @@ NAN_METHOD(PylonImageWrap::Reset)
 
         // Convert from number value
         EImageOrientation arg3 = static_cast<EImageOrientation>(info[3]->NumberValue());
+
+        // Call wrapped method
+        pylonImage->Reset(arg0, arg1, arg2, arg3);
     }
 }

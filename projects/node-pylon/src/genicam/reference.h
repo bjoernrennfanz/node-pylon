@@ -31,38 +31,40 @@
 #include <nan.h>
 
 #include <GenApi/Reference.h>
+#include "../Base/gcstring.h"
 #include "ibase.h"
 
 using namespace v8;
 using namespace GenApi_3_0_Basler_pylon_v5_0;
+using namespace GenICam_3_0_Basler_pylon_v5_0;
 
-class ReferenceTWrap : public node::ObjectWrap
+class ReferenceWrap : public node::ObjectWrap
 {
 public:
     static NAN_MODULE_INIT(Initialize);
     static Nan::Persistent<v8::FunctionTemplate> prototype;
 
-    CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* GetWrapped() const
+    IReference* GetWrapped() const
     {
-        return m_ReferenceT;
+        return m_Reference;
     };
 
-    void SetWrapped(CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* referenceT)
+    void SetWrapped(IReference* reference)
     {
-        m_ReferenceT = referenceT;
+        m_Reference = reference;
     };
 
-    static v8::Handle<v8::Value> NewInstance(CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* referenceT);
+    static v8::Handle<v8::Value> NewInstance(IReference* reference);
 
 private:
     static Nan::Persistent<v8::Function> constructor;
-    ReferenceTWrap(Nan::NAN_METHOD_ARGS_TYPE info);
-    ~ReferenceTWrap();
+    ReferenceWrap(Nan::NAN_METHOD_ARGS_TYPE info);
+    ~ReferenceWrap();
     static NAN_METHOD(New);
 
     // Wrapped methods
     static NAN_METHOD(SetReference);
 
     // Wrapped object
-    CReferenceT<GenApi_3_0_Basler_pylon_v5_0::IFloat, GenApi_3_0_Basler_pylon_v5_0::IFloat>* m_ReferenceT;
+    IReference* m_Reference;
 };

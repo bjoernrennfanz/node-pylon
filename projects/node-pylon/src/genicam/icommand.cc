@@ -87,6 +87,11 @@ NAN_METHOD(CommandWrap::Execute)
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        command->Execute(arg0);
     }
 }
 
@@ -97,5 +102,10 @@ NAN_METHOD(CommandWrap::IsDone)
 
     if ((info.Length() == 1) && info[0]->IsBoolean())
     {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped method
+        command->IsDone(arg0);
     }
 }

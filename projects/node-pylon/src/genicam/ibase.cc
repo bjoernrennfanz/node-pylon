@@ -86,5 +86,7 @@ NAN_METHOD(BaseWrap::GetAccessMode)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        base->GetAccessMode();
     }
 }

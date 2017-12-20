@@ -97,18 +97,20 @@ NAN_METHOD(ChunkAdapterWrap::AttachBuffer)
     ChunkAdapterWrap* wrappedChunkAdapter = ObjectWrap::Unwrap<ChunkAdapterWrap>(info.This());
     CChunkAdapter* chunkAdapter = wrappedChunkAdapter->GetWrapped();
 
-    if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
+    if ((info.Length() == 3) && info[0]->IsString() && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Unwrap object
-        AttachStatistics_tWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatistics_tWrap>(info[2]->ToObject());
+        AttachStatisticsWrap* arg2_wrap = ObjectWrap::Unwrap<AttachStatisticsWrap>(info[2]->ToObject());
         AttachStatistics_t* arg2 = arg2_wrap->GetWrapped();
+
+        // Call wrapped method
+        chunkAdapter->AttachBuffer(arg0, arg1, arg2);
     }
 }
 
@@ -122,6 +124,9 @@ NAN_METHOD(ChunkAdapterWrap::AttachNodeMap)
         // Unwrap object
         NodeMapWrap* arg0_wrap = ObjectWrap::Unwrap<NodeMapWrap>(info[0]->ToObject());
         INodeMap* arg0 = arg0_wrap->GetWrapped();
+
+        // Call wrapped method
+        chunkAdapter->AttachNodeMap(arg0);
     }
 }
 
@@ -130,14 +135,16 @@ NAN_METHOD(ChunkAdapterWrap::CheckBufferLayout)
     ChunkAdapterWrap* wrappedChunkAdapter = ObjectWrap::Unwrap<ChunkAdapterWrap>(info.This());
     CChunkAdapter* chunkAdapter = wrappedChunkAdapter->GetWrapped();
 
-    if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")) && info[1]->IsNumber())
+    if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
 
         // Convert from number value
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
+
+        // Call wrapped method
+        chunkAdapter->CheckBufferLayout(arg0, arg1);
     }
 }
 
@@ -148,6 +155,8 @@ NAN_METHOD(ChunkAdapterWrap::ClearCaches)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        chunkAdapter->ClearCaches();
     }
 }
 
@@ -158,6 +167,8 @@ NAN_METHOD(ChunkAdapterWrap::DetachBuffer)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        chunkAdapter->DetachBuffer();
     }
 }
 
@@ -168,6 +179,8 @@ NAN_METHOD(ChunkAdapterWrap::DetachNodeMap)
 
     if (info.Length() == 0)
     {
+        // Call wrapped method
+        chunkAdapter->DetachNodeMap();
     }
 }
 
@@ -176,10 +189,12 @@ NAN_METHOD(ChunkAdapterWrap::UpdateBuffer)
     ChunkAdapterWrap* wrappedChunkAdapter = ObjectWrap::Unwrap<ChunkAdapterWrap>(info.This());
     CChunkAdapter* chunkAdapter = wrappedChunkAdapter->GetWrapped();
 
-    if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "unsigned char")))
+    if ((info.Length() == 1) && info[0]->IsString())
     {
-        // Unwrap object
-        unsigned charWrap* arg0_wrap = ObjectWrap::Unwrap<unsigned charWrap>(info[0]->ToObject());
-        unsigned char* arg0 = arg0_wrap->GetWrapped();
+        // Convert from string value
+        unsigned char* arg0 = static_cast<unsigned char*>(pylon_v8::ToGCString(info[0]->ToString()).c_str());
+
+        // Call wrapped method
+        chunkAdapter->UpdateBuffer(arg0);
     }
 }

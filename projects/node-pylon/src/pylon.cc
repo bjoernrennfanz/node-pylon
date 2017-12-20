@@ -33,7 +33,9 @@
 #include "pylon/acquirecontinuousconfiguration.h"
 #include "pylon/acquiresingleframeconfiguration.h"
 #include "pylon/cameraeventhandler.h"
+#include "pylon/chunkparser.h"
 #include "pylon/configurationeventhandler.h"
+#include "pylon/container.h"
 #include "pylon/pylondevice.h"
 #include "pylon/deviceaccessmode.h"
 #include "pylon/devicefactory.h"
@@ -47,7 +49,6 @@
 #include "pylon/info.h"
 #include "pylon/instantcamera.h"
 #include "pylon/instantcameraarray.h"
-#include "pylon/payloadtype.h"
 #include "pylon/pixeltype.h"
 #include "pylon/pixelformatconverter.h"
 #include "pylon/pylongui.h"
@@ -59,6 +60,26 @@
 #include "pylon/streamgrabber.h"
 #include "pylon/tlfactory.h"
 #include "pylon/transportlayer.h"
+#include "pylon/accessmodeset.h"
+#include "pylon/bitset.h"
+#include "pylon/buffer.h"
+#include "pylon/imageformatconverterparamsparams.h"
+#include "pylon/infobase.h"
+#include "pylon/instantcameraparamsparams.h"
+#include "pylon/constiterator.h"
+#include "pylon/pylonimagewindow.h"
+#include "pylon/deviceinfolist.h"
+#include "pylon/eventresult.h"
+#include "pylon/interfaceinfolist.h"
+#include "pylon/outputpixelformatenum.h"
+#include "pylon/properties.h"
+#include "pylon/selfreliantchunkparser.h"
+#include "pylon/iterator.h"
+#include "pylon/nodevector.h"
+#include "pylon/pylonautoinitterm.h"
+#include "pylon/tlinfolist.h"
+#include "pylon/tlist.h"
+#include "pylon/valuevector.h"
 
 using namespace v8;
 using namespace Pylon;
@@ -77,7 +98,9 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     AcquireContinuousConfigurationWrap::Initialize(target);
     AcquireSingleFrameConfigurationWrap::Initialize(target);
     CameraEventHandlerWrap::Initialize(target);
+    ChunkParserWrap::Initialize(target);
     ConfigurationEventHandlerWrap::Initialize(target);
+    ContainerWrap::Initialize(target);
     PylonDeviceWrap::Initialize(target);
     DeviceaccessmodeWrap::Initialize(target);
     DeviceFactoryWrap::Initialize(target);
@@ -88,37 +111,95 @@ NAN_MODULE_INIT(PylonWrap::Initialize)
     ImageWrap::Initialize(target);
     ImageEventHandlerWrap::Initialize(target);
     ImageFormatConverterWrap::Initialize(target);
-    InfoBaseWrap::Initialize(target);
+    InfoWrap::Initialize(target);
     InstantCameraWrap::Initialize(target);
     InstantCameraArrayWrap::Initialize(target);
-    PayloadtypeWrap::Initialize(target);
     PixeltypeWrap::Initialize(target);
     PixelFormatConverterWrap::Initialize(target);
     PylonguiWrap::Initialize(target);
     PylonImageWrap::Initialize(target);
     PylonImageBaseWrap::Initialize(target);
-    GrabResultWrap::Initialize(target);
+    ResultWrap::Initialize(target);
     ReusableImageWrap::Initialize(target);
     SoftwareTriggerConfigurationWrap::Initialize(target);
     StreamGrabberWrap::Initialize(target);
     TlFactoryWrap::Initialize(target);
     TransportLayerWrap::Initialize(target);
+    AccessModeSetWrap::Initialize(target);
+    BitsetWrap::Initialize(target);
+    BufferWrap::Initialize(target);
+    ImageFormatConverterParamsParamsWrap::Initialize(target);
+    InfoBaseWrap::Initialize(target);
+    InstantCameraParamsParamsWrap::Initialize(target);
+    ConstIteratorWrap::Initialize(target);
+    PylonImageWindowWrap::Initialize(target);
+    DeviceInfoListWrap::Initialize(target);
+    EventResultWrap::Initialize(target);
+    InterfaceInfoListWrap::Initialize(target);
+    OutputPixelFormatEnumWrap::Initialize(target);
+    PropertiesWrap::Initialize(target);
+    SelfReliantChunkParserWrap::Initialize(target);
+    IteratorWrap::Initialize(target);
+    NodeVectorWrap::Initialize(target);
+    PylonAutoInitTermWrap::Initialize(target);
+    TlInfoListWrap::Initialize(target);
+    TListWrap::Initialize(target);
+    ValueVectorWrap::Initialize(target);
 }
 
 NAN_METHOD(PylonWrap::GetPylonVersion)
 {
+    if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
+    {
+        // Convert from number value to pointer
+        unsigned int arg0_value = static_cast<unsigned int>(info[0]->NumberValue());
+        unsigned int* arg0 = &arg0_value;
+
+        // Convert from number value to pointer
+        unsigned int arg1_value = static_cast<unsigned int>(info[1]->NumberValue());
+        unsigned int* arg1 = &arg1_value;
+
+        // Convert from number value to pointer
+        unsigned int arg2_value = static_cast<unsigned int>(info[2]->NumberValue());
+        unsigned int* arg2 = &arg2_value;
+
+        // Convert from number value to pointer
+        unsigned int arg3_value = static_cast<unsigned int>(info[3]->NumberValue());
+        unsigned int* arg3 = &arg3_value;
+
+        // Call wrapped function
+        GetPylonVersion(arg0, arg1, arg2, arg3);
+    }
 }
 
 NAN_METHOD(PylonWrap::GetPylonVersionString)
 {
+    if (info.Length() == 0)
+    {
+        // Call wrapped function
+        GetPylonVersionString();
+    }
 }
 
 NAN_METHOD(PylonWrap::PylonInitialize)
 {
+    if (info.Length() == 0)
+    {
+        // Call wrapped function
+        PylonInitialize();
+    }
 }
 
 NAN_METHOD(PylonWrap::PylonTerminate)
 {
+    if ((info.Length() == 1) && info[0]->IsBoolean())
+    {
+        // Convert from boolean value
+        bool arg0 = info[0]->BooleanValue();
+
+        // Call wrapped function
+        PylonTerminate(arg0);
+    }
 }
 
 NODE_MODULE(pylon, PylonWrap::Initialize)
