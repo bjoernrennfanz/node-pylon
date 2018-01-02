@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,7 +97,10 @@ NAN_METHOD(FileProtocolAdapterWrap::attach)
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        fileProtocolAdapter->attach(arg0);
+        bool result = fileProtocolAdapter->attach(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -112,7 +115,10 @@ NAN_METHOD(FileProtocolAdapterWrap::closeFile)
         char* arg0 = pylon_v8::ToGCString(info[0]->ToString()).c_str();
 
         // Call wrapped method
-        fileProtocolAdapter->closeFile(arg0);
+        bool result = fileProtocolAdapter->closeFile(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -127,7 +133,10 @@ NAN_METHOD(FileProtocolAdapterWrap::deleteFile)
         char* arg0 = pylon_v8::ToGCString(info[0]->ToString()).c_str();
 
         // Call wrapped method
-        fileProtocolAdapter->deleteFile(arg0);
+        bool result = fileProtocolAdapter->deleteFile(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -145,7 +154,10 @@ NAN_METHOD(FileProtocolAdapterWrap::getBufSize)
         int arg1 = static_cast<int>(info[1]->NumberValue());
 
         // Call wrapped method
-        fileProtocolAdapter->getBufSize(arg0, arg1);
+        __int128_t result = fileProtocolAdapter->getBufSize(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -163,7 +175,10 @@ NAN_METHOD(FileProtocolAdapterWrap::openFile)
         int arg1 = static_cast<int>(info[1]->NumberValue());
 
         // Call wrapped method
-        fileProtocolAdapter->openFile(arg0, arg1);
+        bool result = fileProtocolAdapter->openFile(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -187,7 +202,10 @@ NAN_METHOD(FileProtocolAdapterWrap::read)
         char* arg3 = pylon_v8::ToGCString(info[3]->ToString()).c_str();
 
         // Call wrapped method
-        fileProtocolAdapter->read(arg0, arg1, arg2, arg3);
+        __int128_t result = fileProtocolAdapter->read(arg0, arg1, arg2, arg3);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -211,6 +229,9 @@ NAN_METHOD(FileProtocolAdapterWrap::write)
         char* arg3 = pylon_v8::ToGCString(info[3]->ToString()).c_str();
 
         // Call wrapped method
-        fileProtocolAdapter->write(arg0, arg1, arg2, arg3);
+        __int128_t result = fileProtocolAdapter->write(arg0, arg1, arg2, arg3);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }

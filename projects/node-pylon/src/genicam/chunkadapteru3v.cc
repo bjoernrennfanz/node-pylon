@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -106,6 +106,9 @@ NAN_METHOD(ChunkAdapterU3VWrap::AttachBuffer)
 
         // Call wrapped method
         chunkAdapterU3V->AttachBuffer(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -123,6 +126,9 @@ NAN_METHOD(ChunkAdapterU3VWrap::CheckBufferLayout)
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Call wrapped method
-        chunkAdapterU3V->CheckBufferLayout(arg0, arg1);
+        bool result = chunkAdapterU3V->CheckBufferLayout(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

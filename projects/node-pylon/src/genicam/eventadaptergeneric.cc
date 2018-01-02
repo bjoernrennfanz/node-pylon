@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -102,6 +102,9 @@ NAN_METHOD(EventAdapterGenericWrap::DeliverMessage)
 
         // Call wrapped method
         eventAdapterGeneric->DeliverMessage(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 3) && info[0]->IsString() && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "gcstring")))
     {
@@ -117,6 +120,9 @@ NAN_METHOD(EventAdapterGenericWrap::DeliverMessage)
 
         // Call wrapped method
         eventAdapterGeneric->DeliverMessage(arg0, arg1, *arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
@@ -128,5 +134,8 @@ NAN_METHOD(EventAdapterGenericWrap::DeliverMessage)
 
         // Call wrapped method
         eventAdapterGeneric->DeliverMessage(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

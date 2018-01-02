@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -163,6 +163,9 @@ NAN_METHOD(DeviceFactoryWrap::DestroyDevice)
 
         // Call wrapped method
         deviceFactory->DestroyDevice(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -185,7 +188,10 @@ NAN_METHOD(DeviceFactoryWrap::EnumerateDevices)
         bool arg2 = info[2]->BooleanValue();
 
         // Call wrapped method
-        deviceFactory->EnumerateDevices(*arg0, *arg1, arg2);
+        int result = deviceFactory->EnumerateDevices(*arg0, *arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && info[1]->IsBoolean())
     {
@@ -197,7 +203,10 @@ NAN_METHOD(DeviceFactoryWrap::EnumerateDevices)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        deviceFactory->EnumerateDevices(*arg0, arg1);
+        int result = deviceFactory->EnumerateDevices(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -221,6 +230,9 @@ NAN_METHOD(DeviceFactoryWrap::IsDeviceAccessible)
         EDeviceAccessiblityInfo* arg2 = &arg2_value;
 
         // Call wrapped method
-        deviceFactory->IsDeviceAccessible(*arg0, arg1, arg2);
+        bool result = deviceFactory->IsDeviceAccessible(*arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -109,7 +109,10 @@ NAN_METHOD(TransportLayerWrap::EnumerateInterfaces)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        transportLayer->EnumerateInterfaces(*arg0, arg1);
+        int result = transportLayer->EnumerateInterfaces(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -133,6 +136,6 @@ NAN_METHOD(TransportLayerWrap::GetTlInfo)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        transportLayer->GetTlInfo();
+        // TODO: Implement return value wrapper for transportLayer->GetTlInfo()
     }
 }

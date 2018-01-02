@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,9 @@ NAN_METHOD(ChunkParserWrap::AttachBuffer)
 
         // Call wrapped method
         chunkParser->AttachBuffer(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -117,6 +120,9 @@ NAN_METHOD(ChunkParserWrap::Destroy)
     {
         // Call wrapped method
         chunkParser->Destroy();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -129,6 +135,9 @@ NAN_METHOD(ChunkParserWrap::DetachBuffer)
     {
         // Call wrapped method
         chunkParser->DetachBuffer();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -155,5 +164,8 @@ NAN_METHOD(ChunkParserWrap::UpdateBuffer)
 
         // Call wrapped method
         chunkParser->UpdateBuffer(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

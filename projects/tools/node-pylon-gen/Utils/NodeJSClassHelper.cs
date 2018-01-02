@@ -121,6 +121,11 @@ namespace NodePylonGen.Utils
                             // Refresh matches
                             matches = Regex.Matches(trimmedClassName, searchPattern);
                         }
+                        else
+                        {
+                            // Prevent endless loop
+                            break;
+                        }
                     }
                     while (matches.Count > 0);
                 }

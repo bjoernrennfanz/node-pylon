@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -103,7 +103,10 @@ NAN_METHOD(FloatRefTWrap::GetDisplayNotation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetDisplayNotation();
+        EDisplayNotation result = floatRefT->GetDisplayNotation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -115,7 +118,10 @@ NAN_METHOD(FloatRefTWrap::GetDisplayPrecision)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetDisplayPrecision();
+        __int128_t result = floatRefT->GetDisplayPrecision();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -139,7 +145,10 @@ NAN_METHOD(FloatRefTWrap::GetInc)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetInc();
+        double result = floatRefT->GetInc();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -151,7 +160,10 @@ NAN_METHOD(FloatRefTWrap::GetIncMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetIncMode();
+        EIncMode result = floatRefT->GetIncMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -178,7 +190,7 @@ NAN_METHOD(FloatRefTWrap::GetListOfValidValues)
         bool arg0 = info[0]->BooleanValue();
 
         // Call wrapped method
-        floatRefT->GetListOfValidValues(arg0);
+        // TODO: Implement return value wrapper for floatRefT->GetListOfValidValues(arg0)
     }
 }
 
@@ -190,7 +202,10 @@ NAN_METHOD(FloatRefTWrap::GetMax)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetMax();
+        double result = floatRefT->GetMax();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -202,7 +217,10 @@ NAN_METHOD(FloatRefTWrap::GetMin)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetMin();
+        double result = floatRefT->GetMin();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -214,7 +232,10 @@ NAN_METHOD(FloatRefTWrap::GetRepresentation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->GetRepresentation();
+        ERepresentation result = floatRefT->GetRepresentation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -244,7 +265,10 @@ NAN_METHOD(FloatRefTWrap::GetValue)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        floatRefT->GetValue(arg0, arg1);
+        double result = floatRefT->GetValue(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -256,7 +280,10 @@ NAN_METHOD(FloatRefTWrap::HasInc)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        floatRefT->HasInc();
+        bool result = floatRefT->HasInc();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -272,6 +299,9 @@ NAN_METHOD(FloatRefTWrap::ImposeMax)
 
         // Call wrapped method
         floatRefT->ImposeMax(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -287,6 +317,9 @@ NAN_METHOD(FloatRefTWrap::ImposeMin)
 
         // Call wrapped method
         floatRefT->ImposeMin(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -305,5 +338,8 @@ NAN_METHOD(FloatRefTWrap::SetValue)
 
         // Call wrapped method
         floatRefT->SetValue(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

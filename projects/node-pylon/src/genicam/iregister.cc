@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -103,6 +103,9 @@ NAN_METHOD(RegisterWrap::Get)
 
         // Call wrapped method
         register->Get(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -114,7 +117,10 @@ NAN_METHOD(RegisterWrap::GetAddress)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        register->GetAddress();
+        __int128_t result = register->GetAddress();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -126,7 +132,10 @@ NAN_METHOD(RegisterWrap::GetLength)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        register->GetLength();
+        __int128_t result = register->GetLength();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -148,5 +157,8 @@ NAN_METHOD(RegisterWrap::Set)
 
         // Call wrapped method
         register->Set(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

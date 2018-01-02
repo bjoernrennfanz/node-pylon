@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,9 @@ NAN_METHOD(PixelFormatConverterWrap::Convert)
 
         // Call wrapped method
         pixelFormatConverter->Convert(arg0, arg1, arg2, arg3, *arg4, *arg5);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -119,6 +122,9 @@ NAN_METHOD(PixelFormatConverterWrap::Init)
 
         // Call wrapped method
         pixelFormatConverter->Init(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -130,7 +136,10 @@ NAN_METHOD(PixelFormatConverterWrap::IsInitialized)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pixelFormatConverter->IsInitialized();
+        bool result = pixelFormatConverter->IsInitialized();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -146,5 +155,8 @@ NAN_METHOD(PixelFormatConverterWrap::SetOutputBitAlignment)
 
         // Call wrapped method
         pixelFormatConverter->SetOutputBitAlignment(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

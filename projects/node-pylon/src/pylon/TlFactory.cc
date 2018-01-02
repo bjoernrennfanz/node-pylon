@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -190,6 +190,9 @@ NAN_METHOD(TlFactoryWrap::DestroyDevice)
 
         // Call wrapped method
         tlFactory->DestroyDevice(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -212,7 +215,10 @@ NAN_METHOD(TlFactoryWrap::EnumerateDevices)
         bool arg2 = info[2]->BooleanValue();
 
         // Call wrapped method
-        tlFactory->EnumerateDevices(*arg0, *arg1, arg2);
+        int result = tlFactory->EnumerateDevices(*arg0, *arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "DeviceInfoList")) && info[1]->IsBoolean())
     {
@@ -224,7 +230,10 @@ NAN_METHOD(TlFactoryWrap::EnumerateDevices)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        tlFactory->EnumerateDevices(*arg0, arg1);
+        int result = tlFactory->EnumerateDevices(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -240,7 +249,10 @@ NAN_METHOD(TlFactoryWrap::EnumerateTls)
         TlInfoList* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        tlFactory->EnumerateTls(*arg0);
+        int result = tlFactory->EnumerateTls(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -276,7 +288,10 @@ NAN_METHOD(TlFactoryWrap::IsDeviceAccessible)
         EDeviceAccessiblityInfo* arg2 = &arg2_value;
 
         // Call wrapped method
-        tlFactory->IsDeviceAccessible(*arg0, arg1, arg2);
+        bool result = tlFactory->IsDeviceAccessible(*arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -293,5 +308,8 @@ NAN_METHOD(TlFactoryWrap::ReleaseTl)
 
         // Call wrapped method
         tlFactory->ReleaseTl(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

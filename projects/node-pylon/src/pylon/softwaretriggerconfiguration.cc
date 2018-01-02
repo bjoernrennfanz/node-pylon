@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -93,6 +93,9 @@ NAN_METHOD(SoftwareTriggerConfigurationWrap::ApplyConfiguration)
 
         // Call wrapped method
         softwareTriggerConfiguration->ApplyConfiguration(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -109,5 +112,8 @@ NAN_METHOD(SoftwareTriggerConfigurationWrap::OnOpened)
 
         // Call wrapped method
         softwareTriggerConfiguration->OnOpened(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

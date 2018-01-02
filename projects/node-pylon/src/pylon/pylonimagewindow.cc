@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -103,6 +103,9 @@ NAN_METHOD(PylonImageWindowWrap::Attach)
 
         // Call wrapped method
         pylonImageWindow->Attach(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -114,7 +117,10 @@ NAN_METHOD(PylonImageWindowWrap::Close)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImageWindow->Close();
+        bool result = pylonImageWindow->Close();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -142,6 +148,9 @@ NAN_METHOD(PylonImageWindowWrap::Create)
 
         // Call wrapped method
         pylonImageWindow->Create(arg0, arg1, arg2, arg3, arg4);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -153,7 +162,10 @@ NAN_METHOD(PylonImageWindowWrap::Detach)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImageWindow->Detach();
+        unsigned int result = pylonImageWindow->Detach();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -165,7 +177,7 @@ NAN_METHOD(PylonImageWindowWrap::GetWindowHandle)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImageWindow->GetWindowHandle();
+        // TODO: Implement return value wrapper for pylonImageWindow->GetWindowHandle()
     }
 }
 
@@ -177,7 +189,10 @@ NAN_METHOD(PylonImageWindowWrap::GetWindowIndex)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImageWindow->GetWindowIndex();
+        unsigned int result = pylonImageWindow->GetWindowIndex();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -190,6 +205,9 @@ NAN_METHOD(PylonImageWindowWrap::Hide)
     {
         // Call wrapped method
         pylonImageWindow->Hide();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -201,7 +219,10 @@ NAN_METHOD(PylonImageWindowWrap::IsValid)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImageWindow->IsValid();
+        bool result = pylonImageWindow->IsValid();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -218,6 +239,9 @@ NAN_METHOD(PylonImageWindowWrap::SetImage)
 
         // Call wrapped method
         pylonImageWindow->SetImage(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -233,6 +257,9 @@ NAN_METHOD(PylonImageWindowWrap::Show)
 
         // Call wrapped method
         pylonImageWindow->Show(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -249,5 +276,8 @@ NAN_METHOD(PylonImageWindowWrap::DisplayImage)
 
         // Call wrapped function
         DisplayImage(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

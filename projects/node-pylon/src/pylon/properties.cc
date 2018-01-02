@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,10 @@ NAN_METHOD(PropertiesWrap::GetPropertyAvailable)
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        properties->GetPropertyAvailable(*arg0);
+        bool result = properties->GetPropertyAvailable(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -111,7 +114,10 @@ NAN_METHOD(PropertiesWrap::GetPropertyNames)
         gcstring_vector* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        properties->GetPropertyNames(*arg0);
+        int result = properties->GetPropertyNames(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -131,7 +137,10 @@ NAN_METHOD(PropertiesWrap::GetPropertyValue)
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Call wrapped method
-        properties->GetPropertyValue(*arg0, *arg1);
+        bool result = properties->GetPropertyValue(*arg0, *arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -147,7 +156,10 @@ NAN_METHOD(PropertiesWrap::IsSubset)
         IProperties* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        properties->IsSubset(*arg0);
+        bool result = properties->IsSubset(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 

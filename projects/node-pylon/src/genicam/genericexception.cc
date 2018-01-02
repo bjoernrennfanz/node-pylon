@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -141,7 +141,10 @@ NAN_METHOD(GenericExceptionWrap::GetDescription)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        genericException->GetDescription();
+        const char* result = genericException->GetDescription();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }
 
@@ -153,7 +156,10 @@ NAN_METHOD(GenericExceptionWrap::GetSourceFileName)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        genericException->GetSourceFileName();
+        const char* result = genericException->GetSourceFileName();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }
 
@@ -165,7 +171,10 @@ NAN_METHOD(GenericExceptionWrap::GetSourceLine)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        genericException->GetSourceLine();
+        unsigned int result = genericException->GetSourceLine();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -177,6 +186,9 @@ NAN_METHOD(GenericExceptionWrap::what)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        genericException->what();
+        const char* result = genericException->what();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }

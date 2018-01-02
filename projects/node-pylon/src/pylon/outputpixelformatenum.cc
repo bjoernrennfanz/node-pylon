@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +88,10 @@ NAN_METHOD(OutputPixelFormatEnumWrap::GetValue)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        outputPixelFormatEnum->GetValue();
+        EPixelType result = outputPixelFormatEnum->GetValue();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -104,5 +107,8 @@ NAN_METHOD(OutputPixelFormatEnumWrap::SetValue)
 
         // Call wrapped method
         outputPixelFormatEnum->SetValue(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

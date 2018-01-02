@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -117,6 +117,9 @@ NAN_METHOD(EnumerationWrap::GetEntries)
 
         // Call wrapped method
         enumeration->GetEntries(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -165,7 +168,10 @@ NAN_METHOD(EnumerationWrap::GetIntValue)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        enumeration->GetIntValue(arg0, arg1);
+        __int128_t result = enumeration->GetIntValue(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -182,6 +188,9 @@ NAN_METHOD(EnumerationWrap::GetSymbolics)
 
         // Call wrapped method
         enumeration->GetSymbolics(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -200,5 +209,8 @@ NAN_METHOD(EnumerationWrap::SetIntValue)
 
         // Call wrapped method
         enumeration->SetIntValue(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

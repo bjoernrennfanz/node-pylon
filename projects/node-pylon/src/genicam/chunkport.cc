@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -118,6 +118,9 @@ NAN_METHOD(ChunkPortWrap::AttachChunk)
 
         // Call wrapped method
         chunkPort->AttachChunk(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -133,7 +136,10 @@ NAN_METHOD(ChunkPortWrap::AttachPort)
         IPort* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        chunkPort->AttachPort(arg0);
+        bool result = chunkPort->AttachPort(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -151,7 +157,10 @@ NAN_METHOD(ChunkPortWrap::CheckChunkID)
         int arg1 = static_cast<int>(info[1]->NumberValue());
 
         // Call wrapped method
-        chunkPort->CheckChunkID(arg0, arg1);
+        bool result = chunkPort->CheckChunkID(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && info[0]->IsNumber())
     {
@@ -159,7 +168,10 @@ NAN_METHOD(ChunkPortWrap::CheckChunkID)
         __uint128_t arg0 = static_cast<__uint128_t>(info[0]->NumberValue());
 
         // Call wrapped method
-        chunkPort->CheckChunkID(arg0);
+        bool result = chunkPort->CheckChunkID(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -172,6 +184,9 @@ NAN_METHOD(ChunkPortWrap::ClearCache)
     {
         // Call wrapped method
         chunkPort->ClearCache();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -184,6 +199,9 @@ NAN_METHOD(ChunkPortWrap::DetachChunk)
     {
         // Call wrapped method
         chunkPort->DetachChunk();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -196,6 +214,9 @@ NAN_METHOD(ChunkPortWrap::DetachPort)
     {
         // Call wrapped method
         chunkPort->DetachPort();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -207,7 +228,10 @@ NAN_METHOD(ChunkPortWrap::GetAccessMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        chunkPort->GetAccessMode();
+        EAccessMode result = chunkPort->GetAccessMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -219,7 +243,10 @@ NAN_METHOD(ChunkPortWrap::GetChunkIDLength)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        chunkPort->GetChunkIDLength();
+        int result = chunkPort->GetChunkIDLength();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -231,7 +258,10 @@ NAN_METHOD(ChunkPortWrap::GetPrincipalInterfaceType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        chunkPort->GetPrincipalInterfaceType();
+        EInterfaceType result = chunkPort->GetPrincipalInterfaceType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -243,7 +273,10 @@ NAN_METHOD(ChunkPortWrap::GetSwapEndianess)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        chunkPort->GetSwapEndianess();
+        EYesNo result = chunkPort->GetSwapEndianess();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -256,6 +289,9 @@ NAN_METHOD(ChunkPortWrap::InvalidateNode)
     {
         // Call wrapped method
         chunkPort->InvalidateNode();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -276,6 +312,9 @@ NAN_METHOD(ChunkPortWrap::Read)
 
         // Call wrapped method
         chunkPort->Read(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -292,6 +331,9 @@ NAN_METHOD(ChunkPortWrap::SetPortImpl)
 
         // Call wrapped method
         chunkPort->SetPortImpl(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -307,6 +349,9 @@ NAN_METHOD(ChunkPortWrap::UpdateBuffer)
 
         // Call wrapped method
         chunkPort->UpdateBuffer(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -327,5 +372,8 @@ NAN_METHOD(ChunkPortWrap::Write)
 
         // Call wrapped method
         chunkPort->Write(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

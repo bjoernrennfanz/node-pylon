@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -137,7 +137,10 @@ NAN_METHOD(PylonDeviceWrap::DeregisterRemovalCallback)
         // TODO: Implement wrapper for void
 
         // Call wrapped method
-        pylonDevice->DeregisterRemovalCallback(arg0);
+        bool result = pylonDevice->DeregisterRemovalCallback(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -154,6 +157,9 @@ NAN_METHOD(PylonDeviceWrap::DestroyChunkParser)
 
         // Call wrapped method
         pylonDevice->DestroyChunkParser(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -170,6 +176,9 @@ NAN_METHOD(PylonDeviceWrap::DestroyEventAdapter)
 
         // Call wrapped method
         pylonDevice->DestroyEventAdapter(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -186,6 +195,9 @@ NAN_METHOD(PylonDeviceWrap::DestroySelfReliantChunkParser)
 
         // Call wrapped method
         pylonDevice->DestroySelfReliantChunkParser(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -197,7 +209,7 @@ NAN_METHOD(PylonDeviceWrap::GetEventGrabber)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonDevice->GetEventGrabber();
+        // TODO: Implement return value wrapper for pylonDevice->GetEventGrabber()
     }
 }
 
@@ -221,7 +233,10 @@ NAN_METHOD(PylonDeviceWrap::GetNumStreamGrabberChannels)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonDevice->GetNumStreamGrabberChannels();
+        unsigned int result = pylonDevice->GetNumStreamGrabberChannels();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -262,6 +277,6 @@ NAN_METHOD(PylonDeviceWrap::RegisterRemovalCallback)
         // TODO: Implement wrapper for Callback1<Pylon::IPylonDevice *>
 
         // Call wrapped method
-        pylonDevice->RegisterRemovalCallback(*arg0);
+        // TODO: Implement return value wrapper for pylonDevice->RegisterRemovalCallback(*arg0)
     }
 }

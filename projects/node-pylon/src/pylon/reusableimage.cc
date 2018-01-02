@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,10 @@ NAN_METHOD(ReusableImageWrap::IsAdditionalPaddingSupported)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        reusableImage->IsAdditionalPaddingSupported();
+        bool result = reusableImage->IsAdditionalPaddingSupported();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -105,7 +108,10 @@ NAN_METHOD(ReusableImageWrap::IsSupportedPixelType)
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
 
         // Call wrapped method
-        reusableImage->IsSupportedPixelType(arg0);
+        bool result = reusableImage->IsSupportedPixelType(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -118,6 +124,9 @@ NAN_METHOD(ReusableImageWrap::Release)
     {
         // Call wrapped method
         reusableImage->Release();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -145,6 +154,9 @@ NAN_METHOD(ReusableImageWrap::Reset)
 
         // Call wrapped method
         reusableImage->Reset(arg0, arg1, arg2, arg3, arg4);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
     {
@@ -162,5 +174,8 @@ NAN_METHOD(ReusableImageWrap::Reset)
 
         // Call wrapped method
         reusableImage->Reset(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

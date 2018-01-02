@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -115,6 +115,9 @@ NAN_METHOD(PylonImageWrap::AttachGrabResultBuffer)
 
         // Call wrapped method
         pylonImage->AttachGrabResultBuffer(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -147,6 +150,9 @@ NAN_METHOD(PylonImageWrap::AttachUserBuffer)
 
         // Call wrapped method
         pylonImage->AttachUserBuffer(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -162,6 +168,9 @@ NAN_METHOD(PylonImageWrap::ChangePixelType)
 
         // Call wrapped method
         pylonImage->ChangePixelType(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -194,6 +203,9 @@ NAN_METHOD(PylonImageWrap::CopyImage)
 
         // Call wrapped method
         pylonImage->CopyImage(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")) && info[1]->IsNumber())
     {
@@ -206,6 +218,9 @@ NAN_METHOD(PylonImageWrap::CopyImage)
 
         // Call wrapped method
         pylonImage->CopyImage(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
     {
@@ -215,6 +230,9 @@ NAN_METHOD(PylonImageWrap::CopyImage)
 
         // Call wrapped method
         pylonImage->CopyImage(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -253,7 +271,10 @@ NAN_METHOD(PylonImageWrap::GetAllocatedBufferSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetAllocatedBufferSize();
+        unsigned int result = pylonImage->GetAllocatedBufferSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -289,12 +310,12 @@ NAN_METHOD(PylonImageWrap::GetBuffer)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetBuffer();
+        // TODO: Implement return value wrapper for pylonImage->GetBuffer()
     }
     else if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetBuffer();
+        // TODO: Implement return value wrapper for pylonImage->GetBuffer()
     }
 }
 
@@ -306,7 +327,10 @@ NAN_METHOD(PylonImageWrap::GetHeight)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetHeight();
+        unsigned int result = pylonImage->GetHeight();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -318,7 +342,10 @@ NAN_METHOD(PylonImageWrap::GetImageSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetImageSize();
+        unsigned int result = pylonImage->GetImageSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -330,7 +357,10 @@ NAN_METHOD(PylonImageWrap::GetOrientation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetOrientation();
+        EImageOrientation result = pylonImage->GetOrientation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -342,7 +372,10 @@ NAN_METHOD(PylonImageWrap::GetPaddingX)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetPaddingX();
+        unsigned int result = pylonImage->GetPaddingX();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -354,7 +387,10 @@ NAN_METHOD(PylonImageWrap::GetPixelType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetPixelType();
+        EPixelType result = pylonImage->GetPixelType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -384,7 +420,10 @@ NAN_METHOD(PylonImageWrap::GetStride)
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
 
         // Call wrapped method
-        pylonImage->GetStride(*arg0);
+        bool result = pylonImage->GetStride(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -396,7 +435,10 @@ NAN_METHOD(PylonImageWrap::GetWidth)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->GetWidth();
+        unsigned int result = pylonImage->GetWidth();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -408,7 +450,10 @@ NAN_METHOD(PylonImageWrap::IsAdditionalPaddingSupported)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->IsAdditionalPaddingSupported();
+        bool result = pylonImage->IsAdditionalPaddingSupported();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -420,7 +465,10 @@ NAN_METHOD(PylonImageWrap::IsGrabResultBufferAttached)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->IsGrabResultBufferAttached();
+        bool result = pylonImage->IsGrabResultBufferAttached();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -435,7 +483,10 @@ NAN_METHOD(PylonImageWrap::IsSupportedPixelType)
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
 
         // Call wrapped method
-        pylonImage->IsSupportedPixelType(arg0);
+        bool result = pylonImage->IsSupportedPixelType(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -447,7 +498,10 @@ NAN_METHOD(PylonImageWrap::IsUnique)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->IsUnique();
+        bool result = pylonImage->IsUnique();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -459,7 +513,10 @@ NAN_METHOD(PylonImageWrap::IsUserBufferAttached)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->IsUserBufferAttached();
+        bool result = pylonImage->IsUserBufferAttached();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -471,7 +528,10 @@ NAN_METHOD(PylonImageWrap::IsValid)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        pylonImage->IsValid();
+        bool result = pylonImage->IsValid();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -484,6 +544,9 @@ NAN_METHOD(PylonImageWrap::Release)
     {
         // Call wrapped method
         pylonImage->Release();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -511,6 +574,9 @@ NAN_METHOD(PylonImageWrap::Reset)
 
         // Call wrapped method
         pylonImage->Reset(arg0, arg1, arg2, arg3, arg4);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 4) && info[0]->IsNumber() && info[1]->IsNumber() && info[2]->IsNumber() && info[3]->IsNumber())
     {
@@ -528,5 +594,8 @@ NAN_METHOD(PylonImageWrap::Reset)
 
         // Call wrapped method
         pylonImage->Reset(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

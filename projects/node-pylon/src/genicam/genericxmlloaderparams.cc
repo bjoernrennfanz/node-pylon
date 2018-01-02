@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -91,6 +91,6 @@ NAN_METHOD(GenericXmlloaderparamsWrap::CastToIDestroy)
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        CastToIDestroy(arg0);
+        // TODO: Implement return value wrapper for CastToIDestroy(arg0)
     }
 }

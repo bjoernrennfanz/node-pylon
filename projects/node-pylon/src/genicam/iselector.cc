@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -94,6 +94,9 @@ NAN_METHOD(SelectorWrap::GetSelectedFeatures)
 
         // Call wrapped method
         selector->GetSelectedFeatures(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -110,6 +113,9 @@ NAN_METHOD(SelectorWrap::GetSelectingFeatures)
 
         // Call wrapped method
         selector->GetSelectingFeatures(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -121,6 +127,9 @@ NAN_METHOD(SelectorWrap::IsSelector)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        selector->IsSelector();
+        bool result = selector->IsSelector();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

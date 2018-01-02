@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,10 @@ NAN_METHOD(GCWcharWrap::c_str)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCWchar->c_str();
+        const wchar_t* result = gCWchar->c_str();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }
 
@@ -107,7 +110,10 @@ NAN_METHOD(GCWcharWrap::length)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCWchar->length();
+        unsigned int result = gCWchar->length();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -125,7 +131,7 @@ NAN_METHOD(GCWcharWrap::getline)
         char arg2 = pylon_v8::ToGCString(info[2]->ToString()).c_str()[0];
 
         // Call wrapped function
-        getline(*arg0, *arg1, arg2);
+        // TODO: Implement return value wrapper for getline(*arg0, *arg1, arg2)
     }
     else if ((info.Length() == 2) && info[0]->IsObject() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
     {
@@ -136,7 +142,7 @@ NAN_METHOD(GCWcharWrap::getline)
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Call wrapped function
-        getline(*arg0, *arg1);
+        // TODO: Implement return value wrapper for getline(*arg0, *arg1)
     }
 }
 
@@ -152,5 +158,8 @@ NAN_METHOD(GCWcharWrap::ThrowBadAlloc)
 
         // Call wrapped function
         ThrowBadAlloc(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

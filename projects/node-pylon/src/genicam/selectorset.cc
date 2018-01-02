@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,9 @@ NAN_METHOD(SelectorSetWrap::GetSelectorList)
 
         // Call wrapped method
         selectorSet->GetSelectorList(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -116,7 +119,10 @@ NAN_METHOD(SelectorSetWrap::IsEmpty)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        selectorSet->IsEmpty();
+        bool result = selectorSet->IsEmpty();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -129,6 +135,9 @@ NAN_METHOD(SelectorSetWrap::Restore)
     {
         // Call wrapped method
         selectorSet->Restore();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -140,7 +149,10 @@ NAN_METHOD(SelectorSetWrap::SetFirst)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        selectorSet->SetFirst();
+        bool result = selectorSet->SetFirst();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -155,7 +167,10 @@ NAN_METHOD(SelectorSetWrap::SetNext)
         bool arg0 = info[0]->BooleanValue();
 
         // Call wrapped method
-        selectorSet->SetNext(arg0);
+        bool result = selectorSet->SetNext(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 

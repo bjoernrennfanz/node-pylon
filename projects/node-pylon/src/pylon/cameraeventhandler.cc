@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +91,10 @@ NAN_METHOD(CameraEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        cameraEventHandler->DebugGetEventHandlerRegistrationCount();
+        long result = cameraEventHandler->DebugGetEventHandlerRegistrationCount();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -104,6 +107,9 @@ NAN_METHOD(CameraEventHandlerWrap::DestroyCameraEventHandler)
     {
         // Call wrapped method
         cameraEventHandler->DestroyCameraEventHandler();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -127,6 +133,9 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEvent)
 
         // Call wrapped method
         cameraEventHandler->OnCameraEvent(*arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -150,6 +159,9 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerDeregistered)
 
         // Call wrapped method
         cameraEventHandler->OnCameraEventHandlerDeregistered(*arg0, *arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -173,5 +185,8 @@ NAN_METHOD(CameraEventHandlerWrap::OnCameraEventHandlerRegistered)
 
         // Call wrapped method
         cameraEventHandler->OnCameraEventHandlerRegistered(*arg0, *arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
         public override void Process()
         {
-            GenerateLegalFilePreamble(CommentKind.BCPL);
+            GenerateLegalFilePreamble(CommentKind.BCPL, "2017 - " + DateTime.Now.ToString("yyyy"));
             GenerateFilePreamble(CommentKind.BCPL);
 
             // Generate of own include
@@ -188,8 +188,8 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     // Call wrapped method
                     WriteLine("// Call wrapped function");
-                    WriteLine("{0}({1});", overloadFunction.Name, generatedArgumentsWrapped);
-
+                    nodeJSTypePrinter.GenerateReturnTypeWrapper(this, overloadFunction.ReturnType, string.Format("{0}({1})", overloadFunction.Name, generatedArgumentsWrapped));
+                    
                     WriteCloseBraceIndent();
                     PopBlock(NewLineKind.Never);
 
@@ -247,7 +247,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     // Call wrapped method
                     WriteLine("// Call wrapped method");
-                    WriteLine("{0}->{1}({2});", classNameNormLower, overloadMethod.Name, generatedArgumentsWrapped);
+                    nodeJSTypePrinter.GenerateReturnTypeWrapper(this, overloadMethod.ReturnType, string.Format("{0}->{1}({2})", classNameNormLower, overloadMethod.Name, generatedArgumentsWrapped));
 
                     WriteCloseBraceIndent();
                     PopBlock(NewLineKind.Never);

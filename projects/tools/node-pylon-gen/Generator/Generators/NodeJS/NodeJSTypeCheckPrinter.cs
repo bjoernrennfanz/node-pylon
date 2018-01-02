@@ -54,11 +54,6 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             Context = context;
         }
 
-        public override TypePrinterResult VisitParameter(Parameter param, bool hasName = true)
-        {
-            return param.QualifiedType.Visit(this);
-        }
-
         public override TypePrinterResult VisitClassDecl(Class @class)
         {
             return NodeV8IsObject;
@@ -136,34 +131,34 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             return NodeV8IsTypedBuffer;
         }
 
-        public bool ParameterIsArray(Parameter param)
+        public bool QualifiedTypeIsArray(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsArray;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsArray;
         }
 
-        public bool ParameterIsObject(Parameter param)
+        public bool QualifiedTypeIsObject(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsObject;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsObject;
         }
 
-        public bool ParameterIsNumber(Parameter param)
+        public bool QualifiedTypeIsNumber(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsNumber;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsNumber;
         }
 
-        public bool ParameterIsBoolean(Parameter param)
+        public bool QualifiedTypeIsBoolean(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsBoolean;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsBoolean;
         }
 
-        public bool ParameterIsString(Parameter param)
+        public bool QualifiedTypeIsString(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsString;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsString;
         }
 
-        public bool ParameterIsTypedBuffer(Parameter param)
+        public bool QualifiedTypeIsTypedBuffer(QualifiedType qualifiedType)
         {
-            return VisitParameter(param).ToString() == NodeV8IsTypedBuffer;
+            return qualifiedType.Visit(this).ToString() == NodeV8IsTypedBuffer;
         }
 
 
@@ -182,28 +177,28 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                 string parameterTypeName = nodeJSTypePrinter.VisitParameter(parameter, false, false);
                 generatedCheckStatement += methodArgumentIndex > 0 ? " && " : string.Empty;
 
-                if (ParameterIsObject(parameter))
+                if (QualifiedTypeIsObject(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "(info[" + methodArgumentIndex + "]->IsObject() && ";
                     generatedCheckStatement += "(pylon_v8::ToGCString(info[" + methodArgumentIndex + "]->ToObject()->GetConstructorName()) == \"" + parameterTypeName + "\"))";
                 }
-                else if (ParameterIsNumber(parameter))
+                else if (QualifiedTypeIsNumber(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsNumber()";
                 }
-                else if (ParameterIsBoolean(parameter))
+                else if (QualifiedTypeIsBoolean(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsBoolean()";
                 }
-                else if (ParameterIsString(parameter))
+                else if (QualifiedTypeIsString(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsString()";
                 }
-                else if (ParameterIsArray(parameter))
+                else if (QualifiedTypeIsArray(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsArray()";
                 }
-                else if (ParameterIsTypedBuffer(parameter))
+                else if (QualifiedTypeIsTypedBuffer(parameter.QualifiedType))
                 {
                     generatedCheckStatement += "info[" + methodArgumentIndex + "]->IsObject()";
                 }

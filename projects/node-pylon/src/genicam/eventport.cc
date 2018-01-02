@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,9 @@ NAN_METHOD(EventPortWrap::AttachEvent)
 
         // Call wrapped method
         eventPort->AttachEvent(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -125,7 +128,10 @@ NAN_METHOD(EventPortWrap::AttachNode)
         INode* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        eventPort->AttachNode(arg0);
+        bool result = eventPort->AttachNode(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -143,7 +149,10 @@ NAN_METHOD(EventPortWrap::CheckEventID)
         int arg1 = static_cast<int>(info[1]->NumberValue());
 
         // Call wrapped method
-        eventPort->CheckEventID(arg0, arg1);
+        bool result = eventPort->CheckEventID(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && info[0]->IsNumber())
     {
@@ -151,7 +160,10 @@ NAN_METHOD(EventPortWrap::CheckEventID)
         __uint128_t arg0 = static_cast<__uint128_t>(info[0]->NumberValue());
 
         // Call wrapped method
-        eventPort->CheckEventID(arg0);
+        bool result = eventPort->CheckEventID(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -164,6 +176,9 @@ NAN_METHOD(EventPortWrap::DetachEvent)
     {
         // Call wrapped method
         eventPort->DetachEvent();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -176,6 +191,9 @@ NAN_METHOD(EventPortWrap::DetachNode)
     {
         // Call wrapped method
         eventPort->DetachNode();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -187,7 +205,10 @@ NAN_METHOD(EventPortWrap::GetAccessMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        eventPort->GetAccessMode();
+        EAccessMode result = eventPort->GetAccessMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -199,7 +220,10 @@ NAN_METHOD(EventPortWrap::GetEventIDLength)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        eventPort->GetEventIDLength();
+        int result = eventPort->GetEventIDLength();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -211,7 +235,10 @@ NAN_METHOD(EventPortWrap::GetPrincipalInterfaceType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        eventPort->GetPrincipalInterfaceType();
+        EInterfaceType result = eventPort->GetPrincipalInterfaceType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -223,7 +250,10 @@ NAN_METHOD(EventPortWrap::GetSwapEndianess)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        eventPort->GetSwapEndianess();
+        EYesNo result = eventPort->GetSwapEndianess();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -236,6 +266,9 @@ NAN_METHOD(EventPortWrap::InvalidateNode)
     {
         // Call wrapped method
         eventPort->InvalidateNode();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -256,6 +289,9 @@ NAN_METHOD(EventPortWrap::Read)
 
         // Call wrapped method
         eventPort->Read(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -272,6 +308,9 @@ NAN_METHOD(EventPortWrap::SetPortImpl)
 
         // Call wrapped method
         eventPort->SetPortImpl(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -292,5 +331,8 @@ NAN_METHOD(EventPortWrap::Write)
 
         // Call wrapped method
         eventPort->Write(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

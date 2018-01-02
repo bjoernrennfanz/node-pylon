@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -123,7 +123,10 @@ NAN_METHOD(NodeMapRefTWrap::_ClearXMLCache)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        nodeMapRefT->_ClearXMLCache();
+        bool result = nodeMapRefT->_ClearXMLCache();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -143,7 +146,10 @@ NAN_METHOD(NodeMapRefTWrap::_Connect)
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Call wrapped method
-        nodeMapRefT->_Connect(arg0, *arg1);
+        bool result = nodeMapRefT->_Connect(arg0, *arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IPort")))
     {
@@ -152,7 +158,10 @@ NAN_METHOD(NodeMapRefTWrap::_Connect)
         IPort* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        nodeMapRefT->_Connect(arg0);
+        bool result = nodeMapRefT->_Connect(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -165,6 +174,9 @@ NAN_METHOD(NodeMapRefTWrap::_Destroy)
     {
         // Call wrapped method
         nodeMapRefT->_Destroy();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -209,6 +221,9 @@ NAN_METHOD(NodeMapRefTWrap::_GetNodes)
 
         // Call wrapped method
         nodeMapRefT->_GetNodes(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -225,6 +240,9 @@ NAN_METHOD(NodeMapRefTWrap::_GetSupportedSchemaVersions)
 
         // Call wrapped method
         nodeMapRefT->_GetSupportedSchemaVersions(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -237,6 +255,9 @@ NAN_METHOD(NodeMapRefTWrap::_InvalidateNodes)
     {
         // Call wrapped method
         nodeMapRefT->_InvalidateNodes();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -253,6 +274,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromFile)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromFile(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -273,6 +297,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromFileInject)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromFileInject(*arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -289,6 +316,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromString)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromString(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -309,6 +339,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromStringInject)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromStringInject(*arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -326,6 +359,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromZIPData)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromZIPData(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -342,6 +378,9 @@ NAN_METHOD(NodeMapRefTWrap::_LoadXMLFromZIPFile)
 
         // Call wrapped method
         nodeMapRefT->_LoadXMLFromZIPFile(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -357,6 +396,9 @@ NAN_METHOD(NodeMapRefTWrap::_Poll)
 
         // Call wrapped method
         nodeMapRefT->_Poll(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -369,6 +411,6 @@ NAN_METHOD(NodeMapRefTWrap::CastToIDestroy)
         INodeMap* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        CastToIDestroy(arg0);
+        // TODO: Implement return value wrapper for CastToIDestroy(arg0)
     }
 }

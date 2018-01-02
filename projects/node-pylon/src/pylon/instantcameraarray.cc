@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -109,6 +109,9 @@ NAN_METHOD(InstantCameraArrayWrap::Close)
     {
         // Call wrapped method
         instantCameraArray->Close();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -121,6 +124,9 @@ NAN_METHOD(InstantCameraArrayWrap::DestroyDevice)
     {
         // Call wrapped method
         instantCameraArray->DestroyDevice();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -133,6 +139,9 @@ NAN_METHOD(InstantCameraArrayWrap::DetachDevice)
     {
         // Call wrapped method
         instantCameraArray->DetachDevice();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -144,7 +153,10 @@ NAN_METHOD(InstantCameraArrayWrap::GetSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCameraArray->GetSize();
+        unsigned int result = instantCameraArray->GetSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -160,6 +172,9 @@ NAN_METHOD(InstantCameraArrayWrap::Initialize)
 
         // Call wrapped method
         instantCameraArray->Initialize(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -171,7 +186,10 @@ NAN_METHOD(InstantCameraArrayWrap::IsCameraDeviceRemoved)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCameraArray->IsCameraDeviceRemoved();
+        bool result = instantCameraArray->IsCameraDeviceRemoved();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -183,7 +201,10 @@ NAN_METHOD(InstantCameraArrayWrap::IsGrabbing)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCameraArray->IsGrabbing();
+        bool result = instantCameraArray->IsGrabbing();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -195,7 +216,10 @@ NAN_METHOD(InstantCameraArrayWrap::IsOpen)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCameraArray->IsOpen();
+        bool result = instantCameraArray->IsOpen();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -207,7 +231,10 @@ NAN_METHOD(InstantCameraArrayWrap::IsPylonDeviceAttached)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCameraArray->IsPylonDeviceAttached();
+        bool result = instantCameraArray->IsPylonDeviceAttached();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -220,6 +247,9 @@ NAN_METHOD(InstantCameraArrayWrap::Open)
     {
         // Call wrapped method
         instantCameraArray->Open();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -241,7 +271,10 @@ NAN_METHOD(InstantCameraArrayWrap::RetrieveResult)
         ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
 
         // Call wrapped method
-        instantCameraArray->RetrieveResult(arg0, *arg1, arg2);
+        bool result = instantCameraArray->RetrieveResult(arg0, *arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -260,6 +293,9 @@ NAN_METHOD(InstantCameraArrayWrap::StartGrabbing)
 
         // Call wrapped method
         instantCameraArray->StartGrabbing(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -272,5 +308,8 @@ NAN_METHOD(InstantCameraArrayWrap::StopGrabbing)
     {
         // Call wrapped method
         instantCameraArray->StopGrabbing();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

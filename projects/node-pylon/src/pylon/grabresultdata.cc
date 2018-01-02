@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -114,7 +114,10 @@ NAN_METHOD(GrabResultDataWrap::CheckCRC)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->CheckCRC();
+        bool result = grabResultData->CheckCRC();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -126,7 +129,10 @@ NAN_METHOD(GrabResultDataWrap::GetBlockID)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetBlockID();
+        __uint128_t result = grabResultData->GetBlockID();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -138,7 +144,7 @@ NAN_METHOD(GrabResultDataWrap::GetBuffer)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetBuffer();
+        // TODO: Implement return value wrapper for grabResultData->GetBuffer()
     }
 }
 
@@ -150,7 +156,10 @@ NAN_METHOD(GrabResultDataWrap::GetBufferContext)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetBufferContext();
+        int result = grabResultData->GetBufferContext();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -162,7 +171,10 @@ NAN_METHOD(GrabResultDataWrap::GetCameraContext)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetCameraContext();
+        int result = grabResultData->GetCameraContext();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -186,7 +198,10 @@ NAN_METHOD(GrabResultDataWrap::GetErrorCode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetErrorCode();
+        unsigned int result = grabResultData->GetErrorCode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -210,7 +225,10 @@ NAN_METHOD(GrabResultDataWrap::GetFrameNumber)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetFrameNumber();
+        unsigned int result = grabResultData->GetFrameNumber();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -222,7 +240,7 @@ NAN_METHOD(GrabResultDataWrap::GetGrabResultDataImpl)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetGrabResultDataImpl();
+        // TODO: Implement return value wrapper for grabResultData->GetGrabResultDataImpl()
     }
 }
 
@@ -234,7 +252,10 @@ NAN_METHOD(GrabResultDataWrap::GetHeight)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetHeight();
+        unsigned int result = grabResultData->GetHeight();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -246,7 +267,10 @@ NAN_METHOD(GrabResultDataWrap::GetID)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetID();
+        __int128_t result = grabResultData->GetID();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -258,7 +282,10 @@ NAN_METHOD(GrabResultDataWrap::GetImageNumber)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetImageNumber();
+        __int128_t result = grabResultData->GetImageNumber();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -270,7 +297,10 @@ NAN_METHOD(GrabResultDataWrap::GetImageSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetImageSize();
+        unsigned int result = grabResultData->GetImageSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -282,7 +312,10 @@ NAN_METHOD(GrabResultDataWrap::GetNumberOfSkippedImages)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetNumberOfSkippedImages();
+        __int128_t result = grabResultData->GetNumberOfSkippedImages();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -294,7 +327,10 @@ NAN_METHOD(GrabResultDataWrap::GetOffsetX)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetOffsetX();
+        unsigned int result = grabResultData->GetOffsetX();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -306,7 +342,10 @@ NAN_METHOD(GrabResultDataWrap::GetOffsetY)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetOffsetY();
+        unsigned int result = grabResultData->GetOffsetY();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -318,7 +357,10 @@ NAN_METHOD(GrabResultDataWrap::GetPaddingX)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetPaddingX();
+        unsigned int result = grabResultData->GetPaddingX();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -330,7 +372,10 @@ NAN_METHOD(GrabResultDataWrap::GetPaddingY)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetPaddingY();
+        unsigned int result = grabResultData->GetPaddingY();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -342,7 +387,10 @@ NAN_METHOD(GrabResultDataWrap::GetPayloadSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetPayloadSize();
+        unsigned int result = grabResultData->GetPayloadSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -354,7 +402,10 @@ NAN_METHOD(GrabResultDataWrap::GetPayloadType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetPayloadType();
+        EPayloadType result = grabResultData->GetPayloadType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -366,7 +417,10 @@ NAN_METHOD(GrabResultDataWrap::GetPixelType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetPixelType();
+        EPixelType result = grabResultData->GetPixelType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -381,7 +435,10 @@ NAN_METHOD(GrabResultDataWrap::GetStride)
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
 
         // Call wrapped method
-        grabResultData->GetStride(*arg0);
+        bool result = grabResultData->GetStride(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -393,7 +450,10 @@ NAN_METHOD(GrabResultDataWrap::GetTimeStamp)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetTimeStamp();
+        __uint128_t result = grabResultData->GetTimeStamp();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -405,7 +465,10 @@ NAN_METHOD(GrabResultDataWrap::GetWidth)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GetWidth();
+        unsigned int result = grabResultData->GetWidth();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -417,7 +480,10 @@ NAN_METHOD(GrabResultDataWrap::GrabSucceeded)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->GrabSucceeded();
+        bool result = grabResultData->GrabSucceeded();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -429,7 +495,10 @@ NAN_METHOD(GrabResultDataWrap::HasCRC)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->HasCRC();
+        bool result = grabResultData->HasCRC();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -441,6 +510,9 @@ NAN_METHOD(GrabResultDataWrap::IsChunkDataAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        grabResultData->IsChunkDataAvailable();
+        bool result = grabResultData->IsChunkDataAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

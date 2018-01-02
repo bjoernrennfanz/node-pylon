@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -160,7 +160,10 @@ NAN_METHOD(GCStringWrap::_npos)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->_npos();
+        unsigned int result = gCString->_npos();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -264,7 +267,10 @@ NAN_METHOD(GCStringWrap::c_str)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->c_str();
+        const char* result = gCString->c_str();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }
 
@@ -280,7 +286,10 @@ NAN_METHOD(GCStringWrap::compare)
         gcstring* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        gCString->compare(*arg0);
+        int result = gCString->compare(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -292,7 +301,10 @@ NAN_METHOD(GCStringWrap::empty)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->empty();
+        bool result = gCString->empty();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -313,7 +325,10 @@ NAN_METHOD(GCStringWrap::find)
         unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
 
         // Call wrapped method
-        gCString->find(arg0, arg1, arg2);
+        unsigned int result = gCString->find(arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 3) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && info[1]->IsNumber() && info[2]->IsNumber())
     {
@@ -328,7 +343,10 @@ NAN_METHOD(GCStringWrap::find)
         unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
 
         // Call wrapped method
-        gCString->find(*arg0, arg1, arg2);
+        unsigned int result = gCString->find(*arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
@@ -339,7 +357,10 @@ NAN_METHOD(GCStringWrap::find)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        gCString->find(arg0, arg1);
+        unsigned int result = gCString->find(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring")) && info[1]->IsNumber())
     {
@@ -351,7 +372,10 @@ NAN_METHOD(GCStringWrap::find)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        gCString->find(*arg0, arg1);
+        unsigned int result = gCString->find(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && info[0]->IsString() && info[1]->IsNumber())
     {
@@ -362,7 +386,10 @@ NAN_METHOD(GCStringWrap::find)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        gCString->find(arg0, arg1);
+        unsigned int result = gCString->find(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -381,7 +408,10 @@ NAN_METHOD(GCStringWrap::find_first_not_of)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        gCString->find_first_not_of(*arg0, arg1);
+        unsigned int result = gCString->find_first_not_of(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -400,7 +430,10 @@ NAN_METHOD(GCStringWrap::find_first_of)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        gCString->find_first_of(*arg0, arg1);
+        unsigned int result = gCString->find_first_of(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -412,7 +445,10 @@ NAN_METHOD(GCStringWrap::length)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->length();
+        unsigned int result = gCString->length();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -424,7 +460,10 @@ NAN_METHOD(GCStringWrap::max_size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->max_size();
+        unsigned int result = gCString->max_size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -440,6 +479,9 @@ NAN_METHOD(GCStringWrap::resize)
 
         // Call wrapped method
         gCString->resize(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -451,7 +493,10 @@ NAN_METHOD(GCStringWrap::size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCString->size();
+        unsigned int result = gCString->size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -486,6 +531,9 @@ NAN_METHOD(GCStringWrap::swap)
 
         // Call wrapped method
         gCString->swap(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -515,7 +563,7 @@ NAN_METHOD(GCStringWrap::getline)
         char arg2 = pylon_v8::ToGCString(info[2]->ToString()).c_str()[0];
 
         // Call wrapped function
-        getline(*arg0, *arg1, arg2);
+        // TODO: Implement return value wrapper for getline(*arg0, *arg1, arg2)
     }
     else if ((info.Length() == 2) && info[0]->IsObject() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
     {
@@ -526,7 +574,7 @@ NAN_METHOD(GCStringWrap::getline)
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Call wrapped function
-        getline(*arg0, *arg1);
+        // TODO: Implement return value wrapper for getline(*arg0, *arg1)
     }
 }
 
@@ -542,5 +590,8 @@ NAN_METHOD(GCStringWrap::ThrowBadAlloc)
 
         // Call wrapped function
         ThrowBadAlloc(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

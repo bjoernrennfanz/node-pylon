@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -128,7 +128,10 @@ NAN_METHOD(NodeWrap::DeregisterCallback)
         int arg0 = static_cast<int>(info[0]->NumberValue());
 
         // Call wrapped method
-        node->DeregisterCallback(arg0);
+        bool result = node->DeregisterCallback(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -152,7 +155,10 @@ NAN_METHOD(NodeWrap::GetCachingMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->GetCachingMode();
+        ECachingMode result = node->GetCachingMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -184,6 +190,9 @@ NAN_METHOD(NodeWrap::GetChildren)
 
         // Call wrapped method
         node->GetChildren(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -270,7 +279,10 @@ NAN_METHOD(NodeWrap::GetNameSpace)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->GetNameSpace();
+        ENameSpace result = node->GetNameSpace();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -299,6 +311,9 @@ NAN_METHOD(NodeWrap::GetParents)
 
         // Call wrapped method
         node->GetParents(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -310,7 +325,10 @@ NAN_METHOD(NodeWrap::GetPollingTime)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->GetPollingTime();
+        __int128_t result = node->GetPollingTime();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -322,7 +340,10 @@ NAN_METHOD(NodeWrap::GetPrincipalInterfaceType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->GetPrincipalInterfaceType();
+        EInterfaceType result = node->GetPrincipalInterfaceType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -346,7 +367,10 @@ NAN_METHOD(NodeWrap::GetProperty)
         gcstring* arg2 = arg2_wrap->GetWrapped();
 
         // Call wrapped method
-        node->GetProperty(*arg0, *arg1, *arg2);
+        bool result = node->GetProperty(*arg0, *arg1, *arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -363,6 +387,9 @@ NAN_METHOD(NodeWrap::GetPropertyNames)
 
         // Call wrapped method
         node->GetPropertyNames(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -386,7 +413,10 @@ NAN_METHOD(NodeWrap::GetVisibility)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->GetVisibility();
+        EVisibility result = node->GetVisibility();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -402,6 +432,9 @@ NAN_METHOD(NodeWrap::ImposeAccessMode)
 
         // Call wrapped method
         node->ImposeAccessMode(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -417,6 +450,9 @@ NAN_METHOD(NodeWrap::ImposeVisibility)
 
         // Call wrapped method
         node->ImposeVisibility(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -429,6 +465,9 @@ NAN_METHOD(NodeWrap::InvalidateNode)
     {
         // Call wrapped method
         node->InvalidateNode();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -440,7 +479,10 @@ NAN_METHOD(NodeWrap::IsAccessModeCacheable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->IsAccessModeCacheable();
+        EYesNo result = node->IsAccessModeCacheable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -452,7 +494,10 @@ NAN_METHOD(NodeWrap::IsCachable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->IsCachable();
+        bool result = node->IsCachable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -464,7 +509,10 @@ NAN_METHOD(NodeWrap::IsDeprecated)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->IsDeprecated();
+        bool result = node->IsDeprecated();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -476,7 +524,10 @@ NAN_METHOD(NodeWrap::IsFeature)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->IsFeature();
+        bool result = node->IsFeature();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -488,7 +539,10 @@ NAN_METHOD(NodeWrap::IsStreamable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        node->IsStreamable();
+        bool result = node->IsStreamable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -504,7 +558,10 @@ NAN_METHOD(NodeWrap::RegisterCallback)
         CNodeCallback* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        node->RegisterCallback(arg0);
+        int result = node->RegisterCallback(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -519,7 +576,10 @@ NAN_METHOD(NodeWrap::Combine)
         EAccessMode arg1 = static_cast<EAccessMode>(info[1]->NumberValue());
 
         // Call wrapped function
-        Combine(arg0, arg1);
+        EAccessMode result = Combine(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
     {
@@ -530,7 +590,10 @@ NAN_METHOD(NodeWrap::Combine)
         EVisibility arg1 = static_cast<EVisibility>(info[1]->NumberValue());
 
         // Call wrapped function
-        Combine(arg0, arg1);
+        EVisibility result = Combine(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
     {
@@ -541,7 +604,10 @@ NAN_METHOD(NodeWrap::Combine)
         ECachingMode arg1 = static_cast<ECachingMode>(info[1]->NumberValue());
 
         // Call wrapped function
-        Combine(arg0, arg1);
+        ECachingMode result = Combine(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -553,7 +619,10 @@ NAN_METHOD(NodeWrap::IsAvailable)
         EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
 
         // Call wrapped function
-        IsAvailable(arg0);
+        bool result = IsAvailable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -562,7 +631,10 @@ NAN_METHOD(NodeWrap::IsAvailable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsAvailable(arg0);
+        bool result = IsAvailable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -571,7 +643,10 @@ NAN_METHOD(NodeWrap::IsAvailable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsAvailable(*arg0);
+        bool result = IsAvailable(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -583,7 +658,10 @@ NAN_METHOD(NodeWrap::IsCacheable)
         ECachingMode arg0 = static_cast<ECachingMode>(info[0]->NumberValue());
 
         // Call wrapped function
-        IsCacheable(arg0);
+        bool result = IsCacheable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -595,7 +673,10 @@ NAN_METHOD(NodeWrap::IsImplemented)
         EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
 
         // Call wrapped function
-        IsImplemented(arg0);
+        bool result = IsImplemented(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -604,7 +685,10 @@ NAN_METHOD(NodeWrap::IsImplemented)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsImplemented(arg0);
+        bool result = IsImplemented(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -613,7 +697,10 @@ NAN_METHOD(NodeWrap::IsImplemented)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsImplemented(*arg0);
+        bool result = IsImplemented(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -625,7 +712,10 @@ NAN_METHOD(NodeWrap::IsReadable)
         EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
 
         // Call wrapped function
-        IsReadable(arg0);
+        bool result = IsReadable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -634,7 +724,10 @@ NAN_METHOD(NodeWrap::IsReadable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsReadable(arg0);
+        bool result = IsReadable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -643,7 +736,10 @@ NAN_METHOD(NodeWrap::IsReadable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsReadable(*arg0);
+        bool result = IsReadable(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -658,7 +754,10 @@ NAN_METHOD(NodeWrap::IsVisible)
         EVisibility arg1 = static_cast<EVisibility>(info[1]->NumberValue());
 
         // Call wrapped function
-        IsVisible(arg0, arg1);
+        bool result = IsVisible(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -670,7 +769,10 @@ NAN_METHOD(NodeWrap::IsWritable)
         EAccessMode arg0 = static_cast<EAccessMode>(info[0]->NumberValue());
 
         // Call wrapped function
-        IsWritable(arg0);
+        bool result = IsWritable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -679,7 +781,10 @@ NAN_METHOD(NodeWrap::IsWritable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsWritable(arg0);
+        bool result = IsWritable(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IBase")))
     {
@@ -688,6 +793,9 @@ NAN_METHOD(NodeWrap::IsWritable)
         IBase* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped function
-        IsWritable(*arg0);
+        bool result = IsWritable(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

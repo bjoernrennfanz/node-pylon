@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,7 +97,10 @@ NAN_METHOD(ENameSpaceClassWrap::FromString)
         ENameSpace* arg1 = &arg1_value;
 
         // Call wrapped method
-        eNameSpaceClass->FromString(*arg0, arg1);
+        bool result = eNameSpaceClass->FromString(*arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -118,6 +121,9 @@ NAN_METHOD(ENameSpaceClassWrap::ToString)
 
         // Call wrapped method
         eNameSpaceClass->ToString(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && info[0]->IsNumber())
     {

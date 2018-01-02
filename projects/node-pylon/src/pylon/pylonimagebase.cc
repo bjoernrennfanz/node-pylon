@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +93,10 @@ NAN_METHOD(PylonImageBaseWrap::CanSaveWithoutConversion)
         EImageFileFormat arg0 = static_cast<EImageFileFormat>(info[0]->NumberValue());
 
         // Call wrapped method
-        pylonImageBase->CanSaveWithoutConversion(arg0);
+        bool result = pylonImageBase->CanSaveWithoutConversion(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -111,7 +114,7 @@ NAN_METHOD(PylonImageBaseWrap::GetPixelData)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        pylonImageBase->GetPixelData(arg0, arg1);
+        // TODO: Implement return value wrapper for pylonImageBase->GetPixelData(arg0, arg1)
     }
 }
 
@@ -128,6 +131,9 @@ NAN_METHOD(PylonImageBaseWrap::Load)
 
         // Call wrapped method
         pylonImageBase->Load(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -149,5 +155,8 @@ NAN_METHOD(PylonImageBaseWrap::Save)
 
         // Call wrapped method
         pylonImageBase->Save(arg0, *arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

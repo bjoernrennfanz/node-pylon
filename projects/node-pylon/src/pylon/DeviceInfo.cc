@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -181,7 +181,10 @@ NAN_METHOD(DeviceInfoWrap::IsDeviceFactoryAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsDeviceFactoryAvailable();
+        bool result = deviceInfo->IsDeviceFactoryAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -193,7 +196,10 @@ NAN_METHOD(DeviceInfoWrap::IsDeviceVersionAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsDeviceVersionAvailable();
+        bool result = deviceInfo->IsDeviceVersionAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -205,7 +211,10 @@ NAN_METHOD(DeviceInfoWrap::IsModelNameAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsModelNameAvailable();
+        bool result = deviceInfo->IsModelNameAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -217,7 +226,10 @@ NAN_METHOD(DeviceInfoWrap::IsSerialNumberAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsSerialNumberAvailable();
+        bool result = deviceInfo->IsSerialNumberAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -229,7 +241,10 @@ NAN_METHOD(DeviceInfoWrap::IsUserDefinedNameAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsUserDefinedNameAvailable();
+        bool result = deviceInfo->IsUserDefinedNameAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -241,7 +256,10 @@ NAN_METHOD(DeviceInfoWrap::IsXMLSourceAvailable)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        deviceInfo->IsXMLSourceAvailable();
+        bool result = deviceInfo->IsXMLSourceAvailable();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 

@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,9 @@ NAN_METHOD(ImageFormatConverterWrap::Convert)
 
         // Call wrapped method
         imageFormatConverter->Convert(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 8) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReusableImage")) && info[1]->IsObject() && info[2]->IsNumber() && info[3]->IsNumber() && info[4]->IsNumber() && info[5]->IsNumber() && info[6]->IsNumber() && info[7]->IsNumber())
     {
@@ -150,6 +153,9 @@ NAN_METHOD(ImageFormatConverterWrap::Convert)
 
         // Call wrapped method
         imageFormatConverter->Convert(*arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 3) && info[0]->IsObject() && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "IImage")))
     {
@@ -164,6 +170,9 @@ NAN_METHOD(ImageFormatConverterWrap::Convert)
 
         // Call wrapped method
         imageFormatConverter->Convert(arg0, arg1, *arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IReusableImage")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "IImage")))
     {
@@ -177,6 +186,9 @@ NAN_METHOD(ImageFormatConverterWrap::Convert)
 
         // Call wrapped method
         imageFormatConverter->Convert(*arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -197,7 +209,10 @@ NAN_METHOD(ImageFormatConverterWrap::GetBufferSizeForConversion)
         unsigned int arg2 = static_cast<unsigned int>(info[2]->NumberValue());
 
         // Call wrapped method
-        imageFormatConverter->GetBufferSizeForConversion(arg0, arg1, arg2);
+        unsigned int result = imageFormatConverter->GetBufferSizeForConversion(arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
     {
@@ -206,7 +221,10 @@ NAN_METHOD(ImageFormatConverterWrap::GetBufferSizeForConversion)
         IImage* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        imageFormatConverter->GetBufferSizeForConversion(*arg0);
+        unsigned int result = imageFormatConverter->GetBufferSizeForConversion(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -239,7 +257,10 @@ NAN_METHOD(ImageFormatConverterWrap::ImageHasDestinationFormat)
         EImageOrientation arg2 = static_cast<EImageOrientation>(info[2]->NumberValue());
 
         // Call wrapped method
-        imageFormatConverter->ImageHasDestinationFormat(arg0, arg1, arg2);
+        bool result = imageFormatConverter->ImageHasDestinationFormat(arg0, arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "IImage")))
     {
@@ -248,7 +269,10 @@ NAN_METHOD(ImageFormatConverterWrap::ImageHasDestinationFormat)
         IImage* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        imageFormatConverter->ImageHasDestinationFormat(*arg0);
+        bool result = imageFormatConverter->ImageHasDestinationFormat(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -264,6 +288,9 @@ NAN_METHOD(ImageFormatConverterWrap::Initialize)
 
         // Call wrapped method
         imageFormatConverter->Initialize(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -278,7 +305,10 @@ NAN_METHOD(ImageFormatConverterWrap::IsInitialized)
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
 
         // Call wrapped method
-        imageFormatConverter->IsInitialized(arg0);
+        bool result = imageFormatConverter->IsInitialized(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -293,7 +323,10 @@ NAN_METHOD(ImageFormatConverterWrap::IsSupportedInputFormat)
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
 
         // Call wrapped method
-        imageFormatConverter->IsSupportedInputFormat(arg0);
+        bool result = imageFormatConverter->IsSupportedInputFormat(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -308,7 +341,10 @@ NAN_METHOD(ImageFormatConverterWrap::IsSupportedOutputFormat)
         EPixelType arg0 = static_cast<EPixelType>(info[0]->NumberValue());
 
         // Call wrapped method
-        imageFormatConverter->IsSupportedOutputFormat(arg0);
+        bool result = imageFormatConverter->IsSupportedOutputFormat(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -321,5 +357,8 @@ NAN_METHOD(ImageFormatConverterWrap::Uninitialize)
     {
         // Call wrapped method
         imageFormatConverter->Uninitialize();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -106,7 +106,10 @@ NAN_METHOD(ConfigurationEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        configurationEventHandler->DebugGetEventHandlerRegistrationCount();
+        long result = configurationEventHandler->DebugGetEventHandlerRegistrationCount();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -119,6 +122,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::DestroyConfiguration)
     {
         // Call wrapped method
         configurationEventHandler->DestroyConfiguration();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -135,6 +141,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnAttach)
 
         // Call wrapped method
         configurationEventHandler->OnAttach(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -151,6 +160,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnAttached)
 
         // Call wrapped method
         configurationEventHandler->OnAttached(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -167,6 +179,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnCameraDeviceRemoved)
 
         // Call wrapped method
         configurationEventHandler->OnCameraDeviceRemoved(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -183,6 +198,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnClose)
 
         // Call wrapped method
         configurationEventHandler->OnClose(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -199,6 +217,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnClosed)
 
         // Call wrapped method
         configurationEventHandler->OnClosed(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -215,6 +236,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationDeregistered)
 
         // Call wrapped method
         configurationEventHandler->OnConfigurationDeregistered(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -231,6 +255,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnConfigurationRegistered)
 
         // Call wrapped method
         configurationEventHandler->OnConfigurationRegistered(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -247,6 +274,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroy)
 
         // Call wrapped method
         configurationEventHandler->OnDestroy(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -263,6 +293,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDestroyed)
 
         // Call wrapped method
         configurationEventHandler->OnDestroyed(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -279,6 +312,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDetach)
 
         // Call wrapped method
         configurationEventHandler->OnDetach(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -295,6 +331,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnDetached)
 
         // Call wrapped method
         configurationEventHandler->OnDetached(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -314,6 +353,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabError)
 
         // Call wrapped method
         configurationEventHandler->OnGrabError(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -330,6 +372,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStart)
 
         // Call wrapped method
         configurationEventHandler->OnGrabStart(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -346,6 +391,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStarted)
 
         // Call wrapped method
         configurationEventHandler->OnGrabStarted(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -362,6 +410,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStop)
 
         // Call wrapped method
         configurationEventHandler->OnGrabStop(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -378,6 +429,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnGrabStopped)
 
         // Call wrapped method
         configurationEventHandler->OnGrabStopped(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -394,6 +448,9 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnOpen)
 
         // Call wrapped method
         configurationEventHandler->OnOpen(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -410,5 +467,8 @@ NAN_METHOD(ConfigurationEventHandlerWrap::OnOpened)
 
         // Call wrapped method
         configurationEventHandler->OnOpened(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

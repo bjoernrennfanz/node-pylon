@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -99,6 +99,9 @@ NAN_METHOD(StreamGrabberWrap::CancelGrab)
     {
         // Call wrapped method
         streamGrabber->CancelGrab();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -111,6 +114,9 @@ NAN_METHOD(StreamGrabberWrap::Close)
     {
         // Call wrapped method
         streamGrabber->Close();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -124,7 +130,7 @@ NAN_METHOD(StreamGrabberWrap::DeregisterBuffer)
         // TODO: Implement wrapper for void
 
         // Call wrapped method
-        streamGrabber->DeregisterBuffer(arg0);
+        // TODO: Implement return value wrapper for streamGrabber->DeregisterBuffer(arg0)
     }
 }
 
@@ -137,6 +143,9 @@ NAN_METHOD(StreamGrabberWrap::FinishGrab)
     {
         // Call wrapped method
         streamGrabber->FinishGrab();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -160,7 +169,7 @@ NAN_METHOD(StreamGrabberWrap::GetWaitObject)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        streamGrabber->GetWaitObject();
+        // TODO: Implement return value wrapper for streamGrabber->GetWaitObject()
     }
 }
 
@@ -172,7 +181,10 @@ NAN_METHOD(StreamGrabberWrap::IsOpen)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        streamGrabber->IsOpen();
+        bool result = streamGrabber->IsOpen();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -185,6 +197,9 @@ NAN_METHOD(StreamGrabberWrap::Open)
     {
         // Call wrapped method
         streamGrabber->Open();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -197,6 +212,9 @@ NAN_METHOD(StreamGrabberWrap::PrepareGrab)
     {
         // Call wrapped method
         streamGrabber->PrepareGrab();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -213,6 +231,9 @@ NAN_METHOD(StreamGrabberWrap::QueueBuffer)
 
         // Call wrapped method
         streamGrabber->QueueBuffer(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -229,7 +250,7 @@ NAN_METHOD(StreamGrabberWrap::RegisterBuffer)
         unsigned int arg1 = static_cast<unsigned int>(info[1]->NumberValue());
 
         // Call wrapped method
-        streamGrabber->RegisterBuffer(arg0, arg1);
+        // TODO: Implement return value wrapper for streamGrabber->RegisterBuffer(arg0, arg1)
     }
 }
 
@@ -245,6 +266,9 @@ NAN_METHOD(StreamGrabberWrap::RetrieveResult)
         GrabResult* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        streamGrabber->RetrieveResult(*arg0);
+        bool result = streamGrabber->RetrieveResult(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

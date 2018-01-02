@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -111,6 +111,9 @@ NAN_METHOD(ChunkAdapterWrap::AttachBuffer)
 
         // Call wrapped method
         chunkAdapter->AttachBuffer(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -127,6 +130,9 @@ NAN_METHOD(ChunkAdapterWrap::AttachNodeMap)
 
         // Call wrapped method
         chunkAdapter->AttachNodeMap(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -144,7 +150,10 @@ NAN_METHOD(ChunkAdapterWrap::CheckBufferLayout)
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Call wrapped method
-        chunkAdapter->CheckBufferLayout(arg0, arg1);
+        bool result = chunkAdapter->CheckBufferLayout(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -157,6 +166,9 @@ NAN_METHOD(ChunkAdapterWrap::ClearCaches)
     {
         // Call wrapped method
         chunkAdapter->ClearCaches();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -169,6 +181,9 @@ NAN_METHOD(ChunkAdapterWrap::DetachBuffer)
     {
         // Call wrapped method
         chunkAdapter->DetachBuffer();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -181,6 +196,9 @@ NAN_METHOD(ChunkAdapterWrap::DetachNodeMap)
     {
         // Call wrapped method
         chunkAdapter->DetachNodeMap();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -196,5 +214,8 @@ NAN_METHOD(ChunkAdapterWrap::UpdateBuffer)
 
         // Call wrapped method
         chunkAdapter->UpdateBuffer(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

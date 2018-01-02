@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -150,6 +150,9 @@ NAN_METHOD(InstantCameraWrap::Attach)
 
         // Call wrapped method
         instantCamera->Attach(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -161,7 +164,10 @@ NAN_METHOD(InstantCameraWrap::CanWaitForFrameTriggerReady)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->CanWaitForFrameTriggerReady();
+        bool result = instantCamera->CanWaitForFrameTriggerReady();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -174,6 +180,9 @@ NAN_METHOD(InstantCameraWrap::Close)
     {
         // Call wrapped method
         instantCamera->Close();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -193,7 +202,10 @@ NAN_METHOD(InstantCameraWrap::DeregisterCameraEventHandler)
         gcstring* arg1 = arg1_wrap->GetWrapped();
 
         // Call wrapped method
-        instantCamera->DeregisterCameraEventHandler(arg0, *arg1);
+        bool result = instantCamera->DeregisterCameraEventHandler(arg0, *arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -209,7 +221,10 @@ NAN_METHOD(InstantCameraWrap::DeregisterConfiguration)
         CConfigurationEventHandler* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        instantCamera->DeregisterConfiguration(arg0);
+        bool result = instantCamera->DeregisterConfiguration(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -225,7 +240,10 @@ NAN_METHOD(InstantCameraWrap::DeregisterImageEventHandler)
         CImageEventHandler* arg0 = arg0_wrap->GetWrapped();
 
         // Call wrapped method
-        instantCamera->DeregisterImageEventHandler(arg0);
+        bool result = instantCamera->DeregisterImageEventHandler(arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -238,6 +256,9 @@ NAN_METHOD(InstantCameraWrap::DestroyDevice)
     {
         // Call wrapped method
         instantCamera->DestroyDevice();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -262,6 +283,9 @@ NAN_METHOD(InstantCameraWrap::ExecuteSoftwareTrigger)
     {
         // Call wrapped method
         instantCamera->ExecuteSoftwareTrigger();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -273,7 +297,10 @@ NAN_METHOD(InstantCameraWrap::GetCameraContext)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetCameraContext();
+        int result = instantCamera->GetCameraContext();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -285,7 +312,7 @@ NAN_METHOD(InstantCameraWrap::GetCameraEventWaitObject)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetCameraEventWaitObject();
+        // TODO: Implement return value wrapper for instantCamera->GetCameraEventWaitObject()
     }
 }
 
@@ -321,7 +348,7 @@ NAN_METHOD(InstantCameraWrap::GetExtensionInterface)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetExtensionInterface();
+        // TODO: Implement return value wrapper for instantCamera->GetExtensionInterface()
     }
 }
 
@@ -333,7 +360,7 @@ NAN_METHOD(InstantCameraWrap::GetGrabResultWaitObject)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetGrabResultWaitObject();
+        // TODO: Implement return value wrapper for instantCamera->GetGrabResultWaitObject()
     }
 }
 
@@ -345,7 +372,7 @@ NAN_METHOD(InstantCameraWrap::GetGrabStopWaitObject)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetGrabStopWaitObject();
+        // TODO: Implement return value wrapper for instantCamera->GetGrabStopWaitObject()
     }
 }
 
@@ -381,7 +408,10 @@ NAN_METHOD(InstantCameraWrap::GetQueuedBufferCount)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetQueuedBufferCount();
+        unsigned int result = instantCamera->GetQueuedBufferCount();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -393,7 +423,7 @@ NAN_METHOD(InstantCameraWrap::GetSfncVersion)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->GetSfncVersion();
+        // TODO: Implement return value wrapper for instantCamera->GetSfncVersion()
     }
 }
 
@@ -439,7 +469,10 @@ NAN_METHOD(InstantCameraWrap::GrabOne)
         ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
 
         // Call wrapped method
-        instantCamera->GrabOne(arg0, *arg1, arg2);
+        bool result = instantCamera->GrabOne(arg0, *arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -451,7 +484,10 @@ NAN_METHOD(InstantCameraWrap::HasOwnership)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->HasOwnership();
+        bool result = instantCamera->HasOwnership();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -463,7 +499,10 @@ NAN_METHOD(InstantCameraWrap::Is1394)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->Is1394();
+        bool result = instantCamera->Is1394();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -475,7 +514,10 @@ NAN_METHOD(InstantCameraWrap::IsBcon)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsBcon();
+        bool result = instantCamera->IsBcon();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -487,7 +529,10 @@ NAN_METHOD(InstantCameraWrap::IsCameraDeviceRemoved)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsCameraDeviceRemoved();
+        bool result = instantCamera->IsCameraDeviceRemoved();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -499,7 +544,10 @@ NAN_METHOD(InstantCameraWrap::IsCameraLink)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsCameraLink();
+        bool result = instantCamera->IsCameraLink();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -511,7 +559,10 @@ NAN_METHOD(InstantCameraWrap::IsGigE)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsGigE();
+        bool result = instantCamera->IsGigE();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -523,7 +574,10 @@ NAN_METHOD(InstantCameraWrap::IsGrabbing)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsGrabbing();
+        bool result = instantCamera->IsGrabbing();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -535,7 +589,10 @@ NAN_METHOD(InstantCameraWrap::IsOpen)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsOpen();
+        bool result = instantCamera->IsOpen();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -547,7 +604,10 @@ NAN_METHOD(InstantCameraWrap::IsPylonDeviceAttached)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsPylonDeviceAttached();
+        bool result = instantCamera->IsPylonDeviceAttached();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -559,7 +619,10 @@ NAN_METHOD(InstantCameraWrap::IsUsb)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        instantCamera->IsUsb();
+        bool result = instantCamera->IsUsb();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -572,6 +635,9 @@ NAN_METHOD(InstantCameraWrap::Open)
     {
         // Call wrapped method
         instantCamera->Open();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -604,6 +670,9 @@ NAN_METHOD(InstantCameraWrap::RegisterCameraEventHandler)
 
         // Call wrapped method
         instantCamera->RegisterCameraEventHandler(arg0, *arg1, arg2, arg3, arg4, arg5);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -626,6 +695,9 @@ NAN_METHOD(InstantCameraWrap::RegisterConfiguration)
 
         // Call wrapped method
         instantCamera->RegisterConfiguration(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -648,6 +720,9 @@ NAN_METHOD(InstantCameraWrap::RegisterImageEventHandler)
 
         // Call wrapped method
         instantCamera->RegisterImageEventHandler(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -669,7 +744,10 @@ NAN_METHOD(InstantCameraWrap::RetrieveResult)
         ETimeoutHandling arg2 = static_cast<ETimeoutHandling>(info[2]->NumberValue());
 
         // Call wrapped method
-        instantCamera->RetrieveResult(arg0, *arg1, arg2);
+        bool result = instantCamera->RetrieveResult(arg0, *arg1, arg2);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -687,6 +765,9 @@ NAN_METHOD(InstantCameraWrap::SetBufferFactory)
 
         // Call wrapped method
         instantCamera->SetBufferFactory(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -702,6 +783,9 @@ NAN_METHOD(InstantCameraWrap::SetCameraContext)
 
         // Call wrapped method
         instantCamera->SetCameraContext(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -723,6 +807,9 @@ NAN_METHOD(InstantCameraWrap::StartGrabbing)
 
         // Call wrapped method
         instantCamera->StartGrabbing(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && info[0]->IsNumber() && info[1]->IsNumber())
     {
@@ -734,6 +821,9 @@ NAN_METHOD(InstantCameraWrap::StartGrabbing)
 
         // Call wrapped method
         instantCamera->StartGrabbing(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -746,6 +836,9 @@ NAN_METHOD(InstantCameraWrap::StopGrabbing)
     {
         // Call wrapped method
         instantCamera->StopGrabbing();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -763,6 +856,9 @@ NAN_METHOD(InstantCameraWrap::WaitForFrameTriggerReady)
         ETimeoutHandling arg1 = static_cast<ETimeoutHandling>(info[1]->NumberValue());
 
         // Call wrapped method
-        instantCamera->WaitForFrameTriggerReady(arg0, arg1);
+        bool result = instantCamera->WaitForFrameTriggerReady(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

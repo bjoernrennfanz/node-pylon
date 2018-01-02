@@ -28,6 +28,7 @@ using CppSharp;
 using NodePylonGen.Utils;
 using CppSharp.AST.Extensions;
 using System.Linq;
+using System;
 
 namespace NodePylonGen.Generator.Generators.NodeJS
 {
@@ -43,6 +44,23 @@ namespace NodePylonGen.Generator.Generators.NodeJS
         public NodeJSTypePrinter(BindingContext context)
         {
             Context = context;
+        }
+
+        public string VisitReturnType(QualifiedType type, bool hasName, bool hasModifier)
+        {
+            bool savedPrintTypeModifiers = PrintTypeModifiers;
+            bool savedPrintTypeQualifiers = PrintTypeQualifiers;
+            string result = string.Empty;
+
+            PrintTypeModifiers = hasModifier;
+            PrintTypeQualifiers = hasModifier;
+
+            result = type.Visit(this);
+
+            PrintTypeModifiers = savedPrintTypeModifiers;
+            PrintTypeQualifiers = savedPrintTypeQualifiers;
+
+            return result;
         }
 
         public string VisitParameter(Parameter param, bool hasName, bool hasModifier)
@@ -71,6 +89,74 @@ namespace NodePylonGen.Generator.Generators.NodeJS
             return result;
         }
 
+        public void GenerateReturnTypeWrapper(NodeJSTemplate callee, QualifiedType returnType, string calleeToWrap)
+        {
+            NodeJSTypeCheckPrinter nodeJSTypeCheckPrinter = new NodeJSTypeCheckPrinter(Context);
+
+            // Check for void return type
+            if ((returnType.Type is BuiltinType) && ((returnType.Type as BuiltinType).Type == PrimitiveType.Void))
+            {
+                // Write wrapper for void return type
+                callee.WriteLine("{0};", calleeToWrap);
+                callee.WriteLine("");
+                callee.WriteLine("// Set return value to undefined");
+                callee.WriteLine("info.GetReturnValue().SetUndefined();");
+            }
+            else if (nodeJSTypeCheckPrinter.QualifiedTypeIsObject(returnType))
+            {
+
+
+
+                callee.WriteLine("{0};", calleeToWrap);
+
+            }
+            else if (nodeJSTypeCheckPrinter.QualifiedTypeIsNumber(returnType))
+            {
+                PointerType parameterPointerType = returnType.Type as PointerType;
+                if (parameterPointerType != null && parameterPointerType.IsPointer())
+                {
+                    // Currently not supported!
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    // Generate return type wrapper for number type
+                    callee.WriteLine("{0} result = {1};", VisitReturnType(returnType, false, false), calleeToWrap);
+                    callee.WriteLine("");
+                    callee.WriteLine("// Set return value");
+                    callee.WriteLine("info.GetReturnValue().Set(Nan::New<Number>(result));");
+                }
+            }
+            else if (nodeJSTypeCheckPrinter.QualifiedTypeIsBoolean(returnType))
+            {
+                PointerType parameterPointerType = returnType.Type as PointerType;
+                if (parameterPointerType != null && parameterPointerType.IsPointer())
+                {
+                    // Currently not supported!
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    // Generate return type wrapper for boolean type
+                    callee.WriteLine("{0} result = {1};", VisitReturnType(returnType, false, false), calleeToWrap);
+                    callee.WriteLine("");
+                    callee.WriteLine("// Set return value");
+                    callee.WriteLine("info.GetReturnValue().Set(Nan::New<Boolean>(result));");
+                }
+            }
+            else if (nodeJSTypeCheckPrinter.QualifiedTypeIsString(returnType))
+            {
+                callee.WriteLine("const {0}{1} result = {2};", VisitReturnType(returnType, false, false), (returnType.Type is PointerType ? ((returnType.Type as PointerType).IsPointer() ? "*" : string.Empty) : string.Empty), calleeToWrap);
+                callee.WriteLine("");
+                callee.WriteLine("// Set return value");
+                callee.WriteLine("info.GetReturnValue().Set(pylon_v8::FromGCString({0}result).ToLocalChecked());", (returnType.Type is PointerType ? ((returnType.Type as PointerType).IsPointer() ? string.Empty : "&" ) : "&"));
+            }
+            else if (nodeJSTypeCheckPrinter.QualifiedTypeIsTypedBuffer(returnType))
+            {
+                callee.WriteLine("// TODO: Implement return value wrapper for {0}", calleeToWrap);
+            }
+        }
+
         public string GenerateParameterWrapper(NodeJSTemplate callee, IEnumerable<Parameter> parameters)
         {
             int parameterArgumentIndex = 0;
@@ -79,7 +165,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
             foreach (Parameter parameter in parameters)
             {
-                if (nodeJSTypeCheckPrinter.ParameterIsObject(parameter))
+                if (nodeJSTypeCheckPrinter.QualifiedTypeIsObject(parameter.QualifiedType))
                 {
                     string parameterClassName = VisitParameter(parameter, false, false);
                     string parameterClassWrapped = NodeJSClassHelper.GenerateClassWrapName(parameterClassName);
@@ -91,7 +177,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     callee.WriteLine("{0}* arg{1} = arg{1}_wrap->GetWrapped();", parameterClassName, parameterArgumentIndex);
                     callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
-                else if (nodeJSTypeCheckPrinter.ParameterIsNumber(parameter))
+                else if (nodeJSTypeCheckPrinter.QualifiedTypeIsNumber(parameter.QualifiedType))
                 {
                     // Generate wrapper for number values
                     callee.PushBlock(BlockKind.MethodBody);
@@ -111,7 +197,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
-                else if (nodeJSTypeCheckPrinter.ParameterIsBoolean(parameter))
+                else if (nodeJSTypeCheckPrinter.QualifiedTypeIsBoolean(parameter.QualifiedType))
                 {
                     // Generate wrapper for number values
                     callee.PushBlock(BlockKind.MethodBody);
@@ -131,7 +217,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
 
                     callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
-                else if (nodeJSTypeCheckPrinter.ParameterIsString(parameter))
+                else if (nodeJSTypeCheckPrinter.QualifiedTypeIsString(parameter.QualifiedType))
                 {
                     string parameterToWrap = string.Format("{0}{1}", VisitParameter(parameter, false, false), (parameter.Type is PointerType ? ((parameter.Type as PointerType).IsPointer() ? "*" : string.Empty) : string.Empty));
                     string generatedStringWrapperLine = string.Format("{0} arg{1} = ", parameterToWrap, parameterArgumentIndex);
@@ -153,7 +239,7 @@ namespace NodePylonGen.Generator.Generators.NodeJS
                     callee.WriteLine(generatedStringWrapperLine);
                     callee.PopBlock(NewLineKind.BeforeNextBlock);
                 }
-                else if (nodeJSTypeCheckPrinter.ParameterIsTypedBuffer(parameter))
+                else if (nodeJSTypeCheckPrinter.QualifiedTypeIsTypedBuffer(parameter.QualifiedType))
                 {
                     callee.PushBlock(BlockKind.MethodBody);
                     callee.WriteLine("// TODO: Implement wrapper for {0}", VisitParameter(parameter, false, false));

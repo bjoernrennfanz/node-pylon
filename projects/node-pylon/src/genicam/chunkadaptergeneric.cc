@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,9 @@ NAN_METHOD(ChunkAdapterGenericWrap::AttachBuffer)
 
         // Call wrapped method
         chunkAdapterGeneric->AttachBuffer(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 4) && info[0]->IsString() && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "SingleChunkData_t")) && info[2]->IsNumber() && (info[3]->IsObject() && (pylon_v8::ToGCString(info[3]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
     {
@@ -129,6 +132,9 @@ NAN_METHOD(ChunkAdapterGenericWrap::AttachBuffer)
 
         // Call wrapped method
         chunkAdapterGeneric->AttachBuffer(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 3) && info[0]->IsString() && info[1]->IsNumber() && (info[2]->IsObject() && (pylon_v8::ToGCString(info[2]->ToObject()->GetConstructorName()) == "AttachStatistics_t")))
     {
@@ -144,6 +150,9 @@ NAN_METHOD(ChunkAdapterGenericWrap::AttachBuffer)
 
         // Call wrapped method
         chunkAdapterGeneric->AttachBuffer(arg0, arg1, arg2);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -161,6 +170,9 @@ NAN_METHOD(ChunkAdapterGenericWrap::CheckBufferLayout)
         __int128_t arg1 = static_cast<__int128_t>(info[1]->NumberValue());
 
         // Call wrapped method
-        chunkAdapterGeneric->CheckBufferLayout(arg0, arg1);
+        bool result = chunkAdapterGeneric->CheckBufferLayout(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,9 @@ NAN_METHOD(TListWrap::assign)
 
         // Call wrapped method
         tList->assign(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -189,7 +192,10 @@ NAN_METHOD(TListWrap::capacity)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        tList->capacity();
+        unsigned int result = tList->capacity();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -202,6 +208,9 @@ NAN_METHOD(TListWrap::clear)
     {
         // Call wrapped method
         tList->clear();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -213,7 +222,10 @@ NAN_METHOD(TListWrap::empty)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        tList->empty();
+        bool result = tList->empty();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -246,6 +258,9 @@ NAN_METHOD(TListWrap::erase)
 
         // Call wrapped method
         tList->erase(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")))
     {
@@ -291,6 +306,9 @@ NAN_METHOD(TListWrap::insert)
 
         // Call wrapped method
         tList->insert(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "CDeviceInfo")))
     {
@@ -315,7 +333,10 @@ NAN_METHOD(TListWrap::max_size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        tList->max_size();
+        unsigned int result = tList->max_size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -328,6 +349,9 @@ NAN_METHOD(TListWrap::pop_back)
     {
         // Call wrapped method
         tList->pop_back();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -344,6 +368,9 @@ NAN_METHOD(TListWrap::push_back)
 
         // Call wrapped method
         tList->push_back(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -359,6 +386,9 @@ NAN_METHOD(TListWrap::reserve)
 
         // Call wrapped method
         tList->reserve(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -374,6 +404,9 @@ NAN_METHOD(TListWrap::resize)
 
         // Call wrapped method
         tList->resize(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -385,6 +418,9 @@ NAN_METHOD(TListWrap::size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        tList->size();
+        unsigned int result = tList->size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }

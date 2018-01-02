@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,6 +97,9 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
 
         // Call wrapped method
         eventAdapterGEV->DeliverEventMessage(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST_EXTENDED_ID")))
     {
@@ -106,6 +109,9 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
 
         // Call wrapped method
         eventAdapterGEV->DeliverEventMessage(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENTDATA_REQUEST")))
     {
@@ -115,6 +121,9 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
 
         // Call wrapped method
         eventAdapterGEV->DeliverEventMessage(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "GVCP_EVENT_REQUEST")))
     {
@@ -124,6 +133,9 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverEventMessage)
 
         // Call wrapped method
         eventAdapterGEV->DeliverEventMessage(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -142,5 +154,8 @@ NAN_METHOD(EventAdapterGEVWrap::DeliverMessage)
 
         // Call wrapped method
         eventAdapterGEV->DeliverMessage(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

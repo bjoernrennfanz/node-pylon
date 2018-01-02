@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -94,7 +94,10 @@ NAN_METHOD(BooleanWrap::GetValue)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        boolean->GetValue(arg0, arg1);
+        bool result = boolean->GetValue(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -113,5 +116,8 @@ NAN_METHOD(BooleanWrap::SetValue)
 
         // Call wrapped method
         boolean->SetValue(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

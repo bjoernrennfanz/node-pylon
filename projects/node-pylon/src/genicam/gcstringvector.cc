@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -125,6 +125,9 @@ NAN_METHOD(GCStringVectorWrap::assign)
 
         // Call wrapped method
         gCStringVector->assign(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "gcstring_vector")))
     {
@@ -202,7 +205,10 @@ NAN_METHOD(GCStringVectorWrap::capacity)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCStringVector->capacity();
+        unsigned int result = gCStringVector->capacity();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -215,6 +221,9 @@ NAN_METHOD(GCStringVectorWrap::clear)
     {
         // Call wrapped method
         gCStringVector->clear();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -226,7 +235,10 @@ NAN_METHOD(GCStringVectorWrap::empty)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCStringVector->empty();
+        bool result = gCStringVector->empty();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -259,6 +271,9 @@ NAN_METHOD(GCStringVectorWrap::erase)
 
         // Call wrapped method
         gCStringVector->erase(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")))
     {
@@ -304,6 +319,9 @@ NAN_METHOD(GCStringVectorWrap::insert)
 
         // Call wrapped method
         gCStringVector->insert(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "gcstring")))
     {
@@ -328,7 +346,10 @@ NAN_METHOD(GCStringVectorWrap::max_size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCStringVector->max_size();
+        unsigned int result = gCStringVector->max_size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -341,6 +362,9 @@ NAN_METHOD(GCStringVectorWrap::pop_back)
     {
         // Call wrapped method
         gCStringVector->pop_back();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -357,6 +381,9 @@ NAN_METHOD(GCStringVectorWrap::push_back)
 
         // Call wrapped method
         gCStringVector->push_back(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -372,6 +399,9 @@ NAN_METHOD(GCStringVectorWrap::reserve)
 
         // Call wrapped method
         gCStringVector->reserve(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -391,6 +421,9 @@ NAN_METHOD(GCStringVectorWrap::resize)
 
         // Call wrapped method
         gCStringVector->resize(arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -402,6 +435,9 @@ NAN_METHOD(GCStringVectorWrap::size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        gCStringVector->size();
+        unsigned int result = gCStringVector->size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }

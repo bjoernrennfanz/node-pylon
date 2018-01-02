@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -106,6 +106,9 @@ NAN_METHOD(PylonAutoInitTermWrap::GetPylonVersion)
 
         // Call wrapped function
         GetPylonVersion(arg0, arg1, arg2, arg3);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -114,7 +117,10 @@ NAN_METHOD(PylonAutoInitTermWrap::GetPylonVersionString)
     if (info.Length() == 0)
     {
         // Call wrapped function
-        GetPylonVersionString();
+        const char* result = GetPylonVersionString();
+
+        // Set return value
+        info.GetReturnValue().Set(pylon_v8::FromGCString(result).ToLocalChecked());
     }
 }
 
@@ -124,6 +130,9 @@ NAN_METHOD(PylonAutoInitTermWrap::PylonInitialize)
     {
         // Call wrapped function
         PylonInitialize();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -136,5 +145,8 @@ NAN_METHOD(PylonAutoInitTermWrap::PylonTerminate)
 
         // Call wrapped function
         PylonTerminate(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

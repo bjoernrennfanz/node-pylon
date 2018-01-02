@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -92,7 +92,10 @@ NAN_METHOD(ImageEventHandlerWrap::DebugGetEventHandlerRegistrationCount)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        imageEventHandler->DebugGetEventHandlerRegistrationCount();
+        long result = imageEventHandler->DebugGetEventHandlerRegistrationCount();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -105,6 +108,9 @@ NAN_METHOD(ImageEventHandlerWrap::DestroyImageEventHandler)
     {
         // Call wrapped method
         imageEventHandler->DestroyImageEventHandler();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -121,6 +127,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerDeregistered)
 
         // Call wrapped method
         imageEventHandler->OnImageEventHandlerDeregistered(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -137,6 +146,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageEventHandlerRegistered)
 
         // Call wrapped method
         imageEventHandler->OnImageEventHandlerRegistered(*arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -157,6 +169,9 @@ NAN_METHOD(ImageEventHandlerWrap::OnImageGrabbed)
 
         // Call wrapped method
         imageEventHandler->OnImageGrabbed(*arg0, *arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -176,5 +191,8 @@ NAN_METHOD(ImageEventHandlerWrap::OnImagesSkipped)
 
         // Call wrapped method
         imageEventHandler->OnImagesSkipped(*arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

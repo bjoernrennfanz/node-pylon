@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -101,7 +101,10 @@ NAN_METHOD(FloatWrap::GetDisplayNotation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetDisplayNotation();
+        EDisplayNotation result = float->GetDisplayNotation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -113,7 +116,10 @@ NAN_METHOD(FloatWrap::GetDisplayPrecision)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetDisplayPrecision();
+        __int128_t result = float->GetDisplayPrecision();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -125,7 +131,10 @@ NAN_METHOD(FloatWrap::GetInc)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetInc();
+        double result = float->GetInc();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -137,7 +146,10 @@ NAN_METHOD(FloatWrap::GetIncMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetIncMode();
+        EIncMode result = float->GetIncMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -152,7 +164,7 @@ NAN_METHOD(FloatWrap::GetListOfValidValues)
         bool arg0 = info[0]->BooleanValue();
 
         // Call wrapped method
-        float->GetListOfValidValues(arg0);
+        // TODO: Implement return value wrapper for float->GetListOfValidValues(arg0)
     }
 }
 
@@ -164,7 +176,10 @@ NAN_METHOD(FloatWrap::GetMax)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetMax();
+        double result = float->GetMax();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -176,7 +191,10 @@ NAN_METHOD(FloatWrap::GetMin)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetMin();
+        double result = float->GetMin();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -188,7 +206,10 @@ NAN_METHOD(FloatWrap::GetRepresentation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->GetRepresentation();
+        ERepresentation result = float->GetRepresentation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -218,7 +239,10 @@ NAN_METHOD(FloatWrap::GetValue)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        float->GetValue(arg0, arg1);
+        double result = float->GetValue(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -230,7 +254,10 @@ NAN_METHOD(FloatWrap::HasInc)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        float->HasInc();
+        bool result = float->HasInc();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -246,6 +273,9 @@ NAN_METHOD(FloatWrap::ImposeMax)
 
         // Call wrapped method
         float->ImposeMax(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -261,6 +291,9 @@ NAN_METHOD(FloatWrap::ImposeMin)
 
         // Call wrapped method
         float->ImposeMin(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -279,5 +312,8 @@ NAN_METHOD(FloatWrap::SetValue)
 
         // Call wrapped method
         float->SetValue(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }

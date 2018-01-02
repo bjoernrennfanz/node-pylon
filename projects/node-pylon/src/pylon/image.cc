@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -96,12 +96,12 @@ NAN_METHOD(ImageWrap::GetBuffer)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetBuffer();
+        // TODO: Implement return value wrapper for image->GetBuffer()
     }
     else if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetBuffer();
+        // TODO: Implement return value wrapper for image->GetBuffer()
     }
 }
 
@@ -113,7 +113,10 @@ NAN_METHOD(ImageWrap::GetHeight)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetHeight();
+        unsigned int result = image->GetHeight();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -125,7 +128,10 @@ NAN_METHOD(ImageWrap::GetImageSize)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetImageSize();
+        unsigned int result = image->GetImageSize();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -137,7 +143,10 @@ NAN_METHOD(ImageWrap::GetOrientation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetOrientation();
+        EImageOrientation result = image->GetOrientation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -149,7 +158,10 @@ NAN_METHOD(ImageWrap::GetPaddingX)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetPaddingX();
+        unsigned int result = image->GetPaddingX();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -161,7 +173,10 @@ NAN_METHOD(ImageWrap::GetPixelType)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetPixelType();
+        EPixelType result = image->GetPixelType();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -176,7 +191,10 @@ NAN_METHOD(ImageWrap::GetStride)
         unsigned int arg0 = static_cast<unsigned int>(info[0]->NumberValue());
 
         // Call wrapped method
-        image->GetStride(*arg0);
+        bool result = image->GetStride(*arg0);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -188,7 +206,10 @@ NAN_METHOD(ImageWrap::GetWidth)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->GetWidth();
+        unsigned int result = image->GetWidth();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -200,7 +221,10 @@ NAN_METHOD(ImageWrap::IsUnique)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->IsUnique();
+        bool result = image->IsUnique();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -212,6 +236,9 @@ NAN_METHOD(ImageWrap::IsValid)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        image->IsValid();
+        bool result = image->IsValid();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }

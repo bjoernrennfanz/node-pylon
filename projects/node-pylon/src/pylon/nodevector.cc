@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,9 @@ NAN_METHOD(NodeVectorWrap::assign)
 
         // Call wrapped method
         nodeVector->assign(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -189,7 +192,10 @@ NAN_METHOD(NodeVectorWrap::capacity)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        nodeVector->capacity();
+        unsigned int result = nodeVector->capacity();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -202,6 +208,9 @@ NAN_METHOD(NodeVectorWrap::clear)
     {
         // Call wrapped method
         nodeVector->clear();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -213,7 +222,10 @@ NAN_METHOD(NodeVectorWrap::empty)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        nodeVector->empty();
+        bool result = nodeVector->empty();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Boolean>(result));
     }
 }
 
@@ -246,6 +258,9 @@ NAN_METHOD(NodeVectorWrap::erase)
 
         // Call wrapped method
         nodeVector->erase(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 1) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")))
     {
@@ -291,6 +306,9 @@ NAN_METHOD(NodeVectorWrap::insert)
 
         // Call wrapped method
         nodeVector->insert(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
     else if ((info.Length() == 2) && (info[0]->IsObject() && (pylon_v8::ToGCString(info[0]->ToObject()->GetConstructorName()) == "iterator")) && (info[1]->IsObject() && (pylon_v8::ToGCString(info[1]->ToObject()->GetConstructorName()) == "INode")))
     {
@@ -315,7 +333,10 @@ NAN_METHOD(NodeVectorWrap::max_size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        nodeVector->max_size();
+        unsigned int result = nodeVector->max_size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -328,6 +349,9 @@ NAN_METHOD(NodeVectorWrap::pop_back)
     {
         // Call wrapped method
         nodeVector->pop_back();
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -344,6 +368,9 @@ NAN_METHOD(NodeVectorWrap::push_back)
 
         // Call wrapped method
         nodeVector->push_back(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -359,6 +386,9 @@ NAN_METHOD(NodeVectorWrap::reserve)
 
         // Call wrapped method
         nodeVector->reserve(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -374,6 +404,9 @@ NAN_METHOD(NodeVectorWrap::resize)
 
         // Call wrapped method
         nodeVector->resize(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -385,6 +418,9 @@ NAN_METHOD(NodeVectorWrap::size)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        nodeVector->size();
+        unsigned int result = nodeVector->size();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }

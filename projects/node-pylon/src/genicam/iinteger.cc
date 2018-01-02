@@ -1,6 +1,6 @@
 // MIT License
 // 
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2017 - 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -98,7 +98,10 @@ NAN_METHOD(IntegerWrap::GetInc)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        integer->GetInc();
+        __int128_t result = integer->GetInc();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -110,7 +113,10 @@ NAN_METHOD(IntegerWrap::GetIncMode)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        integer->GetIncMode();
+        EIncMode result = integer->GetIncMode();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -125,7 +131,7 @@ NAN_METHOD(IntegerWrap::GetListOfValidValues)
         bool arg0 = info[0]->BooleanValue();
 
         // Call wrapped method
-        integer->GetListOfValidValues(arg0);
+        // TODO: Implement return value wrapper for integer->GetListOfValidValues(arg0)
     }
 }
 
@@ -137,7 +143,10 @@ NAN_METHOD(IntegerWrap::GetMax)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        integer->GetMax();
+        __int128_t result = integer->GetMax();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -149,7 +158,10 @@ NAN_METHOD(IntegerWrap::GetMin)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        integer->GetMin();
+        __int128_t result = integer->GetMin();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -161,7 +173,10 @@ NAN_METHOD(IntegerWrap::GetRepresentation)
     if (info.Length() == 0)
     {
         // Call wrapped method
-        integer->GetRepresentation();
+        ERepresentation result = integer->GetRepresentation();
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -191,7 +206,10 @@ NAN_METHOD(IntegerWrap::GetValue)
         bool arg1 = info[1]->BooleanValue();
 
         // Call wrapped method
-        integer->GetValue(arg0, arg1);
+        __int128_t result = integer->GetValue(arg0, arg1);
+
+        // Set return value
+        info.GetReturnValue().Set(Nan::New<Number>(result));
     }
 }
 
@@ -207,6 +225,9 @@ NAN_METHOD(IntegerWrap::ImposeMax)
 
         // Call wrapped method
         integer->ImposeMax(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -222,6 +243,9 @@ NAN_METHOD(IntegerWrap::ImposeMin)
 
         // Call wrapped method
         integer->ImposeMin(arg0);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
 
@@ -240,5 +264,8 @@ NAN_METHOD(IntegerWrap::SetValue)
 
         // Call wrapped method
         integer->SetValue(arg0, arg1);
+
+        // Set return value to undefined
+        info.GetReturnValue().SetUndefined();
     }
 }
