@@ -99,6 +99,7 @@
     <Compile Include="Generator\BindingContext.cs" />
     <Compile Include="Generator\Generators\CodeGenerator.cs" />
     <Compile Include="Generator\Generator.cs" />
+    <Compile Include="Generator\Generators\NodeJS\AddMissingModulePass.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSHeaders.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSSources.cs" />
     <Compile Include="Generator\Generators\NodeJS\NodeJSTemplate.cs" />
