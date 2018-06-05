@@ -20,18 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using GenPylonBinding.Core.Config;
+using GenPylonBinding.Generator;
+using GenPylonBinding.Generator.Generators.NodeJS;
+using GenPylonBinding.Parser;
+using GenPylonBinding.Parser.Model;
 using log4net;
-using NodePylonGen.Config;
-using NodePylonGen.Parser;
-using NodePylonGen.Parser.Model;
+using Mono.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using NodePylonGen.Generator.Generators.NodeJS;
-using System.Collections.Generic;
-using NodePylonGen.Generator;
-using Mono.Options;
 
 namespace NodePylonGen
 {
@@ -169,7 +169,7 @@ namespace NodePylonGen
             SaveCode(outputs);
         }
 
-        private void SaveCode(IEnumerable<Generator.GeneratorOutput> outputs)
+        private void SaveCode(IEnumerable<GeneratorOutput> outputs)
         {
             foreach (var output in outputs)
             {

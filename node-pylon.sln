@@ -7,6 +7,12 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "node-pylon", "projects\node
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "node-pylon-gen", "projects\tools\node-pylon-gen\node-pylon-gen.csproj", "{EA2E22CA-727E-4DE1-9914-C7420FED4E02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gen-pylon-binding-core", "projects\gen-pylon-binding-core\gen-pylon-binding-core.csproj", "{A53861E5-2500-4537-A532-94FAB2CC1960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gen-pylon-binding-parser", "projects\gen-pylon-binding-parser\gen-pylon-binding-parser.csproj", "{75591FD9-8089-4E0D-B58D-4F1CE5E4E945}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gen-pylon-binding-generator", "projects\gen-pylon-binding-generator\gen-pylon-binding-generator.csproj", "{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +27,18 @@ Global
 		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA2E22CA-727E-4DE1-9914-C7420FED4E02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A53861E5-2500-4537-A532-94FAB2CC1960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A53861E5-2500-4537-A532-94FAB2CC1960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A53861E5-2500-4537-A532-94FAB2CC1960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A53861E5-2500-4537-A532-94FAB2CC1960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75591FD9-8089-4E0D-B58D-4F1CE5E4E945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75591FD9-8089-4E0D-B58D-4F1CE5E4E945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75591FD9-8089-4E0D-B58D-4F1CE5E4E945}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75591FD9-8089-4E0D-B58D-4F1CE5E4E945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
