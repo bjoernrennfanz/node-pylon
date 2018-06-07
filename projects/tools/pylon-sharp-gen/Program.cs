@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2017 Björn Rennfanz <bjoern@fam-rennfanz.de>
+// Copyright (c) 2018 Björn Rennfanz <bjoern@fam-rennfanz.de>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,42 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace GenPylonBinding.Generator
+using log4net;
+using System;
+using System.Reflection;
+
+namespace PylonSharpGen
 {
-    public class DriverOptions : CppSharp.DriverOptions
+    class Program
     {
-        private GeneratorType generatorKind;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static CodeGeneratorApp codeGeneratorApp;
 
-        /// <summary>
-        /// Overloaded version of generator type
-        /// </summary>
-        public new GeneratorType GeneratorKind
+        static void Main(string[] args)
         {
-            get { return generatorKind; }
-            set
+            try
             {
-                if (value == GeneratorType.CSharp)
-                {
-                    base.GeneratorKind = CppSharp.Generators.GeneratorKind.CSharp;
-                    generatorKind = value;
-                }
-                else if (value == GeneratorType.CLI)
-                {
-                    base.GeneratorKind = CppSharp.Generators.GeneratorKind.CLI;
-                }
+                codeGeneratorApp = new CodeGeneratorApp();
+                codeGeneratorApp.ParseArguments(args);
 
-                generatorKind = value;
+                if (codeGeneratorApp.Initialize())
+                {
+                    codeGeneratorApp.Run();
+                }
+                else
+                {
+                    log.Info("Latest code generation is up to date. No need to run code generation");
+                }
             }
+            catch (Exception ex)
+            {
+                log.Fatal("Unexpected exception: ", ex);
+            }
+
+            Environment.Exit(0);
         }
-
-        /// <summary>
-        /// Indicates that generator is for Node JS
-        /// </summary>
-        public bool IsNodeJSGenerator => GeneratorKind == GeneratorType.NodeJS;
-
-        /// <summary>
-        /// Indicates that generator is for Java
-        /// </summary>
-        public bool IsJavaGenerator => GeneratorKind == GeneratorType.Java;
     }
 }

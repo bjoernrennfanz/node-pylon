@@ -36,7 +36,9 @@ namespace GenPylonBinding.Generator
     public enum GeneratorType
     {
         NodeJS = 1,
-        Java
+        Java,
+        CLI,
+        CSharp
     }
 
     /// <summary>

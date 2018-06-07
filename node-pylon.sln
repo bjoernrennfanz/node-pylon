@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gen-pylon-binding-parser", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gen-pylon-binding-generator", "projects\gen-pylon-binding-generator\gen-pylon-binding-generator.csproj", "{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pylon-sharp-gen", "projects\tools\pylon-sharp-gen\pylon-sharp-gen.csproj", "{0E0E6522-8FA3-4074-8F8D-12039F520570}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E9A3361-A153-4A05-8AB8-0AC88F1A2DC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E0E6522-8FA3-4074-8F8D-12039F520570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E0E6522-8FA3-4074-8F8D-12039F520570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E0E6522-8FA3-4074-8F8D-12039F520570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E0E6522-8FA3-4074-8F8D-12039F520570}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
