@@ -1,0 +1,23 @@
+{
+  "name": "node-pylon",
+  "version": "0.1.0-scaffold",
+  "description": "Native Node.js bindings for Basler pylon C++ API (GenICam, ohne DataProcessing im MVP) — node-addon-api / N-API, kein SWIG, kein NAN.",
+  "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install": "node-gyp rebuild",
+    "rebuild": "node-gyp rebuild",
+    "rebuild:mock": "node-gyp rebuild --define=node_pylon_use_mock=1",
+    "test": "node --test test/",
+    "sample:list": "node samples/list-devices.js",
+    "sample:grab": "node samples/grab-mock.js"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.0.0"
+  },
+  "devDependencies": {},
+  "gypfile": true
+}

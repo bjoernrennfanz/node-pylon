@@ -64,3 +64,22 @@ bin/
 obj/
 packages/
 *.db
+
+# node-pylon: N-API-Artefakte, SDK-Binaries, prebuilds (ZAU-149)
+# Kompilate / prebuilds — nie committen
+*.node
+*.so
+*.dylib
+*.dll
+build-cmake/
+prebuilds/
+*.tar.gz
+
+# Basler pylon SDK — Herkunft/Lizenz beachten, nie ins Repo kopieren
+/opt/pylon/
+pylon/
+*.pylon/
+GenICam/
+PYLON_ROOT/
+pylon-*.tar.gz
+pylon-*.zip
