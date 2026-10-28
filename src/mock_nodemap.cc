@@ -58,7 +58,7 @@ MockNodeMap::MockNodeMap() {
 
   strings_["DeviceUserID"] = StringNode{"", true, true, 64};
   strings_["DeviceModelName"] = StringNode{"MockModel Mono", true, false, 64};
-  strings_["DeviceSerialNumber"] = StringNode{"MOCK0001", true, false, 64};
+  strings_["DeviceSerialNumber"] = StringNode{"MOCK123456", true, false, 64};
 
   enums_["PixelFormat"] =
       EnumNode{"Mono8", {"Mono8", "Mono12", "RGB8"}, true, true};

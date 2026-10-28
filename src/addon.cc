@@ -82,7 +82,7 @@ Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
   Napi::Object dev = Napi::Object::New(env);
   dev.Set("friendlyName", "Mock Camera (node-pylon)");
   dev.Set("modelName", "MockModel Mono");
-  dev.Set("serialNumber", "MOCK0001");
+  dev.Set("serialNumber", "MOCK123456");
   dev.Set("vendorName", "Basler (mock)");
   dev.Set("deviceClass", "MockDevice");
   arr.Set(uint32_t(0), dev);
