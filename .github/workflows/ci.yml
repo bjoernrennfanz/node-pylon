@@ -1,6 +1,6 @@
-# ZAU-149: Mock-Build in GitHub Actions — kein lokaler Compiler noetig.
-# Baut das N-API-Modul ohne pylon-SDK/Kamera (NODE_PYLON_MOCK=1, Default),
-# laesst Smoke-Tests + Samples laufen. Matrix: Linux/Windows/macOS x Node 20/22.
+# Mock build in GitHub Actions - no local compiler needed.
+# Builds the N-API module without pylon SDK/camera (mock define = 1, default),
+# then runs smoke tests and samples. Matrix: Linux/Windows/macOS x Node 20/22.
 name: ci
 
 on:
@@ -30,8 +30,12 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
 
-      - name: Install deps (incl. node-gyp toolchain from runner)
-        run: npm ci
+      - name: Setup MSVC (Windows only)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install deps (skip install script, rebuild explicitly below)
+        run: npm ci --ignore-scripts
 
       - name: Rebuild native mock addon (no pylon SDK needed)
         run: npm run rebuild:mock

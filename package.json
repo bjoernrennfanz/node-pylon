@@ -8,10 +8,11 @@
     "node": ">=20"
   },
   "scripts": {
-    "install": "node-gyp rebuild",
-    "rebuild": "node-gyp rebuild",
+    "install": "node-gyp rebuild --define=node_pylon_use_mock=1",
+    "rebuild": "node-gyp rebuild --define=node_pylon_use_mock=1",
     "rebuild:mock": "node-gyp rebuild --define=node_pylon_use_mock=1",
-    "test": "node --test test/",
+    "rebuild:real": "node-gyp rebuild --define=node_pylon_use_mock=0",
+    "test": "node --test test/smoke.test.js",
     "sample:list": "node samples/list-devices.js",
     "sample:grab": "node samples/grab-mock.js"
   },
