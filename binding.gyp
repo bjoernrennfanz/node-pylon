@@ -3,10 +3,12 @@
     {
       "target_name": "node_pylon",
       "sources": [
-        "src/addon.cc"
+        "src/addon.cc",
+        "react-native/shared/pylon_core.cpp"
       ],
       "include_dirs": [
-        "<!@(node -p \"require('node-addon-api').include\")"
+        "<!@(node -p \"require('node-addon-api').include\")",
+        "react-native/shared"
       ],
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")"

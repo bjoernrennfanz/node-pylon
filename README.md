@@ -81,6 +81,21 @@ console.log(pylon.enumerateDevices()); // [] im Mock
 const frame = pylon.grabMock(64, 48);  // Buffer, 64*48 Bytes Mono8
 ```
 
+## React-Native Desktop (ZAU-153, Mock-Stand)
+
+Out-of-tree nach https://reactnative.dev/docs/out-of-tree-platforms:
+`react-native-windows` (Microsoft), `react-native-macos` (Microsoft),
+Linux via Community-Port (Fallback: Electron + Node-Addon aus diesem Repo).
+Geteilter C++-Core `react-native/shared/pylon_core.{h,cpp}` — einmal schreiben,
+von N-API (`src/addon.cc`) und JSI/TurboModule nur adaptieren (kein Doppel-Wrapping).
+Spec: `react-native/specs/NativePylon.js`, Fassade: `react-native/src/index.ts`
+(mit Mock-Fallback, Sample laeuft auch ohne natives Modul), Sample:
+`react-native/sample/App.tsx`. Details: `docs/rn-architecture.md`.
+
+```bash
+npm run test:rn   # RN-Statikcheck (Doku/Core/Spec/Adapter/Sample, ohne Kamera)
+```
+
 ## N-API-Regeln (verbindlich)
 
 - Nur `node-addon-api`/N-API; keine V8-Internals, kein NAN, kein SWIG.
