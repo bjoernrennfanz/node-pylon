@@ -6,7 +6,7 @@ Zielplattformen: Windows x64, Linux x64/arm64, macOS (wie pypylon);
 React-Native out-of-tree (Windows/macOS/Linux) folgt in ZAU-153.
 
 Branch-Strategie: `master` = Legacy-Generator (C#/VS2015),
-`port/node-addon-api-pylon8` = neues N-API-Grundgerüst (dieser Branch).
+`feature/node-port-native` = neues N-API-Grundgerüst (dieser Branch).
 
 ## Zielstruktur (analog pypylon)
 

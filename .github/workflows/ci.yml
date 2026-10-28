@@ -6,7 +6,7 @@ name: ci
 on:
   push:
     branches:
-      - "port/node-addon-api-pylon8"
+      - "feature/node-port-native"
       - master
   pull_request:
   workflow_dispatch:
