@@ -34,11 +34,13 @@ add_library(node_pylon SHARED
   src/addon.cc
   src/mock_nodemap.cc
   src/mock_camera.cc
+  react-native/shared/pylon_core.cpp
 )
 
 target_include_directories(node_pylon PRIVATE
   ${NODEJS_INCLUDE_DIRS}
   ${NODE_ADDON_API_INCLUDE}
+  ${CMAKE_CURRENT_SOURCE_DIR}/react-native/shared
 )
 
 if(NODE_PYLON_USE_MOCK)
