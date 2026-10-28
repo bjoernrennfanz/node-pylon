@@ -12,9 +12,10 @@
     "rebuild": "node-gyp rebuild --define=node_pylon_use_mock=1",
     "rebuild:mock": "node-gyp rebuild --define=node_pylon_use_mock=1",
     "rebuild:real": "node-gyp rebuild --define=node_pylon_use_mock=0",
-    "test": "node --test test/smoke.test.js",
+    "test": "node --test test/smoke.test.js test/api-surface.test.js",
     "sample:list": "node samples/list-devices.js",
-    "sample:grab": "node samples/grab-mock.js"
+    "sample:grab": "node samples/grab-mock.js",
+    "sample:grab-options": "node samples/grab-options.js"
   },
   "dependencies": {
     "node-addon-api": "^8.0.0"
