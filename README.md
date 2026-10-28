@@ -47,6 +47,14 @@ npm run rebuild:mock
 
 Ergebnis: `build/Release/node_pylon.node`.
 
+## CI (GitHub Actions — kein lokaler Compiler nötig)
+
+Der Mock-Build läuft in der Pipeline (`.github/workflows/ci.yml`):
+Matrix **Ubuntu/Windows/macOS × Node 20/22**, Schritte `npm ci` →
+`npm run rebuild:mock` → `npm test` → Samples. Kein pylon-SDK, keine Kamera,
+kein `gcc`/MSVC auf dem eigenen Server nötig — einfach Branch pushen bzw.
+PR öffnen und den `ci`-Check abwarten.
+
 ## Schnellstart (ohne Kamera)
 
 ```bash

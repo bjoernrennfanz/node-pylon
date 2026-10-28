@@ -1,0 +1,45 @@
+# ZAU-149: Mock-Build in GitHub Actions — kein lokaler Compiler noetig.
+# Baut das N-API-Modul ohne pylon-SDK/Kamera (NODE_PYLON_MOCK=1, Default),
+# laesst Smoke-Tests + Samples laufen. Matrix: Linux/Windows/macOS x Node 20/22.
+name: ci
+
+on:
+  push:
+    branches:
+      - "port/node-addon-api-pylon8"
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-mock:
+    name: mock (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install deps (incl. node-gyp toolchain from runner)
+        run: npm ci
+
+      - name: Rebuild native mock addon (no pylon SDK needed)
+        run: npm run rebuild:mock
+
+      - name: Smoke tests (node --test, no camera)
+        run: npm test
+
+      - name: Samples (list-devices, grab-mock)
+        run: |
+          npm run sample:list
+          npm run sample:grab
