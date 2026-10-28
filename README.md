@@ -11,11 +11,13 @@ Branch-Strategie: `master` = Legacy-Generator (C#/VS2015),
 ## Zielstruktur (analog pypylon)
 
 ```text
-src/            N-API-Quellen (addon.cc: TlFactory/InstantCamera/Grab, ZAU-150)
-lib/            JS-Fassade (require('node-pylon') -> lib/index.js)
+src/            N-API-Quellen (addon.cc, mock_camera/nodemap, pylon_lifecycle)
+lib/            JS-Fassade (require('node-pylon') -> lib/index.js, Fallback lib/mock.js)
 types/          TypeScript-Typen (*.d.ts)
-samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-mock.js
-test/           Smoke-Tests ohne Kamera (node --test)
+samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-mock.js,
+                grab-options.js, nodemap-params.js, grab-attributes.js
+test/           Smoke + API-Surface + Nodemap/Grab-Tests (node --test, ohne Kamera)
+docs/           Docs analog pypylon programmers_guide (Installation, Quickstart, API, CI)
 binding.gyp     node-gyp-Build (Node 20/22, N-API 8, C++17)
 CMakeLists.txt  CMake-Alternative
 ```
@@ -50,18 +52,29 @@ Ergebnis: `build/Release/node_pylon.node`.
 ## CI (GitHub Actions — kein lokaler Compiler nötig)
 
 Der Mock-Build läuft in der Pipeline (`.github/workflows/ci.yml`):
-Matrix **Ubuntu/Windows/macOS × Node 20/22**, Schritte `npm ci` →
-`npm run rebuild:mock` → `npm test` → Samples. Kein pylon-SDK, keine Kamera,
-kein `gcc`/MSVC auf dem eigenen Server nötig — einfach Branch pushen bzw.
-PR öffnen und den `ci`-Check abwarten.
+Matrix **Linux x64/arm64 + Windows x64 + macOS × Node 20/22**, Schritte `npm ci` →
+`npm run rebuild:mock` → `npm test` → Samples (+ `.node`-Artifact pro Kombination).
+Kein pylon-SDK, keine Kamera, kein `gcc`/MSVC auf dem eigenen Server nötig —
+einfach Branch pushen bzw. PR öffnen und den `ci`-Check abwarten.
+Echter SDK-Build als opt-in Job `build-real` (nur mit Secret `PYLON_SDK_URL`);
+Releases mit Prebuilds via `.github/workflows/release.yml` bei Tag `v*`.
+Details: [docs/ci-releases.md](docs/ci-releases.md).
+
+## Docs (analog pypylon programmers_guide)
+
+[docs/index.md](docs/index.md) — Einstieg; [Installation](docs/installation.md),
+[Quickstart](docs/quickstart.md), [Programmer's Guide](docs/programmers-guide.md),
+[API-Referenz](docs/api-reference.md), [Samples](docs/samples.md),
+[Testing](docs/testing.md), [CI & Releases](docs/ci-releases.md).
 
 ## Schnellstart (ohne Kamera)
 
 ```bash
-npm test                 # Smoke-Tests (Mock)
-npm run sample:list      # Geraete auflisten (Mock: 1 virtuelle Kamera)
-npm run sample:grab      # Grab-Sample analog pypylon grab.py (Mock oder echt)
-npm run sample:grab-mock # synthetischer Mono8-Frame (legacy)
+npm test                          # alle Tests (Mock/Fallback, ohne Kamera)
+npm run sample:list               # Geraete auflisten (Mock: 1 virtuelle Kamera)
+npm run sample:grab               # Grab-Sample analog pypylon grab.py (Mock oder echt)
+npm run sample:grab-mock          # synthetischer Mono8-Frame (legacy)
+node samples/grab-options.js 100 80  # Frame mit Breite/Hoehe
 ```
 
 ```js

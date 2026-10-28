@@ -1,0 +1,51 @@
+# Prebuilt binaries for tagged releases (ZAU-152).
+# On tag push (v*), rebuilds the mock addon per OS/arch and attaches the
+# .node files to the GitHub Release. Real-SDK prebuilds replace the mock
+# artifacts once ZAU-150 wires PYLON_ROOT (same artifact names).
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  prebuild-mock:
+    name: prebuild (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-14, macos-15]
+        node: [20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Setup MSVC (Windows only)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install deps (skip install script)
+        run: npm ci --ignore-scripts
+
+      - name: Rebuild native mock addon
+        run: npm run rebuild:mock
+
+      - name: Smoke tests
+        run: npm test
+
+      - name: Upload prebuilt (.node)
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_pylon-${{ github.ref_name }}-${{ matrix.os }}-node${{ matrix.node }}
+          path: build/Release/node_pylon.node
+          if-no-files-found: error
+          retention-days: 30

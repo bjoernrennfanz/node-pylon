@@ -16,6 +16,7 @@
     "sample:list": "node samples/list-devices.js",
     "sample:grab": "node samples/grab.js",
     "sample:grab-mock": "node samples/grab-mock.js",
+    "sample:grab-options": "node samples/grab-options.js",
     "sample:nodemap": "node samples/nodemap-params.js",
     "sample:grabattrs": "node samples/grab-attributes.js"
   },
