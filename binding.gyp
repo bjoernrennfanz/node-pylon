@@ -3,7 +3,9 @@
     {
       "target_name": "node_pylon",
       "sources": [
-        "src/addon.cc"
+        "src/addon.cc",
+        "src/mock_nodemap.cc",
+        "src/mock_camera.cc"
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
@@ -25,8 +27,7 @@
         }
       },
       "xcode_settings": {
-        "CLANG_CXX_LANGUAGE_STANDARD": "c++17",
-        "GCC_ENABLE_CPP_EXCEPTIONS": "NO"
+        "CLANG_CXX_LANGUAGE_STANDARD": "c++17"
       },
       "conditions": [
         # Mock-Build (Default 1): kompiliert ohne Basler-pylon-SDK.

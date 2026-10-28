@@ -45,7 +45,8 @@ jobs:
       - name: Smoke tests (node --test, no camera)
         run: npm test
 
-      - name: Samples (list-devices, grab-mock)
+      - name: Samples (list-devices, grab, grab-mock)
         run: |
           npm run sample:list
           npm run sample:grab
+          npm run sample:grab-mock

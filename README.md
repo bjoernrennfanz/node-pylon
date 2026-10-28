@@ -11,10 +11,10 @@ Branch-Strategie: `master` = Legacy-Generator (C#/VS2015),
 ## Zielstruktur (analog pypylon)
 
 ```text
-src/            N-API-Quellen (addon.cc; TlFactory/Camera/Grab folgen in ZAU-150)
+src/            N-API-Quellen (addon.cc: TlFactory/InstantCamera/Grab, ZAU-150)
 lib/            JS-Fassade (require('node-pylon') -> lib/index.js)
 types/          TypeScript-Typen (*.d.ts)
-samples/        list-devices.js, grab-mock.js
+samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-mock.js
 test/           Smoke-Tests ohne Kamera (node --test)
 binding.gyp     node-gyp-Build (Node 20/22, N-API 8, C++17)
 CMakeLists.txt  CMake-Alternative
@@ -59,16 +59,33 @@ PR öffnen und den `ci`-Check abwarten.
 
 ```bash
 npm test                 # Smoke-Tests (Mock)
-npm run sample:list      # Geraete auflisten (Mock: 0)
-npm run sample:grab      # synthetischer Mono8-Frame
+npm run sample:list      # Geraete auflisten (Mock: 1 virtuelle Kamera)
+npm run sample:grab      # Grab-Sample analog pypylon grab.py (Mock oder echt)
+npm run sample:grab-mock # synthetischer Mono8-Frame (legacy)
 ```
 
 ```js
 const pylon = require('node-pylon');
-console.log(pylon.version(), pylon.pylonVersion(), 'mock:', pylon.isMock());
-console.log(pylon.enumerateDevices()); // [] im Mock
-const frame = pylon.grabMock(64, 48);  // Buffer, 64*48 Bytes Mono8
+pylon.initialize();
+try {
+  console.log(pylon.version(), pylon.pylonVersion(), 'mock:', pylon.isMock());
+  const devices = pylon.TlFactory.GetInstance().EnumerateDevices();
+  const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
+  camera.open();
+  camera.startGrabbing();
+  const res = camera.retrieveResult(5000); // null bei Timeout
+  if (res && res.succeeded) console.log(res.width, res.height, res.buffer.length);
+  camera.stopGrabbing();
+  camera.close();
+} finally {
+  pylon.terminate();
+}
 ```
+
+Echter Build: `PYLON_ROOT` setzen und `npm run rebuild:real`
+(Windows: `C:\Program Files\Basler\pylon 8`, Linux: `/opt/pylon`,
+macOS: pylon.framework). Ohne Kamera wirft `CreateFirstDevice` eine
+JS-Exception; `retrieveResult` gibt bei Timeout `null` zurueck.
 
 ## N-API-Regeln (verbindlich)
 
@@ -81,7 +98,7 @@ const frame = pylon.grabMock(64, 48);  // Buffer, 64*48 Bytes Mono8
 ## Roadmap (Issues)
 
 - ZAU-149 (dieser Branch): Scaffold + Mock-Build ✅
-- ZAU-150: TlFactory, InstantCamera, Grab (ohne DataProcessing)
+- ZAU-150: TlFactory, InstantCamera, Grab (ohne DataProcessing) — dieser Stand ✅
 - ZAU-151: Nodemap/Parameter-API + Bild-Handling
 - ZAU-152: CI-Pipeline, Docs, Samples, Tests analog pypylon
 - ZAU-153: React-Native Desktop (out-of-tree Windows/Linux/macOS)

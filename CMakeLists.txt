@@ -30,7 +30,11 @@ if(NOT NODEJS_INCLUDE_DIRS)
   )
 endif()
 
-add_library(node_pylon SHARED src/addon.cc)
+add_library(node_pylon SHARED
+  src/addon.cc
+  src/mock_nodemap.cc
+  src/mock_camera.cc
+)
 
 target_include_directories(node_pylon PRIVATE
   ${NODEJS_INCLUDE_DIRS}
