@@ -72,6 +72,7 @@ packages/
 *.dylib
 *.dll
 build-cmake/
+build-config.gypi
 prebuilds/
 *.tar.gz
 

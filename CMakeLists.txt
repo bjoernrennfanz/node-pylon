@@ -66,6 +66,8 @@ else()
     target_link_libraries(node_pylon PRIVATE
       PylonBase_v12 PylonUtility_v12
       GenApi_MD_VC142_v3_5_Basler_pylon_v1 GCBase_MD_VC142_v3_5_Basler_pylon_v1)
+    # The pylon C++ headers require C++ exceptions and RTTI.
+    target_compile_options(node_pylon PRIVATE /EHsc /GR)
   elseif(APPLE)
     target_include_directories(node_pylon PRIVATE ${PYLON_ROOT}/Frameworks/pylon.framework/Headers)
     target_link_directories(node_pylon PRIVATE ${PYLON_ROOT}/Frameworks/pylon.framework/Libraries)
