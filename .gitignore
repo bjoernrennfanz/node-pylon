@@ -79,6 +79,7 @@ prebuilds/
 # Basler pylon SDK 26.09 — fetched via the PYLON_SDK_BASE_URL secret
 # (scripts/download-pylon-sdk.sh); mind origin/license, never copy into the repo
 .pylon-sdk/
+.pylon-sdk-farm/
 PYLON_ROOT/
 
 # Basler pylon SDK — mind origin/license, never copy into the repo

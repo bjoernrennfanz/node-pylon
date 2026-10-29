@@ -76,6 +76,7 @@ jobs:
           echo "--- SDK layout probe ---"
           ls "$PYLON_ROOT" || true
           ls "$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Headers/PylonIncludes.h" 2>/dev/null || true
+          ls "$PYLON_ROOT/Frameworks/pylon.framework/Headers/PylonIncludes.h" 2>/dev/null || echo "(framework Headers symlink chain broken or absent)"
           ls "$PYLON_ROOT/include/pylon/PylonIncludes.h" 2>/dev/null || true
 
       - name: Rebuild native addon against real pylon SDK

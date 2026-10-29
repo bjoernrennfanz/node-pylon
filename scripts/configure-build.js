@@ -88,24 +88,48 @@ function realConfig(pylonRoot) {
       winLib('GCBase_MD_VC142_v3_5_Basler_pylon_v1.lib')
     );
   } else if (process.platform === 'darwin') {
-    // Physical Versions/A paths (top-level framework symlinks depend on the
-    // extractor; the versioned dirs are always real). Note the framework
-    // headers are FLAT (Headers/*.h, no pylon/ subdir), so the code's
-    // #include <pylon/...> needs a framework search path (-F), not -I.
-    const fwDir = `${pylonRoot}/Frameworks`;
-    const fwLib = `${pylonRoot}/Frameworks/pylon.framework/Versions/A/Libraries`;
-    base.cflags_cc.push(`-F${fwDir}`);
-    base.libraries.push(
-      `-L${fwLib}`,
-      '-lpylonbase',
-      '-lpylonutility',
-      '-lGenApi_gcc_v3_5_Basler_pylon_v1',
-      '-lGCBase_gcc_v3_5_Basler_pylon_v1'
+    // macOS framework layout: headers are FLAT (Headers/*.h, no pylon/
+    // subdir), dylib IDs are @rpath/pylon.framework/Versions/A/Libraries/*,
+    // and the top-level Headers/Libraries/Versions/Current symlinks depend
+    // on the extractor. Sidestep all of that with a local symlink farm of
+    // single-hop absolute links (created fresh here, never from the tar):
+    //   .pylon-sdk-farm/include/pylon -> <real Versions/A/Headers>
+    //   .pylon-sdk-farm/Frameworks/pylon.framework/Versions/A/Libraries/* -> real files
+    // so #include <pylon/...> resolves via plain -I and @rpath resolves via
+    // -rpath <farm>/Frameworks.
+    const farmRoot = path.join(REPO_ROOT, '.pylon-sdk-farm');
+    const farmInclude = path.join(farmRoot, 'include');
+    const farmFwLib = path.join(
+      farmRoot, 'Frameworks', 'pylon.framework', 'Versions', 'A', 'Libraries'
     );
-    base.ldflags = [`-Wl,-rpath,${fwLib}`];
+    const srcHeaders = path.join(
+      pylonRoot, 'Frameworks', 'pylon.framework', 'Versions', 'A', 'Headers'
+    );
+    const srcLib = path.join(
+      pylonRoot, 'Frameworks', 'pylon.framework', 'Versions', 'A', 'Libraries'
+    );
+    fs.rmSync(farmRoot, { recursive: true, force: true });
+    fs.mkdirSync(farmInclude, { recursive: true });
+    fs.mkdirSync(farmFwLib, { recursive: true });
+    fs.symlinkSync(srcHeaders, path.join(farmInclude, 'pylon'), 'dir');
+    for (const entry of fs.readdirSync(srcLib)) {
+      // Link libraries only (skip the gentlproducer/ subdir: used at
+      // runtime via GENICAM_GENTL64_PATH, not at link time).
+      if (!entry.endsWith('.dylib')) continue;
+      const src = fs.realpathSync(path.join(srcLib, entry));
+      fs.symlinkSync(src, path.join(farmFwLib, entry));
+    }
+    base.include_dirs.push(farmInclude);
+    base.libraries.push(`-L${farmFwLib}`);
+    for (const lib of [
+      'pylonbase', 'pylonutility',
+      'GenApi_gcc_v3_5_Basler_pylon_v1', 'GCBase_gcc_v3_5_Basler_pylon_v1',
+    ]) {
+      base.libraries.push(`-l${lib}`);
+    }
+    base.ldflags = [`-Wl,-rpath,${path.join(farmRoot, 'Frameworks')}`];
     base.xcode_settings = {
-      FRAMEWORK_SEARCH_PATHS: [fwDir],
-      OTHER_LDFLAGS: [`-Wl,-rpath,${fwLib}`],
+      OTHER_LDFLAGS: [`-Wl,-rpath,${path.join(farmRoot, 'Frameworks')}`],
     };
   } else {
     base.include_dirs.push(`${pylonRoot}/include`);
