@@ -5,7 +5,7 @@
 // success path (like in pypylon's emulated command tests).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../lib');
+const pylon = require('../../lib');
 const { requireDevice, hasNode } = require('../helpers');
 
 function freshCamera() {
