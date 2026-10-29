@@ -120,6 +120,9 @@ function realConfig(pylonRoot) {
       fs.symlinkSync(src, path.join(farmFwLib, entry));
     }
     base.include_dirs.push(farmInclude);
+    // The SDK umbrella header includes siblings as <Base/...>/<GenApi/...>,
+    // which live flat in the real Headers dir (no pylon/ subdir there).
+    base.include_dirs.push(srcHeaders);
     base.libraries.push(`-L${farmFwLib}`);
     for (const lib of [
       'pylonbase', 'pylonutility',
