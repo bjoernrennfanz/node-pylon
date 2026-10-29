@@ -1,8 +1,8 @@
-// node-pylon N-API-Modul (analog pypylon Top-Level-API).
-// Default: echter Build gegen Basler pylon SDK 26.09 (NODE_PYLON_MOCK=0).
-// Mock nur als explizites Opt-in (NODE_PYLON_MOCK=1, ohne SDK).
-// Regeln: N-API only (node-addon-api), kein SWIG/NAN, keine V8-Internals,
-// keine C++-Exceptions ueber die N-API-Grenze (NAPI_DISABLE_CPP_EXCEPTIONS).
+// node-pylon N-API module (mirrors the pypylon top-level API).
+// Default: real build against Basler pylon SDK 26.09 (NODE_PYLON_MOCK=0).
+// Mock only as an explicit opt-in (NODE_PYLON_MOCK=1, no SDK).
+// Rules: N-API only (node-addon-api), no SWIG/NAN, no V8 internals,
+// no C++ exceptions across the N-API boundary (NAPI_DISABLE_CPP_EXCEPTIONS).
 #include <napi.h>
 
 #include <string>
@@ -16,7 +16,7 @@
 #endif
 
 // ---------------------------------------------------------------------------
-// Versionen: Mock-Stand vs. echter SDK-Build sind unterscheidbar.
+// Versions: mock state vs. real SDK build are distinguishable.
 // ---------------------------------------------------------------------------
 namespace mock {
 constexpr const char* kVersionMock = "0.2.0-core-mock";
@@ -38,7 +38,7 @@ Napi::String GetPylonVersion(const Napi::CallbackInfo& info) {
 #if NODE_PYLON_MOCK
   return Napi::String::New(info.Env(), mock::kPylonVersionMock);
 #else
-  // Echte Version direkt aus dem SDK (pylon 26.09: z. B. "12.5.2.1565").
+// Real version straight from the SDK (pylon 26.09: e.g. "12.5.2.1565").
   const char* v = nullptr;
   try {
     v = Pylon::GetPylonVersionString();
@@ -53,9 +53,9 @@ Napi::String GetPylonVersion(const Napi::CallbackInfo& info) {
 #endif
 }
 
-// PylonInitialize mit Refcount (ZAU-150). Balance: jedes initialize()
-// braucht ein terminate(); jede InstantCamera haelt zusaetzlich eine Ref
-// ueber ihre Lebensdauer (siehe CameraWrap-Konstruktor/Destruktor).
+// PylonInitialize with refcount. Balance: every initialize()
+// needs a terminate(); each InstantCamera additionally holds one ref
+// for its lifetime (see CameraWrap constructor/destructor).
 Napi::Value PylonInitialize(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   try {
@@ -85,9 +85,9 @@ Napi::Value PylonTerminate(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-// Listet erkannte Geraete. Real-Build: echte Enumeration ueber die
-// pylon-TlFactory (ohne Kamera/Emulator leere Liste). Mock-Opt-in:
-// genau ein synthetisches Geraet (analog pylon-Emulator).
+// Lists detected devices. Real build: real enumeration via the
+// pylon TlFactory (empty list without camera/emulator). Mock opt-in:
+// exactly one synthetic device (mirrors the pylon emulator).
 Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 #if NODE_PYLON_MOCK
@@ -128,8 +128,8 @@ Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
 #endif
 }
 
-// createFirstCamera(): JS-Kurzform fuer `new InstantCamera()`
-// (TlFactory.CreateFirstDevice + Anbindung, analog pypylon).
+// createFirstCamera(): JS shorthand for `new InstantCamera()`
+// (TlFactory.CreateFirstDevice + wiring, mirrors pypylon).
 Napi::Value CreateFirstCamera(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::Object obj = node_pylon::CameraWrap::constructor.New({});
@@ -137,8 +137,8 @@ Napi::Value CreateFirstCamera(const Napi::CallbackInfo& info) {
   return obj;
 }
 
-// Synthetischer Mono8-Frame als reiner Buffer (Legacy-Helper aus ZAU-149,
-// bleibt aus Kompatibilitaet erhalten; neue Samples nutzen camera.grab()).
+// Synthetic Mono8 frame as a plain buffer (legacy helper,
+// kept for compatibility; new samples use camera.grab()).
 Napi::Value GrabMock(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   size_t width = 64;

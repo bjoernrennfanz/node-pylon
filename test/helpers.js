@@ -1,6 +1,6 @@
 'use strict';
-// Gemeinsame Test-Helfer: Mock-Opt-in vs. Real-SDK-Modus und
-// Kamera-Verfuegbarkeit (Emulator via PYLON_CAMEMU oder echte Kamera).
+// Shared test helpers: mock opt-in vs. real-SDK mode and
+// camera availability (emulator via PYLON_CAMEMU or a real camera).
 const pylon = require('../lib');
 
 function isMockMode() {
@@ -8,7 +8,7 @@ function isMockMode() {
 }
 
 function deviceCount() {
-  // initialize/terminate balanciert; false bei jedem Fehler (kein Geraet).
+  // Balanced initialize/terminate; 0 on any error (no device).
   try {
     pylon.initialize();
     try {
@@ -21,8 +21,8 @@ function deviceCount() {
   }
 }
 
-// Ueberspringt den Test, wenn keine Kamera/Emulator erreichbar ist
-// (Real-Modus ohne Geraet). Gibt true zurueck, wenn ein Geraet da ist.
+// Skips the test when no camera/emulator is reachable
+// (real mode without a device). Returns true when a device exists.
 function requireDevice(t) {
   if (deviceCount() === 0) {
     t.skip('no camera/emulator available (set PYLON_CAMEMU=1 for the SDK emulator)');

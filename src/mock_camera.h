@@ -1,7 +1,7 @@
-// InstantCamera-N-API-Wrapper, Mock-Stand (ZAU-151).
-// N-API-Regeln: ObjectWrap, keine V8-Internals, Fehler als JS-Exceptions.
-// Der Grab ist synchron und schnell (Mock); der echte RetrieveResult-Loop
-// (ZAU-150/152) laeuft ueber AsyncWorker und blockiert nie den JS-Loop.
+// InstantCamera N-API wrapper, mock state.
+// N-API rules: ObjectWrap, no V8 internals, errors as JS exceptions.
+// The grab is synchronous and fast (mock); the real RetrieveResult loop
+// runs via AsyncWorker and never blocks the JS loop.
 #pragma once
 
 #include <napi.h>
@@ -11,9 +11,9 @@
 #include "mock_nodemap.h"
 
 #if !NODE_PYLON_MOCK
-// Echter Build: TlFactory/InstantCamera gegen Basler-pylon-SDK (ZAU-150).
-// Mock-Pfade (MockNodeMap) bleiben fuer Geometrie-/Parameter-Defaults bestehen,
-// bis die Nodemap-Anbindung (ZAU-151) die GenApi-Knoten direkt spiegelt.
+// Real build: TlFactory/InstantCamera against the Basler pylon SDK.
+// Mock paths (MockNodeMap) remain for geometry/parameter defaults
+// until the nodemap wiring mirrors the GenApi nodes directly.
 #include <pylon/PylonIncludes.h>
 #endif
 
@@ -23,9 +23,9 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
  public:
   static Napi::FunctionReference constructor;
   static void Init(Napi::Env env, Napi::Object exports);
-  // Default: FirstFound-Geraet (analog TlFactory.CreateFirstDevice).
-  // Im Mock-Build immer verfuegbar; im echten Build wirft der Konstruktor
-  // eine JS-Exception, wenn kein Geraet gefunden wurde.
+  // Default: first-found device (mirrors TlFactory.CreateFirstDevice).
+  // Always available in the mock build; in the real build the constructor throws
+  // a JS exception when no device is found.
   explicit CameraWrap(const Napi::CallbackInfo& info);
   ~CameraWrap() override;
 
@@ -35,10 +35,10 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
   Napi::Value Close(const Napi::CallbackInfo& info);
   Napi::Value GetDeviceInfo(const Napi::CallbackInfo& info);
 
-  // ZAU-150 Core-Grab (pypylon-nah): expliziter Grab-Loop.
+  // Core grab (mirrors pypylon): explicit grab loop.
   // startGrabbing()/stopGrabbing()/isGrabbing() + retrieveResult(timeoutMs)
   // -> { succeeded, width, height, pixelFormat, payloadSize, buffer }
-  // oder null bei Timeout. retrieveResult ohne Grabbing wirft.
+  // or null on timeout. retrieveResult without grabbing throws.
   Napi::Value StartGrabbing(const Napi::CallbackInfo& info);
   Napi::Value StopGrabbing(const Napi::CallbackInfo& info);
   Napi::Value IsGrabbing(const Napi::CallbackInfo& info);
@@ -72,7 +72,7 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
 
   // grab() -> { buffer, width, height, pixelFormat, payloadSize,
   //              timestamp, frameNumber, chunk }
-  // Zero-copy: Buffer mit Finalizer, keine Zwischenkopie.
+  // Zero-copy: buffer with finalizer, no intermediate copy.
   Napi::Value Grab(const Napi::CallbackInfo& info);
 
   static void ThrowNodeError(Napi::Env env, const std::string& node,
@@ -83,8 +83,8 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
    uint64_t frameNumber_ = 0;
    MockNodeMap nodemap_;
 #if !NODE_PYLON_MOCK
-   // Echte Kamera; nullptr bis zur erfolgreichen Anbindung im Konstruktor.
-   // initOk_ steuert, ob der Destruktor ReleaseRef() rufen muss.
+  // Real camera; nullptr until successfully wired in the constructor.
+  // initOk_ controls whether the destructor must call ReleaseRef().
    Pylon::CInstantCamera* camera_ = nullptr;
    bool initOk_ = false;
 #endif

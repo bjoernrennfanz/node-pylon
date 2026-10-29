@@ -1,12 +1,12 @@
 /**
- * Codegen-Spec fuer das Pylon-TurboModule (ZAU-153).
- * `npx @react-native-community/cli codegen` erzeugt daraus pro Plattform
- * die `AppSpecsJSI.h`-Scaffolds; die Adapter unter windows/macos/linux
- * implementieren nur JSI-Marshalling und delegieren an pylon_core_*.
+ * Codegen spec for the Pylon TurboModule.
+ * `npx @react-native-community/cli codegen` generates the per-platform
+ * `AppSpecsJSI.h` scaffolds from it; the adapters under windows/macos/linux
+ * only implement JSI marshalling and delegate to pylon_core_*.
  *
- * Metro-Suffixe: optional `NativePylon.windows.js` / `.macos.js` neben
- * dieser Datei ablegen, falls plattformspezifische JS-Anpassungen noetig
- * (siehe docs/rn-architecture.md, rnpm.haste.platforms).
+ * Metro suffixes: optionally place `NativePylon.windows.js` / `.macos.js` next
+ * to this file if platform-specific JS adjustments are needed
+ * (see docs/rn-architecture.md, rnpm.haste.platforms).
  *
  * @format
  */
@@ -25,8 +25,8 @@ export interface Spec extends TurboModule {
   getPylonVersion(): string;
   isMock(): boolean;
   enumerateDevices(): Array<DeviceInfo>;
-  // Sync-Mock fuer das Sample; echter Grab wird Promise<GrabResult> (ZAU-150/151,
-  // CallInvoker-Thread, kein Block des JS-Loops).
+  // Sync mock for the sample; the real grab becomes Promise<GrabResult>
+  // (CallInvoker thread, never blocks the JS loop).
   grabMock(width: number, height: number): string;
 }
 

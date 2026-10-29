@@ -1,5 +1,5 @@
-// Mock-GenICam-Nodemap: Implementierung (ZAU-151).
-// Keine pylon-Abhaengigkeit, keine Exceptions ueber Modulgrenzen.
+// Mock GenICam nodemap: implementation.
+// No pylon dependency, no exceptions across module boundaries.
 #include "mock_nodemap.h"
 
 namespace node_pylon {
@@ -47,7 +47,7 @@ const char* NodeTypeName(NodeType t) {
 MockNodeMap::MockNodeMap() {
   integers_["Width"] = IntegerNode{640, 64, 1920, true, true};
   integers_["Height"] = IntegerNode{480, 48, 1080, true, true};
-  // Readonly, wird aus Width*Height*Bpp berechnet (GetInteger-Sonderfall).
+  // Read-only; computed from Width*Height*Bpp (GetInteger special case).
   integers_["PayloadSize"] = IntegerNode{640 * 480, 0, 1920 * 1080 * 3, true, false};
 
   floats_["ExposureTime"] = FloatNode{5000.0, 10.0, 100000.0, true, true};
@@ -119,7 +119,7 @@ NodeError MockNodeMap::IsReadable(const std::string& name, bool* out) const {
       *out = enums_.at(name).readable;
       return NodeError::kOk;
     case NodeType::Command:
-      // Commands haben keinen Lesezugriff auf einen Wert.
+      // Commands have no readable value access.
       *out = false;
       return NodeError::kOk;
   }
@@ -147,7 +147,7 @@ NodeError MockNodeMap::IsWritable(const std::string& name, bool* out) const {
       *out = enums_.at(name).writable;
       return NodeError::kOk;
     case NodeType::Command:
-      // Commands sind ausfuehrbar, wenn verfuegbar.
+      // Commands are executable when available.
       *out = commands_.at(name).available;
       return NodeError::kOk;
   }
@@ -379,7 +379,7 @@ void MockNodeMap::GetImageGeometry(int64_t* w, int64_t* h,
 int MockNodeMap::BytesPerPixel(const std::string& pixelFormat) {
   if (pixelFormat == "RGB8") return 3;
   if (pixelFormat == "Mono12") return 2;
-  return 1;  // Mono8 + Default
+  return 1;  // Mono8 + default
 }
 
 }  // namespace node_pylon

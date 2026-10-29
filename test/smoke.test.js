@@ -1,7 +1,7 @@
 'use strict';
-// Smoke-Tests: laufen gegen den Real-SDK-Build (Default, mit
-// Kamera-Emulator via PYLON_CAMEMU) oder den Mock-Opt-in
-// (NODE_PYLON_USE_MOCK=1 + rebuild:mock). Lauf mit: npm test
+// Smoke tests: run against the real-SDK build (default, with the
+// camera emulator via PYLON_CAMEMU) or the mock opt-in
+// (NODE_PYLON_USE_MOCK=1 + rebuild:mock). Run with: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
@@ -36,7 +36,7 @@ describe('node-pylon core', () => {
       const devices = pylon.TlFactory.GetInstance().EnumerateDevices();
       assert.ok(Array.isArray(devices));
       assert.deepEqual(pylon.enumerateDevices(), devices);
-      // Kleinschreib-Aliase funktionieren ebenfalls.
+      // Lowercase aliases work as well.
       assert.deepEqual(pylon.TlFactory.getInstance().enumerateDevices(), devices);
       if (isMockMode()) {
         assert.equal(devices.length, 1);

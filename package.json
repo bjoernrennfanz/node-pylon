@@ -1,7 +1,7 @@
 {
   "name": "node-pylon",
   "version": "0.1.0-scaffold",
-  "description": "Native Node.js bindings for Basler pylon C++ API (GenICam, ohne DataProcessing im MVP) — node-addon-api / N-API, kein SWIG, kein NAN.",
+  "description": "Native Node.js bindings for the Basler pylon C++ API (GenICam, without DataProcessing in the MVP) - node-addon-api / N-API, no SWIG, no NAN.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "engines": {

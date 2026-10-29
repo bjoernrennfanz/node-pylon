@@ -1,7 +1,7 @@
-# Real-SDK prebuilds for tagged releases (ZAU-161).
+# Real-SDK prebuilds for tagged releases.
 # On tag push (v*), rebuilds the real-pylon addon per OS/arch and attaches
 # the .node files (+ Windows runtime DLLs) to the GitHub Release.
-# SDK-Bezug wie in ci.yml: Secret PYLON_SDK_BASE_URL, nie in Logs.
+# SDK sourcing as in ci.yml: PYLON_SDK_BASE_URL secret, never in logs.
 name: release
 
 on:

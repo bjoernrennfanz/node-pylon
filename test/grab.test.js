@@ -1,8 +1,8 @@
 'use strict';
-// Bild-Handling — grab()-Attribute (Width/Height/PixelFormat),
-// Payload-Konsistenz, Chunk-Daten, Zero-copy-Buffer.
-// Laeuft gegen den Real-SDK-Build (Default, Emulator/Kamera) oder den
-// Mock-Opt-in (NODE_PYLON_USE_MOCK=1). Lauf mit: npm test
+// Image handling — grab() attributes (Width/Height/PixelFormat),
+// payload consistency, chunk data, zero-copy buffer.
+// Runs against the real-SDK build (default, emulator/camera) or the
+// mock opt-in (NODE_PYLON_USE_MOCK=1). Run with: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
@@ -14,7 +14,7 @@ function freshCamera() {
   return cam;
 }
 
-describe('image handling (ZAU-151)', () => {
+describe('image handling', () => {
   it('grab reflects nodemap geometry and pixel format', (t) => {
     if (!requireDevice(t)) return;
     const cam = freshCamera();
@@ -41,7 +41,7 @@ describe('image handling (ZAU-151)', () => {
     const g = cam.grab();
     assert.equal(g.payloadSize, 128 * 64 * 3);
     assert.equal(g.buffer.length, g.payloadSize);
-    // PayloadSize-Nodemap stimmt mit Grab ueberein.
+    // PayloadSize nodemap matches the grab.
     assert.equal(cam.getInteger('PayloadSize'), g.payloadSize);
     cam.close();
   });

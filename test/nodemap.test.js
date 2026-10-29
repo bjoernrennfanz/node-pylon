@@ -1,7 +1,7 @@
 'use strict';
-// Nodemap/Parameter-API analog pypylon (GenICam-Typen).
-// Laeuft gegen den Real-SDK-Build (Default, Emulator/Kamera) oder den
-// Mock-Opt-in (NODE_PYLON_USE_MOCK=1). Lauf mit: npm test
+// Nodemap/parameter API mirroring pypylon (GenICam types).
+// Runs against the real-SDK build (default, emulator/camera) or the
+// mock opt-in (NODE_PYLON_USE_MOCK=1). Run with: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
@@ -13,7 +13,7 @@ function freshCamera() {
   return cam;
 }
 
-describe('nodemap parameter API (ZAU-151)', () => {
+describe('nodemap parameter API', () => {
   it('exposes device info', (t) => {
     if (!requireDevice(t)) return;
     const cam = freshCamera();
@@ -88,8 +88,8 @@ describe('nodemap parameter API (ZAU-151)', () => {
     const cam = freshCamera();
     assert.equal(cam.getString('DeviceModelName'), 'MockModel Mono');
     assert.throws(() => cam.setString('DeviceModelName', 'x'), /not writable/);
-    cam.setString('DeviceUserID', 'ZAU-151');
-    assert.equal(cam.getString('DeviceUserID'), 'ZAU-151');
+    cam.setString('DeviceUserID', 'demo-user');
+    assert.equal(cam.getString('DeviceUserID'), 'demo-user');
     assert.deepEqual(cam.getEnumEntries('PixelFormat'), ['Mono8', 'Mono12', 'RGB8']);
     assert.equal(cam.getEnum('PixelFormat'), 'Mono8');
     cam.setEnum('PixelFormat', 'RGB8');

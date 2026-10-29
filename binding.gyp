@@ -15,7 +15,7 @@
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")"
       ],
-      # N-API ABI-Stabilitaet: kein V8-Direktzugriff, keine Exceptions ueber die Grenze.
+      # N-API ABI stability: no direct V8 access, no exceptions across the boundary.
       "defines": [
         "NAPI_VERSION=8",
         "NAPI_DISABLE_CPP_EXCEPTIONS"
@@ -32,9 +32,9 @@
         "CLANG_CXX_LANGUAGE_STANDARD": "c++17"
       },
       "conditions": [
-        # Real-SDK-Build (Default): gegen Basler pylon SDK 26.09.
-        # SDK-Bezug via scripts/download-pylon-sdk.sh (PYLON_SDK_BASE_URL).
-        # Mock nur als explizites Opt-in:
+        # Real-SDK build (default) against Basler pylon SDK 26.09.
+        # SDK comes from scripts/download-pylon-sdk.sh (PYLON_SDK_BASE_URL).
+        # Mock only as an explicit opt-in:
         #   npm run rebuild:mock  (node-gyp ... --define=node_pylon_use_mock=1)
         [ "node_pylon_use_mock==1", {
           "defines": [ "NODE_PYLON_MOCK=1" ]
@@ -83,10 +83,10 @@
         }]
       ],
       "variables": {
-        # node_pylon_use_mock=0 -> Real-SDK (Default, ZAU-161). Mock nur opt-in.
+        # node_pylon_use_mock=0 -> real SDK (default). Mock only opt-in.
         "node_pylon_use_mock%": 0,
-        # Ueber env PYLON_ROOT setzbar (CI-Export aus download-Skript);
-        # Default: .pylon-sdk im Repo-Root (legt scripts/download-pylon-sdk.sh an).
+        # Settable via env PYLON_ROOT (CI export from the download script);
+        # default: .pylon-sdk in the repo root (created by scripts/download-pylon-sdk.sh).
         "PYLON_ROOT%": "<!(node -p \"process.env.PYLON_ROOT || require('path').join(process.cwd(), '.pylon-sdk')\")"
       }
     }

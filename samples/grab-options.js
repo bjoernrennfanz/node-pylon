@@ -1,6 +1,6 @@
 'use strict';
-// Grab mit CLI-Optionen (analog pypylon grab-Sample, Mock ohne Kamera).
-// Aufruf: node samples/grab-options.js [width] [height]
+// Grab with CLI options (mirrors the pypylon grab sample, mock without camera).
+// Usage: node samples/grab-options.js [width] [height]
 const pylon = require('../lib');
 
 const width = Number(process.argv[2] || 64);
@@ -17,7 +17,7 @@ if (buf.length !== width * height) {
   process.exitCode = 1;
   return;
 }
-// Deterministisches Muster (x+y)&0xFF wie in src/addon.cc.
+// Deterministic pattern (x+y)&0xFF as in src/addon.cc.
 let bad = -1;
 for (let y = 0; y < height && bad < 0; y += 1) {
   for (let x = 0; x < width; x += 1) {

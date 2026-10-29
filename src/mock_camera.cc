@@ -1,6 +1,6 @@
-// InstantCamera-N-API-Wrapper: Implementierung (ZAU-151, Mock).
-// ZAU-150-Anteil: Grab-Loop (startGrabbing/retrieveResult/...) + optional
-// echte pylon-Anbindung (NODE_PYLON_MOCK=0). Fehler -> JS-Exceptions.
+// InstantCamera N-API wrapper: implementation (mock).
+// Covers the grab loop (startGrabbing/retrieveResult/...) plus optional
+// real pylon wiring (NODE_PYLON_MOCK=0). Errors -> JS exceptions.
 #include "mock_camera.h"
 
 #include <chrono>
@@ -79,7 +79,7 @@ CameraWrap::CameraWrap(const Napi::CallbackInfo& info)
   try {
     lifecycle::EnsureInitialized();
 #if !NODE_PYLON_MOCK
-    // TlFactory::CreateFirstDevice — wirft ohne angeschlossene Kamera.
+    // TlFactory::CreateFirstDevice — throws without a connected camera.
     camera_ = new Pylon::CInstantCamera(
         Pylon::CTlFactory::GetInstance().CreateFirstDevice());
     initOk_ = true;
@@ -106,7 +106,7 @@ CameraWrap::~CameraWrap() {
       if (camera_->IsGrabbing()) camera_->StopGrabbing();
       if (camera_->IsOpen()) camera_->Close();
     } catch (...) {
-      // Destruktor: niemals werfen.
+      // Destructor: never throw.
     }
     delete camera_;
     camera_ = nullptr;
@@ -225,7 +225,7 @@ Napi::Value CameraWrap::GetDeviceInfo(const Napi::CallbackInfo& info) {
 #endif
 }
 
-// --- ZAU-150 Grab-Loop ------------------------------------------------------
+// --- Grab loop ---------------------------------------------------------------
 
 Napi::Value CameraWrap::StartGrabbing(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -304,8 +304,8 @@ Napi::Value CameraWrap::IsGrabbing(const Napi::CallbackInfo& info) {
 #if !NODE_PYLON_MOCK
 static std::string DescribePixelType(
     const Pylon::CGrabResultPtr& ptr) {
-  // Handverdrahtete Abbildung der gaengigsten Formate (stabile Enum-Werte,
-  // keine Abhaengigkeit von optionalen Mapper-Helfern im SDK).
+  // Hard-wired mapping of the most common formats (stable enum values,
+  // no dependency on optional mapper helpers in the SDK).
   switch (ptr->GetPixelType()) {
     case Pylon::PixelType_Mono8:
       return "Mono8";
@@ -369,7 +369,7 @@ Napi::Value CameraWrap::RetrieveResult(const Napi::CallbackInfo& info) {
     bool ok =
         camera_->RetrieveResult(timeoutMs, ptr, Pylon::TimeoutHandling_Return);
     if (!ok || !ptr.IsValid()) {
-      return env.Null();  // Timeout -> null, kein Throw.
+      return env.Null();  // Timeout -> null, no throw.
     }
     Napi::Object out = Napi::Object::New(env);
     const bool succeeded = ptr->GrabSucceeded();
@@ -792,8 +792,8 @@ Napi::Value CameraWrap::Grab(const Napi::CallbackInfo& info) {
                  static_cast<size_t>(bpp);
   auto* data = new uint8_t[bytes];
   uint64_t frame = frameNumber_++;
-  // Deterministisches Muster: (x + y + frame) & 0xFF pro Byte.
-  // Bei RGB8 wird jeder Kanal gleich belegt (Mock-Naive-Debayer-faehig).
+  // Deterministic pattern: (x + y + frame) & 0xFF per byte.
+  // For RGB8 every channel gets the same value (mock, naive-debayer capable).
   for (size_t i = 0; i < bytes; ++i) {
     data[i] = static_cast<uint8_t>((i + frame) & 0xFF);
   }

@@ -1,15 +1,15 @@
-# Programmer's Guide (analog pypylon)
+# Programmer's guide (mirrors pypylon)
 
-Kapitelstruktur wie im pypylon Programmer's Guide; Standard ist der
-Real-SDK-Build 26.09 (Mock nur als Opt-in ohne SDK).
+Chapter structure follows the pypylon programmer's guide; default is the
+real-SDK build 26.09 (mock only as an opt-in without SDK).
 
-1. Transport Layer / Geräte aufzählen — `enumerateDevices()` (leer ohne Kamera/Emulator; `PYLON_CAMEMU=N` stellt Emulator-Geräte bereit)
-2. Kamera öffnen — `TlFactory.GetInstance().CreateFirstDevice()` + `open()` (wirft ohne erkanntes Gerät)
-3. Grab-Loop — `startGrabbing()` / `retrieveResult(timeoutMs)` (`null` bei Timeout) / `stopGrabbing()`, analog pypylon
-4. Nodemap/Parameter: Integer/Float/Enum/Boolean/String/Command (`get/set*`, `get*Min/Max`, `tryMax`, `executeCommand`); Fehler als JS-Exceptions (`Unknown node`, Typfehler, `RangeError`)
-5. Bild-Handling: `grab()` → `{ buffer, width, height, pixelFormat, payloadSize, timestamp, frameNumber, chunk }` (Buffer zero-copy); `retrieveResult()` zusätzlich mit `succeeded`/`errorCode`/`errorDescription`
-6. Fehlerbehandlung: pylon-`GenericException`s werden in JS-Exceptions übersetzt; keine C++-Exceptions über die N-API-Grenze
-7. Threading: Grab-Loop/Events blockieren nie den JS-Loop (AsyncWorker/ThreadSafeFunction-Prinzip)
+1. Transport layer / enumerate devices — `enumerateDevices()` (empty without camera/emulator; `PYLON_CAMEMU=N` provides emulator devices)
+2. Open a camera — `TlFactory.GetInstance().CreateFirstDevice()` + `open()` (throws without a detected device)
+3. Grab loop — `startGrabbing()` / `retrieveResult(timeoutMs)` (`null` on timeout) / `stopGrabbing()`, mirrors pypylon
+4. Nodemap/parameters: Integer/Float/Enum/Boolean/String/Command (`get/set*`, `get*Min/Max`, `tryMax`, `executeCommand`); errors as JS exceptions (`Unknown node`, type errors, `RangeError`)
+5. Image handling: `grab()` → `{ buffer, width, height, pixelFormat, payloadSize, timestamp, frameNumber, chunk }` (zero-copy buffer); `retrieveResult()` additionally with `succeeded`/`errorCode`/`errorDescription`
+6. Error handling: pylon `GenericException`s are translated into JS exceptions; no C++ exceptions across the N-API boundary
+7. Threading: grab loop/events never block the JS loop (AsyncWorker/ThreadSafeFunction principle)
 
-N-API-Regeln (verbindlich): nur `node-addon-api`/N-API, kein NAN/SWIG/V8;
-`NAPI_VERSION=8`; Fehler als JS-Exceptions; keine Handles leaken.
+N-API rules (binding): only `node-addon-api`/N-API, no NAN/SWIG/V8;
+`NAPI_VERSION=8`; errors as JS exceptions; never leak handles.

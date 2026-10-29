@@ -1,17 +1,17 @@
-# CMake-Alternative zum node-gyp-Build.
-# Default: echter Build gegen Basler pylon SDK 26.09 (ZAU-161).
-# SDK-Bezug via scripts/download-pylon-sdk.sh (PYLON_SDK_BASE_URL, Secret);
-# PYLON_ROOT zeigt auf das extrahierte SDK (.pylon-sdk im Repo-Root).
-# Mock nur als explizites Opt-in: -DNODE_PYLON_USE_MOCK=ON.
+# CMake alternative to the node-gyp build.
+# Default: real build against Basler pylon SDK 26.09.
+# SDK comes from scripts/download-pylon-sdk.sh (PYLON_SDK_BASE_URL, secret);
+# PYLON_ROOT points at the extracted SDK (.pylon-sdk in the repo root).
+# Mock only as an explicit opt-in: -DNODE_PYLON_USE_MOCK=ON.
 cmake_minimum_required(VERSION 3.18)
 project(node_pylon VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(NODE_PYLON_USE_MOCK "Explizites Opt-in: Build ohne Basler-pylon-SDK (Mock)" OFF)
+option(NODE_PYLON_USE_MOCK "Explicit opt-in: build without the Basler pylon SDK (mock)" OFF)
 
-# Node-Header + node-addon-api (erwartet: npm install im Repo-Root).
+# Node headers + node-addon-api (expects: npm install in the repo root).
 execute_process(
   COMMAND node -p "require('node-addon-api').include.replace('\"','')"
   OUTPUT_VARIABLE NODE_ADDON_API_INCLUDE

@@ -1,55 +1,55 @@
 # Installation
 
-## Voraussetzungen
+## Prerequisites
 
-- Node.js 20 oder 22 (LTS), `npm`
-- C++17-Toolchain nur für lokale Builds: MSVC 2022 / GCC 11+ / Clang 14+
-  (in der GitHub-Pipeline nicht nötig — siehe `docs/ci-releases.md`)
-- Echter Build (Default): Basler pylon SDK 26.09 per Download-Skript
-  (siehe unten), keine Kamera nötig — der SDK-Kamera-Emulator genügt
-  für Tests (`PYLON_CAMEMU=2`)
-- Mock-Opt-in: keine weitere Abhängigkeit, kein pylon-SDK, keine Kamera
-  (`npm run rebuild:mock` + `NODE_PYLON_USE_MOCK=1`, siehe unten)
+- Node.js 20 or 22 (LTS), `npm`
+- C++17 toolchain only for local builds: MSVC 2022 / GCC 11+ / Clang 14+
+  (not needed in the GitHub pipeline — see `docs/ci-releases.md`)
+- Real build (default): Basler pylon SDK 26.09 via the download script
+  (see below), no camera needed — the SDK camera emulator is enough
+  for tests (`PYLON_CAMEMU=2`)
+- Mock opt-in: no further dependencies, no pylon SDK, no camera
+  (`npm run rebuild:mock` + `NODE_PYLON_USE_MOCK=1`, see below)
 
-## Standard-Installation (Real-SDK 26.09)
+## Standard installation (real SDK 26.09)
 
-Der SDK-Bezug läuft ausschließlich über die Umgebungsvariable
-`PYLON_SDK_BASE_URL` (lokal als Agent-Secret gesetzt, in CI als
-GitHub-Actions-Secret gleichen Namens). Die Basis-URL steht nirgends im
-Repo und wird nie in Logs ausgegeben; das Skript hängt den passenden
-Archivnamen pro OS/Arch automatisch an:
+The SDK is obtained exclusively via the `PYLON_SDK_BASE_URL` environment
+variable (set as an agent secret locally, as a GitHub Actions secret of the
+same name in CI). The base URL appears nowhere in the repo and is never
+printed to logs; the script appends the matching archive name per OS/arch
+automatically:
 
 ```bash
-npm install   # lädt das SDK (scripts/download-pylon-sdk.sh) + baut nativ
-npm test      # Tests gegen den echten Build (Emulator via PYLON_CAMEMU, s. docs/testing.md)
+npm install   # downloads the SDK (scripts/download-pylon-sdk.sh) + builds natively
+npm test      # tests against the real build (emulator via PYLON_CAMEMU, see docs/testing.md)
 ```
 
-Manuell:
+Manually:
 
 ```bash
 sh scripts/download-pylon-sdk.sh   # -> .pylon-sdk/ (PYLON_ROOT)
-npm run rebuild                    # nativer Build gegen .pylon-sdk
+npm run rebuild                    # native build against .pylon-sdk
 ```
 
-Ohne gesetztes `PYLON_SDK_BASE_URL` bricht das Skript mit einer klaren
-Fehlermeldung ab (kein URL-Leak). `PYLON_ROOT` kann alternativ auf ein
-bereits vorhandenes SDK zeigen (Linux: Verzeichnis mit `include/`+`lib/`;
-macOS: entpacktes Archiv mit `Frameworks/pylon.framework/`; Windows:
-Verzeichnis mit `Development/`+`Runtime/`).
+Without `PYLON_SDK_BASE_URL` set, the script aborts with a clear error
+message (no URL leak). `PYLON_ROOT` can alternatively point at an
+already-present SDK (Linux: directory with `include/`+`lib/`;
+macOS: unpacked archive with `Frameworks/pylon.framework/`; Windows:
+directory with `Development/`+`Runtime/`).
 
-CMake-Alternative:
+CMake alternative:
 
 ```bash
 sh scripts/download-pylon-sdk.sh
 cmake -S . -B build-cmake && cmake --build build-cmake
 ```
 
-Ergebnis: `build/Release/node_pylon.node`. Keine Binaries/Secrets committen
-(`.pylon-sdk/`, `*.node`, `*.tar.gz` sind ignoriert, siehe `.gitignore`).
+Result: `build/Release/node_pylon.node`. Never commit binaries/secrets
+(`.pylon-sdk/`, `*.node`, `*.tar.gz` are ignored, see `.gitignore`).
 
-## Mock-Opt-in (nur Offline-Arbeit ohne SDK)
+## Mock opt-in (offline work without SDK only)
 
-Der Mock ist kein Default mehr. Nur für Offline-Arbeit ohne SDK/Compiler:
+The mock is no longer the default. Only for offline work without SDK/compiler:
 
 ```bash
 npm run rebuild:mock
@@ -57,5 +57,5 @@ NODE_PYLON_USE_MOCK=1 npm test
 NODE_PYLON_USE_MOCK=1 node samples/list-devices.js
 ```
 
-Ohne natives Modul und ohne dieses Opt-in wirft `require('node-pylon')`
-einen klaren Fehler statt still auf den Mock zurückzufallen.
+Without a native module and without this opt-in, `require('node-pylon')`
+throws a clear error instead of silently falling back to the mock.

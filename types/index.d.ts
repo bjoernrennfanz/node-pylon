@@ -1,13 +1,13 @@
-// TypeScript-Typen zur JS-Fassade (lib/index.js). Analog pypylon-API, MVP ohne DataProcessing.
+// TypeScript types for the JS facade (lib/index.js). Mirrors the pypylon API, MVP without DataProcessing.
 export declare function version(): string;
 export declare function pylonVersion(): string;
 export declare function isMock(): boolean;
 export declare function isNative(): boolean;
-/** True nur im expliziten Mock-Opt-in (NODE_PYLON_USE_MOCK=1, ohne natives Modul). */
+/** True only in the explicit mock opt-in (NODE_PYLON_USE_MOCK=1, no native module). */
 export declare function mockActive(): boolean;
-/** PylonInitialize (Refcount). Jede initialize()-Referenz braucht ein terminate(). */
+/** PylonInitialize (refcounted). Each initialize() reference needs a terminate(). */
 export declare function initialize(): void;
-/** PylonTerminate (Refcount). */
+/** PylonTerminate (refcounted). */
 export declare function terminate(): void;
 
 export interface PylonDeviceInfo {
@@ -20,11 +20,11 @@ export interface PylonDeviceInfo {
 }
 
 export declare function enumerateDevices(): PylonDeviceInfo[];
-/** TlFactory.CreateFirstDevice — wirft ohne erkannte Kamera eine Exception. */
+/** TlFactory.CreateFirstDevice — throws without a detected camera. */
 export declare function createFirstCamera(): InstantCamera;
 export declare function createFirst(): InstantCamera;
 
-/** Synthetischer Mono8-Frame (width*height Bytes). Legacy-Helper; neue Codepfade nutzen InstantCamera.grab(). */
+/** Synthetic Mono8 frame (width*height bytes). Legacy helper; new code paths use InstantCamera.grab(). */
 export declare function grabMock(width?: number, height?: number): Buffer;
 
 export type NodeTypeName = 'Integer' | 'Float' | 'Boolean' | 'String' | 'Enumeration' | 'Command';
@@ -33,7 +33,7 @@ export interface GrabResult {
   buffer: Buffer;
   width: number;
   height: number;
-  /** pypylon-Naming (PixelTypeToString); identisch zu pixelFormat im Mock. */
+  /** pypylon naming (PixelTypeToString); identical to pixelFormat in the mock. */
   pixelType: string;
   pixelFormat: string;
   payloadSize: number;
@@ -42,12 +42,12 @@ export interface GrabResult {
   chunk: { modeActive: boolean; timestamp: number; frameID: number };
 }
 
-/** Ergebnis von retrieveResult (ZAU-150 Grab-Loop). */
+/** Result of retrieveResult (grab loop). */
 export interface RetrieveResult {
   succeeded: boolean;
   width: number;
   height: number;
-  /** pypylon-Naming; identisch zu pixelFormat im Mock. */
+  /** pypylon naming; identical to pixelFormat in the mock. */
   pixelType: string;
   pixelFormat: string;
   payloadSize: number;
@@ -69,7 +69,7 @@ export declare class InstantCamera {
   setInteger(name: string, value: number): void;
   getIntegerMin(name: string): number;
   getIntegerMax(name: string): number;
-  /** Setzt Integer/Float auf Max und gibt den gesetzten Wert zurueck. Wirft bei anderen Typen. */
+  /** Sets Integer/Float to max and returns the value set. Throws for other types. */
   tryMax(name: string): number;
   getFloat(name: string): number;
   setFloat(name: string, value: number): void;
@@ -84,11 +84,11 @@ export declare class InstantCamera {
   getEnumEntries(name: string): string[];
   executeCommand(name: string): boolean;
   grab(): GrabResult;
-  // ZAU-150 Grab-Loop (pypylon-nah, synchron mit Timeout).
+  // Grab loop (mirrors pypylon, synchronous with timeout).
   startGrabbing(): void;
   stopGrabbing(): void;
   isGrabbing(): boolean;
-  /** Blockiert bis timeoutMs; null bei Timeout. Wirft, wenn nicht gegrabbt wird. */
+  /** Blocks until timeoutMs; null on timeout. Throws when not grabbing. */
   retrieveResult(timeoutMs?: number): RetrieveResult | null;
 }
 

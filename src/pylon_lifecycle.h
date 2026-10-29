@@ -1,8 +1,8 @@
-// Pylon-Lifecycle: PylonInitialize/PylonTerminate mit Referenzzaehlung (ZAU-150).
-// Header-only (inline), damit addon.cc und mock_camera.cc dieselbe
-// Zaehler-Instanz teilen. Thread-safe via Mutex. Im Mock-Build ohne SDK
-// nur Zaehler, keine SDK-Calls. Niemals Exceptions ueber die N-API-Grenze:
-// Aufrufer uebersetzen in JS-Exceptions.
+// Pylon lifecycle: PylonInitialize/PylonTerminate with refcounting.
+// Header-only (inline) so addon.cc and mock_camera.cc share the same
+// counter instance. Thread-safe via mutex. No SDK calls in the mock build,
+// only the counter. Never let exceptions cross the N-API boundary:
+// callers translate them into JS exceptions.
 #pragma once
 
 #include <atomic>
@@ -25,8 +25,8 @@ inline std::atomic<int>& Count() {
   return c;
 }
 
-// Erhoeht den Refcount; initialisiert Pylon beim ersten Nutzer.
-// Wirft std::exception / Pylon::GenericException bei SDK-Fehlern.
+// Increments the refcount; initializes pylon on first use.
+// Throws std::exception / Pylon::GenericException on SDK errors.
 inline void EnsureInitialized() {
 #if NODE_PYLON_MOCK
   Count().fetch_add(1);
@@ -39,7 +39,7 @@ inline void EnsureInitialized() {
 #endif
 }
 
-// Senkt den Refcount; terminiert Pylon beim letzten Nutzer.
+// Decrements the refcount; terminates pylon on last use.
 inline void ReleaseRef() {
 #if NODE_PYLON_MOCK
   int prev = Count().fetch_sub(1);

@@ -1,81 +1,81 @@
-# node-pylon — Native Node.js-Bindings für Basler pylon
+# node-pylon — Native Node.js bindings for Basler pylon
 
-Natives Node.js-Binding für die Basler **pylon C++ API** (GenICam; **ohne DataProcessing** im MVP),
-gebaut mit **node-addon-api / N-API** — kein SWIG, kein NAN.
-Standard ist der echte Build gegen **pylon SDK 26.09**; der Mock ist nur noch
-ein explizites Opt-in für Offline-Arbeit.
-Zielplattformen: Windows x64, Linux x64/arm64, macOS (wie pypylon);
-React-Native out-of-tree (Windows/macOS/Linux), siehe `docs/rn-architecture.md`.
+Native Node.js binding for the Basler **pylon C++ API** (GenICam; **without DataProcessing** in the MVP),
+built with **node-addon-api / N-API** — no SWIG, no NAN.
+Default is the real build against **pylon SDK 26.09**; the mock is only
+an explicit opt-in for offline work.
+Target platforms: Windows x64, Linux x64/arm64, macOS (same as pypylon);
+React Native out-of-tree (Windows/macOS/Linux), see `docs/rn-architecture.md`.
 
-Branch-Strategie: `master` = Legacy-Generator (C#/VS2015),
-`feature/node-port-native` = N-API-Grundgerüst (dieser Branch).
+Branch strategy: `master` = legacy generator (C#/VS2015),
+`feature/node-port-native` = N-API foundation (this branch).
 
-## Zielstruktur (analog pypylon)
+## Target layout (mirrors pypylon)
 
 ```text
-src/            N-API-Quellen (addon.cc, mock_camera/nodemap, pylon_lifecycle)
-scripts/        download-pylon-sdk.sh (SDK-Bezug via PYLON_SDK_BASE_URL-Secret)
-lib/            JS-Fassade (require('node-pylon') -> lib/index.js; mock.js nur Opt-in)
-types/          TypeScript-Typen (*.d.ts)
-samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-options.js,
+src/            N-API sources (addon.cc, mock_camera/nodemap, pylon_lifecycle)
+scripts/        download-pylon-sdk.sh (SDK fetch via PYLON_SDK_BASE_URL secret)
+lib/            JS facade (require('node-pylon') -> lib/index.js; mock.js opt-in only)
+types/          TypeScript types (*.d.ts)
+samples/        list-devices.js, grab.js (mirrors pypylon grab.py), grab-options.js,
                 nodemap-params.js, grab-attributes.js, grab-mock.js (legacy)
-test/           Smoke + API-Surface + Nodemap/Grab-Tests (Real-SDK, Emulator)
-docs/           Docs analog pypylon programmers_guide (Installation, Quickstart, API, CI)
-binding.gyp     node-gyp-Build (Node 20/22, N-API 8, C++17, Real-SDK-Default)
-CMakeLists.txt  CMake-Alternative (ebenfalls Real-SDK-Default)
+test/           Smoke + API-surface + nodemap/grab tests (real SDK, emulator)
+docs/           Docs mirroring the pypylon programmers_guide (installation, quickstart, API, CI)
+binding.gyp     node-gyp build (Node 20/22, N-API 8, C++17, real-SDK default)
+CMakeLists.txt  CMake alternative (also real-SDK default)
 ```
 
-## Voraussetzungen
+## Prerequisites
 
-- Node.js 20 oder 22 (LTS), `npm`
-- C++17-Toolchain nur für lokale Builds: MSVC 2022 / GCC 11+ / Clang 14+
-- Echter Build (Default): Umgebungsvariable `PYLON_SDK_BASE_URL`
-  (Agent-Secret lokal, GitHub-Actions-Secret in CI) — das Download-Skript
-  lädt pylon SDK 26.09 pro OS/Arch nach `.pylon-sdk/`; keine Kamera nötig
-  (Tests nutzen den SDK-Emulator via `PYLON_CAMEMU`)
+- Node.js 20 or 22 (LTS), `npm`
+- C++17 toolchain only for local builds: MSVC 2022 / GCC 11+ / Clang 14+
+- Real build (default): `PYLON_SDK_BASE_URL` environment variable
+  (agent secret locally, GitHub Actions secret in CI) — the download script
+  fetches pylon SDK 26.09 per OS/arch into `.pylon-sdk/`; no camera needed
+  (tests use the SDK emulator via `PYLON_CAMEMU`)
 
-## Bauen
+## Build
 
 ```bash
-npm install   # SDK-Download (Secret) + nativer Real-Build
-npm run rebuild  # erneut bauen (SDK wird ggf. aus Cache genutzt)
+npm install   # SDK download (secret) + native real build
+npm run rebuild  # rebuild (SDK reused from cache when present)
 
-# Mock nur als explizites Opt-in (ohne SDK, Offline-Arbeit):
+# Mock only as an explicit opt-in (no SDK, offline work):
 npm run rebuild:mock
 NODE_PYLON_USE_MOCK=1 npm test
 
-# CMake-Alternative (Real-Default; Mock: -DNODE_PYLON_USE_MOCK=ON):
+# CMake alternative (real default; mock: -DNODE_PYLON_USE_MOCK=ON):
 # sh scripts/download-pylon-sdk.sh
 # cmake -S . -B build-cmake && cmake --build build-cmake
 ```
 
-Ergebnis: `build/Release/node_pylon.node`.
+Result: `build/Release/node_pylon.node`.
 
-## CI (GitHub Actions — Real-SDK, kein Mock-Gate)
+## CI (GitHub Actions — real SDK, no mock gate)
 
-Die Pipeline (`.github/workflows/ci.yml`) baut gegen das echte SDK 26.09:
-Matrix **Linux x64/arm64 + Windows x64 + macOS × Node 20/22**,
-Schritte Secret-Check → SDK-Download → `npm run rebuild:real` →
-Leak-Check → `npm test` (mit `PYLON_CAMEMU=2`) → Samples
-(+ `.node`-Artifact pro Kombination; Windows inkl. Runtime-DLLs).
-Releases mit Real-Prebuilds via `.github/workflows/release.yml` bei Tag `v*`.
+The pipeline (`.github/workflows/ci.yml`) builds against the real SDK 26.09:
+matrix **Linux x64/arm64 + Windows x64 + macOS x Node 20/22**,
+steps secret check → SDK download → `npm run rebuild:real` →
+leak check → `npm test` (with `PYLON_CAMEMU=2`) → samples
+(+ `.node` artifact per combination; Windows including runtime DLLs).
+Releases with real prebuilds via `.github/workflows/release.yml` on tag `v*`.
 Details: [docs/ci-releases.md](docs/ci-releases.md).
 
-## Docs (analog pypylon programmers_guide)
+## Docs (mirrors the pypylon programmers_guide)
 
-[docs/index.md](docs/index.md) — Einstieg; [Installation](docs/installation.md),
-[Quickstart](docs/quickstart.md), [Programmer's Guide](docs/programmers-guide.md),
-[API-Referenz](docs/api-reference.md), [Samples](docs/samples.md),
-[Testing](docs/testing.md), [CI & Releases](docs/ci-releases.md).
+[docs/index.md](docs/index.md) — entry point; [installation](docs/installation.md),
+[quickstart](docs/quickstart.md), [programmer's guide](docs/programmers-guide.md),
+[API reference](docs/api-reference.md), [samples](docs/samples.md),
+[testing](docs/testing.md), [CI & releases](docs/ci-releases.md).
 
-## Schnellstart (Real-SDK; Emulator statt Kamera)
+## Quickstart (real SDK; emulator instead of a camera)
 
 ```bash
-export PYLON_CAMEMU=2   # Emulator-Geräte, keine Kamera nötig
-npm test                          # alle Tests gegen den echten Build
-npm run sample:list               # Geräte auflisten (Emulator: 2 Geräte)
-npm run sample:grab               # Grab-Sample analog pypylon grab.py
-node samples/grab-options.js 100 80  # Frame mit Breite/Hoehe
+export PYLON_CAMEMU=2   # emulator devices, no camera needed
+npm test                          # all tests against the real build
+npm run sample:list               # list devices (emulator: 2 devices)
+npm run sample:grab               # grab sample mirroring pypylon grab.py
+node samples/grab-options.js 100 80  # frame with width/height
 ```
 
 ```js
@@ -87,7 +87,7 @@ try {
   const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
   camera.open();
   camera.startGrabbing();
-  const res = camera.retrieveResult(5000); // null bei Timeout
+  const res = camera.retrieveResult(5000); // null on timeout
   if (res && res.succeeded) console.log(res.width, res.height, res.buffer.length);
   camera.stopGrabbing();
   camera.close();
@@ -96,33 +96,33 @@ try {
 }
 ```
 
-Ohne Kamera/Emulator wirft `CreateFirstDevice` eine JS-Exception;
-`retrieveResult` gibt bei Timeout `null` zurück.
+Without a camera/emulator, `CreateFirstDevice` throws a JS exception;
+`retrieveResult` returns `null` on timeout.
 
-## React-Native Desktop (Mock-Stand, Real-Anbindung folgt)
+## React Native desktop (mock state, real wiring follows)
 
-Out-of-tree nach https://reactnative.dev/docs/out-of-tree-platforms:
+Out-of-tree per https://reactnative.dev/docs/out-of-tree-platforms:
 `react-native-windows` (Microsoft), `react-native-macos` (Microsoft),
-Linux via Community-Port (Fallback: Electron + Node-Addon aus diesem Repo).
-Geteilter C++-Core `react-native/shared/pylon_core.{h,cpp}` — einmal schreiben,
-von N-API (`src/addon.cc`) und JSI/TurboModule nur adaptieren (kein Doppel-Wrapping).
-Spec: `react-native/specs/NativePylon.js`, Fassade: `react-native/src/index.ts`
-(mit Mock-Fallback, Sample laeuft auch ohne natives Modul), Sample:
+Linux via community port (fallback: Electron + Node addon from this repo).
+Shared C++ core `react-native/shared/pylon_core.{h,cpp}` — write once,
+adapt from N-API (`src/addon.cc`) and JSI/TurboModule only (no double wrapping).
+Spec: `react-native/specs/NativePylon.js`, facade: `react-native/src/index.ts`
+(with mock fallback, the sample also runs without a native module), sample:
 `react-native/sample/App.tsx`. Details: `docs/rn-architecture.md`.
 
 ```bash
-npm run test:rn   # RN-Statikcheck (Doku/Core/Spec/Adapter/Sample)
+npm run test:rn   # RN static check (docs/core/spec/adapters/sample)
 ```
 
-## N-API-Regeln (verbindlich)
+## N-API rules (binding)
 
-- Nur `node-addon-api`/N-API; keine V8-Internals, kein NAN, kein SWIG.
-- `NAPI_VERSION=8`, `NAPI_DISABLE_CPP_EXCEPTIONS` — Fehler als JS-Exceptions.
-- pylon-Threads/Grab-Loop nie im JS-Loop blockieren (AsyncWorker/ThreadSafeFunction).
-- Bilddaten als Buffer/TypedArray ohne unnötige Kopien.
-- Keine Binaries/Secrets committen (siehe `.gitignore`).
+- Only `node-addon-api`/N-API; no V8 internals, no NAN, no SWIG.
+- `NAPI_VERSION=8`, `NAPI_DISABLE_CPP_EXCEPTIONS` — errors as JS exceptions.
+- Never block the JS loop with pylon threads/grab loops (AsyncWorker/ThreadSafeFunction).
+- Image data as Buffer/TypedArray without unnecessary copies.
+- Never commit binaries/secrets (see `.gitignore`).
 
-## Lizenz
+## License
 
-Siehe `LICENSE`. pylon-SDK-Binaries sind **nicht** im Repo enthalten
-(Bezug via `PYLON_SDK_BASE_URL`-Secret, siehe `docs/installation.md`).
+See `LICENSE`. pylon SDK binaries are **not** included in this repo
+(fetch via the `PYLON_SDK_BASE_URL` secret, see `docs/installation.md`).

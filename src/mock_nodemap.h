@@ -1,8 +1,8 @@
-// Mock-GenICam-Nodemap ohne pylon-SDK (ZAU-151).
-// Reine C++-Logik ohne N-API/V8, damit sie spaeter fuer die
-// React-Native-JSI-Bruecke (ZAU-153) wiederverwendet werden kann.
-// Echte pylon-Anbindung (GenApi::INodeMap) ersetzt nur die
-// MockNodeMap-Methoden; die N-API-Schicht darueber bleibt stabil.
+// Mock GenICam nodemap without the pylon SDK.
+// Pure C++ logic without N-API/V8, so it can later be reused for the
+// React Native JSI bridge.
+// A real pylon wiring (GenApi::INodeMap) only replaces the
+// MockNodeMap methods; the N-API layer above stays stable.
 #pragma once
 
 #include <cstdint>
@@ -12,7 +12,7 @@
 
 namespace node_pylon {
 
-// Eindeutige Fehlerschluessel fuer die JS-Exception-Uebersetzung.
+// Distinct error keys for translation into JS exceptions.
 enum class NodeError {
   kOk = 0,
   kUnknownNode,
@@ -26,7 +26,7 @@ enum class NodeError {
 
 const char* NodeErrorMessage(NodeError e);
 
-// Unterstuetzte GenICam-Typen (MVP analog pypylon, ohne DataProcessing).
+// Supported GenICam types (MVP mirrors pypylon, without DataProcessing).
 enum class NodeType {
   Integer,
   Float,
@@ -75,13 +75,13 @@ struct EnumNode {
 };
 
 struct CommandNode {
-  // Zaehlt Ausfuehrungen (fuer Tests/Samples beobachtbar).
+  // Counts executions (observable for tests/samples).
   int executeCount = 0;
   bool available = true;
 };
 
-// Deterministischer Mock-Stand der Kamera-Parameter.
-// Defaults: 640x480 Mono8, Exposure 5000 us, Gain 0 dB.
+// Deterministic mock state of the camera parameters.
+// Defaults: 640x480 Mono8, exposure 5000 us, gain 0 dB.
 class MockNodeMap {
  public:
   MockNodeMap();
@@ -94,7 +94,7 @@ class MockNodeMap {
   NodeError SetInteger(const std::string& name, int64_t v);
   NodeError GetIntegerLimits(const std::string& name, int64_t* minOut,
                              int64_t* maxOut) const;
-  // Setzt Integer/Float auf Max; gibt den gesetzten Wert zurueck.
+  // Sets Integer/Float to max; returns the value set.
   NodeError TryMax(const std::string& name, double* outValue);
 
   NodeError GetFloat(const std::string& name, double* out) const;
@@ -115,14 +115,14 @@ class MockNodeMap {
 
   NodeError Execute(const std::string& name);
 
-  // Fest verdrahtete DeviceInfo (Mock-Geraet).
+  // Hard-wired device info (mock device).
   void GetDeviceInfo(std::string* friendlyName, std::string* modelName,
                      std::string* serialNumber, std::string* vendorName,
                      std::string* deviceClass) const;
 
-  // Aktuelle Bildgeometrie aus Width/Height/PixelFormat.
+  // Current image geometry from Width/Height/PixelFormat.
   void GetImageGeometry(int64_t* w, int64_t* h, std::string* pixelFormat) const;
-  // Bytes pro Pixel fuer die Mock-Formate (Mono8=1, Mono12=2, RGB8=3).
+  // Bytes per pixel for the mock formats (Mono8=1, Mono12=2, RGB8=3).
   static int BytesPerPixel(const std::string& pixelFormat);
 
  private:

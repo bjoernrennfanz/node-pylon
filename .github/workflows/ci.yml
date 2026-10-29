@@ -1,16 +1,16 @@
-# Real-SDK build in GitHub Actions (kein Mock mehr).
-# Baut das N-API-Modul gegen Basler pylon SDK 26.09 und testet mit dem
-# SDK-Kamera-Emulator (PYLON_CAMEMU) — keine physische Kamera noetig.
-# Matrix (analog pypylon-Plattformen):
+# Real-SDK build in GitHub Actions (no more mock).
+# Builds the N-API module against Basler pylon SDK 26.09 and tests with the
+# SDK camera emulator (PYLON_CAMEMU) — no physical camera needed.
+# Matrix (mirrors pypylon platforms):
 #   Linux x64 (ubuntu-22.04) + Linux arm64 (ubuntu-24.04-arm),
 #   Windows x64 (windows-2022, VS2022 v17),
 #   macOS (macos-14 arm64 + macos-15) x Node 20/22.
 #
-# SDK-Bezug ausschliesslich ueber das Secret PYLON_SDK_BASE_URL
-# (Settings -> Secrets -> Actions). Die Basis-URL erscheint nirgends im
-# Repo und wird nie in Logs ausgegeben (GitHub maskiert Secrets zusaetzlich;
-# der Leak-Check-Step prueft, dass der Secret-Wert in keinem Workspace-File
-# steht, ohne Treffer zu drucken).
+# SDK comes exclusively from the PYLON_SDK_BASE_URL secret
+# (Settings -> Secrets -> Actions). The base URL appears nowhere in the
+# repo and is never printed to logs (GitHub additionally masks secrets;
+# the leak-check step verifies the secret value is in no workspace file
+# without printing matches).
 name: ci
 
 on:
@@ -28,9 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # windows-2022 (VS2022 v17) statt windows-latest: das mitgelieferte
-        # node-gyp erkennt VS v18 noch nicht.
-        # ubuntu-22.04 x64 + ubuntu-24.04-arm decken Linux x64/arm64 ab (pypylon-Paritaet).
+        # windows-2022 (VS2022 v17) instead of windows-latest: the bundled
+        # node-gyp does not detect VS v18 yet.
+        # ubuntu-22.04 x64 + ubuntu-24.04-arm cover Linux x64/arm64 (pypylon parity).
         os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-14, macos-15]
         node: [20, 22]
     steps:
@@ -80,15 +80,15 @@ jobs:
         env:
           PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
         run: |
-          # -q: keine Treffer ausgeben (kein URL-Leak durch den Check selbst).
-          # .git/node_modules/SDK-Ablage sind ausgenommen.
+          # -q: print no matches (the check itself must not leak the URL).
+          # .git/node_modules/SDK staging areas are excluded.
           if grep -rqF "$PYLON_SDK_BASE_URL" --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.pylon-sdk --exclude="*.tar.gz" .; then
             echo "::error::Secret value found in workspace files. Remove it; only the variable name PYLON_SDK_BASE_URL may appear in code/workflows/docs."
             exit 1
           fi
           echo "Leak check passed: secret value absent from workspace files."
-          # Strenge Zweitpruefung: keine http(s)-URL in Build-/Infra-Dateien
-          # (ausser Allowlist oeffentlicher Doku-Links).
+          # Strict second check: no http(s) URL in build/infra files
+          # (except the allowlist of public doc links).
           VIOLATIONS="$(grep -rniE "https?://" scripts binding.gyp CMakeLists.txt package.json .github lib src samples types test 2>/dev/null | grep -viE "github\\.com|reactnative\\.dev|nodejs\\.org|npmjs\\.com|w3\\.org" || true)"
           if [ -n "$VIOLATIONS" ]; then
             echo "::error::Unexpected URL in infra/code files (only public doc links allowlisted):"

@@ -1,5 +1,5 @@
 'use strict';
-// Bild-Attribute + Chunk-Daten aus grab() (ZAU-151). Ohne Kamera lauffaehig.
+// Image attributes + chunk data from grab(). Runs without a camera.
 const pylon = require('../lib');
 
 const cam = pylon.createAndOpenCamera();
@@ -14,9 +14,9 @@ for (let i = 0; i < 3; i++) {
   const ok = g.buffer.length === expected && g.buffer.length === g.payloadSize;
   console.log(`frame ${g.frameNumber}: ${g.width}x${g.height} ${g.pixelFormat} payload=${g.payloadSize} ts=${g.timestamp} chunk=${JSON.stringify(g.chunk)} ok=${ok}`);
   if (!ok) {
-    console.error('Payload-Groesse passt nicht zu Width/Height/PixelFormat');
+    console.error('Payload size does not match Width/Height/PixelFormat');
     process.exit(1);
   }
 }
 cam.close();
-console.log('OK: Bild-Handling (Attribute + Chunk + Buffer) konsistent.');
+console.log('OK: image handling (attributes + chunk + buffer) consistent.');

@@ -65,8 +65,8 @@ obj/
 packages/
 *.db
 
-# node-pylon: N-API-Artefakte, SDK-Binaries, prebuilds
-# Kompilate / prebuilds — nie committen
+# node-pylon: N-API artifacts, SDK binaries, prebuilds
+# Build output / prebuilds — never commit
 *.node
 *.so
 *.dylib
@@ -75,12 +75,12 @@ build-cmake/
 prebuilds/
 *.tar.gz
 
-# Basler pylon SDK 26.09 — Bezug via PYLON_SDK_BASE_URL-Secret
-# (scripts/download-pylon-sdk.sh), Herkunft/Lizenz beachten, nie ins Repo kopieren
+# Basler pylon SDK 26.09 — fetched via the PYLON_SDK_BASE_URL secret
+# (scripts/download-pylon-sdk.sh); mind origin/license, never copy into the repo
 .pylon-sdk/
 PYLON_ROOT/
 
-# Basler pylon SDK — Herkunft/Lizenz beachten, nie ins Repo kopieren
+# Basler pylon SDK — mind origin/license, never copy into the repo
 /opt/pylon/
 pylon/
 *.pylon/

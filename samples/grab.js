@@ -1,7 +1,7 @@
 'use strict';
-// Grab-Sample analog pypylon `grab.py` (vereinfachte Variante):
+// Grab sample mirroring pypylon `grab.py` (simplified):
 // TlFactory -> FirstDevice -> Open -> StartGrabbing -> RetrieveResult -> Close.
-// Laeuft gegen echte Kamera (realer Build) oder Mock-Kamera (Mock-Build).
+// Runs against a real camera (real build) or the mock camera (mock build).
 const pylon = require('../lib');
 
 const NUM_FRAMES = Number(process.argv[2] || 5);
@@ -12,7 +12,7 @@ try {
   console.log(`devices found: ${devices.length}`);
   for (const d of devices) console.log(' -', JSON.stringify(d));
   if (devices.length === 0) {
-    console.error('No camera found (weder echt noch Mock).');
+    console.error('No camera found (neither real nor mock).');
     process.exit(1);
   }
 
@@ -39,7 +39,7 @@ try {
     camera.close();
     console.log('done.');
   } finally {
-    // Native Destruktor sichert StopGrabbing/Close zusätzlich ab.
+    // The native destructor also covers StopGrabbing/Close.
   }
 } finally {
   pylon.terminate();

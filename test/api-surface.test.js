@@ -1,6 +1,6 @@
 'use strict';
-// API-Oberflaeche: lib-Exporte muessen zu types/index.d.ts passen.
-// Lauf mit: npm test (keine Kamera, Mock-Build).
+// API surface: lib exports must match types/index.d.ts.
+// Run with: npm test (no camera, mock build).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -16,7 +16,7 @@ describe('node-pylon api surface', () => {
     for (const name of EXPECTED) assert.equal(typeof pylon[name], 'function', name);
   });
 
-  it('exports TlFactory and InstantCamera (ZAU-150)', () => {
+  it('exports TlFactory and InstantCamera', () => {
     for (const name of EXPECTED_OBJECTS) assert.ok(pylon[name], name);
     assert.equal(typeof pylon.TlFactory.GetInstance, 'function');
     assert.equal(typeof pylon.TlFactory.CreateFirstDevice, 'function');

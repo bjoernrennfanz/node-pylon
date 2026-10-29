@@ -1,12 +1,12 @@
-# node-pylon docs (analog pypylon programmer's guide)
+# node-pylon docs (mirrors the pypylon programmer's guide)
 
-Struktur angelehnt an den pypylon Programmer's Guide; Standard ist der
-Real-SDK-Build 26.09 (Mock nur als Opt-in, siehe Installation).
+Structure follows the pypylon programmer's guide; default is the
+real-SDK build 26.09 (mock only as an opt-in, see installation).
 
-- [Installation](installation.md) — Node-Version, SDK-Bezug via `PYLON_SDK_BASE_URL`, `PYLON_ROOT`, Mock-Opt-in
-- [Quickstart](quickstart.md) — Geräte auflisten (Emulator), Frame grabben
-- [Programmer's Guide](programmers-guide.md) — Kapitelübersicht analog pypylon
-- [API-Referenz](api-reference.md) — JS-Fassade + `.d.ts`
-- [Samples](samples.md) — alle Samples mit Aufruf
-- [Testing](testing.md) — `npm test` gegen Real-SDK (Emulator), Mock-Opt-in
-- [CI & Releases](ci-releases.md) — Real-Matrix, Secret, Masking, Prebuilds
+- [Installation](installation.md) — Node version, SDK fetch via `PYLON_SDK_BASE_URL`, `PYLON_ROOT`, mock opt-in
+- [Quickstart](quickstart.md) — list devices (emulator), grab a frame
+- [Programmer's guide](programmers-guide.md) — chapter overview mirroring pypylon
+- [API reference](api-reference.md) — JS facade + `.d.ts`
+- [Samples](samples.md) — all samples with invocations
+- [Testing](testing.md) — `npm test` against the real SDK (emulator), mock opt-in
+- [CI & releases](ci-releases.md) — real matrix, secret, masking, prebuilds

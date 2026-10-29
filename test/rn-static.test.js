@@ -1,6 +1,6 @@
-// RN-Statikcheck (ZAU-153): laeuft in CI ohne Kamera/SDK/Compiler.
-// Prueft, dass Doku + geteilter Core + TurboModule-Spec + Adapter-Skizzen
-// + Sample vorhanden sind und der Core die noetigen Symbole enthaelt.
+// RN static check: runs in CI without camera/SDK/compiler.
+// Verifies that docs + shared core + TurboModule spec + adapter sketches
+// + sample exist and that the core exposes the required symbols.
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -21,30 +21,30 @@ const mustExist = [
   'react-native/sample/README.md',
 ];
 
-test('rn-desktop: alle Dateien vorhanden', () => {
+test('rn-desktop: all files present', () => {
   for (const f of mustExist) {
-    assert.ok(fs.existsSync(path.join(root, f)), `fehlt: ${f}`);
+    assert.ok(fs.existsSync(path.join(root, f)), `missing: ${f}`);
   }
 });
 
-test('rn-desktop: core ohne JSI/V8-Includes (teilbar)', () => {
+test('rn-desktop: core without JSI/V8 includes (shareable)', () => {
   const h = fs.readFileSync(path.join(root, 'react-native/shared/pylon_core.h'), 'utf8');
-  assert.ok(h.includes('EnumerateDevices'), 'core: EnumerateDevices fehlt');
-  assert.ok(h.includes('GrabMockFrame'), 'core: GrabMockFrame fehlt');
-  assert.ok(h.includes('PylonVersion'), 'core: PylonVersion fehlt');
-  assert.ok(!h.includes('napi.h'), 'core darf kein napi.h enthalten');
-  assert.ok(!h.includes('jsi/'), 'core darf kein jsi enthalten');
+  assert.ok(h.includes('EnumerateDevices'), 'core: EnumerateDevices missing');
+  assert.ok(h.includes('GrabMockFrame'), 'core: GrabMockFrame missing');
+  assert.ok(h.includes('PylonVersion'), 'core: PylonVersion missing');
+  assert.ok(!h.includes('napi.h'), 'core must not include napi.h');
+  assert.ok(!h.includes('jsi/'), 'core must not include jsi');
 });
 
-test('rn-desktop: spec nutzt TurboModuleRegistry', () => {
+test('rn-desktop: spec uses TurboModuleRegistry', () => {
   const spec = fs.readFileSync(path.join(root, 'react-native/specs/NativePylon.js'), 'utf8');
-  assert.ok(spec.includes('TurboModuleRegistry'), 'spec: TurboModuleRegistry fehlt');
-  assert.ok(spec.includes('codegenNativeModule') || spec.includes('TurboModule'), 'spec: TurboModule-Marker fehlt');
+  assert.ok(spec.includes('TurboModuleRegistry'), 'spec: TurboModuleRegistry missing');
+  assert.ok(spec.includes('codegenNativeModule') || spec.includes('TurboModule'), 'spec: TurboModule marker missing');
 });
 
-test('rn-desktop: architektur-doku nennt out-of-tree-plattformen', () => {
+test('rn-desktop: architecture doc mentions out-of-tree platforms', () => {
   const doc = fs.readFileSync(path.join(root, 'docs/rn-architecture.md'), 'utf8');
   for (const needle of ['react-native-windows', 'react-native-macos', 'out-of-tree']) {
-    assert.ok(doc.includes(needle), `doku: ${needle} fehlt`);
+    assert.ok(doc.includes(needle), `docs: ${needle} missing`);
   }
 });

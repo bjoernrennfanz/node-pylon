@@ -1,43 +1,43 @@
-# Testing (Real-SDK, ohne Kamera)
+# Testing (real SDK, no camera)
 
 ```bash
-npm test   # node --test test/*.test.js — gegen den echten Build
+npm test   # node --test test/*.test.js — against the real build
 ```
 
-- Die Tests laufen gegen das nativ gebaute Modul
+- Tests run against the natively built module
   (`build/Release/node_pylon.node`, pylon SDK 26.09).
-- Ohne physische Kamera deckt der **SDK-Kamera-Emulator** die
-  Gerätepfade ab (Enumeration, Open, Grab-Loop, DeviceInfo):
+- Without a physical camera, the **SDK camera emulator** covers the
+  device paths (enumeration, open, grab loop, device info):
 
   ```bash
-  export PYLON_CAMEMU=2   # zwei Emulator-Geräte (Linux/macOS/Windows)
+  export PYLON_CAMEMU=2   # two emulator devices (Linux/macOS/Windows)
   npm test
   ```
 
-  Die CI setzt `PYLON_CAMEMU=2` automatisch (siehe `docs/ci-releases.md`).
-  Laufzeit-Umgebung pro OS exportiert die CI ebenfalls
-  (`LD_LIBRARY_PATH`/`GENICAM_GENTL64_PATH` auf Linux,
-  `DYLD_LIBRARY_PATH` auf macOS, `Runtime\x64` im `PATH` auf Windows).
-- Ohne erreichbares Gerät (weder Kamera noch Emulator) werden die
-  geräteabhängigen Tests übersprungen (`t.skip`), geräteunabhängige
-  Assertions (Versionen, API-Surface, `grabMock`) laufen immer.
-- `test/smoke.test.js` — Versionen, `isMock()`, Lifecycle-Refcount,
-  TlFactory-Enumeration, Open/Grab-Loop/Close, Fehlerpfade.
-- `test/api-surface.test.js` — prüft, dass alle in `types/index.d.ts`
-  exportierten Funktionen in `lib/index.js` existieren und die
-  dokumentierten Signaturen einhalten (Rückgabetypen, Buffer-Länge).
-- `test/nodemap.test.js`, `test/grab.test.js` — Nodemap/Parameter-API
-  und Bild-Handling (deterministischer Parameterspeicher, Zero-copy-Buffer).
-- `test/rn-static.test.js` — React-Native-Statikcheck (Dateien/Core/Spec).
+  CI sets `PYLON_CAMEMU=2` automatically (see `docs/ci-releases.md`).
+  CI also exports the runtime environment per OS
+  (`LD_LIBRARY_PATH`/`GENICAM_GENTL64_PATH` on Linux,
+  `DYLD_LIBRARY_PATH` on macOS, `Runtime\x64` on `PATH` on Windows).
+- Without a reachable device (neither camera nor emulator), the
+  device-dependent tests are skipped (`t.skip`); device-independent
+  assertions (versions, API surface, `grabMock`) always run.
+- `test/smoke.test.js` — versions, `isMock()`, lifecycle refcount,
+  TlFactory enumeration, open/grab-loop/close, error paths.
+- `test/api-surface.test.js` — checks that every function exported from
+  `types/index.d.ts` exists in `lib/index.js` and honors the
+  documented signatures (return types, buffer length).
+- `test/nodemap.test.js`, `test/grab.test.js` — nodemap/parameter API
+  and image handling (deterministic parameter store, zero-copy buffer).
+- `test/rn-static.test.js` — React Native static check (files/core/spec).
 
-## Mock-Modus (Opt-in)
+## Mock mode (opt-in)
 
 ```bash
 npm run rebuild:mock
 NODE_PYLON_USE_MOCK=1 npm test
 ```
 
-Im Mock-Modus gelten die deterministischen Mock-Erwartungen
-(`MOCK123456`, 640×480 Mono8); im Real-Modus prüfen die Tests
-Emulator-/Kamera-Werte (nicht-leere Seriennummern, `succeeded`,
-`buffer.length === payloadSize).
+In mock mode the deterministic mock expectations apply
+(`MOCK123456`, 640x480 Mono8); in real mode the tests check
+emulator/camera values (non-empty serial numbers, `succeeded`,
+`buffer.length === payloadSize`).

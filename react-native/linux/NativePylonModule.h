@@ -1,9 +1,9 @@
-// Linux-Adapter (Community-Port react-native-linux, JSI/TurboModule).
-// Reine Marshalling-Schicht — Logik liegt in ../shared/pylon_core.{h,cpp}.
-// Falls der evaluierte Linux-Fork kein Codegen/TurboModules traegt:
-// Fallback Electron + Node-Addon (build/Release/node_pylon.node) aus diesem
-// Repo nutzen (siehe docs/rn-architecture.md). Kein Doppel-Wrapping:
-// auch hier nur pylon_core_* aufrufen, kein zweiter Grab-Pfad.
+// Linux adapter (community port react-native-linux, JSI/TurboModule).
+// Pure marshalling layer — logic lives in ../shared/pylon_core.{h,cpp}.
+// If the Linux fork under evaluation does not support codegen/TurboModules:
+// fallback to Electron + Node addon (build/Release/node_pylon.node) from this
+// repo (see docs/rn-architecture.md). No double wrapping:
+// only call pylon_core_* here, no second grab path.
 #pragma once
 // #include "../shared/pylon_core.h"
 // namespace node_pylon::rn::linux {
