@@ -70,6 +70,18 @@ jobs:
       - name: Rebuild native addon against real pylon SDK
         run: npm run rebuild:real
 
+      - name: Diagnose build config (local paths only, no secrets)
+        shell: bash
+        run: |
+          node -p "process.platform + ' ' + process.arch"
+          echo "--- build-config.gypi ---"
+          cat build-config.gypi
+          echo "--- SDK include layout ---"
+          ls "$PYLON_ROOT/include/pylon/PylonIncludes.h" 2>/dev/null || true
+          ls "$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Headers/PylonIncludes.h" 2>/dev/null || true
+          ls "$PYLON_ROOT/Frameworks/pylon.framework/Headers/PylonIncludes.h" 2>/dev/null || true
+          ls "$PYLON_ROOT/Development/include/pylon/PylonIncludes.h" 2>/dev/null || true
+
       - name: Stage Windows runtime DLLs next to the addon
         if: runner.os == 'Windows'
         shell: pwsh
