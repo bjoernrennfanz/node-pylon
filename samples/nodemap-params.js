@@ -43,14 +43,25 @@ console.log('ChunkModeActive:', cam.getBoolean('ChunkModeActive'));
 cam.setString('DeviceUserID', 'demo-user');
 console.log('DeviceUserID:', cam.getString('DeviceUserID'));
 console.log('DeviceModelName (read-only):', cam.getString('DeviceModelName'));
-cam.executeCommand('AcquisitionStart');
-console.log('AcquisitionStart executed.');
+// Execute a side-effect-free standard command if the device offers one
+// (the emulator rejects the acquisition commands outside a running grab).
+let executed = null;
+for (const name of ['UserSetSave', 'ForceFailedBuffer', 'AcquisitionStop']) {
+  try {
+    cam.getNodeType(name);
+    cam.executeCommand(name);
+    executed = name;
+    break;
+  } catch {
+    // Not offered here — try the next one.
+  }
+}
+console.log('executed command:', executed === null ? '(none offered)' : executed);
 
 // Image attributes from grab(): Width/Height/PixelFormat mirror the nodemap.
 const grab = cam.grab();
 console.log(`grab: ${grab.width}x${grab.height} ${grab.pixelFormat}, payload=${grab.payloadSize}, frame=${grab.frameNumber}`);
 console.log('buffer bytes:', grab.buffer.length, '| chunk:', JSON.stringify(grab.chunk));
 console.log('first bytes:', Array.from(grab.buffer.subarray(0, 8)).join(','));
-cam.executeCommand('AcquisitionStop');
 cam.close();
 console.log('OK: nodemap read/write + grab succeeded.');
