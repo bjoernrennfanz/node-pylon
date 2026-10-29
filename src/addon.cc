@@ -101,10 +101,11 @@ Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
   arr.Set(uint32_t(0), dev);
   return arr;
 #else
-  Pylon::DeviceInfoList_t deviceList;
-  int count = 0;
+  // Real TlFactory enumeration. PylonInitialize is refcounted in this
+  // module (see pylon_lifecycle.h): take a balanced reference around the
+  // call so enumerateDevices() also works without a prior initialize().
   try {
-    count = Pylon::CTlFactory::GetInstance().EnumerateDevices(deviceList);
+    node_pylon::lifecycle::EnsureInitialized();
   } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return Napi::Array::New(env, 0);
@@ -112,6 +113,20 @@ Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return Napi::Array::New(env, 0);
   }
+  Pylon::DeviceInfoList_t deviceList;
+  int count = 0;
+  try {
+    count = Pylon::CTlFactory::GetInstance().EnumerateDevices(deviceList);
+  } catch (const Pylon::GenericException& ex) {
+    node_pylon::lifecycle::ReleaseRef();
+    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+    return Napi::Array::New(env, 0);
+  } catch (const std::exception& ex) {
+    node_pylon::lifecycle::ReleaseRef();
+    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+    return Napi::Array::New(env, 0);
+  }
+  node_pylon::lifecycle::ReleaseRef();
   Napi::Array arr = Napi::Array::New(env, static_cast<uint32_t>(count));
   for (int i = 0; i < count; ++i) {
     const Pylon::CDeviceInfo& di = deviceList[i];

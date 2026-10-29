@@ -810,6 +810,8 @@ Napi::Value CameraWrap::Grab(const Napi::CallbackInfo& info) {
   out.Set("buffer", buf);
   out.Set("width", Napi::Number::New(env, static_cast<double>(w)));
   out.Set("height", Napi::Number::New(env, static_cast<double>(h)));
+  // pixelType (pypylon naming) mirrors pixelFormat, like retrieveResult.
+  out.Set("pixelType", Napi::String::New(env, pixelFormat));
   out.Set("pixelFormat", Napi::String::New(env, pixelFormat));
   out.Set("payloadSize", Napi::Number::New(env, static_cast<double>(bytes)));
   out.Set("timestamp", Napi::Number::New(env, static_cast<double>(ts)));

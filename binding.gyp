@@ -47,11 +47,10 @@
         "CLANG_CXX_LANGUAGE_STANDARD": "c++17"
       },
       "conditions": [
-        [ "OS==\"linux\"", {
-          "cflags!": [ "-fno-exceptions", "-fno-rtti" ],
-          "cflags_cc!": [ "-fno-exceptions", "-fno-rtti" ],
-          "cflags_cc": [ "-fexceptions", "-frtti" ]
-        }],
+        # OS-only toolchain settings (proven visible to gyp; flavor comes
+        # from build-config.gypi instead). The make generator ignores
+        # xcode_settings, so gcc/clang exception/RTTI flags are emitted by
+        # the generator; these entries cover direct Xcode/MSVC users.
         [ "OS==\"mac\"", {
           "xcode_settings": {
             "GCC_ENABLE_CPP_EXCEPTIONS": "YES",

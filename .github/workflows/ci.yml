@@ -111,8 +111,8 @@ jobs:
             export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
           fi
           if [ "$RUNNER_OS" = "macOS" ]; then
-            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries:${DYLD_LIBRARY_PATH:-}"
-            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries/gentlproducer/gtl"
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries:${DYLD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries/gentlproducer/gtl"
           fi
           npm test
 
@@ -130,8 +130,8 @@ jobs:
             export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
           fi
           if [ "$RUNNER_OS" = "macOS" ]; then
-            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries:${DYLD_LIBRARY_PATH:-}"
-            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries/gentlproducer/gtl"
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries:${DYLD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries/gentlproducer/gtl"
           fi
           npm run sample:list
           npm run sample:grab

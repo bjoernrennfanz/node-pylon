@@ -78,6 +78,7 @@ function realConfig(pylonRoot) {
     include_dirs: [],
     libraries: [],
   };
+  addExceptionFlags(base);
   if (process.platform === 'win32') {
     base.include_dirs.push(`${pylonRoot}/Development/include`);
     base.libraries.push(
@@ -87,16 +88,22 @@ function realConfig(pylonRoot) {
       winLib('GCBase_MD_VC142_v3_5_Basler_pylon_v1.lib')
     );
   } else if (process.platform === 'darwin') {
-    base.include_dirs.push(`${pylonRoot}/Frameworks/pylon.framework/Headers`);
+    // Physical Versions/A paths (not the top-level framework symlinks:
+    // symlink restoration is extractor-dependent, the versioned dirs are
+    // always real).
+    const fwLib = `${pylonRoot}/Frameworks/pylon.framework/Versions/A/Libraries`;
+    base.include_dirs.push(`${pylonRoot}/Frameworks/pylon.framework/Versions/A/Headers`);
     base.libraries.push(
-      `-L${pylonRoot}/Frameworks/pylon.framework/Libraries`,
+      `-L${fwLib}`,
       '-lpylonbase',
       '-lpylonutility',
       '-lGenApi_gcc_v3_5_Basler_pylon_v1',
       '-lGCBase_gcc_v3_5_Basler_pylon_v1'
     );
+    // C++ exceptions + RTTI (node-gyp make generator ignores xcode_settings).
+    base.ldflags = [`-Wl,-rpath,${fwLib}`];
     base.xcode_settings = {
-      OTHER_LDFLAGS: [`-Wl,-rpath,${pylonRoot}/Frameworks/pylon.framework/Libraries`],
+      OTHER_LDFLAGS: [`-Wl,-rpath,${fwLib}`],
     };
   } else {
     base.include_dirs.push(`${pylonRoot}/include`);
@@ -112,10 +119,21 @@ function realConfig(pylonRoot) {
   return base;
 }
 
+// C++ exceptions + RTTI for gcc/clang (node-gyp make generator ignores
+// xcode_settings and defaults both off; the pylon headers and the mock
+// translation units need them). MSVC is covered by binding.gyp.
+function addExceptionFlags(config) {
+  if (process.platform === 'win32') return;
+  config['cflags!'] = ['-fno-exceptions', '-fno-rtti'];
+  config['cflags_cc!'] = ['-fno-exceptions', '-fno-rtti'];
+  config.cflags_cc = ['-fexceptions', '-frtti'];
+}
+
 function main() {
   let config;
   if (isMock()) {
     config = { defines: ['NODE_PYLON_MOCK=1'] };
+    addExceptionFlags(config);
     console.log('build flavor: mock (explicit opt-in, no pylon SDK)');
   } else {
     let root = resolvePylonRoot();
