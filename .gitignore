@@ -83,8 +83,9 @@ prebuilds/
 PYLON_ROOT/
 
 # Basler pylon SDK — mind origin/license, never copy into the repo
+# (anchored: must not match test/pylon/ or other subdirs)
 /opt/pylon/
-pylon/
+/pylon/
 *.pylon/
 GenICam/
 PYLON_ROOT/
