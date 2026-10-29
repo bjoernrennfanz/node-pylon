@@ -42,9 +42,9 @@ done
 
 fail() { echo "error: $1" >&2; exit 1; }
 
-if [ -z "${PYLON_SDK_BASE_URL:-}" ]; then
-  fail "PYLON_SDK_BASE_URL is not set. Provide the pylon SDK base URL via the PYLON_SDK_BASE_URL environment variable (agent secret locally, GitHub Actions secret in CI), then retry."
-fi
+# The local SDK cache wins over the network: a present SDK is reused
+# without requiring the secret (offline rebuilds, repeated CI steps).
+# Only a missing cache (or --force) needs PYLON_SDK_BASE_URL.
 
 detect_os() {
   case "$(uname -s)" in
@@ -74,9 +74,7 @@ case "$OS/$ARCH" in
   *) fail "unsupported OS/arch combination: $OS/$ARCH" ;;
 esac
 
-# Strip a single trailing slash; the archive name carries the version.
-BASE_URL="${PYLON_SDK_BASE_URL%/}"
-
+# The base URL is resolved only after the secret check below (set -u safe).
 if [ "$PRINT_ROOT_ONLY" = "1" ]; then
   echo "$OUT"
   exit 0
@@ -94,6 +92,14 @@ if [ -f "$OUT/.pylon-sdk-ready" ] && [ "$FORCE" != "1" ]; then
   fi
   exit 0
 fi
+
+# Only a fresh download needs the secret (see header: never echoed).
+if [ -z "${PYLON_SDK_BASE_URL:-}" ]; then
+  fail "PYLON_SDK_BASE_URL is not set. Provide the pylon SDK base URL via the PYLON_SDK_BASE_URL environment variable (agent secret locally, GitHub Actions secret in CI), then retry."
+fi
+
+# Strip a single trailing slash; the archive name carries the version.
+BASE_URL="${PYLON_SDK_BASE_URL%/}"
 
 command -v curl >/dev/null 2>&1 || fail "curl is required to download the pylon SDK."
 command -v tar >/dev/null 2>&1 || fail "tar is required to extract the pylon SDK."
