@@ -67,20 +67,19 @@ jobs:
       - name: Install deps (skip install script, rebuild explicitly below)
         run: npm ci --ignore-scripts
 
-      - name: Rebuild native addon against real pylon SDK
-        run: npm run rebuild:real
-
-      - name: Diagnose build config (local paths only, no secrets)
+      - name: Configure native build flavor (real SDK, no secrets printed)
         shell: bash
         run: |
-          node -p "process.platform + ' ' + process.arch"
+          node scripts/configure-build.js
           echo "--- build-config.gypi ---"
           cat build-config.gypi
-          echo "--- SDK include layout ---"
-          ls "$PYLON_ROOT/include/pylon/PylonIncludes.h" 2>/dev/null || true
+          echo "--- SDK layout probe ---"
+          ls "$PYLON_ROOT" || true
           ls "$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Headers/PylonIncludes.h" 2>/dev/null || true
-          ls "$PYLON_ROOT/Frameworks/pylon.framework/Headers/PylonIncludes.h" 2>/dev/null || true
-          ls "$PYLON_ROOT/Development/include/pylon/PylonIncludes.h" 2>/dev/null || true
+          ls "$PYLON_ROOT/include/pylon/PylonIncludes.h" 2>/dev/null || true
+
+      - name: Rebuild native addon against real pylon SDK
+        run: node-gyp rebuild
 
       - name: Stage Windows runtime DLLs next to the addon
         if: runner.os == 'Windows'
