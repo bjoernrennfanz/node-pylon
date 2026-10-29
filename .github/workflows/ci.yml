@@ -1,12 +1,16 @@
-# Mock build in GitHub Actions - no local compiler needed.
-# Builds the N-API module without pylon SDK/camera (mock define = 1, default),
-# then runs smoke tests and samples.
-# Matrix (ZAU-152, analog pypylon platforms):
+# Real-SDK build in GitHub Actions (kein Mock mehr).
+# Baut das N-API-Modul gegen Basler pylon SDK 26.09 und testet mit dem
+# SDK-Kamera-Emulator (PYLON_CAMEMU) — keine physische Kamera noetig.
+# Matrix (analog pypylon-Plattformen):
 #   Linux x64 (ubuntu-22.04) + Linux arm64 (ubuntu-24.04-arm),
 #   Windows x64 (windows-2022, VS2022 v17),
 #   macOS (macos-14 arm64 + macos-15) x Node 20/22.
-# Real-SDK build (needs pylon binaries via secret) runs as separate
-# opt-in job and never blocks the mock matrix.
+#
+# SDK-Bezug ausschliesslich ueber das Secret PYLON_SDK_BASE_URL
+# (Settings -> Secrets -> Actions). Die Basis-URL erscheint nirgends im
+# Repo und wird nie in Logs ausgegeben (GitHub maskiert Secrets zusaetzlich;
+# der Leak-Check-Step prueft, dass der Secret-Wert in keinem Workspace-File
+# steht, ohne Treffer zu drucken).
 name: ci
 
 on:
@@ -18,20 +22,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-mock:
-    name: mock (${{ matrix.os }}, node ${{ matrix.node }})
+  build-real:
+    name: real-sdk (${{ matrix.os }}, node ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        # windows-2022 (VS2022 v17) instead of windows-latest: the latest image
-        # ships VS v18, which the npm-bundled node-gyp cannot detect yet.
-        # ubuntu-22.04 x64 + ubuntu-24.04-arm cover Linux x64/arm64 (pypylon parity).
+        # windows-2022 (VS2022 v17) statt windows-latest: das mitgelieferte
+        # node-gyp erkennt VS v18 noch nicht.
+        # ubuntu-22.04 x64 + ubuntu-24.04-arm decken Linux x64/arm64 ab (pypylon-Paritaet).
         os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-14, macos-15]
         node: [20, 22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Check pylon SDK secret (no URL in logs)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: |
+          if [ -z "$PYLON_SDK_BASE_URL" ]; then
+            echo "::error::PYLON_SDK_BASE_URL secret is not set. Add it under Settings -> Secrets -> Actions (base URL only, archive names are appended automatically)."
+            exit 1
+          fi
+          echo "PYLON_SDK_BASE_URL is set (value masked, never printed)."
 
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
@@ -43,17 +58,81 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Download pylon SDK 26.09 (secret only, quiet)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: bash scripts/download-pylon-sdk.sh
+
       - name: Install deps (skip install script, rebuild explicitly below)
         run: npm ci --ignore-scripts
 
-      - name: Rebuild native mock addon (no pylon SDK needed)
-        run: npm run rebuild:mock
+      - name: Rebuild native addon against real pylon SDK
+        run: npm run rebuild:real
 
-      - name: Smoke tests (node --test, no camera)
-        run: npm test
+      - name: Stage Windows runtime DLLs next to the addon
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Copy-Item "$env:PYLON_ROOT\Runtime\x64\*.dll" -Destination "build\Release\" -Force
 
-      - name: Samples (list, grab, grab-mock, options, nodemap)
+      - name: Leak check (secret value must not appear in workspace files)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
         run: |
+          # -q: keine Treffer ausgeben (kein URL-Leak durch den Check selbst).
+          # .git/node_modules/SDK-Ablage sind ausgenommen.
+          if grep -rqF "$PYLON_SDK_BASE_URL" --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.pylon-sdk --exclude="*.tar.gz" .; then
+            echo "::error::Secret value found in workspace files. Remove it; only the variable name PYLON_SDK_BASE_URL may appear in code/workflows/docs."
+            exit 1
+          fi
+          echo "Leak check passed: secret value absent from workspace files."
+          # Strenge Zweitpruefung: keine http(s)-URL in Build-/Infra-Dateien
+          # (ausser Allowlist oeffentlicher Doku-Links).
+          VIOLATIONS="$(grep -rniE "https?://" scripts binding.gyp CMakeLists.txt package.json .github lib src samples types test 2>/dev/null | grep -viE "github\\.com|reactnative\\.dev|nodejs\\.org|npmjs\\.com|w3\\.org" || true)"
+          if [ -n "$VIOLATIONS" ]; then
+            echo "::error::Unexpected URL in infra/code files (only public doc links allowlisted):"
+            echo "$VIOLATIONS" | cut -c1-200
+            exit 1
+          fi
+          echo "URL check passed: no hardcoded URLs in infra/code files."
+
+      - name: Smoke tests (real addon, camera emulator, no hardware)
+        shell: bash
+        env:
+          PYLON_CAMEMU: 2
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            export PATH="$PYLON_ROOT/Runtime/x64:$PATH"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Runtime/x64"
+          fi
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            export LD_LIBRARY_PATH="$PYLON_ROOT/lib:${LD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
+          fi
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries:${DYLD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries/gentlproducer/gtl"
+          fi
+          npm test
+
+      - name: Samples (list, grab, grab-options, nodemap, attributes)
+        shell: bash
+        env:
+          PYLON_CAMEMU: 2
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            export PATH="$PYLON_ROOT/Runtime/x64:$PATH"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Runtime/x64"
+          fi
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            export LD_LIBRARY_PATH="$PYLON_ROOT/lib:${LD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
+          fi
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries:${DYLD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries/gentlproducer/gtl"
+          fi
           npm run sample:list
           npm run sample:grab
           npm run sample:grab-mock
@@ -61,58 +140,19 @@ jobs:
           npm run sample:nodemap
           npm run sample:grabattrs
 
-      - name: Upload mock prebuilt (.node)
+      - name: Upload real prebuilt (.node)
         uses: actions/upload-artifact@v4
         with:
-          name: node_pylon-mock-${{ matrix.os }}-node${{ matrix.node }}
+          name: node_pylon-real-${{ matrix.os }}-node${{ matrix.node }}
           path: build/Release/node_pylon.node
           if-no-files-found: error
           retention-days: 7
 
-  # Opt-in real build against Basler pylon SDK binaries.
-  # Provide binaries via secret PYLON_SDK_URL (tarball/zip per OS) or a
-  # pre-provisioned Artifactory mirror; without the secret the job skips
-  # (never red) so forks without SDK access stay green.
-  # Native wiring (PYLON_ROOT, link step, TlFactory/InstantCamera gegen
-  # das SDK) ist mit ZAU-150 im Baum (binding.gyp + NODE_PYLON_MOCK=0-Pfade);
-  # dieser Job braucht nur noch Download + PYLON_ROOT-Export + rebuild:real.
-  build-real:
-    name: real-sdk (${{ matrix.os }}, node ${{ matrix.node }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, windows-2022, macos-14]
-        node: [20, 22]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check for pylon SDK secret
-        id: sdk
-        shell: bash
-        env:
-          PYLON_SDK_URL: ${{ secrets.PYLON_SDK_URL }}
-        run: |
-          if [ -z "$PYLON_SDK_URL" ]; then
-            echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "No PYLON_SDK_URL secret — skipping real-SDK build (mock matrix above is the gate)."
-          else
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Setup Node.js ${{ matrix.node }}
-        if: steps.sdk.outputs.available == 'true'
-        uses: actions/setup-node@v4
+      - name: Upload Windows runtime DLLs (real prebuilt bundle)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
         with:
-          node-version: ${{ matrix.node }}
-          cache: npm
-
-      - name: Setup MSVC (Windows only)
-        if: steps.sdk.outputs.available == 'true' && runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Note (SDK provided, download wiring follows)
-        if: steps.sdk.outputs.available == 'true'
-        run: |
-          echo "PYLON_SDK_URL is set. Download + PYLON_ROOT-Export + npm run rebuild:real (ZAU-150-verdrahtet) folgen als naechster Schritt."
+          name: node_pylon-real-${{ matrix.os }}-node${{ matrix.node }}-dlls
+          path: build/Release/*.dll
+          if-no-files-found: error
+          retention-days: 7

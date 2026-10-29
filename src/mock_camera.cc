@@ -301,6 +301,7 @@ Napi::Value CameraWrap::IsGrabbing(const Napi::CallbackInfo& info) {
 #endif
 }
 
+#if !NODE_PYLON_MOCK
 static std::string DescribePixelType(
     const Pylon::CGrabResultPtr& ptr) {
   // Handverdrahtete Abbildung der gaengigsten Formate (stabile Enum-Werte,
@@ -318,6 +319,7 @@ static std::string DescribePixelType(
       return "Unknown";
   }
 }
+#endif
 
 // retrieveResult(timeoutMs) -> Grab-Objekt oder null bei Timeout.
 // Felder: succeeded, width, height, pixelFormat, payloadSize, buffer.
@@ -349,10 +351,9 @@ Napi::Value CameraWrap::RetrieveResult(const Napi::CallbackInfo& info) {
     out.Set("succeeded", true);
     out.Set("width", Napi::Number::New(env, static_cast<double>(w)));
     out.Set("height", Napi::Number::New(env, static_cast<double>(h)));
-    // pixelType (pypylon-Naming) + pixelFormat (explizit) — identisch im Mock.
+    // pixelType (pypylon-Naming) + pixelFormat (explizit).
     out.Set("pixelType", Napi::String::New(env, pixelFormat));
-  out.Set("pixelType", Napi::String::New(env, pixelFormat));
-  out.Set("pixelFormat", Napi::String::New(env, pixelFormat));
+    out.Set("pixelFormat", Napi::String::New(env, pixelFormat));
     out.Set("payloadSize", Napi::Number::New(env, static_cast<double>(bytes)));
     out.Set("buffer", Napi::Buffer<uint8_t>::New(
                           env, data, bytes,

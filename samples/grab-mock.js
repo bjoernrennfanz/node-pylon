@@ -1,5 +1,7 @@
 'use strict';
-// Mock-Grab ohne Kamera: synthetischer Mono8-Frame als Buffer.
+// Legacy-Helper: synthetischer Mono8-Frame als Buffer (kein Kamera-Grab).
+// Funktioniert gegen Real- und Mock-Builds; neue Codepfade nutzen
+// camera.grab() bzw. retrieveResult() (siehe samples/grab.js).
 const pylon = require('../lib');
 
 const width = Number(process.argv[2] || 64);

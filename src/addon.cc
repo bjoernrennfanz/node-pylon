@@ -1,37 +1,47 @@
-// node-pylon N-API-Modul (ZAU-149 Scaffold + ZAU-151 Nodemap/Bild-Handling).
-// ZAU-150-Anteil: PylonInitialize/Terminate, createFirstCamera (TlFactory).
+// node-pylon N-API-Modul (analog pypylon Top-Level-API).
+// Default: echter Build gegen Basler pylon SDK 26.09 (NODE_PYLON_MOCK=0).
+// Mock nur als explizites Opt-in (NODE_PYLON_MOCK=1, ohne SDK).
 // Regeln: N-API only (node-addon-api), kein SWIG/NAN, keine V8-Internals,
 // keine C++-Exceptions ueber die N-API-Grenze (NAPI_DISABLE_CPP_EXCEPTIONS).
 #include <napi.h>
 
+#include <string>
+
 #include "mock_camera.h"
 #include "pylon_lifecycle.h"
 
+#if !NODE_PYLON_MOCK
+#include <pylon/PylonIncludes.h>
+#include <pylon/TlFactory.h>
+#endif
+
 // ---------------------------------------------------------------------------
-// Mock-Schicht: deterministische Werte ohne Kamera/SDK.
-// Echte pylon-Calls (TlFactory/InstantCamera) ersetzen die Mock-Pfade,
-// sobald das PYLON SDK verfuegbar ist (ZAU-150). Die CameraWrap-API
-// (Nodemap + Grab) bleibt dabei stabil.
+// Versionen: Mock-Stand vs. echter SDK-Build sind unterscheidbar.
 // ---------------------------------------------------------------------------
 namespace mock {
-constexpr const char* kVersion = "0.2.0-core-mock";
-constexpr const char* kPylonVersion = "mock-8.x";
+constexpr const char* kVersionMock = "0.2.0-core-mock";
+constexpr const char* kVersionReal = "0.2.0-core";
+constexpr const char* kPylonVersionMock = "mock-8.x";
 }  // namespace mock
 
 namespace {
 
 Napi::String GetVersion(const Napi::CallbackInfo& info) {
-  return Napi::String::New(info.Env(), mock::kVersion);
+#if NODE_PYLON_MOCK
+  return Napi::String::New(info.Env(), mock::kVersionMock);
+#else
+  return Napi::String::New(info.Env(), mock::kVersionReal);
+#endif
 }
 
 Napi::String GetPylonVersion(const Napi::CallbackInfo& info) {
 #if NODE_PYLON_MOCK
-  return Napi::String::New(info.Env(), mock::kPylonVersion);
+  return Napi::String::New(info.Env(), mock::kPylonVersionMock);
 #else
-  // Echter Build: Version direkt aus dem SDK.
+  // Echte Version direkt aus dem SDK (pylon 26.09: z. B. "12.5.2.1565").
+  const char* v = nullptr;
   try {
-    Pylon::String_t v = Pylon::GetPylonVersionString();
-    return Napi::String::New(info.Env(), std::string(v.c_str()));
+    v = Pylon::GetPylonVersionString();
   } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(info.Env(), ex.what()).ThrowAsJavaScriptException();
     return Napi::String::New(info.Env(), "");
@@ -39,6 +49,7 @@ Napi::String GetPylonVersion(const Napi::CallbackInfo& info) {
     Napi::Error::New(info.Env(), ex.what()).ThrowAsJavaScriptException();
     return Napi::String::New(info.Env(), "");
   }
+  return Napi::String::New(info.Env(), v != nullptr ? v : "");
 #endif
 }
 
@@ -74,10 +85,12 @@ Napi::Value PylonTerminate(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-// Listet erkannte Geraete. Mock: genau ein synthetisches Geraet, damit
-// DeviceInfo/Samples ohne Kamera funktionieren (analog pylon-Emulator).
+// Listet erkannte Geraete. Real-Build: echte Enumeration ueber die
+// pylon-TlFactory (ohne Kamera/Emulator leere Liste). Mock-Opt-in:
+// genau ein synthetisches Geraet (analog pylon-Emulator).
 Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+#if NODE_PYLON_MOCK
   Napi::Array arr = Napi::Array::New(env, 1);
   Napi::Object dev = Napi::Object::New(env);
   dev.Set("friendlyName", "Mock Camera (node-pylon)");
@@ -87,6 +100,32 @@ Napi::Array EnumerateDevices(const Napi::CallbackInfo& info) {
   dev.Set("deviceClass", "MockDevice");
   arr.Set(uint32_t(0), dev);
   return arr;
+#else
+  Pylon::DeviceInfoList_t deviceList;
+  int count = 0;
+  try {
+    count = Pylon::CTlFactory::GetInstance().EnumerateDevices(deviceList);
+  } catch (const Pylon::GenericException& ex) {
+    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+    return Napi::Array::New(env, 0);
+  } catch (const std::exception& ex) {
+    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
+    return Napi::Array::New(env, 0);
+  }
+  Napi::Array arr = Napi::Array::New(env, static_cast<uint32_t>(count));
+  for (int i = 0; i < count; ++i) {
+    const Pylon::CDeviceInfo& di = deviceList[i];
+    Napi::Object dev = Napi::Object::New(env);
+    dev.Set("friendlyName", std::string(di.GetFriendlyName().c_str()));
+    dev.Set("modelName", std::string(di.GetModelName().c_str()));
+    dev.Set("serialNumber", std::string(di.GetSerialNumber().c_str()));
+    dev.Set("vendorName", std::string(di.GetVendorName().c_str()));
+    dev.Set("deviceClass", std::string(di.GetDeviceClass().c_str()));
+    dev.Set("fullName", std::string(di.GetFullName().c_str()));
+    arr.Set(static_cast<uint32_t>(i), dev);
+  }
+  return arr;
+#endif
 }
 
 // createFirstCamera(): JS-Kurzform fuer `new InstantCamera()`

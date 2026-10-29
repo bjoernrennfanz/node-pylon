@@ -1,7 +1,7 @@
-# Prebuilt binaries for tagged releases (ZAU-152).
-# On tag push (v*), rebuilds the mock addon per OS/arch and attaches the
-# .node files to the GitHub Release. Real-SDK prebuilds replace the mock
-# artifacts once ZAU-150 wires PYLON_ROOT (same artifact names).
+# Real-SDK prebuilds for tagged releases (ZAU-161).
+# On tag push (v*), rebuilds the real-pylon addon per OS/arch and attaches
+# the .node files (+ Windows runtime DLLs) to the GitHub Release.
+# SDK-Bezug wie in ci.yml: Secret PYLON_SDK_BASE_URL, nie in Logs.
 name: release
 
 on:
@@ -10,8 +10,11 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  prebuild-mock:
+  prebuild-real:
     name: prebuild (${{ matrix.os }}, node ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
     strategy:
@@ -23,6 +26,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check pylon SDK secret (no URL in logs)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: |
+          if [ -z "$PYLON_SDK_BASE_URL" ]; then
+            echo "::error::PYLON_SDK_BASE_URL secret is not set. Add it under Settings -> Secrets -> Actions."
+            exit 1
+          fi
+          echo "PYLON_SDK_BASE_URL is set (value masked, never printed)."
+
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
@@ -33,14 +47,39 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Download pylon SDK 26.09 (secret only, quiet)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: bash scripts/download-pylon-sdk.sh
+
       - name: Install deps (skip install script)
         run: npm ci --ignore-scripts
 
-      - name: Rebuild native mock addon
-        run: npm run rebuild:mock
+      - name: Rebuild native addon against real pylon SDK
+        run: npm run rebuild:real
 
-      - name: Smoke tests
-        run: npm test
+      - name: Stage Windows runtime DLLs next to the addon
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Copy-Item "$env:PYLON_ROOT\Runtime\x64\*.dll" -Destination "build\Release\" -Force
+
+      - name: Smoke tests (camera emulator)
+        shell: bash
+        env:
+          PYLON_CAMEMU: 2
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            export PATH="$PYLON_ROOT/Runtime/x64:$PATH"
+          fi
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            export LD_LIBRARY_PATH="$PYLON_ROOT/lib:${LD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
+          fi
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Libraries:${DYLD_LIBRARY_PATH:-}"
+          fi
+          npm test
 
       - name: Upload prebuilt (.node)
         uses: actions/upload-artifact@v4
@@ -49,3 +88,13 @@ jobs:
           path: build/Release/node_pylon.node
           if-no-files-found: error
           retention-days: 30
+
+      - name: Attach prebuilt to GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          ASSET="node_pylon-${{ matrix.os }}-node${{ matrix.node }}.node"
+          cp build/Release/node_pylon.node "$ASSET"
+          gh release upload "${{ github.ref_name }}" "$ASSET" --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}

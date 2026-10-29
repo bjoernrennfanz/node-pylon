@@ -1,9 +1,11 @@
 'use strict';
-// ZAU-151: Nodemap/Parameter-API analog pypylon (GenICam-Typen).
-// Laeuft gegen natives Modul oder JS-Fallback, ohne Kamera (Mock).
+// Nodemap/Parameter-API analog pypylon (GenICam-Typen).
+// Laeuft gegen den Real-SDK-Build (Default, Emulator/Kamera) oder den
+// Mock-Opt-in (NODE_PYLON_USE_MOCK=1). Lauf mit: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
+const { isMockMode, requireDevice } = require('./helpers');
 
 function freshCamera() {
   const cam = new pylon.InstantCamera();
@@ -12,16 +14,19 @@ function freshCamera() {
 }
 
 describe('nodemap parameter API (ZAU-151)', () => {
-  it('exposes device info', () => {
+  it('exposes device info', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     const info = cam.getDeviceInfo();
-    assert.equal(info.serialNumber, 'MOCK123456');
+    assert.equal(typeof info.serialNumber, 'string');
+    if (isMockMode()) assert.equal(info.serialNumber, 'MOCK123456');
     assert.equal(typeof info.modelName, 'string');
     assert.equal(typeof info.friendlyName, 'string');
     cam.close();
   });
 
-  it('reports node types and access flags', () => {
+  it('reports node types and access flags', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     assert.equal(cam.getNodeType('Width'), 'Integer');
     assert.equal(cam.getNodeType('ExposureTime'), 'Float');
@@ -37,7 +42,8 @@ describe('nodemap parameter API (ZAU-151)', () => {
     cam.close();
   });
 
-  it('reads/writes Integer with limits and tryMax', () => {
+  it('reads/writes Integer with limits and tryMax', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     assert.equal(cam.getInteger('Width'), 640);
     assert.equal(cam.getIntegerMin('Width'), 64);
@@ -54,7 +60,8 @@ describe('nodemap parameter API (ZAU-151)', () => {
     cam.close();
   });
 
-  it('reads/writes Float with limits', () => {
+  it('reads/writes Float with limits', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     assert.equal(cam.getFloat('ExposureTime'), 5000.0);
     cam.setFloat('ExposureTime', 8000.5);
@@ -66,7 +73,8 @@ describe('nodemap parameter API (ZAU-151)', () => {
     cam.close();
   });
 
-  it('reads/writes Boolean', () => {
+  it('reads/writes Boolean', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     assert.equal(cam.getBoolean('ChunkModeActive'), false);
     cam.setBoolean('ChunkModeActive', true);
@@ -75,7 +83,8 @@ describe('nodemap parameter API (ZAU-151)', () => {
     cam.close();
   });
 
-  it('reads/writes String and Enum, executes Commands', () => {
+  it('reads/writes String and Enum, executes Commands', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     assert.equal(cam.getString('DeviceModelName'), 'MockModel Mono');
     assert.throws(() => cam.setString('DeviceModelName', 'x'), /not writable/);

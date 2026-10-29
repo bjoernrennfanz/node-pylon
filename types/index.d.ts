@@ -3,6 +3,8 @@ export declare function version(): string;
 export declare function pylonVersion(): string;
 export declare function isMock(): boolean;
 export declare function isNative(): boolean;
+/** True nur im expliziten Mock-Opt-in (NODE_PYLON_USE_MOCK=1, ohne natives Modul). */
+export declare function mockActive(): boolean;
 /** PylonInitialize (Refcount). Jede initialize()-Referenz braucht ein terminate(). */
 export declare function initialize(): void;
 /** PylonTerminate (Refcount). */

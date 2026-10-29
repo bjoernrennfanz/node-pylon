@@ -1,10 +1,12 @@
 'use strict';
-// ZAU-151: Bild-Handling — grab()-Attribute (Width/Height/PixelFormat),
+// Bild-Handling — grab()-Attribute (Width/Height/PixelFormat),
 // Payload-Konsistenz, Chunk-Daten, Zero-copy-Buffer.
-// Laeuft gegen natives Modul oder JS-Fallback, ohne Kamera (Mock).
+// Laeuft gegen den Real-SDK-Build (Default, Emulator/Kamera) oder den
+// Mock-Opt-in (NODE_PYLON_USE_MOCK=1). Lauf mit: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
+const { requireDevice } = require('./helpers');
 
 function freshCamera() {
   const cam = new pylon.InstantCamera();
@@ -13,7 +15,8 @@ function freshCamera() {
 }
 
 describe('image handling (ZAU-151)', () => {
-  it('grab reflects nodemap geometry and pixel format', () => {
+  it('grab reflects nodemap geometry and pixel format', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     cam.setInteger('Width', 64);
     cam.setInteger('Height', 48);
@@ -29,7 +32,8 @@ describe('image handling (ZAU-151)', () => {
     cam.close();
   });
 
-  it('payload scales with bytes per pixel (RGB8)', () => {
+  it('payload scales with bytes per pixel (RGB8)', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     cam.setInteger('Width', 128);
     cam.setInteger('Height', 64);
@@ -42,7 +46,8 @@ describe('image handling (ZAU-151)', () => {
     cam.close();
   });
 
-  it('delivers chunk data and deterministic frames', () => {
+  it('delivers chunk data and deterministic frames', (t) => {
+    if (!requireDevice(t)) return;
     const cam = freshCamera();
     cam.setBoolean('ChunkModeActive', true);
     const a = cam.grab();

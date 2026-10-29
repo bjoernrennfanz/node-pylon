@@ -1,15 +1,15 @@
-# Programmer's Guide (analog pypylon, Stand ZAU-152)
+# Programmer's Guide (analog pypylon)
 
-Kapitelstruktur wie im pypylon Programmer's Guide; `[Mock]` = bereits nutzbar,
-`[geplant]` = folgt mit ZAU-150/151.
+Kapitelstruktur wie im pypylon Programmer's Guide; Standard ist der
+Real-SDK-Build 26.09 (Mock nur als Opt-in ohne SDK).
 
-1. [Mock] Transport Layer / Geräte aufzählen — `enumerateDevices()` (Mock: `[]`)
-2. [Mock] Ersten Frame holen — `grabMock(w, h)` als deterministischer Mono8-Buffer
-3. [geplant] InstantCamera öffnen, Grab-Loop, Software-Trigger (ZAU-150)
-4. [geplant] Nodemap/Parameter: Integer/Float/Enum/Boolean/String/Command (ZAU-151)
-5. [geplant] Bild-Handling: Buffer/TypedArray zero-copy, GenDC-Komponenten (ZAU-151)
-6. [geplant] Fehlerbehandlung: pylon-Fehlercodes → JS-Exceptions (ZAU-150/151)
-7. [geplant] Threading: Grab-Loop/Events ohne Blockade des JS-Loops (ZAU-150)
+1. Transport Layer / Geräte aufzählen — `enumerateDevices()` (leer ohne Kamera/Emulator; `PYLON_CAMEMU=N` stellt Emulator-Geräte bereit)
+2. Kamera öffnen — `TlFactory.GetInstance().CreateFirstDevice()` + `open()` (wirft ohne erkanntes Gerät)
+3. Grab-Loop — `startGrabbing()` / `retrieveResult(timeoutMs)` (`null` bei Timeout) / `stopGrabbing()`, analog pypylon
+4. Nodemap/Parameter: Integer/Float/Enum/Boolean/String/Command (`get/set*`, `get*Min/Max`, `tryMax`, `executeCommand`); Fehler als JS-Exceptions (`Unknown node`, Typfehler, `RangeError`)
+5. Bild-Handling: `grab()` → `{ buffer, width, height, pixelFormat, payloadSize, timestamp, frameNumber, chunk }` (Buffer zero-copy); `retrieveResult()` zusätzlich mit `succeeded`/`errorCode`/`errorDescription`
+6. Fehlerbehandlung: pylon-`GenericException`s werden in JS-Exceptions übersetzt; keine C++-Exceptions über die N-API-Grenze
+7. Threading: Grab-Loop/Events blockieren nie den JS-Loop (AsyncWorker/ThreadSafeFunction-Prinzip)
 
 N-API-Regeln (verbindlich): nur `node-addon-api`/N-API, kein NAN/SWIG/V8;
 `NAPI_VERSION=8`; Fehler als JS-Exceptions; keine Handles leaken.

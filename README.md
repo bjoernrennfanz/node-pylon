@@ -2,62 +2,63 @@
 
 Natives Node.js-Binding für die Basler **pylon C++ API** (GenICam; **ohne DataProcessing** im MVP),
 gebaut mit **node-addon-api / N-API** — kein SWIG, kein NAN.
+Standard ist der echte Build gegen **pylon SDK 26.09**; der Mock ist nur noch
+ein explizites Opt-in für Offline-Arbeit.
 Zielplattformen: Windows x64, Linux x64/arm64, macOS (wie pypylon);
-React-Native out-of-tree (Windows/macOS/Linux) folgt in ZAU-153.
+React-Native out-of-tree (Windows/macOS/Linux), siehe `docs/rn-architecture.md`.
 
 Branch-Strategie: `master` = Legacy-Generator (C#/VS2015),
-`feature/node-port-native` = neues N-API-Grundgerüst (dieser Branch).
+`feature/node-port-native` = N-API-Grundgerüst (dieser Branch).
 
 ## Zielstruktur (analog pypylon)
 
 ```text
 src/            N-API-Quellen (addon.cc, mock_camera/nodemap, pylon_lifecycle)
-lib/            JS-Fassade (require('node-pylon') -> lib/index.js, Fallback lib/mock.js)
+scripts/        download-pylon-sdk.sh (SDK-Bezug via PYLON_SDK_BASE_URL-Secret)
+lib/            JS-Fassade (require('node-pylon') -> lib/index.js; mock.js nur Opt-in)
 types/          TypeScript-Typen (*.d.ts)
-samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-mock.js,
-                grab-options.js, nodemap-params.js, grab-attributes.js
-test/           Smoke + API-Surface + Nodemap/Grab-Tests (node --test, ohne Kamera)
+samples/        list-devices.js, grab.js (analog pypylon grab.py), grab-options.js,
+                nodemap-params.js, grab-attributes.js, grab-mock.js (legacy)
+test/           Smoke + API-Surface + Nodemap/Grab-Tests (Real-SDK, Emulator)
 docs/           Docs analog pypylon programmers_guide (Installation, Quickstart, API, CI)
-binding.gyp     node-gyp-Build (Node 20/22, N-API 8, C++17)
-CMakeLists.txt  CMake-Alternative
+binding.gyp     node-gyp-Build (Node 20/22, N-API 8, C++17, Real-SDK-Default)
+CMakeLists.txt  CMake-Alternative (ebenfalls Real-SDK-Default)
 ```
 
 ## Voraussetzungen
 
 - Node.js 20 oder 22 (LTS), `npm`
-- C++17-Toolchain: MSVC 2022 / GCC 11+ / Clang 14+
-- Für den **Mock-Build**: keine weitere Abhängigkeit (kein pylon-SDK, keine Kamera nötig).
-- Für den **echten Build** (ab ZAU-150): Basler pylon SDK 8.x + `PYLON_ROOT`-Env
-  (Windows: `C:\Program Files\Basler\pylon 8`, Linux: `/opt/pylon`, macOS: `/Library/Frameworks/pylon.framework`).
+- C++17-Toolchain nur für lokale Builds: MSVC 2022 / GCC 11+ / Clang 14+
+- Echter Build (Default): Umgebungsvariable `PYLON_SDK_BASE_URL`
+  (Agent-Secret lokal, GitHub-Actions-Secret in CI) — das Download-Skript
+  lädt pylon SDK 26.09 pro OS/Arch nach `.pylon-sdk/`; keine Kamera nötig
+  (Tests nutzen den SDK-Emulator via `PYLON_CAMEMU`)
 
 ## Bauen
 
 ```bash
-npm install
-# Mock-Build ohne Kamera/SDK (Default, Abnahme ZAU-149):
-npm run rebuild
-# oder explizit:
+npm install   # SDK-Download (Secret) + nativer Real-Build
+npm run rebuild  # erneut bauen (SDK wird ggf. aus Cache genutzt)
+
+# Mock nur als explizites Opt-in (ohne SDK, Offline-Arbeit):
 npm run rebuild:mock
+NODE_PYLON_USE_MOCK=1 npm test
 
-# Echter Build gegen pylon-SDK (ab ZAU-150 verdrahtet):
-# export PYLON_ROOT=/opt/pylon
-# npm run rebuild -- --define=node_pylon_use_mock=0
-
-# CMake-Alternative:
-# cmake -S . -B build-cmake -DNODE_PYLON_USE_MOCK=ON && cmake --build build-cmake
+# CMake-Alternative (Real-Default; Mock: -DNODE_PYLON_USE_MOCK=ON):
+# sh scripts/download-pylon-sdk.sh
+# cmake -S . -B build-cmake && cmake --build build-cmake
 ```
 
 Ergebnis: `build/Release/node_pylon.node`.
 
-## CI (GitHub Actions — kein lokaler Compiler nötig)
+## CI (GitHub Actions — Real-SDK, kein Mock-Gate)
 
-Der Mock-Build läuft in der Pipeline (`.github/workflows/ci.yml`):
-Matrix **Linux x64/arm64 + Windows x64 + macOS × Node 20/22**, Schritte `npm ci` →
-`npm run rebuild:mock` → `npm test` → Samples (+ `.node`-Artifact pro Kombination).
-Kein pylon-SDK, keine Kamera, kein `gcc`/MSVC auf dem eigenen Server nötig —
-einfach Branch pushen bzw. PR öffnen und den `ci`-Check abwarten.
-Echter SDK-Build als opt-in Job `build-real` (nur mit Secret `PYLON_SDK_URL`);
-Releases mit Prebuilds via `.github/workflows/release.yml` bei Tag `v*`.
+Die Pipeline (`.github/workflows/ci.yml`) baut gegen das echte SDK 26.09:
+Matrix **Linux x64/arm64 + Windows x64 + macOS × Node 20/22**,
+Schritte Secret-Check → SDK-Download → `npm run rebuild:real` →
+Leak-Check → `npm test` (mit `PYLON_CAMEMU=2`) → Samples
+(+ `.node`-Artifact pro Kombination; Windows inkl. Runtime-DLLs).
+Releases mit Real-Prebuilds via `.github/workflows/release.yml` bei Tag `v*`.
 Details: [docs/ci-releases.md](docs/ci-releases.md).
 
 ## Docs (analog pypylon programmers_guide)
@@ -67,13 +68,13 @@ Details: [docs/ci-releases.md](docs/ci-releases.md).
 [API-Referenz](docs/api-reference.md), [Samples](docs/samples.md),
 [Testing](docs/testing.md), [CI & Releases](docs/ci-releases.md).
 
-## Schnellstart (ohne Kamera)
+## Schnellstart (Real-SDK; Emulator statt Kamera)
 
 ```bash
-npm test                          # alle Tests (Mock/Fallback, ohne Kamera)
-npm run sample:list               # Geraete auflisten (Mock: 1 virtuelle Kamera)
-npm run sample:grab               # Grab-Sample analog pypylon grab.py (Mock oder echt)
-npm run sample:grab-mock          # synthetischer Mono8-Frame (legacy)
+export PYLON_CAMEMU=2   # Emulator-Geräte, keine Kamera nötig
+npm test                          # alle Tests gegen den echten Build
+npm run sample:list               # Geräte auflisten (Emulator: 2 Geräte)
+npm run sample:grab               # Grab-Sample analog pypylon grab.py
 node samples/grab-options.js 100 80  # Frame mit Breite/Hoehe
 ```
 
@@ -95,12 +96,10 @@ try {
 }
 ```
 
-Echter Build: `PYLON_ROOT` setzen und `npm run rebuild:real`
-(Windows: `C:\Program Files\Basler\pylon 8`, Linux: `/opt/pylon`,
-macOS: pylon.framework). Ohne Kamera wirft `CreateFirstDevice` eine
-JS-Exception; `retrieveResult` gibt bei Timeout `null` zurueck.
+Ohne Kamera/Emulator wirft `CreateFirstDevice` eine JS-Exception;
+`retrieveResult` gibt bei Timeout `null` zurück.
 
-## React-Native Desktop (ZAU-153, Mock-Stand)
+## React-Native Desktop (Mock-Stand, Real-Anbindung folgt)
 
 Out-of-tree nach https://reactnative.dev/docs/out-of-tree-platforms:
 `react-native-windows` (Microsoft), `react-native-macos` (Microsoft),
@@ -112,25 +111,18 @@ Spec: `react-native/specs/NativePylon.js`, Fassade: `react-native/src/index.ts`
 `react-native/sample/App.tsx`. Details: `docs/rn-architecture.md`.
 
 ```bash
-npm run test:rn   # RN-Statikcheck (Doku/Core/Spec/Adapter/Sample, ohne Kamera)
+npm run test:rn   # RN-Statikcheck (Doku/Core/Spec/Adapter/Sample)
 ```
 
 ## N-API-Regeln (verbindlich)
 
 - Nur `node-addon-api`/N-API; keine V8-Internals, kein NAN, kein SWIG.
 - `NAPI_VERSION=8`, `NAPI_DISABLE_CPP_EXCEPTIONS` — Fehler als JS-Exceptions.
-- pylon-Threads/Grab-Loop nie im JS-Loop blockieren (ab ZAU-150: AsyncWorker/ThreadSafeFunction).
-- Bilddaten als Buffer/TypedArray ohne unnötige Kopien (ab ZAU-151).
+- pylon-Threads/Grab-Loop nie im JS-Loop blockieren (AsyncWorker/ThreadSafeFunction).
+- Bilddaten als Buffer/TypedArray ohne unnötige Kopien.
 - Keine Binaries/Secrets committen (siehe `.gitignore`).
-
-## Roadmap (Issues)
-
-- ZAU-149 (dieser Branch): Scaffold + Mock-Build ✅
-- ZAU-150: TlFactory, InstantCamera, Grab (ohne DataProcessing) — dieser Stand ✅
-- ZAU-151: Nodemap/Parameter-API + Bild-Handling
-- ZAU-152: CI-Pipeline, Docs, Samples, Tests analog pypylon
-- ZAU-153: React-Native Desktop (out-of-tree Windows/Linux/macOS)
 
 ## Lizenz
 
-Siehe `LICENSE`. pylon-SDK-Binaries sind **nicht** im Repo enthalten.
+Siehe `LICENSE`. pylon-SDK-Binaries sind **nicht** im Repo enthalten
+(Bezug via `PYLON_SDK_BASE_URL`-Secret, siehe `docs/installation.md`).

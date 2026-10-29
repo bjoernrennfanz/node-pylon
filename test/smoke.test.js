@@ -1,20 +1,26 @@
 'use strict';
-// Smoke-Tests ohne Kamera (Mock-Build oder JS-Fallback). Lauf mit: npm test
-// Deckt ZAU-150 (TlFactory/InstantCamera/Grab-Loop/Lifecycle) und die
-// ZAU-151-Nodemap-Fassade ab — beide muessen im Mock identisch funktionieren.
+// Smoke-Tests: laufen gegen den Real-SDK-Build (Default, mit
+// Kamera-Emulator via PYLON_CAMEMU) oder den Mock-Opt-in
+// (NODE_PYLON_USE_MOCK=1 + rebuild:mock). Lauf mit: npm test
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../lib');
+const { isMockMode, requireDevice } = require('./helpers');
 
-describe('node-pylon core (ZAU-150, mock)', () => {
+describe('node-pylon core', () => {
   it('exposes version strings', () => {
     assert.equal(typeof pylon.version(), 'string');
-    assert.match(pylon.version(), /mock/);
     assert.equal(typeof pylon.pylonVersion(), 'string');
+    if (isMockMode()) {
+      assert.match(pylon.version(), /mock/);
+    } else {
+      assert.doesNotMatch(pylon.version(), /mock/);
+    }
   });
 
-  it('flags mock build', () => {
-    assert.equal(pylon.isMock(), true);
+  it('mock flag matches build mode', () => {
+    assert.equal(typeof pylon.isMock(), 'boolean');
+    assert.equal(pylon.isMock(), isMockMode());
   });
 
   it('initialize/terminate do not throw (refcounted)', () => {
@@ -24,44 +30,60 @@ describe('node-pylon core (ZAU-150, mock)', () => {
     pylon.terminate();
   });
 
-  it('TlFactory enumerates the mock camera', () => {
+  it('TlFactory enumerates devices', (t) => {
     pylon.initialize();
     try {
       const devices = pylon.TlFactory.GetInstance().EnumerateDevices();
       assert.ok(Array.isArray(devices));
-      assert.equal(devices.length, 1);
-      assert.equal(devices[0].serialNumber, 'MOCK123456');
       assert.deepEqual(pylon.enumerateDevices(), devices);
       // Kleinschreib-Aliase funktionieren ebenfalls.
       assert.deepEqual(pylon.TlFactory.getInstance().enumerateDevices(), devices);
+      if (isMockMode()) {
+        assert.equal(devices.length, 1);
+        assert.equal(devices[0].serialNumber, 'MOCK123456');
+      } else if (devices.length > 0) {
+        for (const d of devices) {
+          assert.equal(typeof d.serialNumber, 'string');
+          assert.ok(d.serialNumber.length > 0);
+        }
+      } else {
+        t.skip('no camera/emulator available (set PYLON_CAMEMU=1 for the SDK emulator)');
+      }
     } finally {
       pylon.terminate();
     }
   });
 
-  it('InstantCamera open/grab-loop/close flow (mock)', () => {
+  it('InstantCamera open/grab-loop/close flow', (t) => {
     pylon.initialize();
     try {
+      if (!requireDevice(t)) return;
       const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
       assert.equal(camera.isOpen(), false);
       assert.equal(camera.isGrabbing(), false);
       const info = camera.getDeviceInfo();
-      assert.equal(info.serialNumber, 'MOCK123456');
+      assert.equal(typeof info.serialNumber, 'string');
+      if (isMockMode()) assert.equal(info.serialNumber, 'MOCK123456');
       camera.open();
       assert.equal(camera.isOpen(), true);
       camera.startGrabbing();
       assert.equal(camera.isGrabbing(), true);
-      const res = camera.retrieveResult(1000);
+      const res = camera.retrieveResult(10000);
       assert.ok(res !== null);
       assert.equal(res.succeeded, true);
-      assert.equal(res.width, 640);
-      assert.equal(res.height, 480);
-      assert.equal(res.pixelFormat, 'Mono8');
-      assert.equal(res.buffer.length, 640 * 480);
-      assert.equal(res.buffer[0], 0); // (0 + frame0) & 0xFF
-      const res2 = camera.retrieveResult(1000);
-      assert.ok(res2 !== null && res2.buffer.length === 640 * 480);
-      assert.equal(res2.buffer[0], 1); // frame1
+      assert.ok(res.width > 0 && res.height > 0);
+      assert.equal(res.buffer.length, res.payloadSize);
+      assert.equal(typeof res.pixelFormat, 'string');
+      if (isMockMode()) {
+        assert.equal(res.width, 640);
+        assert.equal(res.height, 480);
+        assert.equal(res.pixelFormat, 'Mono8');
+        assert.equal(res.buffer.length, 640 * 480);
+        assert.equal(res.buffer[0], 0); // (0 + frame0) & 0xFF
+        const res2 = camera.retrieveResult(1000);
+        assert.ok(res2 !== null && res2.buffer.length === 640 * 480);
+        assert.equal(res2.buffer[0], 1); // frame1
+      }
       camera.stopGrabbing();
       assert.equal(camera.isGrabbing(), false);
       camera.close();
@@ -71,9 +93,10 @@ describe('node-pylon core (ZAU-150, mock)', () => {
     }
   });
 
-  it('startGrabbing without open throws', () => {
+  it('startGrabbing without open throws', (t) => {
     pylon.initialize();
     try {
+      if (!requireDevice(t)) return;
       const camera = pylon.createFirstCamera();
       assert.throws(() => camera.startGrabbing(), /not open/i);
     } finally {
@@ -81,9 +104,10 @@ describe('node-pylon core (ZAU-150, mock)', () => {
     }
   });
 
-  it('retrieveResult without grabbing throws', () => {
+  it('retrieveResult without grabbing throws', (t) => {
     pylon.initialize();
     try {
+      if (!requireDevice(t)) return;
       const camera = pylon.createFirstCamera();
       camera.open();
       assert.throws(() => camera.retrieveResult(100), /Not grabbing/);
@@ -102,8 +126,9 @@ describe('node-pylon core (ZAU-150, mock)', () => {
   });
 });
 
-describe('node-pylon nodemap (ZAU-151, mock)', () => {
-  it('reads defaults and writes within limits', () => {
+describe('node-pylon nodemap defaults', () => {
+  it('reads defaults and writes within limits', (t) => {
+    if (!requireDevice(t)) return;
     const camera = pylon.createFirstCamera();
     camera.open();
     try {
@@ -123,7 +148,8 @@ describe('node-pylon nodemap (ZAU-151, mock)', () => {
     }
   });
 
-  it('rejects unknown nodes and out-of-range writes', () => {
+  it('rejects unknown nodes and out-of-range writes', (t) => {
+    if (!requireDevice(t)) return;
     const camera = pylon.createFirstCamera();
     assert.throws(() => camera.getInteger('Nope'), /Unknown node/);
     assert.throws(() => camera.setInteger('Width', 99999), RangeError);

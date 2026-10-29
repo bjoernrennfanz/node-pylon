@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const pylon = require('../lib');
 
-const EXPECTED = ['version', 'pylonVersion', 'isMock', 'enumerateDevices', 'grabMock',
+const EXPECTED = ['version', 'pylonVersion', 'isMock', 'isNative', 'mockActive', 'enumerateDevices', 'grabMock',
   'initialize', 'terminate', 'createFirstCamera', 'createFirst'];
 const EXPECTED_OBJECTS = ['TlFactory', 'InstantCamera'];
 
