@@ -79,7 +79,9 @@ jobs:
           ls "$PYLON_ROOT/include/pylon/PylonIncludes.h" 2>/dev/null || true
 
       - name: Rebuild native addon against real pylon SDK
-        run: node-gyp rebuild
+        # Via the npm script (not bare node-gyp): npm puts its bundled
+        # node-gyp on PATH; the configure step above already ran.
+        run: npm run rebuild:real
 
       - name: Stage Windows runtime DLLs next to the addon
         if: runner.os == 'Windows'

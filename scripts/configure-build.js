@@ -88,11 +88,13 @@ function realConfig(pylonRoot) {
       winLib('GCBase_MD_VC142_v3_5_Basler_pylon_v1.lib')
     );
   } else if (process.platform === 'darwin') {
-    // Physical Versions/A paths (not the top-level framework symlinks:
-    // symlink restoration is extractor-dependent, the versioned dirs are
-    // always real).
+    // Physical Versions/A paths (top-level framework symlinks depend on the
+    // extractor; the versioned dirs are always real). Note the framework
+    // headers are FLAT (Headers/*.h, no pylon/ subdir), so the code's
+    // #include <pylon/...> needs a framework search path (-F), not -I.
+    const fwDir = `${pylonRoot}/Frameworks`;
     const fwLib = `${pylonRoot}/Frameworks/pylon.framework/Versions/A/Libraries`;
-    base.include_dirs.push(`${pylonRoot}/Frameworks/pylon.framework/Versions/A/Headers`);
+    base.cflags_cc.push(`-F${fwDir}`);
     base.libraries.push(
       `-L${fwLib}`,
       '-lpylonbase',
@@ -100,9 +102,9 @@ function realConfig(pylonRoot) {
       '-lGenApi_gcc_v3_5_Basler_pylon_v1',
       '-lGCBase_gcc_v3_5_Basler_pylon_v1'
     );
-    // C++ exceptions + RTTI (node-gyp make generator ignores xcode_settings).
     base.ldflags = [`-Wl,-rpath,${fwLib}`];
     base.xcode_settings = {
+      FRAMEWORK_SEARCH_PATHS: [fwDir],
       OTHER_LDFLAGS: [`-Wl,-rpath,${fwLib}`],
     };
   } else {
