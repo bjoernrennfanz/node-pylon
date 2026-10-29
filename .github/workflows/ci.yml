@@ -130,6 +130,10 @@ jobs:
           fi
           npm test
 
+      - name: React Native desktop static checks (no SDK/camera needed)
+        shell: bash
+        run: npm run test:rn
+
       - name: Samples (list, grab, grab-options, nodemap, attributes)
         shell: bash
         env:
