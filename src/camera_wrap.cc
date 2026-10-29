@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstring>
 #include <string>
+#include <vector>
 
 #include "pylon_lifecycle.h"
 
