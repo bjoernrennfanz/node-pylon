@@ -3,7 +3,7 @@
 // genicam node_test.py / INode checks).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../lib');
+const pylon = require('../../lib');
 const { requireDevice } = require('../helpers');
 
 function freshCamera() {

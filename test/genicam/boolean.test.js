@@ -2,7 +2,7 @@
 // genicam: Boolean nodes (analogous to pypylon's booleanparameter tests).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../lib');
+const pylon = require('../../lib');
 const { requireDevice, hasNode } = require('../helpers');
 
 function freshCamera() {
