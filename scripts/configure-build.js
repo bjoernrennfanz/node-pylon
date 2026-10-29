@@ -121,8 +121,9 @@ function realConfig(pylonRoot) {
     }
     base.include_dirs.push(farmInclude);
     // The SDK umbrella header includes siblings as <Base/...>/<GenApi/...>,
-    // which live flat in the real Headers dir (no pylon/ subdir there).
-    base.include_dirs.push(srcHeaders);
+    // which live under Headers/GenICam on macOS (flat Headers/ has no
+    // pylon/ subdir, hence the farm above for <pylon/...>).
+    base.include_dirs.push(path.join(srcHeaders, 'GenICam'));
     base.libraries.push(`-L${farmFwLib}`);
     for (const lib of [
       'pylonbase', 'pylonutility',
