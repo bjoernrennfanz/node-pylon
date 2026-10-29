@@ -12,7 +12,7 @@
     "install": "node scripts/configure-build.js && node-gyp rebuild",
     "rebuild": "node scripts/configure-build.js && node-gyp rebuild",
     "rebuild:real": "node scripts/configure-build.js && node-gyp rebuild",
-    "test": "node --test test/pylon/ test/genicam/",
+    "test": "node --test test/pylon/*.test.js test/genicam/*.test.js",
     "test:rn": "node --test test/rn-static.test.js",
     "sample:list": "node samples/list-devices.js",
     "sample:grab": "node samples/grab.js",
