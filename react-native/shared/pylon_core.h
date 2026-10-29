@@ -1,8 +1,9 @@
 // Shared C++ core for the Node addon (N-API) and the RN JSI/TurboModule.
 // Pure C++17, NO N-API/JSI/V8 includes here — this file is written once
 // and only adapted by both bridges (no double wrapping).
-// Mock state without pylon SDK/camera; wire a real build behind
-// NODE_PYLON_USE_REAL (PYLON_ROOT).
+// Real pylon SDK only: device enumeration and version come from
+// the SDK; callers must have called PylonInitialize (the N-API bridge does
+// this per InstantCamera via pylon_lifecycle.h).
 #pragma once
 
 #include <cstdint>
@@ -19,16 +20,13 @@ struct DeviceInfo {
   std::string serial_number;
 };
 
-inline const char* kVersion = "0.1.0-rn-mock";
-inline const char* kPylonVersionMock = "mock-8.x";
+inline const char* kVersion = "0.2.0-core";
 
-// Mock: empty list (no camera). Real: CTlFactory::EnumerateDevices.
+// Real enumeration via the pylon transport layer factory. Empty without a
+// camera or emulator (PYLON_CAMEMU=N provides emulator devices).
 std::vector<DeviceInfo> EnumerateDevices();
 
-// Mock: Mono8 gradient w*h bytes. Real: grab result buffer, zero-copy.
-// Returns false for invalid dimensions (0 or > 4096).
-bool GrabMockFrame(uint32_t width, uint32_t height, std::vector<uint8_t>& out);
-
+// Real pylon version string from the SDK (e.g. "12.5.2.1565").
 const char* PylonVersion();
 
 }  // namespace core

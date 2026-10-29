@@ -1,10 +1,6 @@
 // TypeScript types for the JS facade (lib/index.js). Mirrors the pypylon API, MVP without DataProcessing.
 export declare function version(): string;
 export declare function pylonVersion(): string;
-export declare function isMock(): boolean;
-export declare function isNative(): boolean;
-/** True only in the explicit mock opt-in (NODE_PYLON_USE_MOCK=1, no native module). */
-export declare function mockActive(): boolean;
 /** PylonInitialize (refcounted). Each initialize() reference needs a terminate(). */
 export declare function initialize(): void;
 /** PylonTerminate (refcounted). */
@@ -24,16 +20,13 @@ export declare function enumerateDevices(): PylonDeviceInfo[];
 export declare function createFirstCamera(): InstantCamera;
 export declare function createFirst(): InstantCamera;
 
-/** Synthetic Mono8 frame (width*height bytes). Legacy helper; new code paths use InstantCamera.grab(). */
-export declare function grabMock(width?: number, height?: number): Buffer;
-
 export type NodeTypeName = 'Integer' | 'Float' | 'Boolean' | 'String' | 'Enumeration' | 'Command';
 
 export interface GrabResult {
   buffer: Buffer;
   width: number;
   height: number;
-  /** pypylon naming (PixelTypeToString); identical to pixelFormat in the mock. */
+  /** pypylon naming (pixel type string). */
   pixelType: string;
   pixelFormat: string;
   payloadSize: number;
@@ -47,7 +40,7 @@ export interface RetrieveResult {
   succeeded: boolean;
   width: number;
   height: number;
-  /** pypylon naming; identical to pixelFormat in the mock. */
+  /** pypylon naming; mirrors pixelFormat. */
   pixelType: string;
   pixelFormat: string;
   payloadSize: number;

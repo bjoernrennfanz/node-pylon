@@ -1,12 +1,12 @@
-# node-pylon docs (mirrors the pypylon programmer's guide)
+# node-pylon docs (pypylon programmer's guide style)
 
-Structure follows the pypylon programmer's guide; default is the
-real-SDK build 26.09 (mock only as an opt-in, see installation).
+Structure follows the pypylon Programmer's Guide; the standard is the
+real-SDK build 26.09.
 
-- [Installation](installation.md) — Node version, SDK fetch via `PYLON_SDK_BASE_URL`, `PYLON_ROOT`, mock opt-in
+- [Installation](installation.md) — Node version, SDK fetch via `PYLON_SDK_BASE_URL`, `PYLON_ROOT`
 - [Quickstart](quickstart.md) — list devices (emulator), grab a frame
-- [Programmer's guide](programmers-guide.md) — chapter overview mirroring pypylon
+- [Programmer's Guide](programmers-guide.md) — chapter overview like pypylon
 - [API reference](api-reference.md) — JS facade + `.d.ts`
-- [Samples](samples.md) — all samples with invocations
-- [Testing](testing.md) — `npm test` against the real SDK (emulator), mock opt-in
-- [CI & releases](ci-releases.md) — real matrix, secret, masking, prebuilds
+- [Samples](samples.md) — all samples with calls
+- [Testing](testing.md) — `npm test` against the real SDK (emulator)
+- [CI & Releases](ci-releases.md) — real matrix, secret, masking, prebuilds

@@ -1,30 +1,41 @@
 'use strict';
 // Acceptance sample: read/write parameters across all nodemap types
 // (Integer/Float/Enum/Boolean/String/Command, Get/Set/TryMax) + device info
-// + image attributes from grab(). Runs without a camera (mock or native module).
+// + image attributes from grab(). Needs a camera or the SDK emulator
+// (PYLON_CAMEMU=2). All writes stay inside the device's reported limits.
 const pylon = require('../lib');
 
 const cam = pylon.createAndOpenCamera();
-console.log('node-pylon version:', pylon.version(), '| native:', pylon.isNative(), '| mock:', pylon.isMock());
+console.log('node-pylon version:', pylon.version(), '| pylon:', pylon.pylonVersion());
 console.log('deviceInfo:', JSON.stringify(cam.getDeviceInfo()));
 
+function clamp(v, mn, mx) {
+  return Math.min(mx, Math.max(mn, v));
+}
+
 // Integer: read Width, change it, min/max, TryMax.
-console.log('Width:', cam.getInteger('Width'), `(min ${cam.getIntegerMin('Width')}, max ${cam.getIntegerMax('Width')})`);
-cam.setInteger('Width', 320);
-console.log('Width after setInteger(320):', cam.getInteger('Width'));
+const wMin = cam.getIntegerMin('Width');
+const wMax = cam.getIntegerMax('Width');
+console.log('Width:', cam.getInteger('Width'), `(min ${wMin}, max ${wMax})`);
+cam.setInteger('Width', clamp(320, wMin, wMax));
+console.log('Width after setInteger:', cam.getInteger('Width'));
 console.log('Height tryMax() ->', cam.tryMax('Height'), '| now:', cam.getInteger('Height'));
 
 // Float: ExposureTime + Gain.
+const eMin = cam.getFloatMin('ExposureTime');
+const eMax = cam.getFloatMax('ExposureTime');
 console.log('ExposureTime:', cam.getFloat('ExposureTime'));
-cam.setFloat('ExposureTime', 8000.5);
-console.log('ExposureTime after setFloat(8000.5):', cam.getFloat('ExposureTime'));
+const eTarget = clamp(8000.5, eMin, eMax);
+cam.setFloat('ExposureTime', eTarget);
+console.log('ExposureTime after setFloat:', cam.getFloat('ExposureTime'));
 console.log('Gain limits:', cam.getFloatMin('Gain'), '..', cam.getFloatMax('Gain'));
 
 // Enumeration: read PixelFormat, entries, set it.
-console.log('PixelFormat:', cam.getEnum('PixelFormat'), '| Entries:', cam.getEnumEntries('PixelFormat').join(','));
-cam.setEnum('PixelFormat', 'RGB8');
-console.log('PixelFormat after setEnum(RGB8):', cam.getEnum('PixelFormat'));
-cam.setEnum('PixelFormat', 'Mono8');
+const entries = cam.getEnumEntries('PixelFormat');
+console.log('PixelFormat:', cam.getEnum('PixelFormat'), '| Entries:', entries.join(','));
+const other = entries.find((e) => e !== cam.getEnum('PixelFormat')) || entries[0];
+cam.setEnum('PixelFormat', other);
+console.log('PixelFormat after setEnum:', cam.getEnum('PixelFormat'));
 
 // Boolean + String + Command.
 cam.setBoolean('ChunkModeActive', true);

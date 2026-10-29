@@ -1,21 +1,16 @@
-// InstantCamera N-API wrapper, mock state.
+// InstantCamera N-API wrapper over the real Basler pylon SDK.
 // N-API rules: ObjectWrap, no V8 internals, errors as JS exceptions.
-// The grab is synchronous and fast (mock); the real RetrieveResult loop
-// runs via AsyncWorker and never blocks the JS loop.
+// Grab loop and node access run synchronously and never block the JS loop
+// beyond the call itself; the frame buffer is handed over zero-copy.
 #pragma once
 
 #include <napi.h>
 
 #include <cstdint>
 
-#include "mock_nodemap.h"
-
-#if !NODE_PYLON_MOCK
-// Real build: TlFactory/InstantCamera against the Basler pylon SDK.
-// Mock paths (MockNodeMap) remain for geometry/parameter defaults
-// until the nodemap wiring mirrors the GenApi nodes directly.
 #include <pylon/PylonIncludes.h>
-#endif
+
+#include "node_map.h"
 
 namespace node_pylon {
 
@@ -23,9 +18,8 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
  public:
   static Napi::FunctionReference constructor;
   static void Init(Napi::Env env, Napi::Object exports);
-  // Default: first-found device (mirrors TlFactory.CreateFirstDevice).
-  // Always available in the mock build; in the real build the constructor throws
-  // a JS exception when no device is found.
+  // Default: first-found device (like TlFactory.CreateFirstDevice).
+  // Throws a JS exception when no device was found.
   explicit CameraWrap(const Napi::CallbackInfo& info);
   ~CameraWrap() override;
 
@@ -35,7 +29,7 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
   Napi::Value Close(const Napi::CallbackInfo& info);
   Napi::Value GetDeviceInfo(const Napi::CallbackInfo& info);
 
-  // Core grab (mirrors pypylon): explicit grab loop.
+  // Explicit grab loop (pypylon style):
   // startGrabbing()/stopGrabbing()/isGrabbing() + retrieveResult(timeoutMs)
   // -> { succeeded, width, height, pixelFormat, payloadSize, buffer }
   // or null on timeout. retrieveResult without grabbing throws.
@@ -70,24 +64,26 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
   Napi::Value GetEnumEntries(const Napi::CallbackInfo& info);
   Napi::Value ExecuteCommand(const Napi::CallbackInfo& info);
 
-  // grab() -> { buffer, width, height, pixelFormat, payloadSize,
+  // grab() -> { buffer, width, height, pixelType, pixelFormat, payloadSize,
   //              timestamp, frameNumber, chunk }
-  // Zero-copy: buffer with finalizer, no intermediate copy.
+  // Deterministic test frame with the camera's current geometry
+  // (Width/Height/PixelFormat from GenApi); buffer ownership moves into
+  // the JS Buffer via finalizer, no intermediate copy.
   Napi::Value Grab(const Napi::CallbackInfo& info);
 
   static void ThrowNodeError(Napi::Env env, const std::string& node,
                              NodeError err);
 
-   bool open_ = false;
-   bool grabbing_ = false;
-   uint64_t frameNumber_ = 0;
-   MockNodeMap nodemap_;
-#if !NODE_PYLON_MOCK
-  // Real camera; nullptr until successfully wired in the constructor.
-  // initOk_ controls whether the destructor must call ReleaseRef().
-   Pylon::CInstantCamera* camera_ = nullptr;
-   bool initOk_ = false;
-#endif
+  bool open_ = false;
+  bool grabbing_ = false;
+  uint64_t frameNumber_ = 0;
+  // Real camera, attached in the constructor. initOk_ tracks whether the
+  // destructor must release the lifecycle reference.
+  Pylon::CInstantCamera* camera_ = nullptr;
+  bool initOk_ = false;
+  // GenApi view of the open device (set on Open, cleared on Close).
+  GenApi::INodeMap* genapi_ = nullptr;
+  RealNodeMap nodemap_{nullptr};
 };
 
 }  // namespace node_pylon

@@ -1,4 +1,4 @@
-# Real-SDK build in GitHub Actions (no more mock).
+# Real-SDK build in GitHub Actions.
 # Builds the N-API module against Basler pylon SDK 26.09 and tests with the
 # SDK camera emulator (PYLON_CAMEMU) — no physical camera needed.
 # Matrix (mirrors pypylon platforms):
@@ -149,7 +149,6 @@ jobs:
           fi
           npm run sample:list
           npm run sample:grab
-          npm run sample:grab-mock
           npm run sample:grab-options
           npm run sample:nodemap
           npm run sample:grabattrs

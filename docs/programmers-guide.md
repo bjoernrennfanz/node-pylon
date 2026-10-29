@@ -1,7 +1,7 @@
 # Programmer's guide (mirrors pypylon)
 
-Chapter structure follows the pypylon programmer's guide; default is the
-real-SDK build 26.09 (mock only as an opt-in without SDK).
+Chapter structure follows the pypylon programmer's guide; the only
+supported build is the real-SDK build 26.09.
 
 1. Transport layer / enumerate devices — `enumerateDevices()` (empty without camera/emulator; `PYLON_CAMEMU=N` provides emulator devices)
 2. Open a camera — `TlFactory.GetInstance().CreateFirstDevice()` + `open()` (throws without a detected device)

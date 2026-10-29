@@ -1,6 +1,7 @@
 // RN static check: runs in CI without camera/SDK/compiler.
 // Verifies that docs + shared core + TurboModule spec + adapter sketches
-// + sample exist and that the core exposes the required symbols.
+// + sample exist, that the core exposes the required symbols, and that no
+// mock API remains in the RN surface.
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -30,7 +31,6 @@ test('rn-desktop: all files present', () => {
 test('rn-desktop: core without JSI/V8 includes (shareable)', () => {
   const h = fs.readFileSync(path.join(root, 'react-native/shared/pylon_core.h'), 'utf8');
   assert.ok(h.includes('EnumerateDevices'), 'core: EnumerateDevices missing');
-  assert.ok(h.includes('GrabMockFrame'), 'core: GrabMockFrame missing');
   assert.ok(h.includes('PylonVersion'), 'core: PylonVersion missing');
   assert.ok(!h.includes('napi.h'), 'core must not include napi.h');
   assert.ok(!h.includes('jsi/'), 'core must not include jsi');
@@ -40,6 +40,19 @@ test('rn-desktop: spec uses TurboModuleRegistry', () => {
   const spec = fs.readFileSync(path.join(root, 'react-native/specs/NativePylon.js'), 'utf8');
   assert.ok(spec.includes('TurboModuleRegistry'), 'spec: TurboModuleRegistry missing');
   assert.ok(spec.includes('codegenNativeModule') || spec.includes('TurboModule'), 'spec: TurboModule marker missing');
+});
+
+test('rn-desktop: no mock API in RN surface', () => {
+  for (const f of [
+    'react-native/shared/pylon_core.h',
+    'react-native/shared/pylon_core.cpp',
+    'react-native/specs/NativePylon.js',
+    'react-native/src/index.ts',
+    'react-native/sample/App.tsx',
+  ]) {
+    const text = fs.readFileSync(path.join(root, f), 'utf8');
+    assert.ok(!/mock/i.test(text), `${f} still mentions mock`);
+  }
 });
 
 test('rn-desktop: architecture doc mentions out-of-tree platforms', () => {

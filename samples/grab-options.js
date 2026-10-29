@@ -1,6 +1,7 @@
 'use strict';
-// Grab with CLI options (mirrors the pypylon grab sample, mock without camera).
+// Grab with CLI options (mirrors the pypylon grab sample).
 // Usage: node samples/grab-options.js [width] [height]
+// Uses the camera emulator when no hardware is attached (PYLON_CAMEMU=2).
 const pylon = require('../lib');
 
 const width = Number(process.argv[2] || 64);
@@ -10,23 +11,32 @@ if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || heigh
   process.exitCode = 2;
   return;
 }
-const buf = pylon.grabMock(width, height);
-console.log(`grab-options: ${width}x${height} Mono8, ${buf.length} bytes, mock=${pylon.isMock()}`);
-if (buf.length !== width * height) {
-  console.error(`length mismatch: got ${buf.length}, want ${width * height}`);
-  process.exitCode = 1;
-  return;
-}
-// Deterministic pattern (x+y)&0xFF as in src/addon.cc.
-let bad = -1;
-for (let y = 0; y < height && bad < 0; y += 1) {
-  for (let x = 0; x < width; x += 1) {
-    if (buf[y * width + x] !== ((x + y) & 0xff)) { bad = y * width + x; break; }
+
+pylon.initialize();
+try {
+  const cam = pylon.TlFactory.GetInstance().CreateFirstDevice();
+  cam.open();
+  try {
+    const wMin = cam.getIntegerMin('Width');
+    const wMax = cam.getIntegerMax('Width');
+    const hMin = cam.getIntegerMin('Height');
+    const hMax = cam.getIntegerMax('Height');
+    const w = Math.min(wMax, Math.max(wMin, width));
+    const h = Math.min(hMax, Math.max(hMin, height));
+    cam.setInteger('Width', w);
+    cam.setInteger('Height', h);
+    const g = cam.grab();
+    console.log(`grab-options: ${g.width}x${g.height} ${g.pixelFormat}, ${g.buffer.length} bytes`);
+    const expected = g.width * g.height * (g.pixelFormat === 'RGB8' ? 3 : g.pixelFormat === 'Mono12' ? 2 : 1);
+    if (g.buffer.length !== expected || g.buffer.length !== g.payloadSize) {
+      console.error(`payload mismatch: got ${g.buffer.length}, want ${expected}`);
+      process.exitCode = 1;
+    } else {
+      console.log(`payload ok, first bytes: ${Array.from(g.buffer.subarray(0, 8)).join(',')}`);
+    }
+  } finally {
+    cam.close();
   }
-}
-if (bad >= 0) {
-  console.error(`pattern mismatch at byte ${bad}`);
-  process.exitCode = 1;
-} else {
-  console.log(`pattern ok, first bytes: ${Array.from(buf.subarray(0, 8)).join(',')}`);
+} finally {
+  pylon.terminate();
 }

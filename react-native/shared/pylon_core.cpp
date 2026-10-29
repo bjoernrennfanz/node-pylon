@@ -1,34 +1,35 @@
-// Implementation of the shared core (mock). See pylon_core.h.
+// Implementation of the shared core (real pylon SDK only).
 #include "pylon_core.h"
+
+#include <pylon/PylonIncludes.h>
+#include <pylon/TlFactory.h>
 
 namespace node_pylon {
 namespace core {
 
 std::vector<DeviceInfo> EnumerateDevices() {
-#if defined(NODE_PYLON_USE_REAL)
-  // Real build: hook in Pylon::CTlFactory::EnumerateDevices here.
-  // Intentionally still empty until SDK origin/license is clarified (owner: management).
-  return {};
-#else
-  return {};
-#endif
-}
-
-bool GrabMockFrame(uint32_t width, uint32_t height, std::vector<uint8_t>& out) {
-  if (width == 0 || height == 0 || width > 4096 || height > 4096) return false;
-  out.resize(static_cast<size_t>(width) * height);
-  for (uint32_t y = 0; y < height; ++y)
-    for (uint32_t x = 0; x < width; ++x)
-      out[static_cast<size_t>(y) * width + x] = static_cast<uint8_t>((x + y) & 0xFF);
-  return true;
+  std::vector<DeviceInfo> out;
+  Pylon::DeviceInfoList_t devices;
+  const int count =
+      Pylon::CTlFactory::GetInstance().EnumerateDevices(devices);
+  for (int i = 0; i < count; ++i) {
+    const Pylon::CDeviceInfo& di = devices[i];
+    DeviceInfo info;
+    info.friendly_name = std::string(di.GetFriendlyName().c_str());
+    info.model_name = std::string(di.GetModelName().c_str());
+    info.serial_number = std::string(di.GetSerialNumber().c_str());
+    out.push_back(info);
+  }
+  return out;
 }
 
 const char* PylonVersion() {
-#if defined(NODE_PYLON_USE_REAL)
-  return "pylon-linked";  // Real build: Pylon::GetPylonVersionString()
-#else
-  return kPylonVersionMock;
-#endif
+  static std::string cached;
+  if (cached.empty()) {
+    const char* v = Pylon::GetPylonVersionString();
+    cached = v != nullptr ? v : "";
+  }
+  return cached.c_str();
 }
 
 }  // namespace core

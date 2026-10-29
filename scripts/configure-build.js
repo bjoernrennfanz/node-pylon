@@ -1,21 +1,15 @@
 'use strict';
-// Generates build-config.gypi (flavor-dependent build settings) before
-// node-gyp runs. Plain file generation instead of gyp conditions: this
-// gyp version evaluates target conditions before external variables
-// (command line, include files, command expansions) are visible, so a
-// condition-based flavor switch silently never matches. Generating the
-// file keeps the switch explicit and testable.
+// Generates build-config.gypi (SDK-dependent build settings) before node-gyp
+// runs. Plain file generation instead of gyp conditions: this gyp version
+// evaluates target conditions before external variables (command line,
+// include files, command expansions) are visible, so a condition-based
+// switch silently never matches. Generating the file keeps it explicit.
 //
-//   node scripts/configure-build.js          -> real SDK 26.09 (default)
-//   node scripts/configure-build.js --mock   -> mock opt-in
-//   NODE_PYLON_USE_MOCK=1 node scripts/configure-build.js -> mock opt-in
-// (CLI flag and env var are equivalent; the flag exists so npm scripts
-// work on Windows cmd.exe, which has no VAR=x command prefix.)
-//
-// Real mode ensures the SDK is present (runs scripts/download-pylon-sdk.sh
-// when PYLON_ROOT is missing) and records per-OS include/lib paths with
-// the exact 26.09 library names. Mock mode records no SDK paths at all.
-// Never prints PYLON_SDK_BASE_URL (handled only by the download script).
+// The build is always against the real Basler pylon SDK 26.09:
+// ensures the SDK is present (runs scripts/download-pylon-sdk.sh when
+// PYLON_ROOT is missing) and records per-OS include/lib paths with the
+// exact 26.09 library names. Never prints PYLON_SDK_BASE_URL (handled
+// only by the download script).
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -26,12 +20,6 @@ const OUT_FILE = path.join(REPO_ROOT, 'build-config.gypi');
 function fail(msg) {
   console.error(`error: ${msg}`);
   process.exit(1);
-}
-
-function isMock() {
-  if (process.argv.includes('--mock')) return true;
-  if (process.argv.includes('--real')) return false;
-  return process.env.NODE_PYLON_USE_MOCK === '1';
 }
 
 function runDownloadScript() {
@@ -58,7 +46,7 @@ function checkHeaders(pylonRoot, os) {
     os === 'win'
       ? ['Development/include/pylon/PylonIncludes.h']
       : os === 'mac'
-        ? ['Frameworks/pylon.framework/Headers/PylonIncludes.h']
+        ? ['Frameworks/pylon.framework/Versions/A/Headers/PylonIncludes.h']
         : ['include/pylon/PylonIncludes.h'];
   for (const rel of candidates) {
     if (fs.existsSync(path.join(pylonRoot, rel))) return;
@@ -74,7 +62,7 @@ function realConfig(pylonRoot) {
   // archives (linux x64/arm64, macOS universal framework, Windows x64).
   const winLib = (name) => `${pylonRoot}/Development/lib/x64/${name}`;
   const base = {
-    defines: ['NODE_PYLON_MOCK=0'],
+    defines: [],
     include_dirs: [],
     libraries: [],
   };
@@ -96,7 +84,8 @@ function realConfig(pylonRoot) {
     //   .pylon-sdk-farm/include/pylon -> <real Versions/A/Headers>
     //   .pylon-sdk-farm/Frameworks/pylon.framework/Versions/A/Libraries/* -> real files
     // so #include <pylon/...> resolves via plain -I and @rpath resolves via
-    // -rpath <farm>/Frameworks.
+    // -rpath <farm>/Frameworks. <Base/...>/<GenApi/...> siblings resolve via
+    // the real Headers/GenICam dir (mirrors Basler's HEADER_SEARCH_PATHS).
     const farmRoot = path.join(REPO_ROOT, '.pylon-sdk-farm');
     const farmInclude = path.join(farmRoot, 'include');
     const farmFwLib = path.join(
@@ -119,11 +108,7 @@ function realConfig(pylonRoot) {
       const src = fs.realpathSync(path.join(srcLib, entry));
       fs.symlinkSync(src, path.join(farmFwLib, entry));
     }
-    base.include_dirs.push(farmInclude);
-    // The SDK umbrella header includes siblings as <Base/...>/<GenApi/...>,
-    // which live under Headers/GenICam on macOS (flat Headers/ has no
-    // pylon/ subdir, hence the farm above for <pylon/...>).
-    base.include_dirs.push(path.join(srcHeaders, 'GenICam'));
+    base.include_dirs.push(farmInclude, path.join(srcHeaders, 'GenICam'));
     base.libraries.push(`-L${farmFwLib}`);
     for (const lib of [
       'pylonbase', 'pylonutility',
@@ -150,8 +135,8 @@ function realConfig(pylonRoot) {
 }
 
 // C++ exceptions + RTTI for gcc/clang (node-gyp make generator ignores
-// xcode_settings and defaults both off; the pylon headers and the mock
-// translation units need them). MSVC is covered by binding.gyp.
+// xcode_settings and defaults both off; the pylon headers need them).
+// MSVC is covered by binding.gyp.
 function addExceptionFlags(config) {
   if (process.platform === 'win32') return;
   config['cflags!'] = ['-fno-exceptions', '-fno-rtti'];
@@ -160,22 +145,18 @@ function addExceptionFlags(config) {
 }
 
 function main() {
-  let config;
-  if (isMock()) {
-    config = { defines: ['NODE_PYLON_MOCK=1'] };
-    addExceptionFlags(config);
-    console.log('build flavor: mock (explicit opt-in, no pylon SDK)');
-  } else {
-    let root = resolvePylonRoot();
-    const os = process.platform === 'win32' ? 'win' : process.platform === 'darwin' ? 'mac' : 'linux';
-    if (!fs.existsSync(path.join(root, '.pylon-sdk-ready')) && !process.env.PYLON_ROOT) {
-      runDownloadScript();
-      root = resolvePylonRoot();
-    }
-    checkHeaders(root, os);
-    config = realConfig(root);
-    console.log(`build flavor: real pylon SDK 26.09 (PYLON_ROOT=${root})`);
+  if (process.argv.includes('--mock') || process.env.NODE_PYLON_USE_MOCK === '1') {
+    fail('only the real pylon SDK 26.09 build exists; offline fake-device builds were removed.');
   }
+  let root = resolvePylonRoot();
+  const os = process.platform === 'win32' ? 'win' : process.platform === 'darwin' ? 'mac' : 'linux';
+  if (!fs.existsSync(path.join(root, '.pylon-sdk-ready')) && !process.env.PYLON_ROOT) {
+    runDownloadScript();
+    root = resolvePylonRoot();
+  }
+  checkHeaders(root, os);
+  const config = realConfig(root);
+  console.log(`build flavor: real pylon SDK 26.09 (PYLON_ROOT=${root})`);
   fs.writeFileSync(OUT_FILE, `${JSON.stringify(config, null, 2)}\n`);
   console.log(`wrote ${path.basename(OUT_FILE)}`);
 }

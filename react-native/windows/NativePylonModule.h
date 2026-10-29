@@ -11,8 +11,7 @@
 //   NativePylonModule(std::shared_ptr<facebook::react::CallInvoker> jsInvoker);
 //   std::string getVersion(facebook::jsi::Runtime& rt);
 //   std::string getPylonVersion(facebook::jsi::Runtime& rt);
-//   bool isMock(facebook::jsi::Runtime& rt);
-//   // ... enumerateDevices / grabMock delegate to node_pylon::core::*
+//   // ... enumerateDevices delegates to node_pylon::core::*
 // };
 // 
 // Registration in the package provider (sketch):

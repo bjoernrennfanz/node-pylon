@@ -1,7 +1,7 @@
 'use strict';
 // Grab sample mirroring pypylon `grab.py` (simplified):
 // TlFactory -> FirstDevice -> Open -> StartGrabbing -> RetrieveResult -> Close.
-// Runs against a real camera (real build) or the mock camera (mock build).
+// Uses the camera emulator when no hardware is attached (PYLON_CAMEMU=2).
 const pylon = require('../lib');
 
 const NUM_FRAMES = Number(process.argv[2] || 5);
@@ -12,7 +12,7 @@ try {
   console.log(`devices found: ${devices.length}`);
   for (const d of devices) console.log(' -', JSON.stringify(d));
   if (devices.length === 0) {
-    console.error('No camera found (neither real nor mock).');
+    console.error('No camera found (no hardware, no emulator).');
     process.exit(1);
   }
 

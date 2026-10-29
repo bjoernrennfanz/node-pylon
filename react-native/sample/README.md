@@ -1,6 +1,7 @@
 # RN desktop sample
 
-Working sample without a camera (mock fallback in `react-native/src/index.ts`).
+Sample against the real pylon SDK (requires the native TurboModule;
+no fake values without it).
 
 ## Start per platform (out-of-tree)
 
@@ -22,13 +23,7 @@ Metro resolves `NativePylon.windows.js` / `.macos.js` next to
 
 ## What the sample shows
 
-`App.tsx`: two buttons — "list version + devices" (`enumerateDevices`,
-mock: `[]`) and "grab mock" (64x48 Mono8, deterministic gradient, base64).
-With a native TurboModule the values come from `pylon_core_*`; without a native
-module the JS mock kicks in — the sample runs in both cases.
-
-## Real camera operation
-
-Build the core behind `NODE_PYLON_USE_REAL` against `PYLON_ROOT`, then
-`enumerateDevices()` maps to `CTlFactory` and `grabMock()` maps to a
-`RetrieveResult` promise via `CallInvoker` (never blocks the JS loop).
+`App.tsx`: "list version + devices" (`enumerateDevices()` via the
+`pylon_core_*` shared core). With a camera or the SDK emulator
+(`PYLON_CAMEMU=2`) attached, devices are listed; otherwise the list is
+empty.

@@ -2,8 +2,7 @@
 
 Native Node.js binding for the Basler **pylon C++ API** (GenICam; **without DataProcessing** in the MVP),
 built with **node-addon-api / N-API** — no SWIG, no NAN.
-Default is the real build against **pylon SDK 26.09**; the mock is only
-an explicit opt-in for offline work.
+Always builds against the real **pylon SDK 26.09**.
 Target platforms: Windows x64, Linux x64/arm64, macOS (same as pypylon);
 React Native out-of-tree (Windows/macOS/Linux), see `docs/rn-architecture.md`.
 
@@ -13,23 +12,25 @@ Branch strategy: `master` = legacy generator (C#/VS2015),
 ## Target layout (mirrors pypylon)
 
 ```text
-src/            N-API sources (addon.cc, mock_camera/nodemap, pylon_lifecycle)
-scripts/        download-pylon-sdk.sh (SDK fetch via PYLON_SDK_BASE_URL secret)
-lib/            JS facade (require('node-pylon') -> lib/index.js; mock.js opt-in only)
+src/            N-API sources (addon.cc, camera_wrap, node_map, pylon_lifecycle)
+scripts/        download-pylon-sdk.sh (SDK fetch via PYLON_SDK_BASE_URL secret),
+                configure-build.js (build-config.gypi generator for node-gyp)
+lib/            JS facade (require('node-pylon') -> lib/index.js)
 types/          TypeScript types (*.d.ts)
 samples/        list-devices.js, grab.js (mirrors pypylon grab.py), grab-options.js,
-                nodemap-params.js, grab-attributes.js, grab-mock.js (legacy)
-test/           Smoke + API-surface + nodemap/grab tests (real SDK, emulator)
+                nodemap-params.js, grab-attributes.js
+test/pylon/     TlFactory, InstantCamera, device info, grab results (emulator-driven)
+test/genicam/   nodemap/parameter API per GenICam type (emulator-driven)
 docs/           Docs mirroring the pypylon programmers_guide (installation, quickstart, API, CI)
-binding.gyp     node-gyp build (Node 20/22, N-API 8, C++17, real-SDK default)
-CMakeLists.txt  CMake alternative (also real-SDK default)
+binding.gyp     node-gyp build (Node 20/22, N-API 8, C++17, real SDK only)
+CMakeLists.txt  CMake alternative (real SDK only)
 ```
 
 ## Prerequisites
 
 - Node.js 20 or 22 (LTS), `npm`
 - C++17 toolchain only for local builds: MSVC 2022 / GCC 11+ / Clang 14+
-- Real build (default): `PYLON_SDK_BASE_URL` environment variable
+- `PYLON_SDK_BASE_URL` environment variable
   (agent secret locally, GitHub Actions secret in CI) — the download script
   fetches pylon SDK 26.09 per OS/arch into `.pylon-sdk/`; no camera needed
   (tests use the SDK emulator via `PYLON_CAMEMU`)
@@ -37,25 +38,21 @@ CMakeLists.txt  CMake alternative (also real-SDK default)
 ## Build
 
 ```bash
-npm install   # SDK download (secret) + native real build
+npm install   # SDK download (secret) + native build
 npm run rebuild  # rebuild (SDK reused from cache when present)
 
-# Mock only as an explicit opt-in (no SDK, offline work):
-npm run rebuild:mock
-NODE_PYLON_USE_MOCK=1 npm test
-
-# CMake alternative (real default; mock: -DNODE_PYLON_USE_MOCK=ON):
+# CMake alternative:
 # sh scripts/download-pylon-sdk.sh
 # cmake -S . -B build-cmake && cmake --build build-cmake
 ```
 
 Result: `build/Release/node_pylon.node`.
 
-## CI (GitHub Actions — real SDK, no mock gate)
+## CI (GitHub Actions — real SDK)
 
 The pipeline (`.github/workflows/ci.yml`) builds against the real SDK 26.09:
 matrix **Linux x64/arm64 + Windows x64 + macOS x Node 20/22**,
-steps secret check → SDK download → `npm run rebuild:real` →
+steps secret check → SDK download → configure → `node-gyp rebuild` →
 leak check → `npm test` (with `PYLON_CAMEMU=2`) → samples
 (+ `.node` artifact per combination; Windows including runtime DLLs).
 Releases with real prebuilds via `.github/workflows/release.yml` on tag `v*`.
@@ -82,7 +79,7 @@ node samples/grab-options.js 100 80  # frame with width/height
 const pylon = require('node-pylon');
 pylon.initialize();
 try {
-  console.log(pylon.version(), pylon.pylonVersion(), 'mock:', pylon.isMock());
+  console.log(pylon.version(), pylon.pylonVersion());
   const devices = pylon.TlFactory.GetInstance().EnumerateDevices();
   const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
   camera.open();
@@ -99,7 +96,7 @@ try {
 Without a camera/emulator, `CreateFirstDevice` throws a JS exception;
 `retrieveResult` returns `null` on timeout.
 
-## React Native desktop (mock state, real wiring follows)
+## React Native desktop (real SDK core, JSI adapters follow)
 
 Out-of-tree per https://reactnative.dev/docs/out-of-tree-platforms:
 `react-native-windows` (Microsoft), `react-native-macos` (Microsoft),
@@ -107,8 +104,8 @@ Linux via community port (fallback: Electron + Node addon from this repo).
 Shared C++ core `react-native/shared/pylon_core.{h,cpp}` — write once,
 adapt from N-API (`src/addon.cc`) and JSI/TurboModule only (no double wrapping).
 Spec: `react-native/specs/NativePylon.js`, facade: `react-native/src/index.ts`
-(with mock fallback, the sample also runs without a native module), sample:
-`react-native/sample/App.tsx`. Details: `docs/rn-architecture.md`.
+(requires the native module), sample: `react-native/sample/App.tsx`.
+Details: `docs/rn-architecture.md`.
 
 ```bash
 npm run test:rn   # RN static check (docs/core/spec/adapters/sample)

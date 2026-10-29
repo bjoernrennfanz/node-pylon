@@ -1,7 +1,6 @@
-// InstantCamera N-API wrapper: implementation (mock).
-// Covers the grab loop (startGrabbing/retrieveResult/...) plus optional
-// real pylon wiring (NODE_PYLON_MOCK=0). Errors -> JS exceptions.
-#include "mock_camera.h"
+// InstantCamera N-API wrapper: implementation (real pylon SDK only).
+// N-API rules: ObjectWrap, no V8 internals, errors as JS exceptions.
+#include "camera_wrap.h"
 
 #include <chrono>
 #include <cstring>
@@ -13,8 +12,10 @@ namespace node_pylon {
 
 Napi::FunctionReference CameraWrap::constructor;
 
-static std::string RequireStringArg(const Napi::CallbackInfo& info, size_t idx,
-                                    bool* ok) {
+namespace {
+
+std::string RequireStringArg(const Napi::CallbackInfo& info, size_t idx,
+                             bool* ok) {
   if (idx >= info.Length() || !info[idx].IsString()) {
     *ok = false;
     return "";
@@ -22,6 +23,25 @@ static std::string RequireStringArg(const Napi::CallbackInfo& info, size_t idx,
   *ok = true;
   return info[idx].As<Napi::String>().Utf8Value();
 }
+
+std::string DescribePixelType(const Pylon::CGrabResultPtr& ptr) {
+  // Hand-mapped common formats (stable enum values, no dependency on
+  // optional mapper helpers in the SDK).
+  switch (ptr->GetPixelType()) {
+    case Pylon::PixelType_Mono8:
+      return "Mono8";
+    case Pylon::PixelType_Mono12:
+    case Pylon::PixelType_Mono12packed:
+      return "Mono12";
+    case Pylon::PixelType_RGB8packed:
+    case Pylon::PixelType_BGR8packed:
+      return "RGB8";
+    default:
+      return "Unknown";
+  }
+}
+
+}  // namespace
 
 void CameraWrap::ThrowNodeError(Napi::Env env, const std::string& node,
                                 NodeError err) {
@@ -39,14 +59,14 @@ void CameraWrap::ThrowNodeError(Napi::Env env, const std::string& node,
 void CameraWrap::Init(Napi::Env env, Napi::Object exports) {
   Napi::Function ctor = DefineClass(
       env, "InstantCamera",
-       {InstanceMethod("isOpen", &CameraWrap::IsOpen),
-        InstanceMethod("open", &CameraWrap::Open),
-        InstanceMethod("close", &CameraWrap::Close),
-        InstanceMethod("getDeviceInfo", &CameraWrap::GetDeviceInfo),
-        InstanceMethod("startGrabbing", &CameraWrap::StartGrabbing),
-        InstanceMethod("stopGrabbing", &CameraWrap::StopGrabbing),
-        InstanceMethod("isGrabbing", &CameraWrap::IsGrabbing),
-        InstanceMethod("retrieveResult", &CameraWrap::RetrieveResult),
+      {InstanceMethod("isOpen", &CameraWrap::IsOpen),
+       InstanceMethod("open", &CameraWrap::Open),
+       InstanceMethod("close", &CameraWrap::Close),
+       InstanceMethod("getDeviceInfo", &CameraWrap::GetDeviceInfo),
+       InstanceMethod("startGrabbing", &CameraWrap::StartGrabbing),
+       InstanceMethod("stopGrabbing", &CameraWrap::StopGrabbing),
+       InstanceMethod("isGrabbing", &CameraWrap::IsGrabbing),
+       InstanceMethod("retrieveResult", &CameraWrap::RetrieveResult),
        InstanceMethod("getNodeType", &CameraWrap::GetNodeType),
        InstanceMethod("isReadable", &CameraWrap::IsReadable),
        InstanceMethod("isWritable", &CameraWrap::IsWritable),
@@ -78,21 +98,15 @@ CameraWrap::CameraWrap(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   try {
     lifecycle::EnsureInitialized();
-#if !NODE_PYLON_MOCK
-    // TlFactory::CreateFirstDevice — throws without a connected camera.
+    // TlFactory::CreateFirstDevice throws without an attached device.
     camera_ = new Pylon::CInstantCamera(
         Pylon::CTlFactory::GetInstance().CreateFirstDevice());
     initOk_ = true;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+  } catch (const Pylon::GenericException& ex) {
     lifecycle::ReleaseRef();
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return;
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     lifecycle::ReleaseRef();
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return;
@@ -100,7 +114,6 @@ CameraWrap::CameraWrap(const Napi::CallbackInfo& info)
 }
 
 CameraWrap::~CameraWrap() {
-#if !NODE_PYLON_MOCK
   if (camera_ != nullptr) {
     try {
       if (camera_->IsGrabbing()) camera_->StopGrabbing();
@@ -110,17 +123,13 @@ CameraWrap::~CameraWrap() {
     }
     delete camera_;
     camera_ = nullptr;
+    genapi_ = nullptr;
+    nodemap_.Rebind(nullptr);
   }
   if (initOk_) lifecycle::ReleaseRef();
-#else
-  lifecycle::ReleaseRef();
-#endif
 }
 
 Napi::Value CameraWrap::IsOpen(const Napi::CallbackInfo& info) {
-#if NODE_PYLON_MOCK
-  return Napi::Boolean::New(info.Env(), open_);
-#else
   bool v = open_;
   try {
     if (camera_ != nullptr) v = camera_->IsOpen();
@@ -128,15 +137,11 @@ Napi::Value CameraWrap::IsOpen(const Napi::CallbackInfo& info) {
     v = open_;
   }
   return Napi::Boolean::New(info.Env(), v);
-#endif
 }
 
 Napi::Value CameraWrap::Open(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   try {
-#if NODE_PYLON_MOCK
-    open_ = true;
-#else
     if (camera_ == nullptr) {
       Napi::Error::New(env, "InstantCamera not initialized")
           .ThrowAsJavaScriptException();
@@ -144,15 +149,12 @@ Napi::Value CameraWrap::Open(const Napi::CallbackInfo& info) {
     }
     if (!camera_->IsOpen()) camera_->Open();
     open_ = true;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+    genapi_ = &camera_->GetNodeMap();
+    nodemap_.Rebind(genapi_);
+  } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
   }
@@ -162,25 +164,18 @@ Napi::Value CameraWrap::Open(const Napi::CallbackInfo& info) {
 Napi::Value CameraWrap::Close(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   try {
-#if NODE_PYLON_MOCK
-    open_ = false;
-    grabbing_ = false;
-#else
     if (camera_ != nullptr) {
       if (camera_->IsGrabbing()) camera_->StopGrabbing();
       if (camera_->IsOpen()) camera_->Close();
     }
     grabbing_ = false;
     open_ = false;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+    genapi_ = nullptr;
+    nodemap_.Rebind(nullptr);
+  } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
   }
@@ -189,17 +184,6 @@ Napi::Value CameraWrap::Close(const Napi::CallbackInfo& info) {
 
 Napi::Value CameraWrap::GetDeviceInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-#if NODE_PYLON_MOCK
-  std::string friendly, model, serial, vendor, cls;
-  nodemap_.GetDeviceInfo(&friendly, &model, &serial, &vendor, &cls);
-  Napi::Object o = Napi::Object::New(env);
-  o.Set("friendlyName", friendly);
-  o.Set("modelName", model);
-  o.Set("serialNumber", serial);
-  o.Set("vendorName", vendor);
-  o.Set("deviceClass", cls);
-  return o;
-#else
   try {
     if (camera_ == nullptr) {
       Napi::Error::New(env, "InstantCamera not initialized")
@@ -222,23 +206,14 @@ Napi::Value CameraWrap::GetDeviceInfo(const Napi::CallbackInfo& info) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
   }
-#endif
 }
 
-// --- Grab loop ---------------------------------------------------------------
+// --- Grab loop (pypylon style) ---------------------------------------------
 
 Napi::Value CameraWrap::StartGrabbing(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   (void)info;
   try {
-#if NODE_PYLON_MOCK
-    if (!open_) {
-      Napi::Error::New(env, "Camera is not open. Call open() first.")
-          .ThrowAsJavaScriptException();
-      return env.Undefined();
-    }
-    grabbing_ = true;
-#else
     if (camera_ == nullptr || !camera_->IsOpen()) {
       Napi::Error::New(env, "Camera is not open. Call open() first.")
           .ThrowAsJavaScriptException();
@@ -248,15 +223,10 @@ Napi::Value CameraWrap::StartGrabbing(const Napi::CallbackInfo& info) {
       camera_->StartGrabbing(Pylon::GrabStrategy_LatestImageOnly);
     }
     grabbing_ = true;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+  } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
   }
@@ -267,20 +237,12 @@ Napi::Value CameraWrap::StopGrabbing(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   (void)info;
   try {
-#if NODE_PYLON_MOCK
-    grabbing_ = false;
-#else
     if (camera_ != nullptr && camera_->IsGrabbing()) camera_->StopGrabbing();
     grabbing_ = false;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+  } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Undefined();
   }
@@ -288,9 +250,6 @@ Napi::Value CameraWrap::StopGrabbing(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value CameraWrap::IsGrabbing(const Napi::CallbackInfo& info) {
-#if NODE_PYLON_MOCK
-  return Napi::Boolean::New(info.Env(), grabbing_);
-#else
   bool v = grabbing_;
   try {
     if (camera_ != nullptr) v = camera_->IsGrabbing();
@@ -298,31 +257,10 @@ Napi::Value CameraWrap::IsGrabbing(const Napi::CallbackInfo& info) {
     v = grabbing_;
   }
   return Napi::Boolean::New(info.Env(), v);
-#endif
 }
 
-#if !NODE_PYLON_MOCK
-static std::string DescribePixelType(
-    const Pylon::CGrabResultPtr& ptr) {
-  // Hard-wired mapping of the most common formats (stable enum values,
-  // no dependency on optional mapper helpers in the SDK).
-  switch (ptr->GetPixelType()) {
-    case Pylon::PixelType_Mono8:
-      return "Mono8";
-    case Pylon::PixelType_Mono12:
-    case Pylon::PixelType_Mono12packed:
-      return "Mono12";
-    case Pylon::PixelType_RGB8packed:
-    case Pylon::PixelType_BGR8packed:
-      return "RGB8";
-    default:
-      return "Unknown";
-  }
-}
-#endif
-
-// retrieveResult(timeoutMs) -> Grab-Objekt oder null bei Timeout.
-// Felder: succeeded, width, height, pixelFormat, payloadSize, buffer.
+// retrieveResult(timeoutMs) -> grab object or null on timeout.
+// Fields: succeeded, width, height, pixelFormat, payloadSize, buffer.
 Napi::Value CameraWrap::RetrieveResult(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   uint32_t timeoutMs = 5000;
@@ -330,36 +268,6 @@ Napi::Value CameraWrap::RetrieveResult(const Napi::CallbackInfo& info) {
     timeoutMs = info[0].As<Napi::Number>().Uint32Value();
   }
   try {
-#if NODE_PYLON_MOCK
-    if (!grabbing_) {
-      Napi::Error::New(env, "Not grabbing. Call startGrabbing() first.")
-          .ThrowAsJavaScriptException();
-      return env.Null();
-    }
-    int64_t w = 0, h = 0;
-    std::string pixelFormat;
-    nodemap_.GetImageGeometry(&w, &h, &pixelFormat);
-    int bpp = MockNodeMap::BytesPerPixel(pixelFormat);
-    size_t bytes = static_cast<size_t>(w) * static_cast<size_t>(h) *
-                   static_cast<size_t>(bpp);
-    auto* data = new uint8_t[bytes];
-    uint64_t frame = frameNumber_++;
-    for (size_t i = 0; i < bytes; ++i) {
-      data[i] = static_cast<uint8_t>((i + frame) & 0xFF);
-    }
-    Napi::Object out = Napi::Object::New(env);
-    out.Set("succeeded", true);
-    out.Set("width", Napi::Number::New(env, static_cast<double>(w)));
-    out.Set("height", Napi::Number::New(env, static_cast<double>(h)));
-    // pixelType (pypylon-Naming) + pixelFormat (explizit).
-    out.Set("pixelType", Napi::String::New(env, pixelFormat));
-    out.Set("pixelFormat", Napi::String::New(env, pixelFormat));
-    out.Set("payloadSize", Napi::Number::New(env, static_cast<double>(bytes)));
-    out.Set("buffer", Napi::Buffer<uint8_t>::New(
-                          env, data, bytes,
-                          [](Napi::Env /*e*/, uint8_t* p) { delete[] p; }));
-    return out;
-#else
     if (camera_ == nullptr || !camera_->IsGrabbing()) {
       Napi::Error::New(env, "Not grabbing. Call startGrabbing() first.")
           .ThrowAsJavaScriptException();
@@ -403,15 +311,10 @@ Napi::Value CameraWrap::RetrieveResult(const Napi::CallbackInfo& info) {
       }
     }
     return out;
-#endif
-  }
-#if !NODE_PYLON_MOCK
-  catch (const Pylon::GenericException& ex) {
+  } catch (const Pylon::GenericException& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Null();
-  }
-#endif
-  catch (const std::exception& ex) {
+  } catch (const std::exception& ex) {
     Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
     return env.Null();
   }
@@ -424,6 +327,10 @@ Napi::Value CameraWrap::GetNodeType(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "getNodeType(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   NodeType t;
@@ -444,6 +351,10 @@ Napi::Value CameraWrap::IsReadable(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   bool v = false;
   NodeError e = nodemap_.IsReadable(name, &v);
   if (e != NodeError::kOk) {
@@ -460,6 +371,10 @@ Napi::Value CameraWrap::IsWritable(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "isWritable(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   bool v = false;
@@ -480,6 +395,10 @@ Napi::Value CameraWrap::GetInteger(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   int64_t v = 0;
   NodeError e = nodemap_.GetInteger(name, &v);
   if (e != NodeError::kOk) {
@@ -496,6 +415,10 @@ Napi::Value CameraWrap::SetInteger(const Napi::CallbackInfo& info) {
   if (!ok || info.Length() < 2 || !info[1].IsNumber()) {
     Napi::TypeError::New(env, "setInteger(name: string, value: number) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   int64_t v = info[1].As<Napi::Number>().Int64Value();
@@ -516,6 +439,10 @@ Napi::Value CameraWrap::GetIntegerMin(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   int64_t mn = 0, mx = 0;
   NodeError e = nodemap_.GetIntegerLimits(name, &mn, &mx);
   if (e != NodeError::kOk) {
@@ -532,6 +459,10 @@ Napi::Value CameraWrap::GetIntegerMax(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "getIntegerMax(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   int64_t mn = 0, mx = 0;
@@ -552,6 +483,10 @@ Napi::Value CameraWrap::TryMax(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   double v = 0;
   NodeError e = nodemap_.TryMax(name, &v);
   if (e != NodeError::kOk) {
@@ -568,6 +503,10 @@ Napi::Value CameraWrap::GetFloat(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "getFloat(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   double v = 0;
@@ -588,6 +527,10 @@ Napi::Value CameraWrap::SetFloat(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   double v = info[1].As<Napi::Number>().DoubleValue();
   NodeError e = nodemap_.SetFloat(name, v);
   if (e != NodeError::kOk) {
@@ -604,6 +547,10 @@ Napi::Value CameraWrap::GetFloatMin(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "getFloatMin(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   double mn = 0, mx = 0;
@@ -624,6 +571,10 @@ Napi::Value CameraWrap::GetFloatMax(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   double mn = 0, mx = 0;
   NodeError e = nodemap_.GetFloatLimits(name, &mn, &mx);
   if (e != NodeError::kOk) {
@@ -642,6 +593,10 @@ Napi::Value CameraWrap::GetBoolean(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   bool v = false;
   NodeError e = nodemap_.GetBoolean(name, &v);
   if (e != NodeError::kOk) {
@@ -656,8 +611,13 @@ Napi::Value CameraWrap::SetBoolean(const Napi::CallbackInfo& info) {
   bool ok = false;
   std::string name = RequireStringArg(info, 0, &ok);
   if (!ok || info.Length() < 2 || !info[1].IsBoolean()) {
-    Napi::TypeError::New(env, "setBoolean(name: string, value: boolean) expected")
+    Napi::TypeError::New(env,
+                          "setBoolean(name: string, value: boolean) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   bool v = info[1].As<Napi::Boolean>().Value();
@@ -678,6 +638,10 @@ Napi::Value CameraWrap::GetString(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   std::string v;
   NodeError e = nodemap_.GetString(name, &v);
   if (e != NodeError::kOk) {
@@ -694,6 +658,10 @@ Napi::Value CameraWrap::SetString(const Napi::CallbackInfo& info) {
   if (!ok || info.Length() < 2 || !info[1].IsString()) {
     Napi::TypeError::New(env, "setString(name: string, value: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   std::string v = info[1].As<Napi::String>().Utf8Value();
@@ -714,6 +682,10 @@ Napi::Value CameraWrap::GetEnum(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   std::string v;
   NodeError e = nodemap_.GetEnum(name, &v);
   if (e != NodeError::kOk) {
@@ -730,6 +702,10 @@ Napi::Value CameraWrap::SetEnum(const Napi::CallbackInfo& info) {
   if (!ok || info.Length() < 2 || !info[1].IsString()) {
     Napi::TypeError::New(env, "setEnum(name: string, value: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   std::string v = info[1].As<Napi::String>().Utf8Value();
@@ -750,6 +726,10 @@ Napi::Value CameraWrap::GetEnumEntries(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
+    return env.Null();
+  }
   std::vector<std::string> entries;
   NodeError e = nodemap_.GetEnumEntries(name, &entries);
   if (e != NodeError::kOk) {
@@ -758,7 +738,7 @@ Napi::Value CameraWrap::GetEnumEntries(const Napi::CallbackInfo& info) {
   }
   Napi::Array arr = Napi::Array::New(env, entries.size());
   for (size_t i = 0; i < entries.size(); ++i) {
-    arr.Set(i, Napi::String::New(env, entries[i]));
+    arr.Set(static_cast<uint32_t>(i), Napi::String::New(env, entries[i]));
   }
   return arr;
 }
@@ -770,6 +750,10 @@ Napi::Value CameraWrap::ExecuteCommand(const Napi::CallbackInfo& info) {
   if (!ok) {
     Napi::TypeError::New(env, "executeCommand(name: string) expected")
         .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  if (!open_) {
+    ThrowNodeError(env, "", NodeError::kNotOpen);
     return env.Null();
   }
   NodeError e = nodemap_.Execute(name);
@@ -784,16 +768,24 @@ Napi::Value CameraWrap::ExecuteCommand(const Napi::CallbackInfo& info) {
 
 Napi::Value CameraWrap::Grab(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+  if (!open_) {
+    Napi::Error::New(env, "Camera is not open. Call open() first.")
+        .ThrowAsJavaScriptException();
+    return env.Null();
+  }
   int64_t w = 0, h = 0;
   std::string pixelFormat;
-  nodemap_.GetImageGeometry(&w, &h, &pixelFormat);
-  int bpp = MockNodeMap::BytesPerPixel(pixelFormat);
+  NodeError e = nodemap_.GetImageGeometry(&w, &h, &pixelFormat);
+  if (e != NodeError::kOk) {
+    ThrowNodeError(env, "Width/Height/PixelFormat", e);
+    return env.Null();
+  }
+  int bpp = RealNodeMap::BytesPerPixel(pixelFormat);
   size_t bytes = static_cast<size_t>(w) * static_cast<size_t>(h) *
                  static_cast<size_t>(bpp);
   auto* data = new uint8_t[bytes];
   uint64_t frame = frameNumber_++;
-  // Deterministic pattern: (x + y + frame) & 0xFF per byte.
-  // For RGB8 every channel gets the same value (mock, naive-debayer capable).
+  // Deterministic test pattern: (i + frame) & 0xFF per byte.
   for (size_t i = 0; i < bytes; ++i) {
     data[i] = static_cast<uint8_t>((i + frame) & 0xFF);
   }
@@ -810,7 +802,6 @@ Napi::Value CameraWrap::Grab(const Napi::CallbackInfo& info) {
   out.Set("buffer", buf);
   out.Set("width", Napi::Number::New(env, static_cast<double>(w)));
   out.Set("height", Napi::Number::New(env, static_cast<double>(h)));
-  // pixelType (pypylon naming) mirrors pixelFormat, like retrieveResult.
   out.Set("pixelType", Napi::String::New(env, pixelFormat));
   out.Set("pixelFormat", Napi::String::New(env, pixelFormat));
   out.Set("payloadSize", Napi::Number::New(env, static_cast<double>(bytes)));
