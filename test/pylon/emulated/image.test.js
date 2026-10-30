@@ -108,7 +108,9 @@ describe('pylon image attributes', () => {
     if (!requireDevice(t)) return;
     pylon.initialize();
     try {
-      const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
+      // pypylon: InstantCamera(factory.CreateFirstDevice()); our facade
+      // equivalent is createFirstCamera().
+      const camera = pylon.createFirstCamera();
       camera.open();
       try {
         camera.startGrabbing();

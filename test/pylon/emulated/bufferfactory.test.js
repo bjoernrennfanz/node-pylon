@@ -106,8 +106,12 @@ describe('pylon BufferFactory', () => {
       cam.stopGrabbing();
       for (const result of results) result.release();
       results.length = 0;
-      // The holdable results carry zero-copy buffer views that share
-      // ownership of the SDK buffers, so the frees land on GC.
+      // pypylon frees buffers when the device is destroyed: the driver may
+      // retain buffers until the stream is torn down, so close the camera
+      // before observing frees. Zero-copy views share SDK buffer ownership,
+      // so remaining frees land on GC.
+      cam.setBufferFactory(null);
+      cam.close();
       if (typeof global.gc !== 'function') {
         t.skip('needs --expose-gc to observe buffer frees');
         return;

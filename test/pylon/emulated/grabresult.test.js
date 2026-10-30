@@ -91,9 +91,17 @@ describe('grab result', () => {
         assert.ok(grab.getPayloadSize() > 0);
         assert.ok(grab.getBufferSize() >= grab.getPayloadSize());
         assert.ok(grab.getImageSize() > 0);
-        assert.ok(grab.getTimestamp() > 0);
+        // pypylon documents: CamEmu reports 0 timestamp for all frames
+        // (and 0 as placeholder BlockID since pylon 12.4), so identifiers
+        // are asserted non-decreasing, not positive, like upstream.
+        assert.ok(grab.getTimestamp() >= 0);
         assert.ok(grab.getBlockId() >= 0);
         assert.ok(grab.getImageNumber() >= 0);
+        const second = cam.retrieveGrabResult(10000);
+        assert.ok(second !== null);
+        assert.ok(second.getTimestamp() >= grab.getTimestamp());
+        assert.ok(second.getBlockId() >= grab.getBlockId());
+        assert.ok(second.getImageNumber() >= grab.getImageNumber());
       } finally {
         cam.stopGrabbing();
       }

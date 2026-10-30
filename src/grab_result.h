@@ -78,7 +78,9 @@ class GrabResultWrap : public Napi::ObjectWrap<GrabResultWrap> {
   Napi::Value GetStride(const Napi::CallbackInfo& info);
   // Zero-copy views over the grab buffer. getBuffer() returns a Node Buffer,
   // getArray() a Uint8Array, getMemoryView() a DataView over the same
-  // memory; all share the grab lifetime (no memcpy).
+  // memory; all share the grab lifetime (no memcpy). The first view is
+  // created lazily and cached, so a fresh result stays the unique owner
+  // (IsUnique() true, like pypylon) until a view is taken.
   Napi::Value GetBuffer(const Napi::CallbackInfo& info);
   Napi::Value GetArray(const Napi::CallbackInfo& info);
   Napi::Value GetMemoryView(const Napi::CallbackInfo& info);
@@ -91,8 +93,17 @@ class GrabResultWrap : public Napi::ObjectWrap<GrabResultWrap> {
   // Plain-object snapshot for property-style access (width, height,
   // pixelType, payloadSize, timestamp, ... plus buffer).
   Napi::Value ToObject(const Napi::CallbackInfo& info);
+  // Lazy `buffer` accessor (installed by FromPtr/Release instead of an
+  // eager data property) plus the shared getBuffer() implementation.
+  static Napi::Value BufferAccessor(const Napi::CallbackInfo& info);
+  Napi::Value GetOrCreateBuffer(Napi::Env env);
+  static void InstallBufferAccessor(Napi::Env env, Napi::Object obj);
 
   GrabPtr ptr_;
+  // Cached zero-copy view (created on first `buffer`/getBuffer() access;
+  // empty until then so fresh results stay uniquely owned).
+  Napi::Reference<Napi::Value> bufferCache_;
+  bool hasBufferCache_ = false;
   // Buffer-factory provenance (see SetFactory): exact JS factory object
   // that allocated this result's buffer, if any.
   Napi::ObjectReference factoryRef_;
@@ -112,6 +123,7 @@ inline bool IsNativeInstance(Napi::Object obj,
 // Pixel/payload/enum helpers shared by grab result, images and the facade.
 const char* PixelTypeName(Pylon::EPixelType t);
 const char* PayloadTypeName(Pylon::EPayloadType t);
-Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr);
+Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr,
+                            bool includeBuffer = true);
 
 }  // namespace node_pylon

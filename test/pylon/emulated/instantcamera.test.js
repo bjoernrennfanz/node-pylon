@@ -12,7 +12,9 @@ describe('pylon InstantCamera', () => {
     pylon.initialize();
     try {
       if (!requireDevice(t)) return;
-      const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
+      // pypylon: InstantCamera(factory.CreateFirstDevice()); our facade
+      // equivalent is createFirstCamera().
+      const camera = pylon.createFirstCamera();
       assert.equal(camera.isOpen(), false);
       assert.equal(camera.isGrabbing(), false);
       camera.open();

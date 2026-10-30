@@ -21,7 +21,14 @@ describe('genicam category and selector', () => {
     try {
       const features = cam.getCategoryFeatures('Root');
       assert.ok(Array.isArray(features) && features.length > 0);
-      assert.ok(features.includes('Width'));
+      // On SFNC devices Width lives in the image-format category, not in
+      // Root (pypylon's category tests use a mock port; the emulator
+      // exposes the real SFNC tree).
+      if (features.includes('ImageFormatControl')) {
+        assert.ok(cam.getCategoryFeatures('ImageFormatControl').includes('Width'));
+      } else {
+        assert.ok(cam.isReadable('Width'));
+      }
       assert.throws(() => cam.getCategoryFeatures('Width'), TypeError);
       assert.throws(() => cam.getCategoryFeatures('NoSuchNode12345'), /Unknown node/);
     } finally {

@@ -98,7 +98,8 @@ const char* PayloadTypeName(Pylon::EPayloadType t) {
   }
 }
 
-Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr) {
+Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr,
+                             bool includeBuffer) {
   Napi::Object out = Napi::Object::New(env);
   if (!ValidGrab(ptr)) {
     out.Set("grabSucceeded",
@@ -160,6 +161,11 @@ Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr) {
   out.Set("payloadType", std::string(PayloadTypeName(plt)));
   out.Set("payloadSize", Napi::Number::New(env, static_cast<double>(payload)));
   out.Set("timestamp", Napi::Number::New(env, static_cast<double>(ts)));
+  // NOTE: live GrabResult wrappers install a lazy `buffer` accessor instead
+  // (see InstallBufferAccessor) so fresh results stay uniquely owned until
+  // the first view is taken. Only eager snapshots (ToObject) embed the
+  // buffer directly.
+  if (!includeBuffer) return out;
   if (ok && payload > 0) {
     uint8_t* data = nullptr;
     size_t bufSize = 0;
@@ -250,7 +256,44 @@ GrabResultWrap::GrabResultWrap(const Napi::CallbackInfo& info)
     : Napi::ObjectWrap<GrabResultWrap>(info),
       ptr_(std::make_shared<Pylon::CGrabResultPtr>()) {}
 
-void GrabResultWrap::Attach(Pylon::CGrabResultPtr ptr) { *ptr_ = ptr; }
+void GrabResultWrap::Attach(Pylon::CGrabResultPtr ptr) {
+  *ptr_ = ptr;
+  bufferCache_.Reset();
+  hasBufferCache_ = false;
+}
+
+Napi::Value GrabResultWrap::GetOrCreateBuffer(Napi::Env env) {
+  if (hasBufferCache_) return bufferCache_.Value();
+  Napi::Value buf = EmptyBuffer(env);
+  if (ValidGrab(*ptr_)) {
+    try {
+      uint8_t* data = static_cast<uint8_t*>((*ptr_)->GetBuffer());
+      size_t size = (*ptr_)->GetBufferSize();
+      if (data != nullptr && size > 0) {
+        buf = ZeroCopyBuffer(env, data, size, GrabPtr(ptr_));
+      }
+    } catch (...) {
+      buf = EmptyBuffer(env);
+    }
+  }
+  bufferCache_ = Napi::Persistent(buf);
+  hasBufferCache_ = true;
+  return buf;
+}
+
+Napi::Value GrabResultWrap::BufferAccessor(const Napi::CallbackInfo& info) {
+  auto* self = Napi::ObjectWrap<GrabResultWrap>::Unwrap(
+      info.This().As<Napi::Object>());
+  if (self == nullptr) return info.Env().Undefined();
+  return self->GetOrCreateBuffer(info.Env());
+}
+
+void GrabResultWrap::InstallBufferAccessor(Napi::Env env, Napi::Object obj) {
+  (void)env;
+  obj.DefineProperty(
+      Napi::PropertyDescriptor::Accessor<&GrabResultWrap::BufferAccessor>(
+          "buffer", napi_enumerable | napi_configurable));
+}
 
 void GrabResultWrap::SetFactory(Napi::Object factory) {
   factoryRef_ = Napi::Persistent(factory);
@@ -293,8 +336,10 @@ Napi::Object GrabResultWrap::FromPtr(Napi::Env env,
   GrabResultWrap* w = Napi::ObjectWrap<GrabResultWrap>::Unwrap(obj);
   w->Attach(ptr);
   // Backward-compatible plain fields (existing tests read res.succeeded,
-  // res.width, res.buffer, ... directly).
-  Napi::Object fields = BuildGrabFields(env, ptr);
+  // res.width, res.buffer, ... directly). The buffer rides a lazy accessor
+  // so fresh results stay uniquely owned until the first view is taken.
+  Napi::Object fields = BuildGrabFields(env, ptr, /*includeBuffer=*/false);
+  InstallBufferAccessor(env, obj);
   Napi::Array names = fields.GetPropertyNames();
   for (uint32_t i = 0; i < names.Length(); ++i) {
     Napi::Value key = names[i];
@@ -324,13 +369,19 @@ Napi::Value GrabResultWrap::Release(const Napi::CallbackInfo& info) {
     Napi::Error::New(info.Env(), ex.what()).ThrowAsJavaScriptException();
   }
   // Refresh plain fields so property access matches the released state.
+  // The cached buffer view is dropped; the lazy accessor stays installed
+  // and reports an empty buffer from here on.
+  bufferCache_.Reset();
+  hasBufferCache_ = false;
   Napi::Object self = info.This().As<Napi::Object>();
-  Napi::Object fields = BuildGrabFields(info.Env(), *ptr_);
+  Napi::Object fields = BuildGrabFields(info.Env(), *ptr_,
+                                        /*includeBuffer=*/false);
   Napi::Array names = fields.GetPropertyNames();
   for (uint32_t i = 0; i < names.Length(); ++i) {
     Napi::Value key = names[i];
     self.Set(key, fields.Get(key));
   }
+  InstallBufferAccessor(info.Env(), self);
   return info.Env().Undefined();
 }
 Napi::Value GrabResultWrap::Succeeded(const Napi::CallbackInfo& info) {
@@ -536,22 +587,9 @@ Napi::Value GrabResultWrap::GetStride(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value GrabResultWrap::GetBuffer(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  if (!ValidGrab(*ptr_)) return EmptyBuffer(env);
-  uint8_t* data = nullptr;
-  size_t size = 0;
-  try {
-    data = static_cast<uint8_t*>((*ptr_)->GetBuffer());
-    size = (*ptr_)->GetBufferSize();
-  } catch (const Pylon::GenericException& ex) {
-    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
-    return env.Undefined();
-  } catch (const std::exception& ex) {
-    Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
-    return env.Undefined();
-  }
-  if (data == nullptr || size == 0) return EmptyBuffer(env);
-  return ZeroCopyBuffer(env, data, size, GrabPtr(ptr_));
+  // Shared cached view: `grab.buffer === grab.getBuffer()`, and no view
+  // exists (unique ownership intact) until the first access.
+  return GetOrCreateBuffer(info.Env());
 }
 
 Napi::Value GrabResultWrap::GetArray(const Napi::CallbackInfo& info) {
