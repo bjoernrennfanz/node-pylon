@@ -80,8 +80,15 @@ int main() {
           std::to_string(img.width) + "x" + std::to_string(img.height));
     Check(!img.buffer.empty() && img.buffer.size() == img.payload_size,
           "grab-buffer", std::to_string(img.buffer.size()) + " bytes");
-    Check(img.timestamp > 0, "grab-timestamp",
-          std::to_string(img.timestamp));
+    // Timestamps may start at 0 on the emulator (like the Node grabresult
+    // suite asserts: >= 0 and non-decreasing across grabs).
+    const GrabImage img2 =
+        RetrieveResult(cam, 5000, TimeoutHandling::ThrowException);
+    Check(img.succeeded && img2.succeeded, "grab-twice", "ok");
+    Check(img.timestamp >= 0 && img2.timestamp >= img.timestamp,
+          "grab-timestamp",
+          std::to_string(img.timestamp) + "->" +
+              std::to_string(img2.timestamp));
     StopGrabbing(cam);
     Check(!IsGrabbing(cam), "stop-grabbing", "false");
 
