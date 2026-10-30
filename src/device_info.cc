@@ -144,85 +144,85 @@ NODEPYLON_DEVICEINFO_RO_LIST(NODEPYLON_DEFINE_RO_ACCESSOR)
 void DeviceInfoWrap::Init(Napi::Env env, Napi::Object exports) {
   std::vector<Napi::ClassPropertyDescriptor<DeviceInfoWrap>> props;
 #define NODEPYLON_ADD_RW(Name)                                                 \
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(                      \
+  props.push_back(DeviceInfoWrap::InstanceAccessor(                      \
       #Name, &DeviceInfoWrap::Get##Name, &DeviceInfoWrap::Set##Name));         \
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(                         \
+  props.push_back(DeviceInfoWrap::InstanceMethod(                         \
       "Get" #Name, &DeviceInfoWrap::Get##Name));                               \
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(                         \
+  props.push_back(DeviceInfoWrap::InstanceMethod(                         \
       "Set" #Name, &DeviceInfoWrap::Set##Name##Method));                       \
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(                         \
+  props.push_back(DeviceInfoWrap::InstanceMethod(                         \
       "Is" #Name "Available", &DeviceInfoWrap::Is##Name##Available));
 #define NODEPYLON_ADD_RO(Name)                                                 \
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(                      \
+  props.push_back(DeviceInfoWrap::InstanceAccessor(                      \
       #Name, &DeviceInfoWrap::Get##Name, nullptr));                            \
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(                         \
+  props.push_back(DeviceInfoWrap::InstanceMethod(                         \
       "Get" #Name, &DeviceInfoWrap::Get##Name));                               \
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(                         \
+  props.push_back(DeviceInfoWrap::InstanceMethod(                         \
       "Is" #Name "Available", &DeviceInfoWrap::Is##Name##Available));
   NODEPYLON_DEVICEINFO_RW_LIST(NODEPYLON_ADD_RW)
   NODEPYLON_DEVICEINFO_RO_LIST(NODEPYLON_ADD_RO)
 #undef NODEPYLON_ADD_RW
 #undef NODEPYLON_ADD_RO
   // camelCase aliases for the discovery fields used by the facade/tests.
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "friendlyName", &DeviceInfoWrap::GetFriendlyName,
       &DeviceInfoWrap::SetFriendlyName));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "fullName", &DeviceInfoWrap::GetFullName, &DeviceInfoWrap::SetFullName));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "vendorName", &DeviceInfoWrap::GetVendorName,
       &DeviceInfoWrap::SetVendorName));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "deviceClass", &DeviceInfoWrap::GetDeviceClass,
       &DeviceInfoWrap::SetDeviceClass));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "serialNumber", &DeviceInfoWrap::GetSerialNumber,
       &DeviceInfoWrap::SetSerialNumber));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "modelName", &DeviceInfoWrap::GetModelName,
       &DeviceInfoWrap::SetModelName));
-  props.push_back(Napi::InstanceAccessor<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceAccessor(
       "tlType", &DeviceInfoWrap::GetTLType, &DeviceInfoWrap::SetTLType));
   // Generic IProperties + comparison + dict helpers + GigE predicates.
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "GetPropertyNames", &DeviceInfoWrap::GetPropertyNames));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "GetPropertyAvailable", &DeviceInfoWrap::GetPropertyAvailable));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "GetPropertyValue", &DeviceInfoWrap::GetPropertyValue));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "SetPropertyValue", &DeviceInfoWrap::SetPropertyValue));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("IsSubset", &DeviceInfoWrap::IsSubset));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+      DeviceInfoWrap::InstanceMethod("IsSubset", &DeviceInfoWrap::IsSubset));
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsUserProvided", &DeviceInfoWrap::IsUserProvided));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "GetPropertyNotAvailable", &DeviceInfoWrap::GetPropertyNotAvailable));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("equals", &DeviceInfoWrap::Equals));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+      DeviceInfoWrap::InstanceMethod("equals", &DeviceInfoWrap::Equals));
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "lessThan", &DeviceInfoWrap::LessThan));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("keys", &DeviceInfoWrap::Keys));
+      DeviceInfoWrap::InstanceMethod("keys", &DeviceInfoWrap::Keys));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("values", &DeviceInfoWrap::Values));
+      DeviceInfoWrap::InstanceMethod("values", &DeviceInfoWrap::Values));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("items", &DeviceInfoWrap::Items));
+      DeviceInfoWrap::InstanceMethod("items", &DeviceInfoWrap::Items));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("toDict", &DeviceInfoWrap::ToDict));
+      DeviceInfoWrap::InstanceMethod("toDict", &DeviceInfoWrap::ToDict));
   props.push_back(
-      Napi::InstanceMethod<DeviceInfoWrap>("update", &DeviceInfoWrap::Update));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+      DeviceInfoWrap::InstanceMethod("update", &DeviceInfoWrap::Update));
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsPersistentIpActive", &DeviceInfoWrap::IsPersistentIpActive));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsDhcpActive", &DeviceInfoWrap::IsDhcpActive));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsAutoIpActive", &DeviceInfoWrap::IsAutoIpActive));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsPersistentIpSupported", &DeviceInfoWrap::IsPersistentIpSupported));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsDhcpSupported", &DeviceInfoWrap::IsDhcpSupported));
-  props.push_back(Napi::InstanceMethod<DeviceInfoWrap>(
+  props.push_back(DeviceInfoWrap::InstanceMethod(
       "IsAutoIpSupported", &DeviceInfoWrap::IsAutoIpSupported));
   Napi::Function ctor = DefineClass(env, "DeviceInfo", props);
   constructor = Napi::Persistent(ctor);

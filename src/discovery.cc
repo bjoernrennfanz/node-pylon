@@ -251,42 +251,42 @@ void TlInfoWrap::Init(Napi::Env env, Napi::Object exports,
                       const Napi::Function& base) {
   std::vector<Napi::ClassPropertyDescriptor<TlInfoWrap>> props;
 #define NODEPYLON_ADD_TLINFO_RW(Name)                                          \
-  props.push_back(Napi::InstanceAccessor<TlInfoWrap>(                          \
+  props.push_back(TlInfoWrap::InstanceAccessor(                          \
       #Name, &TlInfoWrap::Get##Name, &TlInfoWrap::Set##Name));                 \
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>("Get" #Name,                 \
+  props.push_back(TlInfoWrap::InstanceMethod("Get" #Name,                 \
                                                    &TlInfoWrap::Get##Name));   \
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(                             \
+  props.push_back(TlInfoWrap::InstanceMethod(                             \
       "Set" #Name, &TlInfoWrap::Set##Name##Method));                           \
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(                             \
+  props.push_back(TlInfoWrap::InstanceMethod(                             \
       "Is" #Name "Available", &TlInfoWrap::Is##Name##Available));
   NODEPYLON_TLINFO_RW_LIST(NODEPYLON_ADD_TLINFO_RW)
 #undef NODEPYLON_ADD_TLINFO_RW
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+  props.push_back(TlInfoWrap::InstanceMethod(
       "GetPropertyNames", &TlInfoWrap::GetPropertyNames));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+  props.push_back(TlInfoWrap::InstanceMethod(
       "GetPropertyAvailable", &TlInfoWrap::GetPropertyAvailable));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+  props.push_back(TlInfoWrap::InstanceMethod(
       "GetPropertyValue", &TlInfoWrap::GetPropertyValue));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+  props.push_back(TlInfoWrap::InstanceMethod(
       "SetPropertyValue", &TlInfoWrap::SetPropertyValue));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("IsSubset", &TlInfoWrap::IsSubset));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+      TlInfoWrap::InstanceMethod("IsSubset", &TlInfoWrap::IsSubset));
+  props.push_back(TlInfoWrap::InstanceMethod(
       "IsUserProvided", &TlInfoWrap::IsUserProvided));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>(
+  props.push_back(TlInfoWrap::InstanceMethod(
       "GetPropertyNotAvailable", &TlInfoWrap::GetPropertyNotAvailable));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("equals", &TlInfoWrap::Equals));
+      TlInfoWrap::InstanceMethod("equals", &TlInfoWrap::Equals));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("lessThan", &TlInfoWrap::LessThan));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>("keys", &TlInfoWrap::Keys));
+      TlInfoWrap::InstanceMethod("lessThan", &TlInfoWrap::LessThan));
+  props.push_back(TlInfoWrap::InstanceMethod("keys", &TlInfoWrap::Keys));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("values", &TlInfoWrap::Values));
-  props.push_back(Napi::InstanceMethod<TlInfoWrap>("items", &TlInfoWrap::Items));
+      TlInfoWrap::InstanceMethod("values", &TlInfoWrap::Values));
+  props.push_back(TlInfoWrap::InstanceMethod("items", &TlInfoWrap::Items));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("toDict", &TlInfoWrap::ToDict));
+      TlInfoWrap::InstanceMethod("toDict", &TlInfoWrap::ToDict));
   props.push_back(
-      Napi::InstanceMethod<TlInfoWrap>("update", &TlInfoWrap::Update));
+      TlInfoWrap::InstanceMethod("update", &TlInfoWrap::Update));
   Napi::Function ctor = DefineClass(env, "TlInfo", props);
   constructor = Napi::Persistent(ctor);
   constructor.SuppressDestruct();
@@ -658,43 +658,43 @@ void InterfaceInfoWrap::Init(Napi::Env env, Napi::Object exports,
                              const Napi::Function& base) {
   std::vector<Napi::ClassPropertyDescriptor<InterfaceInfoWrap>> props;
 #define NODEPYLON_ADD_IFINFO_RW(Name)                                          \
-  props.push_back(Napi::InstanceAccessor<InterfaceInfoWrap>(                    \
+  props.push_back(InterfaceInfoWrap::InstanceAccessor(                    \
       #Name, &InterfaceInfoWrap::Get##Name, &InterfaceInfoWrap::Set##Name));   \
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(                      \
+  props.push_back(InterfaceInfoWrap::InstanceMethod(                      \
       "Get" #Name, &InterfaceInfoWrap::Get##Name));                            \
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(                      \
+  props.push_back(InterfaceInfoWrap::InstanceMethod(                      \
       "Set" #Name, &InterfaceInfoWrap::Set##Name##Method));                    \
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(                      \
+  props.push_back(InterfaceInfoWrap::InstanceMethod(                      \
       "Is" #Name "Available", &InterfaceInfoWrap::Is##Name##Available));
   NODEPYLON_IFINFO_RW_LIST(NODEPYLON_ADD_IFINFO_RW)
 #undef NODEPYLON_ADD_IFINFO_RW
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "GetPropertyNames", &InterfaceInfoWrap::GetPropertyNames));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "GetPropertyAvailable", &InterfaceInfoWrap::GetPropertyAvailable));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "GetPropertyValue", &InterfaceInfoWrap::GetPropertyValue));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "SetPropertyValue", &InterfaceInfoWrap::SetPropertyValue));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "IsSubset", &InterfaceInfoWrap::IsSubset));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "IsUserProvided", &InterfaceInfoWrap::IsUserProvided));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "GetPropertyNotAvailable", &InterfaceInfoWrap::GetPropertyNotAvailable));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "equals", &InterfaceInfoWrap::Equals));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "lessThan", &InterfaceInfoWrap::LessThan));
   props.push_back(
-      Napi::InstanceMethod<InterfaceInfoWrap>("keys", &InterfaceInfoWrap::Keys));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+      InterfaceInfoWrap::InstanceMethod("keys", &InterfaceInfoWrap::Keys));
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "values", &InterfaceInfoWrap::Values));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "items", &InterfaceInfoWrap::Items));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "toDict", &InterfaceInfoWrap::ToDict));
-  props.push_back(Napi::InstanceMethod<InterfaceInfoWrap>(
+  props.push_back(InterfaceInfoWrap::InstanceMethod(
       "update", &InterfaceInfoWrap::Update));
   Napi::Function ctor = DefineClass(env, "InterfaceInfo", props);
   constructor = Napi::Persistent(ctor);
