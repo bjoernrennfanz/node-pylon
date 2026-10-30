@@ -158,7 +158,6 @@ class RealNodeMap {
     GenApi::CallbackHandleType gen_handle = 0;
     std::shared_ptr<std::atomic<int>> count;
   };
-  void ClearCallbacks();
   GenApi::INode* Lookup(const std::string& name) const;
 
   GenApi::INodeMap* node_map_;

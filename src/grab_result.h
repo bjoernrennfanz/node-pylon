@@ -100,10 +100,9 @@ class GrabResultWrap : public Napi::ObjectWrap<GrabResultWrap> {
 };
 
 // True when obj is an instance of the given native constructor
-// (JS instanceof semantics; false on proxy traps/pending exceptions).
+// (JS instanceof semantics).
 inline bool IsNativeInstance(Napi::Object obj, const Napi::Function& ctor) {
-  Napi::MaybeOrValue<bool> maybe = obj.InstanceOf(ctor);
-  return maybe.IsJust() && maybe.Unwrap();
+  return obj.InstanceOf(ctor);
 }
 
 inline bool IsNativeInstance(Napi::Object obj,

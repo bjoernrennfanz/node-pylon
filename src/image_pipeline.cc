@@ -479,7 +479,7 @@ void InitImagePipeline(Napi::Env env, Napi::Object exports) {
 
   // Pixel helpers: getPixelTypeByName(name) -> number, getNameByPixelType(n).
   exports.Set("getPixelTypeByName",
-              Napi::Function::New(env, [](const Napi::CallbackInfo& info) {
+              Napi::Function::New(env, [](const Napi::CallbackInfo& info) -> Napi::Value {
                 Napi::Env env = info.Env();
                 if (info.Length() < 1 || !info[0].IsString()) {
                   Napi::TypeError::New(env, "getPixelTypeByName(name: string)")
@@ -493,7 +493,7 @@ void InitImagePipeline(Napi::Env env, Napi::Object exports) {
                 return Napi::Number::New(env, static_cast<double>(t));
               }));
   exports.Set("getNameByPixelType",
-              Napi::Function::New(env, [](const Napi::CallbackInfo& info) {
+              Napi::Function::New(env, [](const Napi::CallbackInfo& info) -> Napi::Value {
                 Napi::Env env = info.Env();
                 if (info.Length() < 1 || !info[0].IsNumber()) {
                   Napi::TypeError::New(env, "getNameByPixelType(value: number)")
@@ -505,7 +505,7 @@ void InitImagePipeline(Napi::Env env, Napi::Object exports) {
                 return Napi::String::New(env, PixelTypeName(t));
               }));
   exports.Set("isMono",
-              Napi::Function::New(env, [](const Napi::CallbackInfo& info) {
+              Napi::Function::New(env, [](const Napi::CallbackInfo& info) -> Napi::Value {
                 Napi::Env env = info.Env();
                 Pylon::EPixelType t = Pylon::PixelType_Undefined;
                 if (info.Length() < 1 || !ParsePixelType(env, info[0], &t) ||
@@ -519,7 +519,7 @@ void InitImagePipeline(Napi::Env env, Napi::Object exports) {
                 return Napi::Boolean::New(env, Pylon::IsMono(t));
               }));
   exports.Set("isColor",
-              Napi::Function::New(env, [](const Napi::CallbackInfo& info) {
+              Napi::Function::New(env, [](const Napi::CallbackInfo& info) -> Napi::Value {
                 Napi::Env env = info.Env();
                 Pylon::EPixelType t = Pylon::PixelType_Undefined;
                 if (info.Length() < 1 || !ParsePixelType(env, info[0], &t) ||
@@ -533,7 +533,7 @@ void InitImagePipeline(Napi::Env env, Napi::Object exports) {
                 return Napi::Boolean::New(env, Pylon::IsColorImage(t));
               }));
   exports.Set("isPacked",
-              Napi::Function::New(env, [](const Napi::CallbackInfo& info) {
+              Napi::Function::New(env, [](const Napi::CallbackInfo& info) -> Napi::Value {
                 Napi::Env env = info.Env();
                 Pylon::EPixelType t = Pylon::PixelType_Undefined;
                 if (info.Length() < 1 || !ParsePixelType(env, info[0], &t) ||
