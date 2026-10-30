@@ -69,7 +69,41 @@ Pylon::CDeviceInfo RequireDeviceInfo(Napi::Env env, const Napi::Value& value,
   return out;
 }
 
+template <typename Wrap>
+Wrap* UnwrapChecked(const Napi::Value& value) {
+  if (!value.IsObject() || value.IsArray()) return nullptr;
+  Napi::Object obj = value.As<Napi::Object>();
+  bool instance = false;
+  try {
+    instance = obj.InstanceOf(Wrap::constructor.Value()).UnwrapOr(false);
+  } catch (...) {
+    return nullptr;
+  }
+  if (!instance) return nullptr;
+  return Napi::ObjectWrap<Wrap>::Unwrap(obj);
+}
+
 }  // namespace
+
+TlInfoWrap* TlInfoWrap::FromValue(const Napi::Value& value) {
+  return UnwrapChecked<TlInfoWrap>(value);
+}
+
+InterfaceInfoWrap* InterfaceInfoWrap::FromValue(const Napi::Value& value) {
+  return UnwrapChecked<InterfaceInfoWrap>(value);
+}
+
+PylonDeviceWrap* PylonDeviceWrap::FromValue(const Napi::Value& value) {
+  return UnwrapChecked<PylonDeviceWrap>(value);
+}
+
+TransportLayerWrap* TransportLayerWrap::FromValue(const Napi::Value& value) {
+  return UnwrapChecked<TransportLayerWrap>(value);
+}
+
+InterfaceWrap* InterfaceWrap::FromValue(const Napi::Value& value) {
+  return UnwrapChecked<InterfaceWrap>(value);
+}
 
 // --- Shared filter/mode helpers -------------------------------------------
 
@@ -273,8 +307,7 @@ TlInfoWrap::TlInfoWrap(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   if (info.Length() == 0) return;
   if (info.Length() == 1 && info[0].IsObject()) {
-    TlInfoWrap* other =
-        Napi::ObjectWrap<TlInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+    TlInfoWrap* other = TlInfoWrap::FromValue(info[0]);
     if (other != nullptr) {
       info_ = other->info_;
       return;
@@ -370,8 +403,7 @@ Napi::Value TlInfoWrap::IsSubset(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  TlInfoWrap* other =
-      Napi::ObjectWrap<TlInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  TlInfoWrap* other = TlInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "IsSubset(other: TlInfo) expected")
         .ThrowAsJavaScriptException();
@@ -410,8 +442,7 @@ Napi::Value TlInfoWrap::Equals(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1 || !info[0].IsObject())
     return Napi::Boolean::New(env, false);
-  TlInfoWrap* other =
-      Napi::ObjectWrap<TlInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  TlInfoWrap* other = TlInfoWrap::FromValue(info[0]);
   if (other == nullptr) return Napi::Boolean::New(env, false);
   try {
     const Pylon::CInfoBase& lhs = info_;
@@ -429,8 +460,7 @@ Napi::Value TlInfoWrap::LessThan(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  TlInfoWrap* other =
-      Napi::ObjectWrap<TlInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  TlInfoWrap* other = TlInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "lessThan(other: TlInfo) expected")
         .ThrowAsJavaScriptException();
@@ -686,8 +716,7 @@ InterfaceInfoWrap::InterfaceInfoWrap(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   if (info.Length() == 0) return;
   if (info.Length() == 1 && info[0].IsObject()) {
-    InterfaceInfoWrap* other =
-        Napi::ObjectWrap<InterfaceInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+    InterfaceInfoWrap* other = InterfaceInfoWrap::FromValue(info[0]);
     if (other != nullptr) {
       info_ = other->info_;
       return;
@@ -785,8 +814,7 @@ Napi::Value InterfaceInfoWrap::IsSubset(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  InterfaceInfoWrap* other =
-      Napi::ObjectWrap<InterfaceInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  InterfaceInfoWrap* other = InterfaceInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "IsSubset(other: InterfaceInfo) expected")
         .ThrowAsJavaScriptException();
@@ -825,8 +853,7 @@ Napi::Value InterfaceInfoWrap::Equals(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1 || !info[0].IsObject())
     return Napi::Boolean::New(env, false);
-  InterfaceInfoWrap* other =
-      Napi::ObjectWrap<InterfaceInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  InterfaceInfoWrap* other = InterfaceInfoWrap::FromValue(info[0]);
   if (other == nullptr) return Napi::Boolean::New(env, false);
   try {
     const Pylon::CInfoBase& lhs = info_;
@@ -844,8 +871,7 @@ Napi::Value InterfaceInfoWrap::LessThan(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  InterfaceInfoWrap* other =
-      Napi::ObjectWrap<InterfaceInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  InterfaceInfoWrap* other = InterfaceInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "lessThan(other: InterfaceInfo) expected")
         .ThrowAsJavaScriptException();
@@ -994,8 +1020,9 @@ PylonDeviceWrap::PylonDeviceWrap(const Napi::CallbackInfo& info)
 
 PylonDeviceWrap::~PylonDeviceWrap() { DestroyNative(); }
 
-void PylonDeviceWrap::Attach(Pylon::IPylonDevice* device, CreatorKind kind,
-                             void* creator, const Napi::Value& owner) {
+bool PylonDeviceWrap::Attach(Napi::Env env, Pylon::IPylonDevice* device,
+                             CreatorKind kind, void* creator,
+                             const Napi::Value& owner) {
   device_ = device;
   kind_ = kind;
   creator_ = creator;
@@ -1005,12 +1032,21 @@ void PylonDeviceWrap::Attach(Pylon::IPylonDevice* device, CreatorKind kind,
   }
   try {
     lifecycle::EnsureInitialized();
-    lifecycleHeld_ = true;
-  } catch (...) {
+  } catch (const Pylon::GenericException& ex) {
     device_ = nullptr;
     destroyed_ = true;
-    throw;
+    owner_.Reset();
+    errormap::ThrowTranslated(env, ex);
+    return false;
+  } catch (const std::exception& ex) {
+    device_ = nullptr;
+    destroyed_ = true;
+    owner_.Reset();
+    errormap::ThrowTranslated(env, ex);
+    return false;
   }
+  lifecycleHeld_ = true;
+  return true;
 }
 
 void PylonDeviceWrap::DestroyNative() {
@@ -1341,8 +1377,7 @@ Napi::Value TransportLayerWrap::CreateInterface(const Napi::CallbackInfo& info) 
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  InterfaceInfoWrap* iiWrap =
-      Napi::ObjectWrap<InterfaceInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+  InterfaceInfoWrap* iiWrap = InterfaceInfoWrap::FromValue(info[0]);
   if (iiWrap == nullptr) {
     Napi::TypeError::New(env, "createInterface(info: InterfaceInfo) expected")
         .ThrowAsJavaScriptException();
@@ -1386,8 +1421,7 @@ Napi::Value TransportLayerWrap::DestroyInterface(
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  InterfaceWrap* ifaceWrap =
-      Napi::ObjectWrap<InterfaceWrap>::Unwrap(info[0].As<Napi::Object>());
+  InterfaceWrap* ifaceWrap = InterfaceWrap::FromValue(info[0]);
   if (ifaceWrap == nullptr) {
     Napi::TypeError::New(env, "destroyInterface(iface: Interface) expected")
         .ThrowAsJavaScriptException();
@@ -1436,22 +1470,13 @@ Napi::Value TransportLayerWrap::CreateDevice(const Napi::CallbackInfo& info) {
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kTransportLayer, tl_, info.This());
-  } catch (const Pylon::GenericException& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kTransportLayer, tl_,
+          info.This())) {
     try {
       tl_->DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
-    return env.Null();
-  } catch (const std::exception& ex) {
-    try {
-      tl_->DestroyDevice(dev);
-    } catch (...) {
-    }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -1496,15 +1521,13 @@ Napi::Value TransportLayerWrap::CreateFirstDevice(
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kTransportLayer, tl_, info.This());
-  } catch (const std::exception& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kTransportLayer, tl_,
+          info.This())) {
     try {
       tl_->DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -1522,8 +1545,7 @@ Napi::Value TransportLayerWrap::DestroyDevice(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  PylonDeviceWrap* devWrap =
-      Napi::ObjectWrap<PylonDeviceWrap>::Unwrap(info[0].As<Napi::Object>());
+  PylonDeviceWrap* devWrap = PylonDeviceWrap::FromValue(info[0]);
   if (devWrap == nullptr) {
     Napi::TypeError::New(env, "destroyDevice(device: PylonDevice) expected")
         .ThrowAsJavaScriptException();
@@ -1889,15 +1911,13 @@ Napi::Value InterfaceWrap::CreateDevice(const Napi::CallbackInfo& info) {
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kInterface, iface_, info.This());
-  } catch (const std::exception& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kInterface, iface_,
+          info.This())) {
     try {
       iface_->DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -1940,15 +1960,13 @@ Napi::Value InterfaceWrap::CreateFirstDevice(const Napi::CallbackInfo& info) {
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kInterface, iface_, info.This());
-  } catch (const std::exception& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kInterface, iface_,
+          info.This())) {
     try {
       iface_->DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -1965,8 +1983,7 @@ Napi::Value InterfaceWrap::DestroyDevice(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  PylonDeviceWrap* devWrap =
-      Napi::ObjectWrap<PylonDeviceWrap>::Unwrap(info[0].As<Napi::Object>());
+  PylonDeviceWrap* devWrap = PylonDeviceWrap::FromValue(info[0]);
   if (devWrap == nullptr) {
     Napi::TypeError::New(env, "destroyDevice(device: PylonDevice) expected")
         .ThrowAsJavaScriptException();
@@ -2155,8 +2172,7 @@ Napi::Value TlFactoryWrap::CreateTl(const Napi::CallbackInfo& info) {
   if (byString) {
     deviceClass = info[0].As<Napi::String>().Utf8Value();
   } else if (info[0].IsObject()) {
-    tiWrap =
-        Napi::ObjectWrap<TlInfoWrap>::Unwrap(info[0].As<Napi::Object>());
+    tiWrap = TlInfoWrap::FromValue(info[0]);
     if (tiWrap == nullptr) {
       Napi::TypeError::New(env, "CreateTl(deviceClass: string | TlInfo)")
           .ThrowAsJavaScriptException();
@@ -2207,8 +2223,7 @@ Napi::Value TlFactoryWrap::ReleaseTl(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  TransportLayerWrap* tlWrap =
-      Napi::ObjectWrap<TransportLayerWrap>::Unwrap(info[0].As<Napi::Object>());
+  TransportLayerWrap* tlWrap = TransportLayerWrap::FromValue(info[0]);
   if (tlWrap == nullptr) {
     Napi::TypeError::New(env, "ReleaseTl(tl: TransportLayer) expected")
         .ThrowAsJavaScriptException();
@@ -2308,15 +2323,13 @@ Napi::Value TlFactoryWrap::CreateDevice(const Napi::CallbackInfo& info) {
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kFactory, nullptr, env.Null());
-  } catch (const std::exception& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kFactory, nullptr,
+          env.Null())) {
     try {
       Pylon::CTlFactory::GetInstance().DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -2367,15 +2380,13 @@ Napi::Value TlFactoryWrap::CreateFirstDevice(const Napi::CallbackInfo& info) {
     }
     return env.Null();
   }
-  try {
-    PylonDeviceWrap::Unwrap(obj)->Attach(
-        dev, PylonDeviceWrap::CreatorKind::kFactory, nullptr, env.Null());
-  } catch (const std::exception& ex) {
+  if (!PylonDeviceWrap::Unwrap(obj)->Attach(
+          env, dev, PylonDeviceWrap::CreatorKind::kFactory, nullptr,
+          env.Null())) {
     try {
       Pylon::CTlFactory::GetInstance().DestroyDevice(dev);
     } catch (...) {
     }
-    errormap::ThrowTranslated(env, ex);
     return env.Null();
   }
   return obj;
@@ -2388,8 +2399,7 @@ Napi::Value TlFactoryWrap::DestroyDevice(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  PylonDeviceWrap* devWrap =
-      Napi::ObjectWrap<PylonDeviceWrap>::Unwrap(info[0].As<Napi::Object>());
+  PylonDeviceWrap* devWrap = PylonDeviceWrap::FromValue(info[0]);
   if (devWrap == nullptr) {
     Napi::TypeError::New(env, "DestroyDevice(device: PylonDevice) expected")
         .ThrowAsJavaScriptException();

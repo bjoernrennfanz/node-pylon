@@ -49,6 +49,9 @@ class TlInfoWrap : public Napi::ObjectWrap<TlInfoWrap> {
                    const Napi::Function& baseProto);
   explicit TlInfoWrap(const Napi::CallbackInfo& info);
 
+  // Non-throwing downcast (nullptr for non-instances, no pending exception).
+  static TlInfoWrap* FromValue(const Napi::Value& value);
+
   const Pylon::CTlInfo& Info() const { return info_; }
   void SetInfo(const Pylon::CTlInfo& info) { info_ = info; }
 
@@ -95,6 +98,9 @@ class InterfaceInfoWrap : public Napi::ObjectWrap<InterfaceInfoWrap> {
   static void Init(Napi::Env env, Napi::Object exports,
                    const Napi::Function& baseProto);
   explicit InterfaceInfoWrap(const Napi::CallbackInfo& info);
+
+  // Non-throwing downcast (nullptr for non-instances, no pending exception).
+  static InterfaceInfoWrap* FromValue(const Napi::Value& value);
 
   const Pylon::CInterfaceInfo& Info() const { return info_; }
   void SetInfo(const Pylon::CInterfaceInfo& info) { info_ = info; }
@@ -144,11 +150,13 @@ class PylonDeviceWrap : public Napi::ObjectWrap<PylonDeviceWrap> {
 
   // Attaches a created device. The owner JS object (TransportLayer or
   // Interface wrapper, empty for factory devices) is referenced to keep the
-  // creator alive until this device is destroyed.
-  void Attach(Pylon::IPylonDevice* device, CreatorKind kind, void* creator,
-              const Napi::Value& owner);
+  // creator alive until this device is destroyed. Returns false with a
+  // pending JS exception when PylonInitialize fails.
+  bool Attach(Napi::Env env, Pylon::IPylonDevice* device, CreatorKind kind,
+              void* creator, const Napi::Value& owner);
   bool IsDestroyed() const { return destroyed_; }
   void DestroyNative();
+  static PylonDeviceWrap* FromValue(const Napi::Value& value);
 
  private:
   Napi::Value GetDeviceInfo(const Napi::CallbackInfo& info);
@@ -179,6 +187,7 @@ class TransportLayerWrap : public Napi::ObjectWrap<TransportLayerWrap> {
   bool IsReleased() const { return released_; }
   Pylon::ITransportLayer* Get() const { return tl_; }
   void ReleaseNative();
+  static TransportLayerWrap* FromValue(const Napi::Value& value);
 
  private:
   Napi::Value GetTlInfo(const Napi::CallbackInfo& info);
@@ -213,6 +222,7 @@ class InterfaceWrap : public Napi::ObjectWrap<InterfaceWrap> {
                              const Napi::Value& parentObj);
   bool IsDestroyed() const { return destroyed_; }
   void DestroyNative();
+  static InterfaceWrap* FromValue(const Napi::Value& value);
 
  private:
   Napi::Value GetInterfaceInfo(const Napi::CallbackInfo& info);

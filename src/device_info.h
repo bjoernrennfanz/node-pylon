@@ -25,6 +25,11 @@ class DeviceInfoWrap : public Napi::ObjectWrap<DeviceInfoWrap> {
   const Pylon::CDeviceInfo& Info() const { return info_; }
   void SetInfo(const Pylon::CDeviceInfo& info) { info_ = info; }
 
+  // Non-throwing downcast for user-provided values: nullptr for anything
+  // that is not a DeviceInfo instance (plain dicts included). Unlike
+  // ObjectWrap::Unwrap it never leaves a pending exception behind.
+  static DeviceInfoWrap* FromValue(const Napi::Value& value);
+
   // Filter helper shared with the discovery layer: accepts a DeviceInfo
   // instance or a plain object (dict). Plain-object values must be strings,
   // otherwise a TypeError is thrown (pypylon parity). Returns false with a

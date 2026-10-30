@@ -11,7 +11,6 @@ namespace node_pylon {
 Napi::FunctionReference DeviceInfoWrap::constructor;
 
 namespace {
-
 void RequireStringValue(Napi::Env env, const Napi::Value& value,
                         const char* what, std::string* out, bool* ok) {
   if (!value.IsString()) {
@@ -39,6 +38,19 @@ Napi::Array PropertyNameArray(Napi::Env env, const Pylon::CDeviceInfo& info) {
 }
 
 }  // namespace
+
+DeviceInfoWrap* DeviceInfoWrap::FromValue(const Napi::Value& value) {
+  if (!value.IsObject() || value.IsArray()) return nullptr;
+  Napi::Object obj = value.As<Napi::Object>();
+  bool instance = false;
+  try {
+    instance = obj.InstanceOf(constructor.Value()).UnwrapOr(false);
+  } catch (...) {
+    return nullptr;
+  }
+  if (!instance) return nullptr;
+  return Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(obj);
+}
 
 // --- Accessor/method generation -------------------------------------------
 // Getters serve both the InstanceAccessor and the legacy Get<Name> method.
@@ -232,11 +244,7 @@ DeviceInfoWrap::DeviceInfoWrap(const Napi::CallbackInfo& info)
   Napi::Env env = info.Env();
   if (info.Length() == 0) return;
   if (info.Length() == 1) {
-    DeviceInfoWrap* other = nullptr;
-    if (info[0].IsObject()) {
-      other = Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(
-          info[0].As<Napi::Object>());
-    }
+    DeviceInfoWrap* other = DeviceInfoWrap::FromValue(info[0]);
     if (other != nullptr) {
       try {
         info_ = other->info_;
@@ -259,7 +267,7 @@ bool DeviceInfoWrap::ToDeviceInfo(Napi::Env env, const Napi::Value& value,
   }
   if (value.IsObject()) {
     Napi::Object obj = value.As<Napi::Object>();
-    DeviceInfoWrap* wrapped = Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(obj);
+    DeviceInfoWrap* wrapped = DeviceInfoWrap::FromValue(obj);
     if (wrapped != nullptr) {
       *out = wrapped->Info();
       return true;
@@ -391,8 +399,7 @@ Napi::Value DeviceInfoWrap::IsSubset(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  DeviceInfoWrap* other = Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(
-      info[0].As<Napi::Object>());
+  DeviceInfoWrap* other = DeviceInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "IsSubset(other: DeviceInfo) expected")
         .ThrowAsJavaScriptException();
@@ -430,8 +437,7 @@ Napi::Value DeviceInfoWrap::GetPropertyNotAvailable(
 Napi::Value DeviceInfoWrap::Equals(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1 || !info[0].IsObject()) return Napi::Boolean::New(env, false);
-  DeviceInfoWrap* other = Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(
-      info[0].As<Napi::Object>());
+  DeviceInfoWrap* other = DeviceInfoWrap::FromValue(info[0]);
   if (other == nullptr) return Napi::Boolean::New(env, false);
   try {
     return Napi::Boolean::New(env, info_ == other->info_);
@@ -447,8 +453,7 @@ Napi::Value DeviceInfoWrap::LessThan(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Null();
   }
-  DeviceInfoWrap* other = Napi::ObjectWrap<DeviceInfoWrap>::Unwrap(
-      info[0].As<Napi::Object>());
+  DeviceInfoWrap* other = DeviceInfoWrap::FromValue(info[0]);
   if (other == nullptr) {
     Napi::TypeError::New(env, "lessThan(other: DeviceInfo) expected")
         .ThrowAsJavaScriptException();
