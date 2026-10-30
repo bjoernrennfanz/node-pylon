@@ -36,8 +36,18 @@ endif()
 
 add_library(node_pylon SHARED
   src/addon.cc
+  src/buffer_factory.cc
   src/camera_wrap.cc
+  src/defect_pixel.cc
+  src/device_info.cc
+  src/discovery.cc
+  src/error_map.cc
+  src/feature_persistence.cc
+  src/grab_result.cc
+  src/image_pipeline.cc
   src/node_map.cc
+  src/pylon_image.cc
+  src/wait_wrap.cc
 )
 
 target_include_directories(node_pylon PRIVATE

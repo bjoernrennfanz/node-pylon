@@ -9,7 +9,19 @@
 #include <pylon/TlFactory.h>
 
 #include "camera_wrap.h"
+#include "grab_result.h"
+#include "image_pipeline.h"
+#include "pylon_image.h"
 #include "pylon_lifecycle.h"
+// Infra API wrappers (buffer factory, wait objects, feature persistence,
+// static defect pixel correction, type mappings / DeviceInfo / exceptions).
+#include "buffer_factory.h"
+#include "defect_pixel.h"
+#include "device_info.h"
+#include "discovery.h"
+#include "error_map.h"
+#include "feature_persistence.h"
+#include "wait_wrap.h"
 
 namespace {
 
@@ -113,6 +125,24 @@ Napi::Value CreateFirstCamera(const Napi::CallbackInfo& info) {
   return obj;
 }
 
+// createCameraAt(index): attach enumerated device i (camera-array support).
+Napi::Value CreateCameraAt(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 1 || !info[0].IsNumber()) {
+    Napi::TypeError::New(env, "createCameraAt(deviceIndex: number) expected")
+        .ThrowAsJavaScriptException();
+    return env.Null();
+  }
+  Napi::Object obj = node_pylon::CameraWrap::constructor.New({info[0]});
+  if (env.IsExceptionPending()) return env.Null();
+  return obj;
+}
+
+void ExportEnum(Napi::Env env, Napi::Object exports, const char* name,
+                int32_t value) {
+  exports.Set(name, Napi::Number::New(env, value));
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set("version", Napi::Function::New(env, GetVersion));
   exports.Set("pylonVersion", Napi::Function::New(env, GetPylonVersion));
@@ -121,7 +151,41 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set("enumerateDevices", Napi::Function::New(env, EnumerateDevices));
   exports.Set("createFirstCamera",
               Napi::Function::New(env, CreateFirstCamera));
+  exports.Set("createCameraAt", Napi::Function::New(env, CreateCameraAt));
+  // Grab strategies (CInstantCamera::EGrabStrategy).
+  ExportEnum(env, exports, "GrabStrategy_OneByOne", 0);
+  ExportEnum(env, exports, "GrabStrategy_LatestImageOnly", 1);
+  ExportEnum(env, exports, "GrabStrategy_LatestImages", 2);
+  ExportEnum(env, exports, "GrabStrategy_UpcomingImage", 3);
+  // Timeout handling (ETimeoutHandling).
+  ExportEnum(env, exports, "TimeoutHandling_Return", 0);
+  ExportEnum(env, exports, "TimeoutHandling_ThrowException", 1);
+  // Grab loop (EGrabLoop).
+  ExportEnum(env, exports, "GrabLoop_ProvidedByInstantCamera", 0);
+  ExportEnum(env, exports, "GrabLoop_ProvidedByUser", 1);
+  // Registration mode (ERegistrationMode) and cleanup (ECleanup).
+  ExportEnum(env, exports, "RegistrationMode_Append", 0);
+  ExportEnum(env, exports, "RegistrationMode_ReplaceAll", 1);
+  ExportEnum(env, exports, "Cleanup_None", 0);
+  ExportEnum(env, exports, "Cleanup_Delete", 1);
+  // Device access modes (EDeviceAccessMode bits).
+  ExportEnum(env, exports, "AccessMode_Control", 1);
+  ExportEnum(env, exports, "AccessMode_Stream", 3);
+  ExportEnum(env, exports, "AccessMode_Event", 4);
+  ExportEnum(env, exports, "AccessMode_Exclusive", 5);
   node_pylon::CameraWrap::Init(env, exports);
+  node_pylon::GrabResultWrap::Init(env, exports);
+  node_pylon::PylonImageWrap::Init(env, exports);
+  node_pylon::InitImagePipeline(env, exports);
+  // Infra APIs first create the exception hierarchy (later wrappers throw
+  // translated errors through it).
+  node_pylon::errormap::Init(env, exports);
+  node_pylon::DeviceInfoWrap::Init(env, exports);
+  node_pylon::InitDiscovery(env, exports);
+  node_pylon::InitWaitApi(env, exports);
+  node_pylon::feature::Init(env, exports);
+  node_pylon::defect::Init(env, exports);
+  node_pylon::bufferfactory::Init(env, exports);
   return exports;
 }
 

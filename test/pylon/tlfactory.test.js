@@ -14,9 +14,12 @@ describe('pylon TlFactory', () => {
       const devices = pylon.TlFactory.GetInstance().EnumerateDevices();
       assert.ok(Array.isArray(devices));
       assert.ok(devices.length > 0);
-      assert.deepEqual(pylon.enumerateDevices(), devices);
+      // DeviceInfo instances (pypylon parity): compare serials, not objects.
+      const serials = (list) => list.map((d) => d.serialNumber).sort();
+      assert.deepEqual(serials(pylon.enumerateDevices()), serials(devices));
       // Lowercase aliases behave the same.
-      assert.deepEqual(pylon.TlFactory.getInstance().enumerateDevices(), devices);
+      assert.deepEqual(serials(pylon.TlFactory.getInstance().enumerateDevices()),
+        serials(pylon.enumerateDevices()));
       for (const d of devices) {
         assert.equal(typeof d.serialNumber, 'string');
         assert.ok(d.serialNumber.length > 0);

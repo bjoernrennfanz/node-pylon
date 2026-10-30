@@ -63,36 +63,35 @@ describe('pylon discovery', () => {
       const a = pylon.TlFactory.GetInstance();
       const b = pylon.TlFactory.getInstance();
       assert.equal(a, b);
-      assert.deepEqual(a.EnumerateDevices(), b.enumerateDevices());
-      assert.deepEqual(pylon.enumerateDevices(), a.EnumerateDevices());
+      const serials = (list) => list.map((d) => d.serialNumber).sort();
+      assert.deepEqual(serials(a.EnumerateDevices()), serials(b.enumerateDevices()));
+      assert.deepEqual(serials(pylon.enumerateDevices()), serials(a.EnumerateDevices()));
     } finally {
       pylon.terminate();
     }
   });
 
-  it('CreateFirstDevice opens a camera with matching device info', (t) => {
+  it('CreateFirstDevice opens a device with matching device info', (t) => {
     if (!requireDevice(t)) return;
     pylon.initialize();
     try {
-      const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
-      // CreateFirstDevice returns the underlying camera object directly
-      // (not the JS facade class), so the contract is behavioral: it must
-      // expose the documented camera API.
-      for (const method of ['open', 'close', 'isOpen', 'getDeviceInfo',
-        'startGrabbing', 'stopGrabbing', 'isGrabbing', 'retrieveResult',
-        'grab', 'getInteger', 'getEnum']) {
-        assert.equal(typeof camera[method], 'function', method);
+      const device = pylon.TlFactory.GetInstance().CreateFirstDevice();
+      // CreateFirstDevice returns a PylonDevice handle (pypylon parity), not
+      // the InstantCamera facade: the contract is behavioral.
+      for (const method of ['open', 'close', 'isOpen', 'getDeviceInfo', 'destroy']) {
+        assert.equal(typeof device[method], 'function', method);
       }
-      assert.equal(camera.isOpen(), false);
-      camera.open();
+      assert.equal(device.isOpen(), false);
+      device.open();
       try {
-        const info = camera.getDeviceInfo();
+        const info = device.getDeviceInfo();
         const devices = pylon.enumerateDevices();
         const serials = devices.map((d) => d.serialNumber);
         assert.ok(serials.includes(info.serialNumber));
       } finally {
-        camera.close();
+        device.close();
       }
+      pylon.TlFactory.GetInstance().DestroyDevice(device);
     } finally {
       pylon.terminate();
     }

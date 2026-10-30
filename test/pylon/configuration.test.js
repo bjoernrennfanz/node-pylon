@@ -5,10 +5,10 @@
 // acquirecontinuousconfiguration_test.py (start/stop grabbing),
 // softwaretriggerconfiguration_test.py (timeout/return semantics via
 // retrieveResult), configurationhelper_test.py (open/grab/close flow).
-// Event-handler registration (cameraeventhandler, imageeventhandler,
-// configurationeventhandler), buffer factories (bufferfactory_test.py) and
-// wait objects (waitobject(s)_test.py) have no MVP wrapper counterpart and
-// are documented as deviations in docs/testing.md.
+// Full 1:1 ports (strategies, handlers, configs, array) live in
+// instantcamera-full.test.js. Buffer factories (bufferfactory_test.py) and
+// wait objects (waitobject(s)_test.py) have no wrapper counterpart and are
+// documented as deviations in docs/testing.md.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const pylon = require('../../lib');
