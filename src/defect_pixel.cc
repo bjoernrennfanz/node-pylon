@@ -243,38 +243,36 @@ Napi::Value NormalizePixelList(const Napi::CallbackInfo& info) {
 
 // --- StaticDefectPixel struct -------------------------------------------
 
-Napi::Value PixelGetX(const Napi::CallbackInfo& info) {
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Number::New(info.Env(), static_cast<double>(self->pixel_.X));
+Napi::Value StaticDefectPixelWrap::GetX(const Napi::CallbackInfo& info) {
+  return Napi::Number::New(info.Env(), static_cast<double>(pixel_.X));
 }
-void PixelSetX(const Napi::CallbackInfo& info, const Napi::Value& value) {
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
+void StaticDefectPixelWrap::SetX(const Napi::CallbackInfo& info,
+                                 const Napi::Value& value) {
   uint16_t v = 0;
-  if (ParseUint16(info.Env(), value, "X", &v)) self->pixel_.X = v;
+  if (ParseUint16(info.Env(), value, "X", &v)) pixel_.X = v;
 }
-Napi::Value PixelGetY(const Napi::CallbackInfo& info) {
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Number::New(info.Env(), static_cast<double>(self->pixel_.Y));
+Napi::Value StaticDefectPixelWrap::GetY(const Napi::CallbackInfo& info) {
+  return Napi::Number::New(info.Env(), static_cast<double>(pixel_.Y));
 }
-void PixelSetY(const Napi::CallbackInfo& info, const Napi::Value& value) {
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
+void StaticDefectPixelWrap::SetY(const Napi::CallbackInfo& info,
+                                 const Napi::Value& value) {
   uint16_t v = 0;
-  if (ParseUint16(info.Env(), value, "Y", &v)) self->pixel_.Y = v;
+  if (ParseUint16(info.Env(), value, "Y", &v)) pixel_.Y = v;
 }
-Napi::Value PixelGetType(const Napi::CallbackInfo& info) {
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
+Napi::Value StaticDefectPixelWrap::GetPixelType(
+    const Napi::CallbackInfo& info) {
   return Napi::Number::New(info.Env(),
-                           static_cast<double>(static_cast<int>(self->pixel_.Type)));
+                           static_cast<double>(static_cast<int>(pixel_.Type)));
 }
-void PixelSetType(const Napi::CallbackInfo& info, const Napi::Value& value) {
+void StaticDefectPixelWrap::SetPixelType(const Napi::CallbackInfo& info,
+                                         const Napi::Value& value) {
   Napi::Env env = info.Env();
-  auto* self = StaticDefectPixelWrap::Unwrap(info.This().As<Napi::Object>());
   if (!value.IsNumber()) {
     Napi::TypeError::New(env, "defect pixel Type must be an integer")
         .ThrowAsJavaScriptException();
     return;
   }
-  self->pixel_.Type = static_cast<Pylon::EStaticDefectPixelType>(
+  pixel_.Type = static_cast<Pylon::EStaticDefectPixelType>(
       value.As<Napi::Number>().Int32Value());
 }
 
@@ -297,44 +295,35 @@ bool ParseSizeArg(Napi::Env env, const Napi::Value& value, size_t* out,
   return true;
 }
 
-Napi::Value VectorLength(const Napi::CallbackInfo& info) {
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Number::New(info.Env(),
-                           static_cast<double>(self->list_.size()));
+Napi::Value StaticDefectPixelVectorWrap::GetLength(
+    const Napi::CallbackInfo& info) {
+  return Napi::Number::New(info.Env(), static_cast<double>(list_.size()));
 }
-void VectorLengthSet(const Napi::CallbackInfo& info, const Napi::Value&) {
+void StaticDefectPixelVectorWrap::SetLength(const Napi::CallbackInfo& info,
+                                            const Napi::Value&) {
   Napi::TypeError::New(info.Env(), "length is read-only")
       .ThrowAsJavaScriptException();
 }
-Napi::Value VectorSize(const Napi::CallbackInfo& info) {
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Number::New(info.Env(),
-                           static_cast<double>(self->list_.size()));
+Napi::Value StaticDefectPixelVectorWrap::Size(const Napi::CallbackInfo& info) {
+  return Napi::Number::New(info.Env(), static_cast<double>(list_.size()));
 }
-Napi::Value VectorCapacity(const Napi::CallbackInfo& info) {
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Number::New(info.Env(),
-                           static_cast<double>(self->list_.capacity()));
+Napi::Value StaticDefectPixelVectorWrap::Capacity(
+    const Napi::CallbackInfo& info) {
+  return Napi::Number::New(info.Env(), static_cast<double>(list_.capacity()));
 }
-Napi::Value VectorEmpty(const Napi::CallbackInfo& info) {
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  return Napi::Boolean::New(info.Env(), self->list_.empty());
+Napi::Value StaticDefectPixelVectorWrap::Empty(const Napi::CallbackInfo& info) {
+  return Napi::Boolean::New(info.Env(), list_.empty());
 }
-Napi::Value VectorReserve(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::Reserve(
+    const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   size_t n = 0;
   if (!ParseSizeArg(env, info.Length() > 0 ? info[0] : env.Undefined(), &n,
                     "reserve(n)")) {
     return env.Undefined();
   }
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
   try {
-    self->list_.reserve(n);
+    list_.reserve(n);
   } catch (const Pylon::GenericException& ex) {
     errormap::ThrowTranslated(env, ex);
   } catch (const std::exception& ex) {
@@ -342,17 +331,16 @@ Napi::Value VectorReserve(const Napi::CallbackInfo& info) {
   }
   return env.Undefined();
 }
-Napi::Value VectorResize(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::Resize(
+    const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   size_t n = 0;
   if (!ParseSizeArg(env, info.Length() > 0 ? info[0] : env.Undefined(), &n,
                     "resize(n)")) {
     return env.Undefined();
   }
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
   try {
-    self->list_.resize(n);
+    list_.resize(n);
   } catch (const Pylon::GenericException& ex) {
     errormap::ThrowTranslated(env, ex);
   } catch (const std::exception& ex) {
@@ -360,13 +348,11 @@ Napi::Value VectorResize(const Napi::CallbackInfo& info) {
   }
   return env.Undefined();
 }
-Napi::Value VectorClear(const Napi::CallbackInfo& info) {
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  self->list_.clear();
+Napi::Value StaticDefectPixelVectorWrap::Clear(const Napi::CallbackInfo& info) {
+  list_.clear();
   return info.Env().Undefined();
 }
-Napi::Value VectorSwap(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::Swap(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1 || !info[0].IsObject() ||
       !info[0].As<Napi::Object>().InstanceOf(
@@ -375,35 +361,31 @@ Napi::Value VectorSwap(const Napi::CallbackInfo& info) {
         .ThrowAsJavaScriptException();
     return env.Undefined();
   }
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
   auto* other =
       StaticDefectPixelVectorWrap::Unwrap(info[0].As<Napi::Object>());
-  if (self == other) return env.Undefined();
-  Pylon::StaticDefectPixelList_t tmp = self->list_;
-  self->list_ = other->list_;
+  if (other == this) return env.Undefined();
+  Pylon::StaticDefectPixelList_t tmp = list_;
+  list_ = other->list_;
   other->list_ = tmp;
   return env.Undefined();
 }
-Napi::Value VectorAt(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::At(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   size_t i = 0;
   if (!ParseSizeArg(env, info.Length() > 0 ? info[0] : env.Undefined(), &i,
                     "at(index)")) {
     return env.Null();
   }
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  if (i >= self->list_.size()) {
+  if (i >= list_.size()) {
     Napi::RangeError::New(env, "index out of range")
         .ThrowAsJavaScriptException();
     return env.Null();
   }
   Napi::Object js = StaticDefectPixelWrap::constructor.New({});
-  StaticDefectPixelWrap::Unwrap(js)->pixel_ = self->list_.at(i);
+  StaticDefectPixelWrap::Unwrap(js)->pixel_ = list_.at(i);
   return js;
 }
-Napi::Value VectorPush(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::Push(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1) {
     Napi::TypeError::New(env, "push(pixel) expected")
@@ -413,34 +395,30 @@ Napi::Value VectorPush(const Napi::CallbackInfo& info) {
   Pylon::StaticDefectPixel pixel = {0, 0,
                                     Pylon::StaticDefectPixelType_Reserved};
   if (!ParsePixel(env, info[0], &pixel)) return env.Undefined();
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  self->list_.push_back(pixel);
+  list_.push_back(pixel);
   return env.Undefined();
 }
-Napi::Value VectorToArray(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::ToArray(
+    const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  Napi::Array out = Napi::Array::New(env, self->list_.size());
-  for (size_t i = 0; i < self->list_.size(); ++i) {
-    out.Set(static_cast<uint32_t>(i), PixelToJs(env, self->list_.at(i)));
+  Napi::Array out = Napi::Array::New(env, list_.size());
+  for (size_t i = 0; i < list_.size(); ++i) {
+    out.Set(static_cast<uint32_t>(i), PixelToJs(env, list_.at(i)));
   }
   return out;
 }
 // Symbol.iterator -> yields {x, y, type} objects in order.
-Napi::Value VectorIterator(const Napi::CallbackInfo& info) {
+Napi::Value StaticDefectPixelVectorWrap::Iterator(
+    const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  auto* self =
-      StaticDefectPixelVectorWrap::Unwrap(info.This().As<Napi::Object>());
-  Napi::Array snapshot = Napi::Array::New(env, self->list_.size());
-  for (size_t i = 0; i < self->list_.size(); ++i) {
-    snapshot.Set(static_cast<uint32_t>(i), PixelToJs(env, self->list_.at(i)));
+  Napi::Array snapshot = Napi::Array::New(env, list_.size());
+  for (size_t i = 0; i < list_.size(); ++i) {
+    snapshot.Set(static_cast<uint32_t>(i), PixelToJs(env, list_.at(i)));
   }
   Napi::Object it = Napi::Object::New(env);
   it.Set("snapshot", snapshot);
   it.Set("index", Napi::Number::New(env, 0));
-  it.Set("next", Napi::Function::New(env, [](const Napi::CallbackInfo& cb) {
+  it.Set("next", Napi::Function::New(env, [](const Napi::CallbackInfo& cb) -> Napi::Value {
              Napi::Env env = cb.Env();
              Napi::Object self = cb.This().As<Napi::Object>();
              Napi::Array snap = self.Get("snapshot").As<Napi::Array>();
@@ -538,14 +516,20 @@ StaticDefectPixelVectorWrap::StaticDefectPixelVectorWrap(
 void Init(Napi::Env env, Napi::Object exports) {
   Napi::Function pixelCtor = StaticDefectPixelWrap::DefineClass(
       env, "StaticDefectPixel",
-      {StaticDefectPixelWrap::InstanceAccessor("X", &PixelGetX, &PixelSetX),
-       StaticDefectPixelWrap::InstanceAccessor("x", &PixelGetX, &PixelSetX),
-       StaticDefectPixelWrap::InstanceAccessor("Y", &PixelGetY, &PixelSetY),
-       StaticDefectPixelWrap::InstanceAccessor("y", &PixelGetY, &PixelSetY),
-       StaticDefectPixelWrap::InstanceAccessor("Type", &PixelGetType,
-                                               &PixelSetType),
-       StaticDefectPixelWrap::InstanceAccessor("type", &PixelGetType,
-                                               &PixelSetType)});
+      {StaticDefectPixelWrap::InstanceAccessor("X", &StaticDefectPixelWrap::GetX,
+                                               &StaticDefectPixelWrap::SetX),
+       StaticDefectPixelWrap::InstanceAccessor("x", &StaticDefectPixelWrap::GetX,
+                                               &StaticDefectPixelWrap::SetX),
+       StaticDefectPixelWrap::InstanceAccessor("Y", &StaticDefectPixelWrap::GetY,
+                                               &StaticDefectPixelWrap::SetY),
+       StaticDefectPixelWrap::InstanceAccessor("y", &StaticDefectPixelWrap::GetY,
+                                               &StaticDefectPixelWrap::SetY),
+       StaticDefectPixelWrap::InstanceAccessor(
+           "Type", &StaticDefectPixelWrap::GetPixelType,
+           &StaticDefectPixelWrap::SetPixelType),
+       StaticDefectPixelWrap::InstanceAccessor(
+           "type", &StaticDefectPixelWrap::GetPixelType,
+           &StaticDefectPixelWrap::SetPixelType)});
   StaticDefectPixelWrap::constructor = Napi::Persistent(pixelCtor);
   StaticDefectPixelWrap::constructor.SuppressDestruct();
   exports.Set("StaticDefectPixel",
@@ -553,24 +537,41 @@ void Init(Napi::Env env, Napi::Object exports) {
 
   Napi::Function vecCtor = StaticDefectPixelVectorWrap::DefineClass(
       env, "StaticDefectPixelVector",
-      {StaticDefectPixelVectorWrap::InstanceAccessor("length", &VectorLength,
-                                                     &VectorLengthSet),
-       StaticDefectPixelVectorWrap::InstanceMethod("size", &VectorSize),
-       StaticDefectPixelVectorWrap::InstanceMethod("capacity", &VectorCapacity),
-       StaticDefectPixelVectorWrap::InstanceMethod("empty", &VectorEmpty),
-       StaticDefectPixelVectorWrap::InstanceMethod("reserve", &VectorReserve),
-       StaticDefectPixelVectorWrap::InstanceMethod("resize", &VectorResize),
-       StaticDefectPixelVectorWrap::InstanceMethod("clear", &VectorClear),
-       StaticDefectPixelVectorWrap::InstanceMethod("swap", &VectorSwap),
-       StaticDefectPixelVectorWrap::InstanceMethod("at", &VectorAt),
-       StaticDefectPixelVectorWrap::InstanceMethod("push", &VectorPush),
-       StaticDefectPixelVectorWrap::InstanceMethod("toArray", &VectorToArray)});
+      {StaticDefectPixelVectorWrap::InstanceAccessor(
+           "length", &StaticDefectPixelVectorWrap::GetLength,
+           &StaticDefectPixelVectorWrap::SetLength),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "size", &StaticDefectPixelVectorWrap::Size),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "capacity", &StaticDefectPixelVectorWrap::Capacity),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "empty", &StaticDefectPixelVectorWrap::Empty),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "reserve", &StaticDefectPixelVectorWrap::Reserve),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "resize", &StaticDefectPixelVectorWrap::Resize),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "clear", &StaticDefectPixelVectorWrap::Clear),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "swap", &StaticDefectPixelVectorWrap::Swap),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "at", &StaticDefectPixelVectorWrap::At),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "push", &StaticDefectPixelVectorWrap::Push),
+       StaticDefectPixelVectorWrap::InstanceMethod(
+           "toArray", &StaticDefectPixelVectorWrap::ToArray)});
   // Symbol.iterator for for..of / spread / Array.from (plain property
   // assignment with the well-known symbol key).
   Napi::Symbol iteratorSym = Napi::Symbol::WellKnown(env, "iterator");
   vecCtor.Get("prototype")
       .As<Napi::Object>()
-      .Set(iteratorSym, Napi::Function::New(env, &VectorIterator));
+      .Set(iteratorSym,
+           Napi::Function::New(
+               env, [](const Napi::CallbackInfo& info) -> Napi::Value {
+                 auto* self = StaticDefectPixelVectorWrap::Unwrap(
+                     info.This().As<Napi::Object>());
+                 return self->Iterator(info);
+               }));
   StaticDefectPixelVectorWrap::constructor =
       Napi::Persistent(vecCtor);
   StaticDefectPixelVectorWrap::constructor.SuppressDestruct();
