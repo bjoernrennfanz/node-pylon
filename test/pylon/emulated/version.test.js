@@ -3,7 +3,7 @@
 // version/pylonVersion surface).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
+const pylon = require('../../../lib');
 
 describe('pylon versions', () => {
   it('exposes module and SDK versions', () => {

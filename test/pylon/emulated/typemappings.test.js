@@ -7,7 +7,7 @@
 // throwing, the boolean result is asserted.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
+const pylon = require('../../../lib');
 
 const MAPPED_EXCEPTION_NAMES = [
   'GenericException',

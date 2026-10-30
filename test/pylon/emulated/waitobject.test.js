@@ -5,8 +5,8 @@
 // a WaitExResult code, Sleep blocks the calling thread.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice } = require('../../helpers');
 
 const SIGNAL_WAIT_TIMEOUT_MS = 5000;
 const NEGATIVE_WAIT_TIMEOUT_MS = 250;

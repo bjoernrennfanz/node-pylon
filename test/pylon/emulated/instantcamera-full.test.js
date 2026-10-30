@@ -6,8 +6,8 @@
 // Uses the emulator when no hardware is attached (PYLON_CAMEMU=2).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, hasNode } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, hasNode } = require('../../helpers');
 
 function openCamera() {
   const cam = pylon.createFirstCamera();

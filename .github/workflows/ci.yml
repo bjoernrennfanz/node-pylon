@@ -1,10 +1,21 @@
-# Real-SDK build in GitHub Actions.
-# Builds the N-API module against Basler pylon SDK 26.09 and tests with the
-# SDK camera emulator (PYLON_CAMEMU) — no physical camera needed.
-# Matrix (mirrors pypylon platforms):
-#   Linux x64 (ubuntu-22.04) + Linux arm64 (ubuntu-24.04-arm),
-#   Windows x64 (windows-2022, VS2022 v17),
-#   macOS (macos-14 arm64 + macos-15) x Node 20/22.
+# Node-API build + test pipeline, modelled on pypylon (.github/workflows/main.yml).
+#
+# Shape (pypylon parity):
+#   build  — one job, OS matrix, compiles the N-API addon once per OS
+#   unit-tests — needs build, OS x Node matrix, downloads the matching
+#     per-OS binary and runs the full suite (no rebuild).
+#
+# Matrix (per ZAU-172):
+#   build:      ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest
+#               x Node 20 only.
+#   unit-tests: same OS list x Node 20/22. macOS intentionally only
+#               `macos-latest` (no macos-14 legacy leg).
+#
+# Node 20-only build: N-API (node-addon-api) is ABI-stable across Node
+# majors, so the Node 20 binary runs unmodified on Node 22. The test job
+# proves this by exercising every build artifact on both runtimes.
+# Fallback if that ever breaks: extend the build matrix to `node: [20, 22]`
+# and key artifact names on `node${{ matrix.node }}`.
 #
 # SDK comes exclusively from the PYLON_SDK_BASE_URL secret
 # (Settings -> Secrets -> Actions). The base URL appears nowhere in the
@@ -22,17 +33,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-real:
-    name: real-sdk (${{ matrix.os }}, node ${{ matrix.node }})
+  build:
+    name: build (${{ matrix.os }}, node 20)
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # windows-2022 (VS2022 v17) instead of windows-latest: the bundled
         # node-gyp does not detect VS v18 yet.
-        # ubuntu-22.04 x64 + ubuntu-24.04-arm cover Linux x64/arm64 (pypylon parity).
-        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-14, macos-15]
-        node: [20, 22]
+        # ubuntu-22.04 x64 + ubuntu-24.04-arm cover Linux x64/arm64
+        # (pypylon parity). macOS: latest only (ZAU-172).
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest]
+        node: [20]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,10 +60,10 @@ jobs:
           fi
           echo "PYLON_SDK_BASE_URL is set (value masked, never printed)."
 
-      - name: Setup Node.js ${{ matrix.node }}
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
           cache: npm
 
       - name: Setup MSVC (Windows only)
@@ -111,7 +123,93 @@ jobs:
           fi
           echo "URL check passed: no hardcoded URLs in infra/code files."
 
-      - name: Smoke tests (real addon, camera emulator, no hardware)
+      - name: Upload built addon (.node)
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_pylon-build-${{ matrix.os }}-node20
+          path: build/Release/node_pylon.node
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload Windows runtime DLLs (build bundle)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_pylon-build-${{ matrix.os }}-node20-dlls
+          path: build/Release/*.dll
+          if-no-files-found: error
+          retention-days: 7
+
+  unit-tests:
+    name: tests (${{ matrix.os }}, node ${{ matrix.node }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same OS list as build; macOS latest only (ZAU-172).
+        # Node 20 + 22 both exercise the Node 20-built N-API binary
+        # (ABI-stable, no rebuild in this job).
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest]
+        node: [20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Setup MSVC (Windows only)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install deps (skip native rebuild; binary comes from build job)
+        run: npm ci --ignore-scripts
+
+      - name: Download built addon for ${{ matrix.os }} (Node 20 N-API binary)
+        uses: actions/download-artifact@v4
+        with:
+          name: node_pylon-build-${{ matrix.os }}-node20
+          path: build/Release/
+
+      - name: Download Windows runtime DLLs
+        if: runner.os == 'Windows'
+        uses: actions/download-artifact@v4
+        with:
+          name: node_pylon-build-${{ matrix.os }}-node20-dlls
+          path: build/Release/
+
+      - name: Verify test binary present (no rebuild in this job)
+        shell: bash
+        run: |
+          ls -la build/Release/node_pylon.node
+          node -e "process.report.writeReport('node-version.json'); console.log(process.version, process.arch)"
+
+      - name: Check pylon SDK secret (emulator libs need SDK layout)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: |
+          if [ -z "$PYLON_SDK_BASE_URL" ]; then
+            echo "::error::PYLON_SDK_BASE_URL secret is not set. Add it under Settings -> Secrets -> Actions."
+            exit 1
+          fi
+          echo "PYLON_SDK_BASE_URL is set (value masked, never printed)."
+
+      - name: Download pylon SDK 26.09 (runtime libs for camera emulator)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: bash scripts/download-pylon-sdk.sh
+
+      - name: Unit tests (real addon, camera emulator, no hardware)
+        # Emulated suite only (mirrors pypylon's all_emulated_tests.py):
+        # GitHub CI provides the CamEmu emulator, never physical cameras,
+        # so the gigE/usb hardware suites (`npm run test:hardware`) skip
+        # there and run on hardware hosts only.
         shell: bash
         env:
           PYLON_CAMEMU: 2
@@ -128,7 +226,7 @@ jobs:
             export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries:${DYLD_LIBRARY_PATH:-}"
             export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries/gentlproducer/gtl"
           fi
-          npm test
+          npm run test:emulated
 
       - name: React Native desktop static checks (no SDK/camera needed)
         shell: bash
@@ -156,20 +254,3 @@ jobs:
           npm run sample:grab-options
           npm run sample:nodemap
           npm run sample:grabattrs
-
-      - name: Upload real prebuilt (.node)
-        uses: actions/upload-artifact@v4
-        with:
-          name: node_pylon-real-${{ matrix.os }}-node${{ matrix.node }}
-          path: build/Release/node_pylon.node
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Upload Windows runtime DLLs (real prebuilt bundle)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
-        with:
-          name: node_pylon-real-${{ matrix.os }}-node${{ matrix.node }}-dlls
-          path: build/Release/*.dll
-          if-no-files-found: error
-          retention-days: 7

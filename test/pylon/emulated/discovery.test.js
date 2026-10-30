@@ -10,8 +10,8 @@
 // deviations in docs/testing.md.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, deviceCount } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, deviceCount } = require('../../helpers');
 
 const DEVICE_FIELDS = [
   'friendlyName',
