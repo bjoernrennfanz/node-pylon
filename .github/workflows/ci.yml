@@ -5,8 +5,8 @@
 #   unit-tests — needs build, OS x Node matrix, downloads the matching
 #     per-OS binary and runs the emulated suite + samples (no rebuild).
 #   rn-build — one job, OS matrix, compile-checks the shared React-Native
-#     core (react-native/shared/pylon_core.cpp) against the real SDK
-#     (no link, no Node addon involved).
+#     core (react-native/shared/pylon_core.cpp) against the real SDK and
+#     runs it against the camera emulator (no Node addon involved).
 #   rn-tests — OS x Node matrix, runs the RN suites (`npm run test:rn`,
 #     SDK-free; facade tests need Node >= 22.6 type stripping and skip
 #     cleanly on Node 20).
@@ -306,6 +306,27 @@ jobs:
         run: |
           node scripts/configure-build.js
           node scripts/compile-pylon-core.js
+
+      - name: Run the shared RN core against the camera emulator
+        # Real core binary + real SDK + emulator (PYLON_CAMEMU=2): no
+        # stubs, no mocks, no JS. Fails the job on any core defect.
+        shell: bash
+        env:
+          PYLON_CAMEMU: 2
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            export PATH="$PYLON_ROOT/Runtime/x64:$PATH"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Runtime/x64"
+          fi
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            export LD_LIBRARY_PATH="$PYLON_ROOT/lib:${LD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/lib/gentlproducer/gtl"
+          fi
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export DYLD_LIBRARY_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries:${DYLD_LIBRARY_PATH:-}"
+            export GENICAM_GENTL64_PATH="$PYLON_ROOT/Frameworks/pylon.framework/Versions/A/Libraries/gentlproducer/gtl"
+          fi
+          node scripts/smoke-pylon-core.js
 
   rn-tests:
     name: rn-tests (${{ matrix.os }}, node ${{ matrix.node }})

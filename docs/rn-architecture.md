@@ -122,11 +122,12 @@ types/index.d.ts                        Node types (RN types in react-native/src
 ## Tests (all in `npm run test:rn`, CI needs no camera/SDK for these)
 
 RN suites run in their own CI jobs (ZAU-174, per GF): `rn-build`
-(compile-checks `pylon_core.cpp` per OS against the real SDK) and
-`rn-tests` (OS x Node 20/22 matrix, no `needs:`, parallel to the addon
-jobs). Facade tests need Node >= 22.6 type stripping and skip cleanly on
-Node 20 (`RN_NO_STRIP`; verified via `RN_FORCE_NO_STRIP=1`: 15 pass,
-96 skipped, 0 fail).
+(compile-checks `pylon_core.cpp` per OS against the real SDK, then runs
+`pylon_core_smoke` — the real core binary against the real SDK and the
+camera emulator, no stubs) and `rn-tests` (OS x Node 20/22 matrix, no
+`needs:`, parallel to the addon jobs). Facade tests need Node >= 22.6
+type stripping and skip cleanly on Node 20 (`RN_NO_STRIP`; verified via
+`RN_FORCE_NO_STRIP=1`: 15 pass, 96 skipped, 0 fail).
 
 ```text
 test/rn-static.test.js      files/symbols/markers/doc mentions (5 tests)
