@@ -920,8 +920,13 @@ std::vector<std::string> GetCategoryFeatures(CameraHandle handle,
     GenApi::FeatureList_t features;
     ptr->GetFeatures(features);
     std::vector<std::string> out;
-    for (const auto& f : features) {
-      out.emplace_back(f->GetName().c_str());
+    for (auto* f : features) {
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out.emplace_back(inode->GetName().c_str());
+      }
     }
     return out;
   } catch (const Pylon::GenericException& ex) {
@@ -955,8 +960,13 @@ std::vector<std::string> GetSelectedFeatures(CameraHandle handle,
     GenApi::FeatureList_t features;
     ptr->GetSelectedFeatures(features);
     std::vector<std::string> out;
-    for (const auto& f : features) {
-      out.emplace_back(f->GetName().c_str());
+    for (auto* f : features) {
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out.emplace_back(inode->GetName().c_str());
+      }
     }
     return out;
   } catch (const Pylon::GenericException& ex) {
@@ -976,8 +986,13 @@ std::vector<std::string> GetSelectingFeatures(CameraHandle handle,
     GenApi::FeatureList_t features;
     ptr->GetSelectingFeatures(features);
     std::vector<std::string> out;
-    for (const auto& f : features) {
-      out.emplace_back(f->GetName().c_str());
+    for (auto* f : features) {
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out.emplace_back(inode->GetName().c_str());
+      }
     }
     return out;
   } catch (const Pylon::GenericException& ex) {
@@ -1220,12 +1235,11 @@ DiscoveryConstants GetDiscoveryConstants() {
   out.strings["FileNameKey"] = ConstStr(Pylon::Key::FileNameKey);
   out.strings["InfoIDKey"] = ConstStr(Pylon::Key::InfoIDKey);
   out.strings["VersionKey"] = ConstStr(Pylon::Key::VersionKey);
-  // Device access modes (Pylon::DeviceAccessMode_*).
-  out.integers["DeviceAccessMode_Control"] = Pylon::DeviceAccessMode_Control;
-  out.integers["DeviceAccessMode_Stream"] = Pylon::DeviceAccessMode_Stream;
-  out.integers["DeviceAccessMode_Event"] = Pylon::DeviceAccessMode_Event;
-  out.integers["DeviceAccessMode_Exclusive"] =
-      Pylon::DeviceAccessMode_Exclusive;
+  // Device access modes (pylon/DeviceAccessMode.h: Pylon::Control etc.).
+  out.integers["DeviceAccessMode_Control"] = Pylon::Control;
+  out.integers["DeviceAccessMode_Stream"] = Pylon::Stream;
+  out.integers["DeviceAccessMode_Event"] = Pylon::Event;
+  out.integers["DeviceAccessMode_Exclusive"] = Pylon::Exclusive;
   // Accessibility states (Pylon::Accessibility_*).
   out.integers["Accessibility_Unknown"] = Pylon::Accessibility_Unknown;
   out.integers["Accessibility_Ok"] = Pylon::Accessibility_Ok;

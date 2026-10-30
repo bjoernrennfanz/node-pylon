@@ -16,7 +16,16 @@
 namespace node_pylon {
 namespace core {
 
-// DeviceInfo also carries the full name (like GetDeviceInfo in Node).
+// A device mirroring the pylon TlFactory DeviceInfo (MVP fields).
+struct DeviceInfo {
+  std::string friendly_name;
+  std::string model_name;
+  std::string serial_number;
+  std::string vendor_name;
+  std::string device_class;
+};
+
+// FullDeviceInfo also carries the full name (like GetDeviceInfo in Node).
 struct FullDeviceInfo : DeviceInfo {
   std::string full_name;
 };
