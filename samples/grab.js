@@ -17,9 +17,9 @@ try {
   }
 
   // pypylon grab.py: InstantCamera(TlFactory.GetInstance().CreateFirstDevice())
-  const camera = pylon.InstantCamera.wrapNative(
-    pylon.TlFactory.GetInstance().CreateFirstDevice()
-  );
+  // (createFirstCamera attaches the first device to a real InstantCamera;
+  // the raw TlFactory device handle has no grab methods).
+  const camera = pylon.createFirstCamera();
   try {
     console.log('device:', JSON.stringify(camera.getDeviceInfo()));
     camera.open();
