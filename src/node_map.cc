@@ -763,7 +763,12 @@ NodeError RealNodeMap::GetCategoryFeatures(
     ptr->GetFeatures(features);
     out->clear();
     for (auto* f : features) {
-      if (f != nullptr) out->push_back(std::string(f->GetName().c_str()));
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out->push_back(std::string(inode->GetName().c_str()));
+      }
     }
   } catch (const Pylon::GenericException&) {
     return NodeError::kCommandFailed;
@@ -808,7 +813,12 @@ NodeError RealNodeMap::GetSelectedFeatures(
     ptr->GetSelectedFeatures(features);
     out->clear();
     for (auto* f : features) {
-      if (f != nullptr) out->push_back(std::string(f->GetName().c_str()));
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out->push_back(std::string(inode->GetName().c_str()));
+      }
     }
   } catch (const Pylon::GenericException&) {
     return NodeError::kCommandFailed;
@@ -829,7 +839,12 @@ NodeError RealNodeMap::GetSelectingFeatures(
     ptr->GetSelectingFeatures(features);
     out->clear();
     for (auto* f : features) {
-      if (f != nullptr) out->push_back(std::string(f->GetName().c_str()));
+      if (f == nullptr) continue;
+      // Feature lists hold IValue*; the name lives on INode.
+      auto* inode = dynamic_cast<GenApi::INode*>(f);
+      if (inode != nullptr) {
+        out->push_back(std::string(inode->GetName().c_str()));
+      }
     }
   } catch (const Pylon::GenericException&) {
     return NodeError::kCommandFailed;
