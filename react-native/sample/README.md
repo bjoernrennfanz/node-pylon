@@ -24,6 +24,9 @@ Metro resolves `NativePylon.windows.js` / `.macos.js` next to
 ## What the sample shows
 
 `App.tsx`: "list version + devices" (`enumerateDevices()` via the
-`pylon_core_*` shared core). With a camera or the SDK emulator
-(`PYLON_CAMEMU=2`) attached, devices are listed; otherwise the list is
-empty.
+`pylon_core_*` shared core) plus "grab one frame (device 0)"
+(`InstantCamera.grabOne()` via the facade, `AcquisitionMode SingleFrame`).
+The grab result shows `width x height`, pixel type, buffer bytes and
+timestamp. With a camera or the SDK emulator (`PYLON_CAMEMU=2`) attached,
+devices are listed and grabs succeed; otherwise the list is empty and
+grab throws (real SDK error, no fake values).

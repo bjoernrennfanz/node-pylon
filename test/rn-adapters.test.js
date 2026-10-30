@@ -64,14 +64,39 @@ test('rn-desktop adapters: TurboModule spec shape', () => {
     spec.includes('codegenNativeModule') || spec.includes('TurboModule'),
     'spec: TurboModule marker missing',
   );
-  for (const method of ['getVersion', 'getPylonVersion', 'enumerateDevices']) {
+  for (const method of [
+    'getVersion',
+    'getPylonVersion',
+    'enumerateDevices',
+    'openCamera',
+    'closeCamera',
+    'startGrabbing',
+    'grabOne',
+    'retrieveResult',
+    'getInteger',
+    'setInteger',
+    'getEnum',
+    'setEnum',
+    'executeCommand',
+  ]) {
     assert.ok(spec.includes(method), `spec: ${method} missing`);
   }
 });
 
 test('rn-desktop adapters: facade only exposes spec methods', () => {
   const facade = read('react-native/src/index.ts');
-  for (const method of ['version', 'pylonVersion', 'enumerateDevices']) {
+  for (const method of [
+    'version',
+    'pylonVersion',
+    'enumerateDevices',
+    'InstantCamera',
+    'grabOne',
+    'retrieveResult',
+    'getEnum',
+    'setEnum',
+    'GrabStrategy',
+    'TimeoutHandling',
+  ]) {
     assert.ok(facade.includes(method), `facade: ${method} missing`);
   }
   assert.ok(!/mock/i.test(facade), 'facade still mentions mock');
@@ -81,5 +106,6 @@ test('rn-desktop adapters: sample uses only the documented facade', () => {
   const app = read('react-native/sample/App.tsx');
   assert.ok(app.includes('enumerateDevices'), 'sample: enumerateDevices missing');
   assert.ok(!/mock/i.test(app), 'sample still mentions mock');
-  assert.ok(!/GrabOne|RetrieveResult/i.test(app), 'sample must not call native grab APIs directly');
+  assert.ok(!/specs\/NativePylon/.test(app), 'sample must not import the spec directly');
+  assert.ok(!/TurboModuleRegistry/.test(app), 'sample must not touch TurboModuleRegistry');
 });
