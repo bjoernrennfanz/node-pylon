@@ -65,8 +65,8 @@ void DefineSubclass(Napi::Env env, Napi::Object on, Napi::Object genicam,
 
 void ThrowJs(Napi::Env env, Napi::FunctionReference& ctorRef,
              const std::string& msg) {
-  Napi::Value argv[] = {Napi::String::New(env, msg)};
-  Napi::Object err = ctorRef.Value().New(1, argv);
+  Napi::Object err =
+      ctorRef.Value().New({Napi::String::New(env, msg)});
   err.Set("message", msg);
   Napi::Error(env, err).ThrowAsJavaScriptException();
 }

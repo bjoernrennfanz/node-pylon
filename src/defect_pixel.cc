@@ -565,12 +565,12 @@ void Init(Napi::Env env, Napi::Object exports) {
        StaticDefectPixelVectorWrap::InstanceMethod("at", &VectorAt),
        StaticDefectPixelVectorWrap::InstanceMethod("push", &VectorPush),
        StaticDefectPixelVectorWrap::InstanceMethod("toArray", &VectorToArray)});
-  // Symbol.iterator for for..of / spread / Array.from.
+  // Symbol.iterator for for..of / spread / Array.from (plain property
+  // assignment with the well-known symbol key).
   Napi::Symbol iteratorSym = Napi::Symbol::WellKnown(env, "iterator");
   vecCtor.Get("prototype")
       .As<Napi::Object>()
-      .DefineProperty(Napi::PropertyDescriptor::Function(
-          iteratorSym, Napi::Function::New(env, &VectorIterator)));
+      .Set(iteratorSym, Napi::Function::New(env, &VectorIterator));
   StaticDefectPixelVectorWrap::constructor =
       Napi::Persistent(vecCtor);
   StaticDefectPixelVectorWrap::constructor.SuppressDestruct();

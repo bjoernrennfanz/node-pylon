@@ -44,7 +44,7 @@ DeviceInfoWrap* DeviceInfoWrap::FromValue(const Napi::Value& value) {
   Napi::Object obj = value.As<Napi::Object>();
   bool instance = false;
   try {
-    instance = obj.InstanceOf(constructor.Value()).UnwrapOr(false);
+    instance = obj.InstanceOf(constructor.Value());
   } catch (...) {
     return nullptr;
   }
