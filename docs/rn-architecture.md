@@ -169,3 +169,13 @@ Functional emulator tests against the real core (`PYLON_CAMEMU`) run in
 the Node suites (`npm run test:emulated`); the RN functional tests use an
 in-test stub because the JSI layer needs a built app per out-of-tree
 platform.
+
+## What each RN layer really proves (no mockups except the bridge double)
+
+| Layer | What runs | Proves |
+|---|---|---|
+| `rn-build` compile | `pylon_core.cpp` vs real SDK headers, per OS | Core compiles everywhere |
+| `rn-build` smoke (`pylon_core_smoke`) | real core binary vs real SDK + CamEmu (`PYLON_CAMEMU=2`) | enumerate/open/nodemap/grab/discovery behave on hardware semantics |
+| `rn-tests` static/contract (16) | source inspection (files, markers, spec types, core mapping, sample) | surface parity, no drift, no mocks in shipped code |
+| `rn-tests` facade/parity (95) | real shipped facade vs bridge double (CamEmu semantics, core error texts) | facade logic: flows, normalization, error mapping, configs |
+| Gap (follow-up) | JSI marshalling inside a built RN app per platform | needs RN toolchain + emulator per out-of-tree fork |
