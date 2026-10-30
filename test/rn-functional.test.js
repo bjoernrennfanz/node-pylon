@@ -15,19 +15,27 @@ const { loadFacade } = require('./rn-stub-core');
 
 let facade = null;
 let mock = null;
+let SKIP = null;
 
 before(async () => {
-  ({ facade, mock } = await loadFacade());
+  try {
+    ({ facade, mock } = await loadFacade());
+  } catch (e) {
+    if (e && e.code === 'RN_NO_STRIP') SKIP = e.message;
+    else throw e;
+  }
 });
 
-async function F() {
+async function F(t) {
+  if (SKIP) t.skip(SKIP);
   if (!facade) ({ facade, mock } = await loadFacade());
   return facade;
 }
 
 
-test('rn-functional: version + discovery (emulator: 2 devices)', async () => {
-  const f = await F();
+test('rn-functional: version + discovery (emulator: 2 devices)', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   assert.equal(f.version(), '0.2.0-core');
   assert.equal(f.pylonVersion(), '12.5.2.1565');
   const devs = f.enumerateDevices();
@@ -37,16 +45,18 @@ test('rn-functional: version + discovery (emulator: 2 devices)', async () => {
   assert.equal(devs[1].serialNumber, 'EMU000002');
 });
 
-test('rn-functional: pixel-type helpers', async () => {
-  const f = await F();
+test('rn-functional: pixel-type helpers', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   assert.equal(f.getPixelTypeName(0x01080001), 'Mono8');
   assert.equal(f.isMonoPixelType(0x01080001), true);
   assert.equal(f.isColorPixelType(0x01080001), false);
   assert.equal(f.isColorPixelType(0x02180014), true);
 });
 
-test('rn-functional: camera lifecycle open/close', async () => {
-  const f = await F();
+test('rn-functional: camera lifecycle open/close', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createFirstCamera();
   assert.equal(cam.isOpen(), true);
   cam.close();
@@ -54,8 +64,9 @@ test('rn-functional: camera lifecycle open/close', async () => {
   assert.throws(() => f.createCameraAt(99), /device index out of range/);
 });
 
-test('rn-functional: grabOne returns Mono8 image with buffer', async () => {
-  const f = await F();
+test('rn-functional: grabOne returns Mono8 image with buffer', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(0);
   try {
     const res = cam.grabOne(5000);
@@ -72,8 +83,9 @@ test('rn-functional: grabOne returns Mono8 image with buffer', async () => {
   }
 });
 
-test('rn-functional: grab loop start/retrieve/stop', async () => {
-  const f = await F();
+test('rn-functional: grab loop start/retrieve/stop', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(1);
   try {
     assert.equal(cam.isGrabbing(), false);
@@ -91,8 +103,9 @@ test('rn-functional: grab loop start/retrieve/stop', async () => {
   }
 });
 
-test('rn-functional: nodemap typed roundtrips', async () => {
-  const f = await F();
+test('rn-functional: nodemap typed roundtrips', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(0);
   try {
     cam.setInteger('Width', 320);
@@ -119,8 +132,9 @@ test('rn-functional: nodemap typed roundtrips', async () => {
   }
 });
 
-test('rn-functional: nodemap errors translate to JS exceptions', async () => {
-  const f = await F();
+test('rn-functional: nodemap errors translate to JS exceptions', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(0);
   try {
     assert.throws(() => cam.getInteger('NoSuchNode'), /unknown node/);
@@ -132,8 +146,9 @@ test('rn-functional: nodemap errors translate to JS exceptions', async () => {
   }
 });
 
-test('rn-functional: timeout Return yields invalid result, bad handle throws', async () => {
-  const f = await F();
+test('rn-functional: timeout Return yields invalid result, bad handle throws', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(0);
   try {
     const res = cam.grabOne(0, f.TimeoutHandling.Return);
@@ -147,8 +162,9 @@ test('rn-functional: timeout Return yields invalid result, bad handle throws', a
   }
 });
 
-test('rn-functional: base64 fallback decodes to identical bytes', async () => {
-  const f = await F();
+test('rn-functional: base64 fallback decodes to identical bytes', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   mock.state.returnBase64 = true;
   try {
     const cam = f.createCameraAt(0);
@@ -167,8 +183,9 @@ test('rn-functional: base64 fallback decodes to identical bytes', async () => {
   }
 });
 
-test('rn-functional: acquisition configurations apply to nodemap', async () => {
-  const f = await F();
+test('rn-functional: acquisition configurations apply to nodemap', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   const cam = f.createCameraAt(0);
   try {
     f.AcquireContinuousConfiguration.applyConfiguration(cam);
@@ -189,8 +206,9 @@ test('rn-functional: acquisition configurations apply to nodemap', async () => {
   }
 });
 
-test('rn-functional: coverage gaps are documented, not silent', async () => {
-  const f = await F();
+test('rn-functional: coverage gaps are documented, not silent', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
   assert.ok(Array.isArray(f.RN_COVERAGE_GAPS));
   assert.ok(f.RN_COVERAGE_GAPS.length > 0);
   for (const gap of ['WaitObject', 'FeaturePersistence', 'event']) {

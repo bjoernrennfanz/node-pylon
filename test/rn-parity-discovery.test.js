@@ -14,19 +14,28 @@ const assert = require('node:assert/strict');
 const { loadFacade } = require('./rn-stub-core');
 
 let f = null;
+let SKIP = null;
 
 before(async () => {
-  ({ facade: f } = await loadFacade());
+  try {
+    ({ facade: f } = await loadFacade());
+  } catch (e) {
+    if (e && e.code === 'RN_NO_STRIP') SKIP = e.message;
+    else throw e;
+  }
 });
 
 describe('rn-parity version', () => {
-  it('reports version strings', () => {
+  it('reports version strings', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     assert.equal(typeof f.version(), 'string');
     assert.ok(f.version().length > 0);
     assert.match(f.pylonVersion(), /\d+\./);
   });
 
-  it('initialize/terminate are balanced and safe', () => {
+  it('initialize/terminate are balanced and safe', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     f.initialize();
     f.initialize();
     f.terminate();
@@ -35,7 +44,8 @@ describe('rn-parity version', () => {
 });
 
 describe('rn-parity device info', () => {
-  it('exposes non-empty device fields', () => {
+  it('exposes non-empty device fields', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = f.createFirstCamera();
     try {
       const info = cam.getDeviceInfo();
@@ -58,7 +68,8 @@ describe('rn-parity device info', () => {
 });
 
 describe('rn-parity discovery', () => {
-  it('enumerates a stable device list', () => {
+  it('enumerates a stable device list', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const a = f.enumerateDevices();
     const b = f.enumerateDevices();
     assert.ok(a.length > 0);
@@ -69,7 +80,9 @@ describe('rn-parity discovery', () => {
     );
   });
 
-  it('matches enumeration against the opened camera', () => {
+  it('matches enumeration against the opened camera', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const devs = f.enumerateDevices();
     const cam = f.createCameraAt(0);
     try {
@@ -80,7 +93,9 @@ describe('rn-parity discovery', () => {
     }
   });
 
-  it('deviceClass names the emulator', () => {
+  it('deviceClass names the emulator', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const devs = f.enumerateDevices();
     assert.equal(typeof devs[0].deviceClass, 'string');
     assert.ok(devs[0].deviceClass.length > 0);
@@ -88,7 +103,8 @@ describe('rn-parity discovery', () => {
 });
 
 describe('rn-parity discovery constants', () => {
-  it('matches the C++ DeviceClass.h string values', () => {
+  it('matches the C++ DeviceClass.h string values', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const s = f.discoveryStrings();
     assert.equal(s.BaslerCamEmuDeviceClass, 'BaslerCamEmu');
     assert.equal(s.BaslerIpCamDeviceClass, 'BaslerIPCam');
@@ -104,7 +120,9 @@ describe('rn-parity discovery constants', () => {
     assert.equal(s.BaslerUsbDeviceClass, 'BaslerUsb');
   });
 
-  it('matches device access mode integers', () => {
+  it('matches device access mode integers', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const n = f.discoveryIntegers();
     assert.equal(n.DeviceAccessMode_Control, 0x1);
     assert.equal(n.DeviceAccessMode_Stream, 0x3);
@@ -112,7 +130,9 @@ describe('rn-parity discovery constants', () => {
     assert.equal(n.DeviceAccessMode_Exclusive, 0x5);
   });
 
-  it('matches accessibility integers', () => {
+  it('matches accessibility integers', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const n = f.discoveryIntegers();
     assert.equal(n.Accessibility_Unknown, 0);
     assert.equal(n.Accessibility_Ok, 1);
@@ -121,7 +141,9 @@ describe('rn-parity discovery constants', () => {
     assert.equal(n.Accessibility_NotReachable, 4);
   });
 
-  it('exposes transport-layer type strings', () => {
+  it('exposes transport-layer type strings', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const s = f.discoveryStrings();
     for (const key of [
       'TLTypeGigE',
@@ -136,7 +158,9 @@ describe('rn-parity discovery constants', () => {
     }
   });
 
-  it('exposes property key strings', () => {
+  it('exposes property key strings', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const s = f.discoveryStrings();
     for (const key of [
       'FriendlyNameKey',
@@ -160,7 +184,9 @@ describe('rn-parity discovery constants', () => {
     }
   });
 
-  it('uses the constants for device filtering', () => {
+  it('uses the constants for device filtering', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const s = f.discoveryStrings();
     const emu = f
       .enumerateDevices()

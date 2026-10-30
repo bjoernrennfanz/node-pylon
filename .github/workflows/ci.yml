@@ -3,13 +3,22 @@
 # Shape (pypylon parity):
 #   build  — one job, OS matrix, compiles the N-API addon once per OS
 #   unit-tests — needs build, OS x Node matrix, downloads the matching
-#     per-OS binary and runs the full suite (no rebuild).
+#     per-OS binary and runs the emulated suite + samples (no rebuild).
+#   rn-build — one job, OS matrix, compile-checks the shared React-Native
+#     core (react-native/shared/pylon_core.cpp) against the real SDK
+#     (no link, no Node addon involved).
+#   rn-tests — OS x Node matrix, runs the RN suites (`npm run test:rn`,
+#     SDK-free; facade tests need Node >= 22.6 type stripping and skip
+#     cleanly on Node 20).
 #
-# Matrix (per ZAU-172):
+# Matrix (per ZAU-172, extended per ZAU-174):
 #   build:      ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest
 #               x Node 20 only.
 #   unit-tests: same OS list x Node 20/22. macOS intentionally only
 #               `macos-latest` (no macos-14 legacy leg).
+#   rn-build:   same OS list x Node 20 only (Node only runs the configure
+#               script; the check itself is pure C++).
+#   rn-tests:   same OS list x Node 20/22 (no SDK, no addon binary needed).
 #
 # Node 20-only build: N-API (node-addon-api) is ABI-stable across Node
 # majors, so the Node 20 binary runs unmodified on Node 22. The test job
@@ -228,10 +237,6 @@ jobs:
           fi
           npm run test:emulated
 
-      - name: React Native desktop static checks (no SDK/camera needed)
-        shell: bash
-        run: npm run test:rn
-
       - name: Samples (list, grab, grab-options, nodemap, attributes)
         shell: bash
         env:
@@ -254,3 +259,79 @@ jobs:
           npm run sample:grab-options
           npm run sample:nodemap
           npm run sample:grabattrs
+
+  rn-build:
+    name: rn-core build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same OS list as the addon build (pypylon parity).
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest]
+        node: [20]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check pylon SDK secret (no URL in logs)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: |
+          if [ -z "$PYLON_SDK_BASE_URL" ]; then
+            echo "::error::PYLON_SDK_BASE_URL secret is not set. Add it under Settings -> Secrets -> Actions (base URL only, archive names are appended automatically)."
+            exit 1
+          fi
+          echo "PYLON_SDK_BASE_URL is set (value masked, never printed)."
+
+      - name: Setup Node.js 20 (runs the configure script only)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup MSVC (Windows only)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Download pylon SDK 26.09 (secret only, quiet)
+        shell: bash
+        env:
+          PYLON_SDK_BASE_URL: ${{ secrets.PYLON_SDK_BASE_URL }}
+        run: bash scripts/download-pylon-sdk.sh
+
+      - name: Compile-check the shared RN core against the real SDK
+        # No link, no Node addon: proves pylon_core.{h,cpp} compiles on
+        # every OS (this is the build-log evidence for the RN API work).
+        shell: bash
+        run: |
+          node scripts/configure-build.js
+          node scripts/compile-pylon-core.js
+
+  rn-tests:
+    name: rn-tests (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same OS list as the addon tests; Node 20 + 22. The suites are
+        # pure JS and SDK-free (no camera, no addon binary, no `needs:`),
+        # so they run in parallel with everything else. Facade tests need
+        # Node >= 22.6 type stripping and skip cleanly on Node 20.
+        os: [ubuntu-22.04, ubuntu-24.04-arm, windows-2022, macos-latest]
+        node: [20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install deps (no native build needed for RN suites)
+        run: npm ci --ignore-scripts
+
+      - name: React Native suites (static, contract, functional, parity)
+        shell: bash
+        run: npm run test:rn

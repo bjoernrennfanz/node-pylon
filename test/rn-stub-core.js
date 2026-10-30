@@ -571,7 +571,34 @@ function createMockCore() {
 
 // Loads the shipped facade with the stubbed TurboModule. Returns the
 // facade module plus the mock core (for toggles like returnBase64).
+//
+// Type stripping (importing .ts) needs Node >= 22.6. On older runtimes
+// this throws an error with code 'RN_NO_STRIP' instead — callers skip
+// facade-dependent tests with that message (static/spec/shape checks
+// still run everywhere).
+async function stripSupported() {
+  // Escape hatch for verifying the Node <22.6 skip path:
+  // RN_FORCE_NO_STRIP=1 simulates a runtime without type stripping.
+  if (process.env.RN_FORCE_NO_STRIP === '1') return false;
+  try {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rn-probe-'));
+    fs.writeFileSync(path.join(dir, 'probe.ts'), 'export const x: number = 1;\n');
+    await import(pathToFileURL(path.join(dir, 'probe.ts')).href);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function loadFacade(mock) {
+  if (!(await stripSupported())) {
+    const err = new Error(
+      `TypeScript type stripping unavailable (this Node ${process.version}; ` +
+        'facade tests need Node >= 22.6)',
+    );
+    err.code = 'RN_NO_STRIP';
+    throw err;
+  }
   const core = mock || createMockCore();
   globalThis.__rnMock = core;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rn-facade-'));

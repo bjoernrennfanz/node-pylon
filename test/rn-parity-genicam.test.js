@@ -13,9 +13,15 @@ const assert = require('node:assert/strict');
 const { loadFacade } = require('./rn-stub-core');
 
 let f = null;
+let SKIP = null;
 
 before(async () => {
-  ({ facade: f } = await loadFacade());
+  try {
+    ({ facade: f } = await loadFacade());
+  } catch (e) {
+    if (e && e.code === 'RN_NO_STRIP') SKIP = e.message;
+    else throw e;
+  }
 });
 
 function freshCamera() {
@@ -25,7 +31,8 @@ function freshCamera() {
 }
 
 describe('rn-parity genicam Integer', () => {
-  it('reads values, limits and writes roundtrip', () => {
+  it('reads values, limits and writes roundtrip', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getInteger('Width');
     try {
@@ -45,7 +52,9 @@ describe('rn-parity genicam Integer', () => {
     }
   });
 
-  it('rejects out-of-range writes', () => {
+  it('rejects out-of-range writes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const mx = cam.getIntegerMax('Width');
@@ -55,7 +64,9 @@ describe('rn-parity genicam Integer', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getInteger('ExposureTime'), TypeError);
@@ -65,7 +76,9 @@ describe('rn-parity genicam Integer', () => {
     }
   });
 
-  it('tryMax sets the maximum', () => {
+  it('tryMax sets the maximum', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getInteger('Height');
     try {
@@ -81,7 +94,8 @@ describe('rn-parity genicam Integer', () => {
 });
 
 describe('rn-parity genicam Float', () => {
-  it('reads values, limits and writes roundtrip', () => {
+  it('reads values, limits and writes roundtrip', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getFloat('ExposureTime');
     try {
@@ -102,7 +116,9 @@ describe('rn-parity genicam Float', () => {
     }
   });
 
-  it('rejects out-of-range writes', () => {
+  it('rejects out-of-range writes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const mx = cam.getFloatMax('ExposureTime');
@@ -112,7 +128,9 @@ describe('rn-parity genicam Float', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getFloat('Width'), TypeError);
@@ -124,7 +142,8 @@ describe('rn-parity genicam Float', () => {
 });
 
 describe('rn-parity genicam Boolean', () => {
-  it('roundtrips ChunkModeActive and restores', () => {
+  it('roundtrips ChunkModeActive and restores', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getBoolean('ChunkModeActive');
     try {
@@ -139,7 +158,9 @@ describe('rn-parity genicam Boolean', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.setBoolean('ChunkModeActive', 'yes'), TypeError);
@@ -151,7 +172,8 @@ describe('rn-parity genicam Boolean', () => {
 });
 
 describe('rn-parity genicam String', () => {
-  it('reads the model name, rejects writes to it', () => {
+  it('reads the model name, rejects writes to it', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const model = cam.getString('DeviceModelName');
@@ -163,7 +185,9 @@ describe('rn-parity genicam String', () => {
     }
   });
 
-  it('roundtrips DeviceUserID and restores', () => {
+  it('roundtrips DeviceUserID and restores', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getString('DeviceUserID');
     try {
@@ -177,7 +201,9 @@ describe('rn-parity genicam String', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.setString('DeviceUserID', 42), TypeError);
@@ -189,7 +215,8 @@ describe('rn-parity genicam String', () => {
 });
 
 describe('rn-parity genicam Enumeration', () => {
-  it('reads value and entries, writes roundtrip', () => {
+  it('reads value and entries, writes roundtrip', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getEnum('PixelFormat');
     try {
@@ -209,7 +236,9 @@ describe('rn-parity genicam Enumeration', () => {
     }
   });
 
-  it('rejects invalid entries', () => {
+  it('rejects invalid entries', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.setEnum('PixelFormat', 'NotARealEntry12345'), RangeError);
@@ -218,7 +247,9 @@ describe('rn-parity genicam Enumeration', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getEnum('Width'), TypeError);
@@ -229,7 +260,8 @@ describe('rn-parity genicam Enumeration', () => {
 });
 
 describe('rn-parity genicam Command', () => {
-  it('executes AcquisitionStart and reports done', () => {
+  it('executes AcquisitionStart and reports done', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.executeCommand('AcquisitionStart');
@@ -239,7 +271,9 @@ describe('rn-parity genicam Command', () => {
     }
   });
 
-  it('rejects unknown commands', () => {
+  it('rejects unknown commands', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.executeCommand('NoSuchCommand12345'), /unknown node/);
@@ -248,7 +282,9 @@ describe('rn-parity genicam Command', () => {
     }
   });
 
-  it('rejects wrong types', () => {
+  it('rejects wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.executeCommand('Width'), TypeError);
@@ -260,7 +296,8 @@ describe('rn-parity genicam Command', () => {
 });
 
 describe('rn-parity genicam nodemap', () => {
-  it('reports exact node types', () => {
+  it('reports exact node types', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(cam.getNodeType('Width'), 'Integer');
@@ -274,7 +311,9 @@ describe('rn-parity genicam nodemap', () => {
     }
   });
 
-  it('reports unknown nodes on every getter', () => {
+  it('reports unknown nodes on every getter', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       for (const get of [
@@ -298,7 +337,9 @@ describe('rn-parity genicam nodemap', () => {
     }
   });
 
-  it('rejects cross-type access', () => {
+  it('rejects cross-type access', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getFloat('Width'), TypeError);
@@ -316,7 +357,9 @@ describe('rn-parity genicam nodemap', () => {
     }
   });
 
-  it('rejects wrong JS value types on setters', () => {
+  it('rejects wrong JS value types on setters', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.setInteger('Width', 'x'), TypeError);
@@ -329,14 +372,18 @@ describe('rn-parity genicam nodemap', () => {
     }
   });
 
-  it('rejects access on a closed camera', () => {
+  it('rejects access on a closed camera', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     cam.close();
     assert.throws(() => cam.grabOne(100), /not open/);
     assert.throws(() => cam.startGrabbing(), /not open/);
   });
 
-  it('DeviceModelName is read-only', () => {
+  it('DeviceModelName is read-only', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(cam.isWritable('DeviceModelName'), false);
@@ -348,7 +395,8 @@ describe('rn-parity genicam nodemap', () => {
 });
 
 describe('rn-parity genicam nodetype', () => {
-  it('maps principal interface types', () => {
+  it('maps principal interface types', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(cam.getNodeType('Width'), 'Integer');
@@ -362,7 +410,9 @@ describe('rn-parity genicam nodetype', () => {
     }
   });
 
-  it('reports readable/writable flags', () => {
+  it('reports readable/writable flags', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(cam.isReadable('Width'), true);
@@ -374,7 +424,9 @@ describe('rn-parity genicam nodetype', () => {
     }
   });
 
-  it('reports unknown nodes', () => {
+  it('reports unknown nodes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getNodeType('NoSuchNode12345'), /unknown node/);
@@ -383,7 +435,9 @@ describe('rn-parity genicam nodetype', () => {
     }
   });
 
-  it('reads values through the typed accessors', () => {
+  it('reads values through the typed accessors', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(typeof cam.getInteger('Width'), 'number');
@@ -398,7 +452,8 @@ describe('rn-parity genicam nodetype', () => {
 });
 
 describe('rn-parity genicam properties', () => {
-  it('exposes integer metadata and min/max writes', () => {
+  it('exposes integer metadata and min/max writes', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getInteger('Width');
     try {
@@ -420,7 +475,9 @@ describe('rn-parity genicam properties', () => {
     }
   });
 
-  it('exposes float metadata and min/max writes', () => {
+  it('exposes float metadata and min/max writes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getFloat('ExposureTime');
     try {
@@ -443,7 +500,9 @@ describe('rn-parity genicam properties', () => {
     }
   });
 
-  it('exposes string max length', () => {
+  it('exposes string max length', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const maxLen = cam.getStringMaxLength('DeviceUserID');
@@ -454,7 +513,9 @@ describe('rn-parity genicam properties', () => {
     }
   });
 
-  it('rejects metadata on wrong types', () => {
+  it('rejects metadata on wrong types', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getIntegerInc('ExposureTime'), TypeError);
@@ -468,7 +529,8 @@ describe('rn-parity genicam properties', () => {
 });
 
 describe('rn-parity genicam register', () => {
-  it('rejects register access on non-register nodes', () => {
+  it('rejects register access on non-register nodes', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getRegisterLength('Width'), TypeError);
@@ -480,7 +542,9 @@ describe('rn-parity genicam register', () => {
     }
   });
 
-  it('reads and writes a register as bytes', () => {
+  it('reads and writes a register as bytes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const len = cam.getRegisterLength('TestRegister');
@@ -502,7 +566,8 @@ describe('rn-parity genicam register', () => {
 });
 
 describe('rn-parity genicam value-string', () => {
-  it('converts integers to/from string', () => {
+  it('converts integers to/from string', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getInteger('Width');
     try {
@@ -517,7 +582,9 @@ describe('rn-parity genicam value-string', () => {
     }
   });
 
-  it('converts enums to/from string and int', () => {
+  it('converts enums to/from string and int', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const orig = cam.getEnum('PixelFormat');
     try {
@@ -536,7 +603,9 @@ describe('rn-parity genicam value-string', () => {
     }
   });
 
-  it('executes commands and reports done', () => {
+  it('executes commands and reports done', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.executeCommand('AcquisitionStart');
@@ -550,7 +619,8 @@ describe('rn-parity genicam value-string', () => {
 });
 
 describe('rn-parity genicam category-selector', () => {
-  it('lists Root category features', () => {
+  it('lists Root category features', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const features = cam.getCategoryFeatures('Root');
@@ -563,7 +633,9 @@ describe('rn-parity genicam category-selector', () => {
     }
   });
 
-  it('rejects categories on wrong types and unknown nodes', () => {
+  it('rejects categories on wrong types and unknown nodes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.getCategoryFeatures('Width'), TypeError);
@@ -573,7 +645,9 @@ describe('rn-parity genicam category-selector', () => {
     }
   });
 
-  it('distinguishes selectors from plain nodes', () => {
+  it('distinguishes selectors from plain nodes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.equal(cam.isSelector('Width'), false);

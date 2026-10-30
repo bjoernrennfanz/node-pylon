@@ -124,7 +124,7 @@ function specSignatureTypes(signature) {
   return types;
 }
 
-test('rn-contract: facade is valid TypeScript (loads via type stripping)', async () => {
+test('rn-contract: facade is valid TypeScript (loads via type stripping)', async (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rn-tscheck-'));
   fs.writeFileSync(
     path.join(dir, 'rn-stub.mjs'),
@@ -138,9 +138,24 @@ test('rn-contract: facade is valid TypeScript (loads via type stripping)', async
   // and must never be loaded at runtime from the facade.
   assert.ok(src.includes('import type'), 'facade must use import type for spec types');
   fs.writeFileSync(path.join(dir, 'rn-facade.ts'), src);
-  const facade = await import(
-    pathToFileURL(path.join(dir, 'rn-facade.ts')).href
-  );
+  if (process.env.RN_FORCE_NO_STRIP === '1') {
+    t.skip('RN_FORCE_NO_STRIP=1 simulates a runtime without type stripping');
+    return;
+  }
+  let facade;
+  try {
+    facade = await import(
+      pathToFileURL(path.join(dir, 'rn-facade.ts')).href
+    );
+  } catch (e) {
+    // Type stripping needs Node >= 22.6; older runtimes skip this check
+    // (static/spec/shape checks in this file still run everywhere).
+    if (e && e.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
+      t.skip(`type stripping unavailable (this Node ${process.version}; needs >= 22.6)`);
+      return;
+    }
+    throw e;
+  }
   for (const name of [
     'version',
     'pylonVersion',

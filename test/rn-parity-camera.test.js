@@ -12,25 +12,36 @@ const assert = require('node:assert/strict');
 const { loadFacade } = require('./rn-stub-core');
 
 let f = null;
+let SKIP = null;
 
 before(async () => {
-  ({ facade: f } = await loadFacade());
+  try {
+    ({ facade: f } = await loadFacade());
+  } catch (e) {
+    if (e && e.code === 'RN_NO_STRIP') SKIP = e.message;
+    else throw e;
+  }
 });
 
 describe('rn-parity camera enums', () => {
-  it('exposes GrabStrategy values', () => {
+  it('exposes GrabStrategy values', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     assert.equal(f.GrabStrategy.OneByOne, 0);
     assert.equal(f.GrabStrategy.LatestImageOnly, 1);
     assert.equal(f.GrabStrategy.LatestImages, 2);
     assert.equal(f.GrabStrategy.UpcomingImage, 3);
   });
 
-  it('exposes TimeoutHandling values', () => {
+  it('exposes TimeoutHandling values', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     assert.equal(f.TimeoutHandling.Return, 0);
     assert.equal(f.TimeoutHandling.ThrowException, 1);
   });
 
-  it('exposes GrabLoop/RegistrationMode/Cleanup/AccessMode values', () => {
+  it('exposes GrabLoop/RegistrationMode/Cleanup/AccessMode values', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     assert.equal(f.GrabLoop.ProvidedByInstantCamera, 0);
     assert.equal(f.GrabLoop.ProvidedByUser, 1);
     assert.equal(f.RegistrationMode.Append, 0);
@@ -45,7 +56,8 @@ describe('rn-parity camera enums', () => {
 });
 
 describe('rn-parity camera open modes', () => {
-  it('opens with every valid access mode', () => {
+  it('opens with every valid access mode', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     for (const mode of [1, 3, 4, 5]) {
       const cam = new f.InstantCamera(0, mode);
       try {
@@ -56,13 +68,16 @@ describe('rn-parity camera open modes', () => {
     }
   });
 
-  it('rejects unknown access modes', () => {
+  it('rejects unknown access modes', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     assert.throws(() => new f.InstantCamera(0, 99), RangeError);
   });
 });
 
 describe('rn-parity camera device handling', () => {
-  it('attaches, detaches and destroys the device', () => {
+  it('attaches, detaches and destroys the device', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera(0);
     try {
       assert.equal(cam.isPylonDeviceAttached(), true);
@@ -78,7 +93,9 @@ describe('rn-parity camera device handling', () => {
     }
   });
 
-  it('indexes cameras per device', () => {
+  it('indexes cameras per device', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const a = new f.InstantCamera(0);
     const b = new f.InstantCamera(1);
     try {
@@ -93,7 +110,9 @@ describe('rn-parity camera device handling', () => {
     }
   });
 
-  it('stores the camera context', () => {
+  it('stores the camera context', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera(0);
     try {
       cam.setCameraContext(12345);
@@ -104,7 +123,9 @@ describe('rn-parity camera device handling', () => {
     }
   });
 
-  it('reports removal and queued buffers', () => {
+  it('reports removal and queued buffers', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera(0);
     try {
       assert.equal(cam.isCameraDeviceRemoved(), false);
@@ -117,7 +138,8 @@ describe('rn-parity camera device handling', () => {
 });
 
 describe('rn-parity software trigger', () => {
-  it('applies the trigger configuration and fires', () => {
+  it('applies the trigger configuration and fires', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera(0);
     try {
       f.SoftwareTriggerConfiguration.applyConfiguration(cam);
@@ -133,7 +155,9 @@ describe('rn-parity software trigger', () => {
     }
   });
 
-  it('runs the helper probes without throwing', () => {
+  it('runs the helper probes without throwing', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera(0);
     try {
       f.ConfigurationHelper.disableAllTriggers(cam);
@@ -148,7 +172,8 @@ describe('rn-parity software trigger', () => {
 });
 
 describe('rn-parity InstantCameraArray', () => {
-  it('initializes one camera per index', () => {
+  it('initializes one camera per index', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const arr = new f.InstantCameraArray(2);
     try {
       assert.equal(arr.getSize(), 2);
@@ -161,7 +186,9 @@ describe('rn-parity InstantCameraArray', () => {
     }
   });
 
-  it('opens and closes all cameras', () => {
+  it('opens and closes all cameras', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const arr = new f.InstantCameraArray(2);
     try {
       assert.equal(arr.isOpen(), true);
@@ -174,7 +201,9 @@ describe('rn-parity InstantCameraArray', () => {
     }
   });
 
-  it('grabs round-robin with camera index', () => {
+  it('grabs round-robin with camera index', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const arr = new f.InstantCameraArray(2);
     try {
       arr.startGrabbing(f.GrabStrategy.OneByOne);
@@ -190,7 +219,9 @@ describe('rn-parity InstantCameraArray', () => {
     }
   });
 
-  it('destroys all devices', () => {
+  it('destroys all devices', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const arr = new f.InstantCameraArray(2);
     arr.destroyDevice();
     assert.equal(arr.getSize(), 0);

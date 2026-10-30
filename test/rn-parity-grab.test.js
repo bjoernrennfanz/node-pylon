@@ -11,9 +11,15 @@ const assert = require('node:assert/strict');
 const { loadFacade } = require('./rn-stub-core');
 
 let f = null;
+let SKIP = null;
 
 before(async () => {
-  ({ facade: f } = await loadFacade());
+  try {
+    ({ facade: f } = await loadFacade());
+  } catch (e) {
+    if (e && e.code === 'RN_NO_STRIP') SKIP = e.message;
+    else throw e;
+  }
 });
 
 function freshCamera() {
@@ -23,7 +29,8 @@ function freshCamera() {
 }
 
 describe('rn-parity pylon grab results', () => {
-  it('grab reflects nodemap geometry and pixel format', () => {
+  it('grab reflects nodemap geometry and pixel format', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const origW = cam.getInteger('Width');
     const origH = cam.getInteger('Height');
@@ -45,7 +52,9 @@ describe('rn-parity pylon grab results', () => {
     }
   });
 
-  it('payload scales with bytes per pixel', () => {
+  it('payload scales with bytes per pixel', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const entries = cam.getEnumEntries('PixelFormat');
     const origFormat = cam.getEnum('PixelFormat');
@@ -71,7 +80,9 @@ describe('rn-parity pylon grab results', () => {
     }
   });
 
-  it('delivers chunk data and deterministic frames', () => {
+  it('delivers chunk data and deterministic frames', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.setBoolean('ChunkModeActive', true);
@@ -90,7 +101,8 @@ describe('rn-parity pylon grab results', () => {
 });
 
 describe('rn-parity pylon grab result fields', () => {
-  it('exposes geometry, payload and buffer consistently', () => {
+  it('exposes geometry, payload and buffer consistently', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     const origW = cam.getInteger('Width');
     const origH = cam.getInteger('Height');
@@ -114,7 +126,9 @@ describe('rn-parity pylon grab result fields', () => {
     }
   });
 
-  it('numbers timestamps, blocks and frames monotonically', () => {
+  it('numbers timestamps, blocks and frames monotonically', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.startGrabbing(f.GrabStrategy.OneByOne);
@@ -137,7 +151,9 @@ describe('rn-parity pylon grab result fields', () => {
     }
   });
 
-  it('yields deterministic per-frame buffers', () => {
+  it('yields deterministic per-frame buffers', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const a = cam.grabOne(5000);
@@ -150,7 +166,9 @@ describe('rn-parity pylon grab result fields', () => {
     }
   });
 
-  it('returns null on Return-timeout', () => {
+  it('returns null on Return-timeout', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.startGrabbing(f.GrabStrategy.OneByOne);
@@ -162,7 +180,9 @@ describe('rn-parity pylon grab result fields', () => {
     }
   });
 
-  it('throws when retrieving without a grab loop', () => {
+  it('throws when retrieving without a grab loop', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       assert.throws(() => cam.retrieveResult(100), /Not grabbing/);
@@ -173,7 +193,8 @@ describe('rn-parity pylon grab result fields', () => {
 });
 
 describe('rn-parity pylon configuration', () => {
-  it('open and close are idempotent', () => {
+  it('open and close are idempotent', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = new f.InstantCamera();
     assert.equal(cam.isOpen(), true);
     cam.open();
@@ -184,7 +205,9 @@ describe('rn-parity pylon configuration', () => {
     assert.equal(cam.isOpen(), false);
   });
 
-  it('start is idempotent and stop is safe when idle', () => {
+  it('start is idempotent and stop is safe when idle', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.stopGrabbing();
@@ -200,7 +223,9 @@ describe('rn-parity pylon configuration', () => {
     }
   });
 
-  it('grabs without a running loop', () => {
+  it('grabs without a running loop', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       const g = cam.grabOne(5000);
@@ -212,14 +237,18 @@ describe('rn-parity pylon configuration', () => {
     }
   });
 
-  it('rejects grab and start on a closed camera', () => {
+  it('rejects grab and start on a closed camera', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     cam.close();
     assert.throws(() => cam.grabOne(100), /not open/);
     assert.throws(() => cam.startGrabbing(), /not open/);
   });
 
-  it('close-while-grabbing stops the loop', () => {
+  it('close-while-grabbing stops the loop', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     cam.startGrabbing(f.GrabStrategy.OneByOne);
     assert.equal(cam.isGrabbing(), true);
@@ -227,7 +256,9 @@ describe('rn-parity pylon configuration', () => {
     assert.equal(cam.isGrabbing(), false);
   });
 
-  it('startGrabbingMax bounds the loop', () => {
+  it('startGrabbingMax bounds the loop', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = freshCamera();
     try {
       cam.startGrabbingMax(2, f.GrabStrategy.OneByOne);
@@ -243,7 +274,8 @@ describe('rn-parity pylon configuration', () => {
 });
 
 describe('rn-parity pylon instantcamera basics', () => {
-  it('opens the first camera and reports state', () => {
+  it('opens the first camera and reports state', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = f.createFirstCamera();
     try {
       assert.equal(cam.isOpen(), true);
@@ -254,7 +286,9 @@ describe('rn-parity pylon instantcamera basics', () => {
     }
   });
 
-  it('grabs a valid frame', () => {
+  it('grabs a valid frame', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = f.createFirstCamera();
     try {
       const res = cam.grabOne(5000);
@@ -267,7 +301,9 @@ describe('rn-parity pylon instantcamera basics', () => {
     }
   });
 
-  it('runs the start/retrieve/stop loop', () => {
+  it('runs the start/retrieve/stop loop', (t) => {
+
+    if (SKIP) { t.skip(SKIP); return; }
     const cam = f.createFirstCamera();
     try {
       assert.throws(() => cam.retrieveResult(50), /Not grabbing/);
