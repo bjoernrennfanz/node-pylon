@@ -14,7 +14,10 @@ if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || heigh
 
 pylon.initialize();
 try {
-  const cam = pylon.TlFactory.GetInstance().CreateFirstDevice();
+  // pypylon: InstantCamera(TlFactory.GetInstance().CreateFirstDevice())
+  const cam = pylon.InstantCamera.wrapNative(
+    pylon.TlFactory.GetInstance().CreateFirstDevice()
+  );
   cam.open();
   try {
     const wMin = cam.getIntegerMin('Width');

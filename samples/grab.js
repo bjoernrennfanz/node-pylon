@@ -16,7 +16,10 @@ try {
     process.exit(1);
   }
 
-  const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
+  // pypylon grab.py: InstantCamera(TlFactory.GetInstance().CreateFirstDevice())
+  const camera = pylon.InstantCamera.wrapNative(
+    pylon.TlFactory.GetInstance().CreateFirstDevice()
+  );
   try {
     console.log('device:', JSON.stringify(camera.getDeviceInfo()));
     camera.open();
