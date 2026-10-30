@@ -75,7 +75,15 @@ describe('pylon discovery', () => {
     pylon.initialize();
     try {
       const camera = pylon.TlFactory.GetInstance().CreateFirstDevice();
-      assert.ok(camera instanceof pylon.InstantCamera);
+      // CreateFirstDevice returns the underlying camera object directly
+      // (not the JS facade class), so the contract is behavioral: it must
+      // expose the documented camera API.
+      for (const method of ['open', 'close', 'isOpen', 'getDeviceInfo',
+        'startGrabbing', 'stopGrabbing', 'isGrabbing', 'retrieveResult',
+        'grab', 'getInteger', 'getEnum']) {
+        assert.equal(typeof camera[method], 'function', method);
+      }
+      assert.equal(camera.isOpen(), false);
       camera.open();
       try {
         const info = camera.getDeviceInfo();
