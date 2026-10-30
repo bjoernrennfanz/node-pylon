@@ -255,10 +255,9 @@ export declare function createAndOpenCamera(): InstantCamera;
 // retrieveResult() object shape; methods expose validity, buffer views,
 // chunk data and GenDC components.
 export declare class GrabResult {
-  succeeded: boolean;
-  grabSucceeded: boolean | (() => boolean);
+  // Plain data fields mirrored from the native wrapper (property access).
+  // isValid/succeeded/grabSucceeded are methods (same names as the fields).
   valid: boolean;
-  isValid: boolean;
   width: number;
   height: number;
   pixelType: string;
@@ -268,6 +267,8 @@ export declare class GrabResult {
   payloadSize: number;
   buffer: Buffer;
   timestamp: number;
+  blockId: number;
+  frameNumber: number;
   errorCode?: number;
   errorDescription?: string;
   isValid(): boolean;
