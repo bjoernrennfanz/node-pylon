@@ -101,13 +101,20 @@ const char* PayloadTypeName(Pylon::EPayloadType t) {
 Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr) {
   Napi::Object out = Napi::Object::New(env);
   if (!ValidGrab(ptr)) {
-    out.Set("succeeded", false);
+    out.Set("grabSucceeded",
+            Napi::Function::New(env, [](const Napi::CallbackInfo& cb) {
+              return Napi::Boolean::New(cb.Env(), false);
+            }));
     out.Set("width", Napi::Number::New(env, 0));
     out.Set("height", Napi::Number::New(env, 0));
     out.Set("pixelType", "Unknown");
     out.Set("pixelFormat", "Unknown");
     out.Set("payloadSize", Napi::Number::New(env, 0));
     out.Set("buffer", EmptyBuffer(env));
+    // NOTE: no "succeeded"/"isValid" data fields here on purpose: the
+    // GrabResult prototype exposes methods with those names, and own data
+    // properties would shadow them. Property-style validity reads "valid";
+    // isValid()/succeeded() stay callable methods (pypylon parity).
     out.Set("valid", false);
     return out;
   }
@@ -117,12 +124,18 @@ Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr) {
   } catch (...) {
     ok = false;
   }
-  out.Set("succeeded", ok);
+  // NOTE: no "succeeded"/"isValid" data fields (see above); "valid" carries
+  // the property-style validity flag, grabSucceeded() the pypylon accessor.
   out.Set("valid", true);
+  // pypylon naming: accessor mirroring GrabSucceeded(), like retrieveResult.
+  out.Set("grabSucceeded",
+          Napi::Function::New(env, [ok](const Napi::CallbackInfo& cb) {
+            return Napi::Boolean::New(cb.Env(), ok);
+          }));
   size_t w = 0, h = 0, payload = 0;
   Pylon::EPixelType pt = Pylon::PixelType_Undefined;
   Pylon::EPayloadType plt = Pylon::PayloadType_Undefined;
-  uint64_t ts = 0;
+  uint64_t ts = 0, block = 0;
   try {
     if (ok) {
       w = ptr->GetWidth();
@@ -132,8 +145,11 @@ Napi::Object BuildGrabFields(Napi::Env env, Pylon::CGrabResultPtr& ptr) {
     plt = ptr->GetPayloadType();
     payload = ptr->GetPayloadSize();
     ts = ptr->GetTimeStamp();
+    block = ptr->GetBlockID();
   } catch (...) {
   }
+  out.Set("blockId", Napi::Number::New(env, static_cast<double>(block)));
+  out.Set("frameNumber", Napi::Number::New(env, static_cast<double>(block)));
   const char* pname = PixelTypeName(pt);
   out.Set("width", Napi::Number::New(env, static_cast<double>(w)));
   out.Set("height", Napi::Number::New(env, static_cast<double>(h)));
@@ -248,6 +264,9 @@ void GrabResultWrap::ClearFactory() {
 
 Napi::Value GrabResultWrap::GetBufferContext(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+  // pypylon parity: no context without a custom factory (the SDK returns an
+  // internal default context that must not leak through).
+  if (!hasFactory_) return env.Null();
   try {
     if (!ValidGrab(*ptr_)) return env.Null();
     const intptr_t ctx = (*ptr_)->GetBufferContext();

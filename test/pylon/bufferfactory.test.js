@@ -89,19 +89,30 @@ describe('pylon BufferFactory', () => {
     }
   });
 
-  it('FreeBuffer is called for every allocated buffer', (t) => {
+  it('FreeBuffer is called for every allocated buffer', async (t) => {
     if (!requireDevice(t)) return;
     const factory = new pylon.BufferFactory();
     const cam = openCamera();
     try {
       cam.setBufferFactory(factory);
       cam.startGrabbingMax(3);
+      const results = [];
       while (cam.isGrabbing()) {
         const result = cam.retrieveGrabResult(5000);
         if (result === null) continue;
-        result.release();
+        results.push(result);
       }
+      assert.equal(results.length, 3);
       cam.stopGrabbing();
+      for (const result of results) result.release();
+      results.length = 0;
+      // The holdable results carry zero-copy buffer views that share
+      // ownership of the SDK buffers, so the frees land on GC.
+      if (typeof global.gc !== 'function') {
+        t.skip('needs --expose-gc to observe buffer frees');
+        return;
+      }
+      await collect();
       assert.ok(factory.freeCount() > 0);
       assert.equal(factory.freeCount(), factory.allocationCount());
     } finally {
@@ -151,16 +162,20 @@ describe('pylon BufferFactory', () => {
     let cam = openCamera();
     cam.setBufferFactory(factory);
     cam.startGrabbing();
-    const result = cam.retrieveGrabResult(5000);
+    let result = cam.retrieveGrabResult(5000);
     assert.ok(result !== null);
     cam.stopGrabbing();
     cam.close();
     cam = null;
-    assert.ok(await collect());
+    await collect();
     // The camera is gone but the result still references the buffer, so
     // the factory must not be released yet.
     assert.equal(factory.isReleased(), false);
     result.release();
+    result = null;
+    // Dropping the last result frees the final SDK buffer (its zero-copy
+    // views only release on GC), which finally releases the factory.
+    await collect();
     assert.equal(factory.isReleased(), true);
   });
 
@@ -240,14 +255,18 @@ describe('pylon BufferFactory', () => {
     }
   });
 
-  it('factory identity survives replacement until the result is released', (t) => {
+  it('factory identity survives replacement until the result is released', async (t) => {
     if (!requireDevice(t)) return;
+    if (typeof global.gc !== 'function') {
+      t.skip('needs --expose-gc for deterministic wrapper destruction');
+      return;
+    }
     const factory = new pylon.BufferFactory();
     const cam = openCamera();
     try {
       cam.setBufferFactory(factory);
       cam.startGrabbing();
-      const result = cam.retrieveGrabResult(5000);
+      let result = cam.retrieveGrabResult(5000);
       assert.ok(result !== null);
       cam.stopGrabbing();
       cam.setBufferFactory(null);
@@ -256,6 +275,8 @@ describe('pylon BufferFactory', () => {
       assert.equal(factory.isReleased(), false);
       assert.equal(result.getBufferFactory(), factory);
       result.release();
+      result = null;
+      await collect();
       assert.equal(factory.isReleased(), true);
     } finally {
       try { cam.stopGrabbing(); } catch { /* already stopped */ }

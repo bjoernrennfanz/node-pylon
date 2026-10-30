@@ -96,7 +96,13 @@ describe('pylon type mappings', () => {
   it('mapped exceptions derive from GenericException and Error', () => {
     for (const name of MAPPED_EXCEPTION_NAMES) {
       const cls = pylon[name];
-      assert.ok(cls.prototype instanceof pylon.GenericException, name);
+      if (name === 'GenericException') {
+        assert.equal(cls, pylon.GenericException);
+      } else {
+        // A class prototype is never instanceof itself; the base class is
+        // only asserted for the subclasses.
+        assert.ok(cls.prototype instanceof pylon.GenericException, name);
+      }
       assert.ok(new cls('probe') instanceof Error, name);
       assert.equal(new cls('probe').name, name);
     }
