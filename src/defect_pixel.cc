@@ -241,7 +241,10 @@ Napi::Value NormalizePixelList(const Napi::CallbackInfo& info) {
   }
 }
 
+}  // namespace
+
 // --- StaticDefectPixel struct -------------------------------------------
+// ObjectWrap accessors/methods (defined at node_pylon::defect scope).
 
 Napi::Value StaticDefectPixelWrap::GetX(const Napi::CallbackInfo& info) {
   return Napi::Number::New(info.Env(), static_cast<double>(pixel_.X));
@@ -436,8 +439,6 @@ Napi::Value StaticDefectPixelVectorWrap::Iterator(
            }));
   return it;
 }
-
-}  // namespace
 
 bool ParsePixel(Napi::Env env, const Napi::Value& value,
                 Pylon::StaticDefectPixel* out) {

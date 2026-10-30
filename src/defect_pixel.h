@@ -35,7 +35,7 @@ class StaticDefectPixelWrap : public Napi::ObjectWrap<StaticDefectPixelWrap> {
   Pylon::StaticDefectPixel pixel_{0, 0,
                                   Pylon::StaticDefectPixelType_Reserved};
 
- private:
+  // ObjectWrap accessors (public: registered from the free Init function).
   Napi::Value GetX(const Napi::CallbackInfo& info);
   void SetX(const Napi::CallbackInfo& info, const Napi::Value& value);
   Napi::Value GetY(const Napi::CallbackInfo& info);
@@ -53,7 +53,7 @@ class StaticDefectPixelVectorWrap
 
   Pylon::StaticDefectPixelList_t list_;
 
- private:
+  // ObjectWrap methods (public: registered from the free Init function).
   Napi::Value GetLength(const Napi::CallbackInfo& info);
   void SetLength(const Napi::CallbackInfo& info, const Napi::Value& value);
   Napi::Value Size(const Napi::CallbackInfo& info);
