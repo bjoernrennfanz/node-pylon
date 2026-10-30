@@ -290,9 +290,13 @@ Napi::Value GrabResultWrap::BufferAccessor(const Napi::CallbackInfo& info) {
 
 void GrabResultWrap::InstallBufferAccessor(Napi::Env env, Napi::Object obj) {
   (void)env;
+  // Note: napi flag enums OR to int, so cast back explicitly.
+  constexpr napi_property_attributes kAttrs =
+      static_cast<napi_property_attributes>(napi_enumerable |
+                                            napi_configurable);
   obj.DefineProperty(
       Napi::PropertyDescriptor::Accessor<&GrabResultWrap::BufferAccessor>(
-          "buffer", napi_enumerable | napi_configurable));
+          "buffer", kAttrs));
 }
 
 void GrabResultWrap::SetFactory(Napi::Object factory) {
