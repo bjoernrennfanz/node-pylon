@@ -5,8 +5,8 @@
 // GenDC component awareness against the SDK emulator.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, pickInt } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, pickInt } = require('../../helpers');
 
 function openCamera() {
   const cam = new pylon.InstantCamera();
@@ -59,7 +59,8 @@ describe('grab result', () => {
         assert.equal(grab.width, grab.getWidth());
         assert.equal(grab.height, grab.getHeight());
         assert.equal(grab.pixelType, grab.getPixelType());
-        assert.equal(grab.succeeded, true);
+        assert.equal(grab.succeeded(), true);
+        assert.equal(grab.valid, true);
       } finally {
         cam.stopGrabbing();
       }

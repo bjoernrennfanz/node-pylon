@@ -4,8 +4,8 @@
 // grabresult_test.py, adapted to the synchronous grab() helper).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, pickInt } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, pickInt } = require('../../helpers');
 
 function freshCamera() {
   const cam = new pylon.InstantCamera();

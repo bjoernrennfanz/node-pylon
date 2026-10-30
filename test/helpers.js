@@ -44,4 +44,47 @@ function pickInt(min, max, preferred) {
   return min;
 }
 
-module.exports = { deviceCount, requireDevice, hasNode, pickInt };
+// Counts reachable devices whose pylon device class contains `fragment`
+// (device classes are 'BaslerGigE', 'BaslerUsb', 'BaslerCamEmu', ...).
+// Mirrors pypylon's pylongigetestcase.py / pylonusbtestcase.py filtering:
+// 0 on any error (no native build, no hardware) so hardware suites skip.
+function deviceCountByClass(deviceClass) {
+  try {
+    pylon.initialize();
+    try {
+      return pylon.enumerateDevices().filter((d) => {
+        const cls = d.deviceClass || d.DeviceClass || '';
+        return String(cls).toLowerCase().includes(String(deviceClass).toLowerCase());
+      }).length;
+    } finally {
+      pylon.terminate();
+    }
+  } catch {
+    return 0;
+  }
+}
+
+// Skips the test unless a physical GigE camera is reachable.
+// (GitHub CI only provides the CamEmu emulator, so gigE suites always
+// skip there; run `npm run test:gige` on a host with GigE hardware.)
+// Returns true when a GigE device exists.
+function requireGigE(t) {
+  if (deviceCountByClass('GigE') === 0) {
+    t.skip('no GigE camera available (hardware-only suite, CI runs emulated only)');
+    return false;
+  }
+  return true;
+}
+
+// Skips the test unless a physical USB camera is reachable.
+// (Same CI note as requireGigE; run `npm run test:usb` on hardware.)
+// Returns true when a USB device exists.
+function requireUsb(t) {
+  if (deviceCountByClass('Usb') === 0) {
+    t.skip('no USB camera available (hardware-only suite, CI runs emulated only)');
+    return false;
+  }
+  return true;
+}
+
+module.exports = { deviceCount, requireDevice, hasNode, pickInt, deviceCountByClass, requireGigE, requireUsb };

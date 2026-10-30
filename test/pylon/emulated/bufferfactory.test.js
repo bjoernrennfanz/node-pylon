@@ -10,8 +10,8 @@
 // MaxNumBuffer exactness follows StartGrabbingMax like pypylon.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice } = require('../../helpers');
 
 function openCamera() {
   const cam = new pylon.InstantCamera();

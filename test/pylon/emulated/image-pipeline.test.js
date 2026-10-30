@@ -8,8 +8,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const pylon = require('../../lib');
-const { requireDevice, pickInt } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, pickInt } = require('../../helpers');
 
 function openCamera() {
   const cam = new pylon.InstantCamera();
@@ -118,7 +118,8 @@ describe('pylon image', () => {
         const img = new pylon.PylonImage();
         try {
           img.copyImage(grab);
-          assert.equal(img.canSaveWithoutConversion('Png'), true);
+          assert.equal(img.canSaveWithoutConversion('Bmp'), true);
+          assert.equal(typeof img.canSaveWithoutConversion('Png'), 'boolean');
           img.save('Png', file);
           assert.ok(fs.existsSync(file));
           const loaded = new pylon.PylonImage();

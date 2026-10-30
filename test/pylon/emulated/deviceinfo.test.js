@@ -3,8 +3,8 @@
 // deviceinfo_test.py).
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice } = require('../../helpers');
 
 describe('pylon device info', () => {
   it('exposes non-empty device fields', (t) => {

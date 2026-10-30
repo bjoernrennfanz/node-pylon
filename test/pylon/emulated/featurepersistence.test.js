@@ -6,8 +6,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const pylon = require('../../lib');
-const { requireDevice } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice } = require('../../helpers');
 
 function openCamera() {
   const cam = new pylon.InstantCamera();

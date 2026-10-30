@@ -32,8 +32,8 @@
 //   assertions (constants, empty-info semantics) always run.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, deviceCount } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, deviceCount } = require('../../helpers');
 
 function deviceFilter() {
   return [{ [pylon.DeviceClassKey]: pylon.BaslerCamEmuDeviceClass }];

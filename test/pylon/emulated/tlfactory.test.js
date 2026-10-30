@@ -3,8 +3,8 @@
 // tlfactory_test.py). Runs against the emulator when no hardware exists.
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const pylon = require('../../lib');
-const { requireDevice, deviceCount } = require('../helpers');
+const pylon = require('../../../lib');
+const { requireDevice, deviceCount } = require('../../helpers');
 
 describe('pylon TlFactory', () => {
   it('enumerates devices', (t) => {
