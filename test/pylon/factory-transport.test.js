@@ -1064,7 +1064,14 @@ describe('pylon TransportLayer', () => {
         assert.ok(infos.length > 0);
         const iface = tl.createInterface(infos[0]);
         try {
-          assert.equal(iface.getNodeMapNumNodes(), 0);
+          // Like `with interface:` in pypylon, entering the nodemap scope
+          // opens the interface; exit closes it again.
+          iface.open();
+          try {
+            assert.equal(iface.getNodeMapNumNodes(), 0);
+          } finally {
+            iface.close();
+          }
         } finally {
           tl.destroyInterface(iface);
         }
