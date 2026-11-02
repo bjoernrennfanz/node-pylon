@@ -666,3 +666,102 @@ describe('rn-parity genicam category-selector', () => {
     }
   });
 });
+
+describe('rn-parity genicam display matrix', () => {
+  it('names and describes every node type', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      for (const name of [
+        'Width',
+        'ExposureTime',
+        'PixelFormat',
+        'ChunkModeActive',
+        'DeviceUserID',
+        'AcquisitionStart',
+      ]) {
+        assert.equal(typeof cam.getDisplayName(name), 'string');
+        assert.ok(cam.getDisplayName(name).length > 0, name);
+        assert.equal(typeof cam.getDescription(name), 'string');
+      }
+      assert.throws(() => cam.getDisplayName('NoSuchNode12345'), /unknown node/);
+      assert.throws(() => cam.getDescription('NoSuchNode12345'), /unknown node/);
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('converts values per type', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    const origExp = cam.getFloat('ExposureTime');
+    const origChunk = cam.getBoolean('ChunkModeActive');
+    try {
+      assert.equal(cam.getValueAsString('ExposureTime'), String(origExp));
+      assert.equal(cam.getValueAsString('ChunkModeActive'), String(origChunk));
+      cam.setValueFromString('ChunkModeActive', 'true');
+      assert.equal(cam.getBoolean('ChunkModeActive'), true);
+      cam.setValueFromString('ExposureTime', '6000');
+      assert.equal(cam.getFloat('ExposureTime'), 6000);
+      assert.throws(
+        () => cam.setValueFromString('Width', 'not-a-number'),
+        /bad integer/,
+      );
+      assert.throws(
+        () => cam.setValueFromString('PixelFormat', 'Bogus'),
+        /invalid entry/,
+      );
+    } finally {
+      try { cam.setFloat('ExposureTime', origExp); } catch { /* restore */ }
+      try { cam.setBoolean('ChunkModeActive', origChunk); } catch { /* restore */ }
+      cam.close();
+    }
+  });
+
+  it('roundtrips enum int values per entry', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    const orig = cam.getEnum('AcquisitionMode');
+    try {
+      for (const entry of cam.getEnumEntries('AcquisitionMode')) {
+        cam.setEnum('AcquisitionMode', entry);
+        const iv = cam.getEnumIntValue('AcquisitionMode');
+        assert.equal(typeof iv, 'number');
+        cam.setEnumIntValue('AcquisitionMode', iv);
+        assert.equal(cam.getEnum('AcquisitionMode'), entry);
+      }
+      assert.throws(() => cam.setEnumIntValue('AcquisitionMode', 99999), /invalid entry/);
+    } finally {
+      try { cam.setEnum('AcquisitionMode', orig); } catch { /* restore */ }
+      cam.close();
+    }
+  });
+
+  it('checks integer metadata exactly', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      assert.equal(cam.getIntegerMin('Width'), 16);
+      assert.equal(cam.getIntegerMax('Width'), 1920);
+      assert.equal(cam.getIntegerInc('Width'), 2);
+      assert.equal(cam.getIntegerInc('Height'), 2);
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('writes register edge shapes', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      assert.equal(cam.getRegisterAddress('TestRegister'), 0x1000);
+      cam.writeRegister('TestRegister', new Uint8Array(0));
+      assert.equal(cam.readRegister('TestRegister').length, 0);
+      cam.writeRegister('TestRegister', Uint8Array.from([9, 8, 7]));
+      assert.deepEqual(Array.from(cam.readRegister('TestRegister')), [9, 8, 7]);
+      assert.throws(() => cam.writeRegister('Width', new Uint8Array(1)), TypeError);
+    } finally {
+      cam.close();
+    }
+  });
+});

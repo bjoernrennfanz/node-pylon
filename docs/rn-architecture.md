@@ -138,26 +138,31 @@ test/rn-contract.test.js    facade TS validity (type stripping), spec
 test/rn-functional.test.js  facade end-to-end vs emulator-like core stub:
                             discovery, pixel helpers, lifecycle, grabOne,
                             grab loop, nodemap roundtrips + errors,
-                            timeout handling, base64 fallback,
-                            configurations (11 tests)
+                            timeout handling, base64/array fallbacks,
+                            configurations (12 tests)
 test/rn-parity-genicam.test.js   GenICam suites mirrored from test/genicam
                             (integer/float/boolean/string/enumeration/
                             command/nodemap/nodetype/properties/register/
-                            value-string/category-selector, 40 tests;
+                            value-string/category-selector, display matrix,
+                            register edges (45 tests;
                             callback needs the event bridge — gap)
 test/rn-parity-grab.test.js      grab/grabresult/configuration/
-                            instantcamera-basics mirrored (17 tests)
-test/rn-parity-camera.test.js    enums, open modes, device handling,
-                            software trigger, helpers, InstantCameraArray
-                            (15 tests)
+                            instantcamera-basics, strategy matrix,
+                            payload checks (21 tests)
+test/rn-parity-camera.test.js    enums, open modes (numeric + symbolic),
+                            device handling + errors, software trigger,
+                            helpers, InstantCameraArray + edges (24 tests)
 test/rn-parity-discovery.test.js version/deviceinfo/discovery +
                             SDK constant parity (12 tests)
 ```
 
 Portability accounting vs the ~300 runnable Node tests (emulated +
 genicam; GigE/USB suites are hardware-only and skip in CI everywhere):
-ported ~95 (all GenICam except callback, all portable grab/config/
-camera/discovery parts, all device-independent constants). Not portable
+ported ~115 (all GenICam except callback, all portable grab/config/
+camera/discovery parts, all device-independent constants, plus
+per-method edges and strategy/device/array matrices). The smoke binary
+adds ~30 native checks (roundtrips, error texts, second handle) against
+the real emulator. Not portable
 without new bridge APIs: TlFactory/TransportLayer/Interface object model
 (~70 tests), WaitObject(s) (39), StaticDefectPixelCorrection (24),
 PylonImage pipeline (15), BufferFactory (13), FeaturePersistence (5),

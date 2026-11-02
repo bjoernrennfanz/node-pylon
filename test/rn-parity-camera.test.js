@@ -228,3 +228,121 @@ describe('rn-parity InstantCameraArray', () => {
     assert.equal(arr.isOpen(), false);
   });
 });
+
+describe('rn-parity camera open modes (strings)', () => {
+  it('opens with symbolic access mode names', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    for (const mode of ['Control', 'Stream', 'Event', 'Exclusive']) {
+      const cam = new f.InstantCamera(0, mode);
+      try {
+        assert.equal(cam.isOpen(), true);
+      } finally {
+        cam.close();
+      }
+    }
+  });
+
+  it('rejects unknown symbolic modes', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    assert.throws(() => new f.InstantCamera(0, 'Bogus'), RangeError);
+    const cam = new f.InstantCamera(0);
+    cam.close();
+    try {
+      assert.throws(() => cam.open('Bogus'), RangeError);
+      assert.equal(cam.isOpen(), false);
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('reopens after close', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = new f.InstantCamera(0);
+    cam.close();
+    assert.equal(cam.isOpen(), false);
+    cam.open();
+    assert.equal(cam.isOpen(), true);
+    cam.close();
+  });
+});
+
+describe('rn-parity camera device errors', () => {
+  it('rejects invalid attach and double detach', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = new f.InstantCamera(0);
+    try {
+      assert.throws(() => cam.attachDevice(99), /device index out of range/);
+      cam.detachDevice();
+      assert.throws(() => cam.detachDevice(), /no device attached/);
+      assert.throws(() => cam.getDeviceInfo(), /no device attached/);
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('exposes defaults and full name', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = new f.InstantCamera(1);
+    try {
+      assert.equal(cam.getCameraContext(), 0);
+      assert.equal(cam.getQueuedBufferCount(), 0);
+      const info = cam.getDeviceInfo();
+      assert.ok(info.fullName.includes(info.serialNumber));
+      assert.equal(info.serialNumber, 'EMU000002');
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('keeps two handles independent', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const a = new f.InstantCamera(0);
+    const b = new f.InstantCamera(0);
+    try {
+      a.setInteger('Width', 64);
+      assert.equal(a.getInteger('Width'), 64);
+      assert.equal(b.getInteger('Width'), 640);
+    } finally {
+      a.close();
+      b.close();
+    }
+  });
+});
+
+describe('rn-parity InstantCameraArray edges', () => {
+  it('handles an empty array safely', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const arr = new f.InstantCameraArray();
+    assert.equal(arr.getSize(), 0);
+    assert.equal(arr.isOpen(), false);
+    assert.equal(arr.isGrabbing(), false);
+    assert.equal(arr.retrieveResult(10, f.TimeoutHandling.Return), null);
+    arr.open();
+    arr.close();
+    arr.stopGrabbing();
+  });
+
+  it('grabs from a single-camera array', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const arr = new f.InstantCameraArray(1);
+    try {
+      arr.startGrabbing(f.GrabStrategy.OneByOne);
+      const res = arr.retrieveResult(5000);
+      assert.ok(res !== null);
+      assert.equal(res.cameraIndex, 0);
+      assert.equal(res.succeeded, true);
+    } finally {
+      arr.destroyDevice();
+    }
+  });
+
+  it('returns stable item instances', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const arr = new f.InstantCameraArray(2);
+    try {
+      assert.equal(arr.getItem(0), arr.getItem(0));
+    } finally {
+      arr.destroyDevice();
+    }
+  });
+});

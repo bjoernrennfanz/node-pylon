@@ -317,3 +317,73 @@ describe('rn-parity pylon instantcamera basics', () => {
     }
   });
 });
+
+describe('rn-parity grab strategy matrix', () => {
+  it('grabs under every strategy', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      for (const strategy of [
+        f.GrabStrategy.OneByOne,
+        f.GrabStrategy.LatestImageOnly,
+        f.GrabStrategy.LatestImages,
+        f.GrabStrategy.UpcomingImage,
+      ]) {
+        cam.startGrabbing(strategy);
+        const res = cam.retrieveResult(5000);
+        assert.ok(res !== null);
+        assert.equal(res.succeeded, true);
+        cam.stopGrabbing();
+      }
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('computes PayloadSize from geometry', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    const origW = cam.getInteger('Width');
+    const origH = cam.getInteger('Height');
+    try {
+      cam.setInteger('Width', 64);
+      cam.setInteger('Height', 48);
+      assert.equal(cam.getInteger('PayloadSize'), 64 * 48);
+      cam.setEnum('PixelFormat', 'RGB8');
+      assert.equal(cam.getInteger('PayloadSize'), 64 * 48 * 3);
+    } finally {
+      try { cam.setEnum('PixelFormat', 'Mono8'); } catch { /* restore */ }
+      try { cam.setInteger('Width', origW); } catch { /* restore */ }
+      try { cam.setInteger('Height', origH); } catch { /* restore */ }
+      cam.close();
+    }
+  });
+
+  it('returns enum entry copies', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      const entries = cam.getEnumEntries('PixelFormat');
+      entries.push('Bogus');
+      assert.ok(!cam.getEnumEntries('PixelFormat').includes('Bogus'));
+    } finally {
+      cam.close();
+    }
+  });
+
+  it('loops under LatestImages', (t) => {
+    if (SKIP) { t.skip(SKIP); return; }
+    const cam = freshCamera();
+    try {
+      cam.startGrabbing(f.GrabStrategy.LatestImages);
+      const a = cam.retrieveResult(5000);
+      const b = cam.retrieveResult(5000);
+      assert.equal(a.succeeded, true);
+      assert.equal(b.succeeded, true);
+      assert.ok(b.frameNumber > a.frameNumber);
+      cam.stopGrabbing();
+    } finally {
+      cam.close();
+    }
+  });
+});

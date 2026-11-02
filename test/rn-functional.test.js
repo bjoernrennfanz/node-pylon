@@ -218,3 +218,23 @@ test('rn-functional: coverage gaps are documented, not silent', async (t) => {
     );
   }
 });
+
+test('rn-functional: array buffer variant decodes identically', async (t) => {
+  if (SKIP) { t.skip(SKIP); return; }
+  const f = await F(t);
+  mock.state.returnArray = true;
+  try {
+    const cam = f.createCameraAt(0);
+    try {
+      const res = cam.grabOne(5000);
+      assert.equal(res.succeeded, true);
+      assert.ok(res.buffer instanceof Uint8Array);
+      assert.equal(res.buffer.length, 640 * 480);
+      assert.equal(res.buffer[0], 0);
+    } finally {
+      cam.close();
+    }
+  } finally {
+    mock.state.returnArray = false;
+  }
+});

@@ -22,6 +22,18 @@ void Check(bool ok, const std::string& name, const std::string& detail) {
   }
 }
 
+// Runs fn, expecting a PylonError whose text contains `want`.
+template <typename Fn>
+void CheckThrows(Fn fn, const std::string& name, const std::string& want) {
+  try {
+    fn();
+    Check(false, name, "no throw");
+  } catch (const PylonError& ex) {
+    Check(std::string(ex.what()).find(want) != std::string::npos, name,
+          ex.what());
+  }
+}
+
 }  // namespace
 
 int main() {
@@ -91,6 +103,72 @@ int main() {
               std::to_string(img2.timestamp));
     StopGrabbing(cam);
     Check(!IsGrabbing(cam), "stop-grabbing", "false");
+
+    // Nodemap roundtrips with restore (real emulator nodes).
+    const int64_t orig_w = GetInteger(cam, "Width");
+    SetInteger(cam, "Width", GetIntegerMin(cam, "Width"));
+    Check(GetInteger(cam, "Width") == GetIntegerMin(cam, "Width"),
+          "width-roundtrip", std::to_string(GetInteger(cam, "Width")));
+    SetInteger(cam, "Width", orig_w);
+    const double orig_exp = GetFloat(cam, "ExposureTime");
+    SetFloat(cam, "ExposureTime", GetFloatMin(cam, "ExposureTime"));
+    Check(GetFloat(cam, "ExposureTime") == GetFloatMin(cam, "ExposureTime"),
+          "exposure-roundtrip", std::to_string(GetFloat(cam, "ExposureTime")));
+    SetFloat(cam, "ExposureTime", orig_exp);
+    const std::string orig_uid = GetString(cam, "DeviceUserID");
+    SetString(cam, "DeviceUserID", "smoke-test");
+    Check(GetString(cam, "DeviceUserID") == "smoke-test", "string-roundtrip",
+          GetString(cam, "DeviceUserID"));
+    SetString(cam, "DeviceUserID", orig_uid);
+    const std::string orig_pf = GetEnum(cam, "PixelFormat");
+    const std::vector<std::string> pf_entries =
+        GetEnumEntries(cam, "PixelFormat");
+    if (pf_entries.size() > 1) {
+      SetEnum(cam, "PixelFormat", pf_entries[1]);
+      Check(GetEnum(cam, "PixelFormat") == pf_entries[1], "enum-roundtrip",
+            pf_entries[1]);
+      SetEnum(cam, "PixelFormat", orig_pf);
+    } else {
+      Check(!pf_entries.empty(), "enum-entries", orig_pf);
+    }
+    Check(GetIntegerInc(cam, "Width") >= 1, "integer-inc",
+          std::to_string(GetIntegerInc(cam, "Width")));
+    const double fmn = GetFloatMin(cam, "ExposureTime");
+    const double fmx = GetFloatMax(cam, "ExposureTime");
+    Check(fmn <= orig_exp && orig_exp <= fmx, "float-range",
+          std::to_string(fmn) + ".." + std::to_string(fmx));
+    const int64_t pf_iv = GetEnumIntValue(cam, "PixelFormat");
+    SetEnumIntValue(cam, "PixelFormat", pf_iv);
+    Check(GetEnum(cam, "PixelFormat") == orig_pf, "enum-int-roundtrip",
+          std::to_string(pf_iv));
+    ExecuteCommand(cam, "AcquisitionStart");
+    Check(IsCommandDone(cam, "AcquisitionStart"), "command-done", "true");
+    Check(!GetCategoryFeatures(cam, "Root").empty(), "category-root",
+          std::to_string(GetCategoryFeatures(cam, "Root").size()) +
+              " features");
+
+    // Deterministic error texts (mirrored by the JS facade mapping).
+    CheckThrows([&]() { CloseCamera(99999); }, "error-bad-handle",
+                "unknown camera handle");
+    CheckThrows([&]() { GetInteger(cam, "NoSuchNode12345"); },
+                "error-unknown-node", "unknown node");
+    CheckThrows(
+        [&]() { SetInteger(cam, "Width", GetIntegerMax(cam, "Width") + 1); },
+        "error-out-of-range", "out of range");
+    CheckThrows([&]() { GetInteger(cam, "PixelFormat"); },
+                "error-wrong-type", "not an Integer");
+    CheckThrows([&]() { SetEnum(cam, "PixelFormat", "Bogus12345"); },
+                "error-invalid-entry", "invalid entry");
+    CheckThrows([&]() { OpenCamera(0, 99); }, "error-access-mode",
+                "Unknown access mode");
+    CheckThrows([&]() { GetCategoryFeatures(cam, "Width"); },
+                "error-not-category", "Category");
+
+    // A second handle is independent.
+    const CameraHandle cam2 = OpenCamera(-1);
+    Check(cam2 != cam && IsCameraOpen(cam2), "second-handle",
+          "handle=" + std::to_string(cam2));
+    CloseCamera(cam2);
 
     CloseCamera(cam);
     Check(true, "close-camera", "ok");

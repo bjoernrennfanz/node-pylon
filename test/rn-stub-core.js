@@ -175,7 +175,11 @@ function createMockCore() {
       timestamp,
       blockId: 1000 + seq,
       frameNumber,
-      buffer: state.returnBase64 ? Buffer.from(buf).toString('base64') : buf,
+      buffer: state.returnBase64
+        ? Buffer.from(buf).toString('base64')
+        : state.returnArray
+          ? Array.from(buf)
+          : buf,
     };
     if (cam.nodes.ChunkModeActive.value === true) {
       image.chunk = { modeActive: true, timestamp, frameID: frameNumber };

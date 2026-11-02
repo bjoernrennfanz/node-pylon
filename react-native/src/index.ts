@@ -133,6 +133,29 @@ export const AccessMode = {
 } as const;
 export type AccessModeValue = (typeof AccessMode)[keyof typeof AccessMode];
 
+const ACCESS_MODE_NAMES: {[name: string]: number} = {
+  Control: 1,
+  Stream: 3,
+  Event: 4,
+  Exclusive: 5,
+};
+
+// Like lib/index.js: accepts the numeric code or the symbolic name;
+// unknown values throw RangeError (same text as the native core).
+function toAccessMode(value: number | string | undefined, dflt: number): number {
+  if (value === undefined) return dflt;
+  if (typeof value === 'string') {
+    const mapped = ACCESS_MODE_NAMES[value];
+    if (mapped === undefined) {
+      throw new RangeError(
+        'Unknown access mode (Control/Stream/Event/Exclusive)',
+      );
+    }
+    return mapped;
+  }
+  return value;
+}
+
 // Discovery constants from the SDK (device classes, TL types, property
 // keys, access modes, accessibility). Values come from the native module
 // at runtime so JS and C++ can never drift apart.
@@ -302,9 +325,9 @@ export class InstantCamera {
   private deviceIndex: number = -1;
   private accessMode: number = 1;
 
-  constructor(deviceIndex?: number, accessMode?: number) {
+  constructor(deviceIndex?: number, accessMode?: number | string) {
     this.deviceIndex = deviceIndex ?? -1;
-    this.accessMode = accessMode ?? AccessMode.Control;
+    this.accessMode = toAccessMode(accessMode, AccessMode.Control);
     this.open();
   }
 
@@ -329,9 +352,9 @@ export class InstantCamera {
     return getModule().isCameraOpen(this.handle);
   }
 
-  open(accessMode?: number): void {
+  open(accessMode?: number | string): void {
     if (this.handle >= 0 && this.isOpen()) return;
-    if (accessMode !== undefined) this.accessMode = accessMode;
+    if (accessMode !== undefined) this.accessMode = toAccessMode(accessMode, this.accessMode);
     this.handle = getModule().openCamera(this.deviceIndex, this.accessMode);
   }
 
