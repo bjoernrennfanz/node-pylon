@@ -141,8 +141,26 @@ int main() {
     SetEnumIntValue(cam, "PixelFormat", pf_iv);
     Check(GetEnum(cam, "PixelFormat") == orig_pf, "enum-int-roundtrip",
           std::to_string(pf_iv));
-    ExecuteCommand(cam, "AcquisitionStart");
-    Check(IsCommandDone(cam, "AcquisitionStart"), "command-done", "true");
+    // Commands: like the Node command suite, probe the known candidates
+    // and execute the first one the device accepts idle (AcquisitionStart
+    // is not writable on CamEmu unless grabbing).
+    std::string done_cmd;
+    for (const char* cand : {"UserSetSave", "ForceFailedBuffer",
+                             "AcquisitionStop", "AcquisitionStart"}) {
+      try {
+        if (GetNodeType(cam, cand) != "Command") continue;
+        ExecuteCommand(cam, cand);
+        done_cmd = cand;
+        break;
+      } catch (const PylonError&) {
+        continue;
+      }
+    }
+    Check(!done_cmd.empty(), "command-execute",
+          done_cmd.empty() ? "<none>" : done_cmd);
+    if (!done_cmd.empty()) {
+      Check(IsCommandDone(cam, done_cmd), "command-done", done_cmd);
+    }
     Check(!GetCategoryFeatures(cam, "Root").empty(), "category-root",
           std::to_string(GetCategoryFeatures(cam, "Root").size()) +
               " features");
