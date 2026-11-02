@@ -28,7 +28,7 @@ void CheckThrows(Fn fn, const std::string& name, const std::string& want) {
   try {
     fn();
     Check(false, name, "no throw");
-  } catch (const PylonError& ex) {
+  } catch (const node_pylon::core::PylonError& ex) {
     Check(std::string(ex.what()).find(want) != std::string::npos, name,
           ex.what());
   }
