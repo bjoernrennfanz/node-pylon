@@ -641,6 +641,60 @@ describe('pylon ConfigurationHelper', () => {
   });
 });
 
+describe('pylon InstantCamera async grab (non-blocking)', () => {
+  it('retrieveResultAsync resolves and keeps the event loop ticking', async (t) => {
+    if (!requireDevice(t)) return;
+    pylon.initialize();
+    try {
+      const camera = openCamera();
+      try {
+        camera.startGrabbing(pylon.GrabStrategy.OneByOne);
+        try {
+          let ticked = false;
+          setImmediate(() => { ticked = true; });
+          const res = await camera.retrieveResultAsync(10000);
+          assert.ok(res !== null);
+          assert.equal(res.isValid, true);
+          assert.equal(res.succeeded, true);
+          assert.equal(ticked, true);
+        } finally {
+          camera.stopGrabbing();
+        }
+      } finally {
+        camera.close();
+      }
+    } finally {
+      pylon.terminate();
+    }
+  });
+
+  it('async reject parity: ThrowException timeout and grabOne while grabbing', async (t) => {
+    if (!requireDevice(t)) return;
+    pylon.initialize();
+    try {
+      const camera = openCamera();
+      try {
+        camera.startGrabbing(pylon.GrabStrategy.UpcomingImage);
+        try {
+          await assert.rejects(
+            camera.retrieveResultAsync(0, pylon.TimeoutHandling.ThrowException).then((res) => {
+              if (res !== null) throw new Error('expected timeout reject, got frame');
+            }),
+            /timeout/i
+          );
+          await assert.rejects(camera.grabOneAsync(100), /while grabbing/);
+        } finally {
+          camera.stopGrabbing();
+        }
+      } finally {
+        camera.close();
+      }
+    } finally {
+      pylon.terminate();
+    }
+  });
+});
+
 describe('pylon InstantCameraArray', () => {
   it('empty array reports size zero and false flags', (t) => {
     if (!requireDevice(t)) return;

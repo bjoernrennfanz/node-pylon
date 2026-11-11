@@ -212,6 +212,11 @@ void CameraWrap::Init(Napi::Env env, Napi::Object exports) {
        InstanceMethod("grabOne", &CameraWrap::GrabOne),
        InstanceMethod("waitForFrameTriggerReady",
                       &CameraWrap::WaitForFrameTriggerReady),
+       InstanceMethod("retrieveResultAsync",
+                      &CameraWrap::RetrieveResultAsync),
+       InstanceMethod("grabOneAsync", &CameraWrap::GrabOneAsync),
+       InstanceMethod("waitForFrameTriggerReadyAsync",
+                      &CameraWrap::WaitForFrameTriggerReadyAsync),
        InstanceMethod("executeSoftwareTrigger",
                       &CameraWrap::ExecuteSoftwareTrigger),
        InstanceMethod("registerConfiguration",
@@ -1143,6 +1148,203 @@ Napi::Value CameraWrap::ExecuteSoftwareTrigger(
     return env.Undefined();
   }
   return env.Undefined();
+}
+
+// --- Async (non-blocking) grab path ----------------------------------------
+// Blocking SDK waits run in Execute() on the worker pool; all N-API object
+// construction and JS handler invocation happens in OnOK() on the JS thread.
+// An ObjectReference on the CameraWrap JS object keeps the native camera
+// alive until the worker completes. Sync semantics preserved: Return
+// handling resolves null on timeout, ThrowException handling rejects.
+class AsyncGrabWorker : public Napi::AsyncWorker {
+ public:
+  enum class Op { Retrieve, GrabOne, WaitTrigger };
+
+  AsyncGrabWorker(Napi::Env env, CameraWrap* owner, Op op, uint32_t timeoutMs,
+                  Pylon::ETimeoutHandling handling)
+      : Napi::AsyncWorker(env),
+        deferred_(Napi::Promise::Deferred::New(env)),
+        owner_(owner),
+        camRef_(Napi::ObjectReference::New(owner->Value(), 1)),
+        op_(op),
+        timeoutMs_(timeoutMs),
+        handling_(handling),
+        ok_(false),
+        ready_(false) {}
+
+  Napi::Promise Promise() { return deferred_.Promise(); }
+
+  void Execute() override {
+    try {
+      Pylon::CInstantCamera* camera = owner_->camera_;
+      if (camera == nullptr) {
+        SetError("InstantCamera not initialized");
+        return;
+      }
+      if (op_ == Op::Retrieve) {
+        if (!camera->IsGrabbing()) {
+          SetError("Not grabbing. Call startGrabbing() first.");
+          return;
+        }
+        Pylon::CGrabResultPtr ptr;
+        bool ok = camera->RetrieveResult(timeoutMs_, ptr, handling_);
+        if (!ok || !ptr.IsValid()) {
+          if (handling_ == Pylon::TimeoutHandling_ThrowException) {
+            SetError("Grab timeout: no result within timeoutMs");
+          }
+          // Return handling: ok_ stays false -> resolves null in OnOK.
+          return;
+        }
+        ptr_ = ptr;
+        ok_ = true;
+      } else if (op_ == Op::GrabOne) {
+        if (camera->IsGrabbing()) {
+          SetError(
+              "GrabOne cannot be called while grabbing. Use "
+              "retrieveResult() instead.");
+          return;
+        }
+        Pylon::CGrabResultPtr ptr;
+        bool ok = camera->GrabOne(timeoutMs_, ptr, handling_);
+        if (!ok || !ptr.IsValid()) {
+          if (handling_ == Pylon::TimeoutHandling_ThrowException) {
+            SetError("Grab timeout: no result within timeoutMs");
+          }
+          return;
+        }
+        ptr_ = ptr;
+        ok_ = true;
+      } else {
+        if (!camera->IsGrabbing()) {
+          SetError("Not grabbing. Call startGrabbing() first.");
+          return;
+        }
+        ready_ = camera->WaitForFrameTriggerReady(timeoutMs_, handling_);
+        ok_ = true;
+      }
+    } catch (const Pylon::GenericException& ex) {
+      SetError(ex.what());
+    } catch (const std::exception& ex) {
+      SetError(ex.what());
+    } catch (...) {
+      SetError("Unknown grab error");
+    }
+  }
+
+  void OnOK() override {
+    Napi::Env env = Env();
+    Napi::HandleScope scope(env);
+    if (op_ == Op::WaitTrigger) {
+      deferred_.Resolve(Napi::Boolean::New(env, ready_));
+      return;
+    }
+    if (!ok_) {
+      deferred_.Resolve(env.Null());
+      return;
+    }
+    try {
+      Napi::Object out = owner_->BuildGrabResultObject(env, ptr_);
+      owner_->FireImageEventHandlers(env, out);
+      deferred_.Resolve(out);
+    } catch (const std::exception& ex) {
+      deferred_.Reject(Napi::Error::New(env, ex.what()).Value());
+    }
+  }
+
+  void OnError(const Napi::Error& err) override {
+    deferred_.Reject(err.Value());
+  }
+
+ private:
+  Napi::Promise::Deferred deferred_;
+  CameraWrap* owner_;
+  Napi::ObjectReference camRef_;
+  Op op_;
+  uint32_t timeoutMs_;
+  Pylon::ETimeoutHandling handling_;
+  Pylon::CGrabResultPtr ptr_;
+  bool ok_;
+  bool ready_;
+};
+
+static bool ParseAsyncGrabArgs(const Napi::CallbackInfo& info,
+                               uint32_t defaultTimeout,
+                               Pylon::ETimeoutHandling defaultHandling,
+                               uint32_t* timeoutMs,
+                               Pylon::ETimeoutHandling* handling) {
+  Napi::Env env = info.Env();
+  *timeoutMs = defaultTimeout;
+  if (info.Length() >= 1 && info[0].IsNumber()) {
+    *timeoutMs = info[0].As<Napi::Number>().Uint32Value();
+  }
+  *handling = defaultHandling;
+  if (info.Length() >= 2 && !info[1].IsUndefined()) {
+    if (!ParseTimeoutHandling(info[1], handling)) {
+      Napi::RangeError::New(env,
+                            "Unknown timeout handling "
+                            "(Return/ThrowException)")
+          .ThrowAsJavaScriptException();
+      return false;
+    }
+  }
+  return true;
+}
+
+Napi::Value CameraWrap::RetrieveResultAsync(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  uint32_t timeoutMs = 5000;
+  Pylon::ETimeoutHandling handling = Pylon::TimeoutHandling_Return;
+  if (!ParseAsyncGrabArgs(info, 5000, Pylon::TimeoutHandling_Return,
+                          &timeoutMs, &handling)) {
+    Napi::Promise::Deferred deferred =
+        Napi::Promise::Deferred::New(env);
+    deferred.Reject(env.GetAndClearPendingException().Value());
+    return deferred.Promise();
+  }
+  auto* worker = new AsyncGrabWorker(env, this,
+                                     AsyncGrabWorker::Op::Retrieve, timeoutMs,
+                                     handling);
+  Napi::Promise promise = worker->Promise();
+  worker->Queue();
+  return promise;
+}
+
+Napi::Value CameraWrap::GrabOneAsync(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  uint32_t timeoutMs = 5000;
+  Pylon::ETimeoutHandling handling = Pylon::TimeoutHandling_ThrowException;
+  if (!ParseAsyncGrabArgs(info, 5000, Pylon::TimeoutHandling_ThrowException,
+                          &timeoutMs, &handling)) {
+    Napi::Promise::Deferred deferred =
+        Napi::Promise::Deferred::New(env);
+    deferred.Reject(env.GetAndClearPendingException().Value());
+    return deferred.Promise();
+  }
+  auto* worker = new AsyncGrabWorker(env, this, AsyncGrabWorker::Op::GrabOne,
+                                     timeoutMs, handling);
+  Napi::Promise promise = worker->Promise();
+  worker->Queue();
+  return promise;
+}
+
+Napi::Value CameraWrap::WaitForFrameTriggerReadyAsync(
+    const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  uint32_t timeoutMs = 1000;
+  Pylon::ETimeoutHandling handling = Pylon::TimeoutHandling_ThrowException;
+  if (!ParseAsyncGrabArgs(info, 1000, Pylon::TimeoutHandling_ThrowException,
+                          &timeoutMs, &handling)) {
+    Napi::Promise::Deferred deferred =
+        Napi::Promise::Deferred::New(env);
+    deferred.Reject(env.GetAndClearPendingException().Value());
+    return deferred.Promise();
+  }
+  auto* worker = new AsyncGrabWorker(env, this,
+                                     AsyncGrabWorker::Op::WaitTrigger,
+                                     timeoutMs, handling);
+  Napi::Promise promise = worker->Promise();
+  worker->Queue();
+  return promise;
 }
 
 // --- Event-handler registration --------------------------------------------

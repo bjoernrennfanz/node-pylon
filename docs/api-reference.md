@@ -22,6 +22,11 @@ Source: `lib/index.js`, types: `types/index.d.ts`.
 `retrieveResult(timeoutMs, timeoutHandling)` returns `null` on timeout with
 `TimeoutHandling.Return` (default), throws on timeout with
 `TimeoutHandling.ThrowException`.
+`retrieveResultAsync/grabOneAsync/waitForFrameTriggerReadyAsync` are
+Promise variants with identical semantics: the blocking SDK wait runs on
+the `Napi::AsyncWorker` pool so the JS event loop stays unblocked, result
+objects and image-handler dispatch happen on the JS thread. `Return`
+handling resolves `null` on timeout, `ThrowException` rejects.
 Grab results are unique plain objects: `{ isValid, succeeded, grabSucceeded(),
 width, height, pixelType, pixelFormat, payloadSize, buffer, blockId,
 frameNumber, timestamp, errorCode?, errorDescription? }`.

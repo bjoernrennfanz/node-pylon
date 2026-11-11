@@ -1,7 +1,8 @@
 // InstantCamera N-API wrapper over the real Basler pylon SDK.
 // N-API rules: ObjectWrap, no V8 internals, errors as JS exceptions.
-// Grab loop and node access run synchronously and never block the JS loop
-// beyond the call itself; the frame buffer is handed over zero-copy.
+// Sync grab calls run on the calling thread; AsyncWorker-based *Async
+// variants move the blocking SDK wait onto the worker pool so the JS event
+// loop stays unblocked. The frame buffer is handed over zero-copy.
 #pragma once
 
 #include <napi.h>
@@ -34,8 +35,10 @@ constexpr int kGrabLoopByUser = 1;
 constexpr int kRegistrationAppend = 0;
 constexpr int kRegistrationReplaceAll = 1;
 
+class AsyncGrabWorker;
 class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
  public:
+  friend class AsyncGrabWorker;
   static Napi::FunctionReference constructor;
   static void Init(Napi::Env env, Napi::Object exports);
   // Default: first-found device (like TlFactory.CreateFirstDevice).
@@ -81,11 +84,18 @@ class CameraWrap : public Napi::ObjectWrap<CameraWrap> {
   Napi::Value StartGrabbingMax(const Napi::CallbackInfo& info);
   Napi::Value StopGrabbing(const Napi::CallbackInfo& info);
   Napi::Value IsGrabbing(const Napi::CallbackInfo& info);
-  Napi::Value RetrieveResult(const Napi::CallbackInfo& info);
-  Napi::Value RetrieveGrabResult(const Napi::CallbackInfo& info);
-  Napi::Value GrabOne(const Napi::CallbackInfo& info);
-  Napi::Value WaitForFrameTriggerReady(const Napi::CallbackInfo& info);
-  Napi::Value ExecuteSoftwareTrigger(const Napi::CallbackInfo& info);
+   Napi::Value RetrieveResult(const Napi::CallbackInfo& info);
+   Napi::Value RetrieveGrabResult(const Napi::CallbackInfo& info);
+   Napi::Value GrabOne(const Napi::CallbackInfo& info);
+   Napi::Value WaitForFrameTriggerReady(const Napi::CallbackInfo& info);
+   Napi::Value ExecuteSoftwareTrigger(const Napi::CallbackInfo& info);
+   // Non-blocking Promise variants: blocking SDK waits run on the
+   // Napi::AsyncWorker pool, result/handler construction on the JS thread.
+   // Sync semantics preserved (null on Return-timeout, reject where sync
+   // throws). Sync methods are untouched.
+   Napi::Value RetrieveResultAsync(const Napi::CallbackInfo& info);
+   Napi::Value GrabOneAsync(const Napi::CallbackInfo& info);
+   Napi::Value WaitForFrameTriggerReadyAsync(const Napi::CallbackInfo& info);
 
   // Event-handler registration (JS callbacks; invoked synchronously on the
   // calling thread for lifecycle/image events so the JS loop never blocks).

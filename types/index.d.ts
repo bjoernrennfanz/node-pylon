@@ -184,11 +184,17 @@ export declare class InstantCamera {
   isGrabbing(): boolean;
   /** Blocks until timeoutMs; null on timeout with Return handling. Throws when not grabbing. */
   retrieveResult(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): RetrieveResult | null;
+  /** Non-blocking Promise variant: blocking wait runs on the worker pool, same resolve/reject semantics. */
+  retrieveResultAsync(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): Promise<RetrieveResult | null>;
   /** Same acquisition as retrieveResult but returns the GrabResult wrapper. */
   retrieveGrabResult(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): GrabResult | null;
   /** Single grab without an explicit grab loop. Must not be called while grabbing. */
   grabOne(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): RetrieveResult | null;
+  /** Non-blocking Promise variant of grabOne. */
+  grabOneAsync(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): Promise<RetrieveResult | null>;
   waitForFrameTriggerReady(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): boolean;
+  /** Non-blocking Promise variant of waitForFrameTriggerReady. */
+  waitForFrameTriggerReadyAsync(timeoutMs?: number, timeoutHandling?: TimeoutHandlingValue): Promise<boolean>;
   executeSoftwareTrigger(): void;
   /** Returns a numeric handler id; mode defaults to Append. */
   registerConfiguration(handler: ConfigurationHandler, mode?: RegistrationModeValue): number;

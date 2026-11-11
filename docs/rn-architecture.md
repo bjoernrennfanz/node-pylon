@@ -121,7 +121,7 @@ types/index.d.ts                        Node types (RN types in react-native/src
 
 ## Tests (all in `npm run test:rn`, CI needs no camera/SDK for these)
 
-RN suites run in their own CI jobs (ZAU-174, per GF): `rn-build`
+RN suites run in their own CI jobs: `rn-build`
 (compile-checks `pylon_core.cpp` per OS against the real SDK, then runs
 `pylon_core_smoke` — the real core binary against the real SDK and the
 camera emulator, no stubs) and `rn-tests` (OS x Node 20/22 matrix, no
