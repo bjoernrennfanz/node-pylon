@@ -648,18 +648,32 @@ describe('pylon InstantCamera async grab (non-blocking)', () => {
     try {
       const camera = openCamera();
       try {
+        // Part A: async retrieve resolves with a valid frame.
         camera.startGrabbing(pylon.GrabStrategy.OneByOne);
         try {
-          let ticked = false;
-          setImmediate(() => { ticked = true; });
           const res = await camera.retrieveResultAsync(10000);
           assert.ok(res !== null);
           assert.equal(res.isValid, true);
           assert.equal(res.succeeded, true);
-          assert.equal(ticked, true);
         } finally {
           camera.stopGrabbing();
         }
+        // Part B: non-blocking proof. grabOneAsync on the idle camera waits
+        // up to one emulator frame (~hundreds of ms) on the worker pool, so
+        // interval timers must tick while the wait is pending. A
+        // synchronous (loop-blocking) implementation would starve them.
+        assert.equal(camera.isGrabbing(), false);
+        let ticks = 0;
+        const timer = setInterval(() => { ticks++; }, 25);
+        try {
+          const res = await camera.grabOneAsync(10000);
+          assert.ok(res !== null);
+          assert.equal(res.isValid, true);
+          assert.equal(res.succeeded, true);
+        } finally {
+          clearInterval(timer);
+        }
+        assert.ok(ticks > 0, `event loop ticked during async wait (ticks=${ticks})`);
       } finally {
         camera.close();
       }
